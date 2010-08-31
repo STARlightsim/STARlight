@@ -1,0 +1,124 @@
+The STARlight Monte Carlo models 2-photon and photon-Pomeron interactions
+in peripheral heavy ion collisions.  The physics approach for the 2-photon
+interactions is described in STAR Note 243. That for the photon-Pomeron
+interactions is described in Klein and Nystrand, Phys. Rev. C60, 014903 (1999),
+with the p_t spectrum (including vector meson interference) discussed by
+Klein and Nystrand in Phys. Rev. Lett. 84, 2330 (2000).  
+
+STARlight has several input files, all of which are expected to be in the
+same directory as the starlight code.  User-specified input parameters are
+read from a file named "slight.in"; these parameters are described
+below.
+
+The output of the STARlight Monte Carlo can be written to an ascii file
+named "slight.out" and in ROOT format (#define root_output if you'd like to have it).
+
+----------------------------------------------------------------------------
+
+The contents of a sample starlight.in file are listed below, with 
+explanation.  The user should modify this file according to his or her
+needs.
+
+79  197	     // Z, A of the colliding ions (symmetric 
+	collisions are assumed)
+79  197	     // Z, A of the colliding ions (symmetric 
+	collisions are assumed)
+100	     // gamma for the colliding ions
+4.0 -1 50   // maximum and minimum values for w (the gamma-gamma center of mass
+	energy, w = 4(E1)(E2), (a -1 tells STARlight to use the default values
+	specified in setConst.f; otherwise, specific wmin here, and the number
+        of w bins in the lookup tables
+3.0 30	// maximum value for y (y is the rapidity, y = 0.5 ln(E1/E2) ) and the 
+        number of y-bins in the cross section calculation 
+1	// gg or gP switch -- A 1 here will produce 2-photon channels, a
+	// 2 here will produce vector meson channels with a narrow
+	//resonance, and a 3 here will produce vector meson channels with
+	//a wide (Breit-Wigner) resonance.
+10000	// number of events to produce
+331	// channel of interest (in PDG notation); currently supported
+	options listed below
+345738	// random number seed
+2	// The form of the output.  A 1 here generates a simple text file.  
+        '2' generates a text file in the gstar format
+        '3' generates a PAW ntuple.
+1	// This number controls the nuclear breakup
+        // Note that this option only works for lead or gold; it should work at any energy
+	1 = hard sphere nuclei (b>2R)
+	2 = both nuclei break up (XnXn)
+	3 = a single neutron from each nucleus (1n1n)
+	4 = require that neither nucleon break up (with b>2R)
+	5 = require that there be no hadronic break up
+		(This is similar to option 1, but with the actual hadronic interaction
+		probability)
+1       0 = no interference (i.e. turned off), 1= interference turned on
+0.5     when interference is turned on, this gives the %age interference 0= none, 1=full
+1       select coherent/incoherent production for assymetric collisions 
+1       scaling factor for incoherent production 
+0.24.   when interference is turned on, this is the maximum pt considered
+120     when interference is turned on, this is the number of pt bins
+
+----------------------------------------------------------------------------
+
+Currently supported 2-photon channel options:
+      jetset id		particle
+   ---------------------------------
+	221		eta			
+	331		eta-prime 		
+	441		eta-c			
+	10221		f0(975)		
+	225		f2(1270)
+	115		a2(1320)
+	335		f2(1525)
+	33		rho0 pair
+	11		e+/e- pair
+	13 		mu+/mu- pair
+	15		tau+/tau- pair
+
+Currently supported vector meson options:
+      jetset id		particle
+   ---------------------------------
+
+	113		rho0
+	223		omega
+	333		phi
+	443		J/psi
+	444		J/psi 2s
+	553 		Upsilon 
+	554 		Upsilon 2s 
+	555		Upsilon 3s 
+	913		rho0 + direct pi+pi- (with interference)
+The direct pi+pi- fraction is from the ZEUS results
+
+
+
+enjoy 
+
+
+Logs:
+
+
+fixed types for class Particle 
+- Int -> Double 
+- fixed Makefile .. 
+   autoconfig will appear in the future .. make sure paths are fixed before compiling 
+   this is for includes and libraries in Makefile
+- don't forget about link to pythia xml doc 
+  This is located in main.cpp
+
+
+-Careful with final states.  Upsilon currently goes to mu+mu-, this can be changed in
+gammavm.cpp gammaavectormeson::getdaughtermass and in gammaacrosssection::brietwigner.
+This applies to psi family as well. Be sure and double check.
+
+
+- changed PID of the charged KAON to 321 and neutral kaon to 310 .. it should work now for phi -> kk 
+
+- incoherent formfactor was hardcoded for dAu events, it should now accept coherent too.
+- Had hardcoded narrow and wide resonances for VMs. The user can again select gg_or_gp (2 or 3)
+except for the psi family.  This is still always narrow.
+- Changed the spin dependence for VMs going to ee/mumu(gammaavectormeson::gettheta).  It was only for psi and now upsilon will follow too
+inretrospect, i should probably have done this first and merge psifamily back into gammaavm.cpp
+
+
+
+
