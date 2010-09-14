@@ -582,37 +582,36 @@ double Gammaacrosssection::sigmagp(double Wgp)
   
   switch(SigmaPID)
     { 
-      //    these are rhos
     case StarlightConstants::RHO:
     case StarlightConstants::RHOZEUS:
       sigmagp_r=1.E-4*(5.0*exp(0.22*log(Wgp))+26.0*exp(-1.23*log(Wgp)));
       break;
-      //    these are omegas
     case StarlightConstants::OMEGA:
       sigmagp_r=1.E-4*(0.55*exp(0.22*log(Wgp))+18.0*exp(-1.92*log(Wgp)));
       break;                                                      
-      //    these are phis
     case StarlightConstants::PHI:
       sigmagp_r=1.E-4*0.34*exp(0.22*log(Wgp));
       break;
-      //    these are J/psis
     case StarlightConstants::JPSI:
-      sigmagp_r=1.E-4*0.0015*exp(0.80*log(Wgp));
+      sigmagp_r=(1.0-((channelmass+StarlightConstants::mp)*(channelmass+StarlightConstants::mp))/(Wgp*Wgp));
+      sigmagp_r*=sigmagp_r;
+      sigmagp_r*=1.E-4*0.00406*exp(0.65*log(Wgp));
+      // sigmagp_r=1.E-4*0.0015*exp(0.80*log(Wgp));
       break;
-      //       these are Psi(2S)
     case StarlightConstants::JPSI2S:
-      sigmagp_r=0.166*(1.E-4*0.0015*exp(0.80*log(Wgp)));
+      sigmagp_r=(1.0-((channelmass+StarlightConstants::mp)*(channelmass+StarlightConstants::mp))/(Wgp*Wgp));
+      sigmagp_r*=sigmagp_r;
+      sigmagp_r*=1.E-4*0.00406*exp(0.65*log(Wgp));
+      sigmagp_r*=0.166;  
+      //      sigmagp_r=0.166*(1.E-4*0.0015*exp(0.80*log(Wgp)));
       break;
-      //       these are Upsilon(1S)
     case StarlightConstants::UPSILON:
       //       >> This is W**1.7 dependence from QCD calculations
       sigmagp_r=1.E-10*(0.060)*exp(1.70*log(Wgp));
       break;
-      //       >> This is Upsilon(2S) scaled with the couplings ratio 0.249/0.577
     case StarlightConstants::UPSILON2S:
       sigmagp_r=1.E-10*(0.0259)*exp(1.70*log(Wgp));
       break;
-      //       >> This is Upsilon(3S) scaled with the couplings ratio 0.174/0.577
     case StarlightConstants::UPSILON3S:
       sigmagp_r=1.E-10*(0.0181)*exp(1.70*log(Wgp));
       break;
