@@ -2,7 +2,7 @@
 /*
  * $Id: gammaavm.cpp,v 1.0 2010/07/04   $
  *
- * /author Joseph Butterwoth
+ * /author 
  *
  * $Log: $
  * Added incoherent t2-> pt2 selection.  Following pp selection scheme
@@ -64,6 +64,8 @@ Gammaavectormeson::Gammaavectormeson(Inputparameters& input,Beambeamsystem& bbsy
     mass=1.019413;
     break;
   case StarlightConstants::JPSI:
+  case StarlightConstants::JPSI_ee:
+  case StarlightConstants::JPSI_mumu:
     width=0.000091;
     mass=3.09692;
     break;
@@ -122,22 +124,24 @@ void Gammaavectormeson::pickwy(double &W, double &Y)
 void Gammaavectormeson::twodecay(StarlightConstants::particle &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,double &pz2,int &iFbadevent)
 {
   
-  //     This routine decays a particle into two particles of mass mdec,
-  //     taking spin into account
+  // This routine decays a particle into two particles of mass mdec,
+  // taking spin into account
 
   double pmag, anglelep[20001],ytest=0.;
   double phi,theta,xtest,dndtheta,Ecm;
   double betax,betay,betaz;
   double mdec=0.0;
   double E1=0.0,E2=0.0;
+
   //    set the mass of the daughter particles
   mdec=getdaughtermass(ipid);
+
   //     calculate the magnitude of the momenta
   if(W < 2*mdec){
       cout<<" ERROR: W="<<W<<endl;
       iFbadevent = 1;
       return;
-    }
+  }
   pmag = sqrt(W*W/4. - mdec*mdec);
   
   //     pick an orientation, based on the spin
@@ -190,9 +194,19 @@ double Gammaavectormeson::getdaughtermass(StarlightConstants::particle &ipid)
     mdec = StarlightConstants::mK;
     ipid = StarlightConstants::KAONCHARGE;
     break;
-    // moved to the separate file 
-    //case StarlightConstants::JPSI:
-    //case StarlightConstants::JPSI2S:
+  case StarlightConstants::JPSI:
+    mdec = StarlightConstants::mel;
+    ipid = StarlightConstants::ELECTRON;
+    break; 
+  case StarlightConstants::JPSI_ee:
+    mdec = StarlightConstants::mel;
+    ipid = StarlightConstants::ELECTRON;
+    break; 
+  case StarlightConstants::JPSI_mumu:
+    mdec = StarlightConstants::mmu;
+    ipid = StarlightConstants::MUON;
+    break; 
+  case StarlightConstants::JPSI2S:
   case StarlightConstants::UPSILON:
   case StarlightConstants::UPSILON2S:
   case StarlightConstants::UPSILON3S:
@@ -201,7 +215,7 @@ double Gammaavectormeson::getdaughtermass(StarlightConstants::particle &ipid)
     
     mdec = StarlightConstants::mmu;
     ipid = StarlightConstants::MUON;
-    
+    cout<<"Incorrect selection "<<endl; 
     break;
   default: cout<<"No daughtermass defined, gammaavectormeson::getdaughtermass"<<endl;
   }
@@ -263,12 +277,11 @@ double Gammaavectormeson::getspin()
   return 1.0; //VM spins are the same
 }
 //______________________________________________________________________________
-void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &py,double &pz,int &tcheck)//may want to remove double w, y//better way for bslope...maybe store it as a vm parameter instead of cs parameter...not sure.
+void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &py,double &pz,int &tcheck)
 {
   //     This subroutine calculates momentum and energy of vector meson
   //     given W and Y,   without interference.  Subroutine vmpt.f handles
   //     production with interference
-
  
   double dW,dY;
   double Egam,Epom,tmin,pt1,pt2,phi1,phi2;
@@ -280,7 +293,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
   dW = (VMWmax-VMWmin)/double(VMnumw);
   dY  = (VMYmax-VMYmin)/double(VMnumy);
   
-  //       >> Find Egam,Epom in CM frame
+  //Find Egam,Epom in CM frame
   Egam = 0.5*W*exp(Y);
   Epom = 0.5*W*exp(-Y);
   
@@ -368,17 +381,15 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
   px2 = pt2*cos(phi2);
   py2 = pt2*sin(phi2);
         
+  // Compute vector sum Pt = Pt1 + Pt2 to find pt for the vector meson
   px = px1 + px2;
   py = py1 + py2;
-  
-  //       Compute vector sum Pt = Pt1 + Pt2 to find pt for the vector meson
   pt = sqrt( px*px + py*py );
        
-  //      I guess W is the mass of the vector meson (not necessarily
-  //      on-mass-shell), and E is the energy
   E  = sqrt(W*W+pt*pt)*cosh(Y);
   pz = sqrt(W*W+pt*pt)*sinh(Y);
-  //      randomly choose to make pz negative 50% of the time
+
+  // Randomly choose to make pz negative 50% of the time
   if(bbs.getBeam2().getZin()==1&&bbs.getBeam2().getAin()==2){
     pz = -pz;
   }
@@ -388,7 +399,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 
 }
 //______________________________________________________________________________
-void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, double &pz,int &tcheck)//may want to remove double w, y
+void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, double &pz,int &tcheck)
 {
   //    This function calculates momentum and energy of vector meson
   //     given W and Y, including interference.
@@ -488,80 +499,9 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 //______________________________________________________________________________
 StarlightConstants::event Gammaavectormeson::produceevent(int &ievent)
 {
- 
-  //returns the vector with the decay particles inside.
-  StarlightConstants::event vmeson; //This object will store all the tracks for a single event
-
-
-  // The new event type
-  UPCEvent event;
-  
-  double comenergy = 0.;
-  double rapidity = 0.;
-  double E = 0.;
-  double momx=0.,momy=0.,momz=0.;
-  int iFbadevent=0;
-  int tcheck=0;
-  StarlightConstants::particle ipid = StarlightConstants::UNKNOWN;
-  
-  double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
-  //this function decays particles and writes events to a file
-  //zero out the event structure
-  vmeson.numberoftracks=0;
-  for(int i=0;i<4;i++){
-    vmeson.px[i]=0.;
-    vmeson.py[i]=0.;
-    vmeson.pz[i]=0.;
-    vmeson.fsparticle[i]=StarlightConstants::UNKNOWN;
-    vmeson.charge[i]=0;
-  }
-  
-  pickwy(comenergy,rapidity);
-  if(VMinterferencemode==0)momenta(comenergy,rapidity,E,momx,momy,momz,tcheck);
-  //bslope...maybe this should be stored in vm instead of sigma...
-  if(VMinterferencemode==1)vmpt(comenergy,rapidity,E,momx,momy,momz,tcheck); 
-  twodecay(ipid,E,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
-  if (iFbadevent==0&&tcheck==0){
-    int q1=0,q2=0;
-    
-    double xtest = Randy.Rndom();//random()/(RAND_MAX+1.0);
-    if (xtest<0.5){
-      q1=1;
-      q2=-1;
-    }
-    else{
-      q1=-1;
-      q2=1;
-    }
-    vmeson.numberoftracks=2;//daughter particles are two tracks...
-    vmeson.px[0]=px1;
-    vmeson.py[0]=py1;
-    vmeson.pz[0]=pz1;
-    vmeson.fsparticle[0]=ipid;
-    vmeson.charge[0]=q1;
-    
-    vmeson.px[1]=px2;
-    vmeson.py[1]=py2;
-    vmeson.pz[1]=pz2;
-    vmeson.fsparticle[1]=ipid;
-    vmeson.charge[1]=q2;
-    
-    // The new stuff
-    StarlightParticle particle1(px1, py1, pz1, StarlightConstants::UNKNOWN, StarlightConstants::UNKNOWN, ipid, q1);
-    event.AddParticle(particle1);
-
-    StarlightParticle particle2(px2, py2, pz2, StarlightConstants::UNKNOWN, StarlightConstants::UNKNOWN, ipid, q2);
-    event.AddParticle(particle2);
-
-    // End of the new stuff
-
-
-    ievent=ievent+1;
-  }
-  return vmeson;
-  
+// Not used 
 }
-//______________________________________________________________________________
+//------------------------------------------------------------------------------
 UPCEvent Gammaavectormeson::ProduceEvent()
 {
     // The new event type
@@ -576,17 +516,21 @@ UPCEvent Gammaavectormeson::ProduceEvent()
     StarlightConstants::particle ipid = StarlightConstants::UNKNOWN;
 
     double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
-//this function decays particles and writes events to a file
-    //zero out the event structure
+
     pickwy(comenergy,rapidity);
-    if (VMinterferencemode==0)momenta(comenergy,rapidity,E,momx,momy,momz,tcheck);
-    //bslope...maybe this should be stored in vm instead of sigma...
-    if (VMinterferencemode==1)vmpt(comenergy,rapidity,E,momx,momy,momz,tcheck);
+
+    if (VMinterferencemode==0){
+      momenta(comenergy,rapidity,E,momx,momy,momz,tcheck);
+    } else if (VMinterferencemode==1){
+      vmpt(comenergy,rapidity,E,momx,momy,momz,tcheck);
+    }
+
     twodecay(ipid,E,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+
     if (iFbadevent==0&&tcheck==0) {
         int q1=0,q2=0;
 
-        double xtest = Randy.Rndom();//random()/(RAND_MAX+1.0);
+        double xtest = Randy.Rndom(); 
         if (xtest<0.5)
         {
             q1=1;
@@ -597,17 +541,16 @@ UPCEvent Gammaavectormeson::ProduceEvent()
             q2=1;
         }
 
-// The new stuff
-        StarlightParticle particle1(px1, py1, pz1, StarlightConstants::UNKNOWN, StarlightConstants::UNKNOWN, ipid, q1);
-        event.AddParticle(particle1);
+//     The new stuff
+         StarlightParticle particle1(px1, py1, pz1, StarlightConstants::UNKNOWN, StarlightConstants::UNKNOWN, ipid, q1);
+         event.AddParticle(particle1);
 
-        StarlightParticle particle2(px2, py2, pz2, StarlightConstants::UNKNOWN, StarlightConstants::UNKNOWN, ipid, q2);
-        event.AddParticle(particle2);
+         StarlightParticle particle2(px2, py2, pz2, StarlightConstants::UNKNOWN, StarlightConstants::UNKNOWN, ipid, q2);
+         event.AddParticle(particle2);
+//     End of the new stuff
 
-
-
-        // End of the new stuff
     }
+
     return event;
 
 }
