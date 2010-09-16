@@ -223,7 +223,7 @@ int Inputparameters::Init(std::string filename)
     Wmin_default  =  mass - 5.*width;
     Wmax          =  mass + 5.*width;
     pidtest=StarlightConstants::JPSI;
-    decaytest=StarlightConstants::PSIFAMILY;
+    decaytest=StarlightConstants::NARROWVMDEFAULT;
   }
   else if(pid==444){
     mass          =  3.686093;      //J/psi
@@ -231,7 +231,23 @@ int Inputparameters::Init(std::string filename)
     Wmin_default  =  mass - 5.*width;
     Wmax          =  mass + 5.*width;
     pidtest=StarlightConstants::JPSI2S;
-    decaytest=StarlightConstants::PSIFAMILY;
+    decaytest=StarlightConstants::NARROWVMDEFAULT;
+  }
+  else if(pid==443011){
+    mass          =  3.09692;  // JN  3.09688;      //J/psi
+    width         =  0.000091; //JN  0.000087;
+    Wmin_default  =  mass - 5.*width;
+    Wmax          =  mass + 5.*width;
+    pidtest=StarlightConstants::JPSI_ee;
+    decaytest=StarlightConstants::NARROWVMDEFAULT;
+  }
+  else if(pid==443013){
+    mass          =  3.09692;  // JN  3.09688;      //J/psi
+    width         =  0.000091; //JN  0.000087;
+    Wmin_default  =  mass - 5.*width;
+    Wmax          =  mass + 5.*width;
+    pidtest=StarlightConstants::JPSI_mumu;
+    decaytest=StarlightConstants::NARROWVMDEFAULT;
   }
   else if(pid==553){
     mass          =  9.46030;      //Upsilon
