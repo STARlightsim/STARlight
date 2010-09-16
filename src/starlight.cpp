@@ -226,6 +226,10 @@ int Starlight::CreateEventChannel()
     case StarlightConstants::RHOZEUS:
     case StarlightConstants::OMEGA://Will probably be three body
     case StarlightConstants::PHI:
+    case StarlightConstants::JPSI:
+    case StarlightConstants::JPSI2S:
+    case StarlightConstants::JPSI_ee:
+    case StarlightConstants::JPSI_mumu:
     case StarlightConstants::UPSILON:
     case StarlightConstants::UPSILON2S:
     case StarlightConstants::UPSILON3S:
@@ -244,13 +248,13 @@ int Starlight::CreateEventChannel()
         std::cout<<"Please go back and adjust gg_or_gp to 2 or 3 for a VM, main.cpp"<<std::endl;
         return -1;
     }
-    case StarlightConstants::JPSI:
-    case StarlightConstants::JPSI2S:
-    {
-        fEventChannel = new Psifamily(*fInputParameters, *fBeamSystem);
-        if (fEventChannel) return 0;
-        else return -1;
-    }
+    //    case StarlightConstants::JPSI:
+    //    case StarlightConstants::JPSI2S:
+    //    {
+    //        fEventChannel = new Psifamily(*fInputParameters, *fBeamSystem);
+    //        if (fEventChannel) return 0;
+    //        else return -1;
+    //    }
     //rhoprime
     default:
         std::cout<<"Hi and welcome to default event channel(null), main::CreateEventChannel"<<std::endl;
