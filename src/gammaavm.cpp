@@ -215,7 +215,6 @@ double Gammaavectormeson::getdaughtermass(StarlightConstants::particle &ipid)
     
     mdec = StarlightConstants::mmu;
     ipid = StarlightConstants::MUON;
-    cout<<"Incorrect selection "<<endl; 
     break;
   default: cout<<"No daughtermass defined, gammaavectormeson::getdaughtermass"<<endl;
   }
