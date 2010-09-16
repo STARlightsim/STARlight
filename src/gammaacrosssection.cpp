@@ -121,6 +121,8 @@ Gammaacrosssection::Gammaacrosssection (Inputparameters& input,
 			width=0.00443;
                         break;
                 case StarlightConstants::JPSI:
+                case StarlightConstants::JPSI_ee:
+                case StarlightConstants::JPSI_mumu:
                         bslope=4.0;
 			f2o4pi=10.45;
 			ANORM=-2.75;//Artificial Breit-Wigner parameters--no direct pions
@@ -238,13 +240,14 @@ double Gammaacrosssection::getcsgA(double Egamma,double W)
   //Used for d-A and A-A
   tmin   = (W*W/(4.*Egamma*SigmaGamma_em) )*(W*W/(4.*Egamma*SigmaGamma_em) );
   
-  //how to make this more generic???
   if(bbs.getBeam1().getAin()==1&&bbs.getBeam2().getAin()==1)
     {  //Proton-proton, no scaling needed.
       csgA = sigmagp(Wgp);
     }
   else if(bbs.getBeam2().getZin()==1&&bbs.getBeam2().getAin()==2)
-    {  //Deuteron-A interaction
+    {  
+
+      // Deuteron-A interaction
       Av = bslope*sigmagp(Wgp);
       
       tmax   = tmin + 0.64;   //0.64
@@ -252,96 +255,79 @@ double Gammaacrosssection::getcsgA(double Egamma,double W)
       bx     = 0.5*(tmax+tmin);
       csgA   = 0.;
       
-      for( int k=1;k<NGAUSS;k++){                                                                                                                   
-	t    = ax*xg[k]+bx;
-	//We use beam2 here since the input stores the deuteron as nucleus 2
-	//and nucleus 2 is the pomeron field source
-	//Also this is the way sergey formatted the formfactor.
-	csgA = csgA + ag[k]*bbs.getBeam2().formfactor(t); 
-	t    = ax*(-xg[k])+bx;
-	csgA = csgA + ag[k]*bbs.getBeam2().formfactor(t);
+      for( int k=1;k<NGAUSS;k++){ 
+        t    = ax*xg[k]+bx;
+        //We use beam2 here since the input stores the deuteron as nucleus 2
+        //and nucleus 2 is the pomeron field source
+        //Also this is the way sergey formatted the formfactor.
+        csgA = csgA + ag[k]*bbs.getBeam2().formfactor(t); 
+        t    = ax*(-xg[k])+bx;
+        csgA = csgA + ag[k]*bbs.getBeam2().formfactor(t);
       }
       csgA = 0.5*(tmax-tmin)*csgA;
       csgA = Av*csgA;
     }
-        else if(SigmaCoherence==0&&(!(bbs.getBeam2().getZin()==1&&bbs.getBeam2().getAin()==2)))
-    {//For incoherent AA interactions , since incoherent treating it as gamma-p
-    //      Calculate the differential V.M.+proton cross section
-    csgA = 1.E-4*SigmaCoherenceFactor*SigmaNucleus*bslope*sigmagp(Wgp);//artifical 1E-3 to scale down sigma
-    //cout<<"sigma for inco AA: "<<cs<<endl;
-    //Calculating int |F(t)| dt
-    //Using proton formfactor for this case
-    //Note the coherence scaling factor being intergrated with the F(t)
-    //Should it just be F(t)^2?   
-    //Pay attention to the way the formfactor is implemented in Nucleus class
-    //Also, notice the tmin value.  It starts higher for dAu, should we proceed
-    //in a similar fashion
-    //Why don't we use formfactors for pp? Is it because it is incorporated in 
-    //the gamma-p fits done for dsigma/dt? Yes?
+  else if(SigmaCoherence==0&&(!(bbs.getBeam2().getZin()==1&&bbs.getBeam2().getAin()==2)))
+    {
 
+      // For incoherent AA interactions , since incoherent treating it as gamma-p
+      // Calculate the differential V.M.+proton cross section
+      csgA = 1.E-4*SigmaCoherenceFactor*SigmaNucleus*bslope*sigmagp(Wgp);//artifical 1E-3 to scale down sigma
 
-      /*  tmax   = tmin + 0.25;
-        ax     = 0.5*(tmax-tmin);
-        bx     = 0.5*(tmax+tmin);
-        csgA   = 0.;
-
-        for( int k=1;k<NGAUSS;k++)
-        {                                                                                                                   
-          t    = ax*xg[k]+bx;
-              csgA = csgA + ag[k]*SigmaCoherenceFactor*SigmaNucleus*bbs.getBeam2().formfactor(t);
-          t    = ax*(-xg[k])+bx;
-              csgA = csgA + ag[k]*SigmaCoherenceFactor*SigmaNucleus*bbs.getBeam2().formfactor(t);
-          }
-
-                csgA = 0.5*(tmax-tmin)*csgA;
-                csgA = Av*csgA;
-        */
+      //Calculating int |F(t)| dt
+      //Using proton formfactor for this case
+      //Note the coherence scaling factor being intergrated with the F(t)
+      //Should it just be F(t)^2?   
+      //Pay attention to the way the formfactor is implemented in Nucleus class
+      //Also, notice the tmin value.  It starts higher for dAu, should we proceed
+      //in a similar fashion
+      //Why don't we use formfactors for pp? Is it because it is incorporated in 
+      //the gamma-p fits done for dsigma/dt? Yes?
 
     }
-  else {	//For typical AA interactions.
-		//      Calculate V.M.+proton cross section
-    cs=sqrt(16.*StarlightConstants::pi*f2o4pi*bslope
+  else 
+    {	
+
+      // For typical AA interactions.
+      // Calculate V.M.+proton cross section
+      cs=sqrt(16.*StarlightConstants::pi*f2o4pi*bslope
 	    *StarlightConstants::hbarc*StarlightConstants::hbarc*sigmagp(Wgp)
 	    /StarlightConstants::alpha);
     
+      //  Calculate V.M.+Nucleus cross section
+      cvma=sigma_A(cs); 
+ 
+      // Calculate Av = dsigma/dt(t=0) Note Units: fm**s/Gev**2
+      Av=(StarlightConstants::alpha*cvma*cvma)/
+        (16.*StarlightConstants::pi*f2o4pi*StarlightConstants::hbarc*StarlightConstants::hbarc);
     
-    //  Calculate V.M.+Nucleus cross section
-    cvma=sigma_A(cs);                                                                                                                                      
+      tmax   = tmin + 0.25;
+      ax     = 0.5*(tmax-tmin);
+      bx     = 0.5*(tmax+tmin);
+      csgA   = 0.;
+      for( int k=1;k<NGAUSS;k++){ 
+        t    = ax*xg[k]+bx;
+        csgA = csgA + ag[k]*bbs.getBeam2().formfactor(t)*bbs.getBeam2().formfactor(t);
+        t    = ax*(-xg[k])+bx;
+        csgA = csgA + ag[k]*bbs.getBeam2().formfactor(t)*bbs.getBeam2().formfactor(t);
+      }
     
-    // Calculate Av = dsigma/dt(t=0) Note Units: fm**s/Gev**2
-    Av=(StarlightConstants::alpha*cvma*cvma)/
-      (16.*StarlightConstants::pi*f2o4pi*StarlightConstants::hbarc*StarlightConstants::hbarc);
-    
-    tmax   = tmin + 0.25;
-    ax     = 0.5*(tmax-tmin);
-    bx     = 0.5*(tmax+tmin);
-    csgA   = 0.;
-    
-    for( int k=1;k<NGAUSS;k++){                                                                                                                   
-      t    = ax*xg[k]+bx;
-      csgA = csgA + ag[k]*bbs.getBeam2().formfactor(t)*bbs.getBeam2().formfactor(t);
-      t    = ax*(-xg[k])+bx;
-      csgA = csgA + ag[k]*bbs.getBeam2().formfactor(t)*bbs.getBeam2().formfactor(t);
-    }
-    
-    csgA = 0.5*(tmax-tmin)*csgA;
-    csgA = Av*csgA;
-    
+      csgA = 0.5*(tmax-tmin)*csgA;
+      csgA = Av*csgA;
+
   }
   return csgA;	
 }
 //______________________________________________________________________________
 double Gammaacrosssection::photonflux(double Egamma)
 {
-  // DOUBLE PRECISION FUNCTION flux(Egamma)
   // This routine gives the photon flux as a function of energy Egamma
-  //  It works for arbitrary nuclei and gamma; the first time it is
-  //  called, it calculates a lookup table which is used on
-  // subsequent calls
-  //  x
-  // it returns dN_gamma/dE (dimensions 1/E), not dI/dE
+  // It works for arbitrary nuclei and gamma; the first time it is
+  // called, it calculates a lookup table which is used on
+  // subsequent calls.
+  // It returns dN_gamma/dE (dimensions 1/E), not dI/dE
   // energies are in GeV, in the lab frame
-  //  rewritten 4/25/2001 by SRK
+  // rewritten 4/25/2001 by SRK
   
   double lEgamma,Emin,Emax;
   static double lnEmax, lnEmin, dlnE;
@@ -364,13 +350,60 @@ double Gammaacrosssection::photonflux(double Egamma)
   static int  Icheck = 0;
   
   //Check first to see if pp (JN0705)
-  if( bbs.getBeam1().getZin()==1 && bbs.getBeam2().getAin()==1 ){
-    bmin = RNuc+RNuc;
-    flux_r = nepoint(Egamma,bmin);
+  if( bbs.getBeam1().getAin()==1 && bbs.getBeam2().getAin()==1 ){
+    int nbsteps = 200;
+    double bmin = 0.5;
+    double bmax = 5.0 + (5.0*SigmaGamma_em*StarlightConstants::hbarc/Egamma);
+    double dlnb = (log(bmax)-log(bmin))/(1.*nbsteps);
+
+    double local_sum=0.0;
+
+    // Impact parameter loop 
+    for (int i = 0; i<=nbsteps;i++){
+
+      double bnn0 = bmin*exp(i*dlnb);
+      double bnn1 = bmin*exp((i+1)*dlnb);
+      double db   = bnn1-bnn0;
+        
+      //      double PofB0 = 1.0; 
+      //      if( bnn0 > 1.4 )PofB0=0.0;
+      //      double PofB1 = 1.0; 
+      //      if( bnn1 > 1.4 )PofB1=0.0;
+      
+      double ppslope = 19.0; 
+      double GammaProfile = exp(-bnn0*bnn0/(2.*StarlightConstants::hbarc*StarlightConstants::hbarc*ppslope));  
+      double PofB0 = 1. - (1. - GammaProfile)*(1. - GammaProfile);   
+      GammaProfile = exp(-bnn1*bnn1/(2.*StarlightConstants::hbarc*StarlightConstants::hbarc*ppslope));  
+      double PofB1 = 1. - (1. - GammaProfile)*(1. - GammaProfile);   
+
+      double Xarg = Egamma*bnn0/(StarlightConstants::hbarc*SigmaGamma_em);
+      double loc_nofe0 = (bbs.getBeam1().getZin()*bbs.getBeam1().getZin()*StarlightConstants::alpha)/
+	(StarlightConstants::pi*StarlightConstants::pi); 
+      loc_nofe0 *= (1./(Egamma*bnn0*bnn0)); 
+      loc_nofe0 *= Xarg*Xarg*(bessel::dbesk1(Xarg))*(bessel::dbesk1(Xarg)); 
+
+      Xarg = Egamma*bnn1/(StarlightConstants::hbarc*SigmaGamma_em);
+      double loc_nofe1 = (bbs.getBeam1().getZin()*bbs.getBeam1().getZin()*StarlightConstants::alpha)/
+	(StarlightConstants::pi*StarlightConstants::pi); 
+      loc_nofe1 *= (1./(Egamma*bnn1*bnn1)); 
+      loc_nofe1 *= Xarg*Xarg*(bessel::dbesk1(Xarg))*(bessel::dbesk1(Xarg)); 
+
+      local_sum += loc_nofe0*(1. - PofB0)*bnn0*db; 
+      local_sum += loc_nofe1*(1. - PofB1)*bnn1*db; 
+
+    }
+    // End Impact parameter loop 
+
+    // Note: 2*pi --> pi because of no factor 2 above 
+    double flux_r=local_sum*StarlightConstants::pi; 
     return flux_r;
+
+    //    bmin = RNuc+RNuc;
+    //    flux_r = nepoint(Egamma,bmin);
+    //    return flux_r;
   }
+
   //   first call?  - initialize - calculate photon flux
-  
   Icheck=Icheck+1;
   if(Icheck > 1) goto L1000f;
   
@@ -593,6 +626,8 @@ double Gammaacrosssection::sigmagp(double Wgp)
       sigmagp_r=1.E-4*0.34*exp(0.22*log(Wgp));
       break;
     case StarlightConstants::JPSI:
+    case StarlightConstants::JPSI_ee:
+    case StarlightConstants::JPSI_mumu:
       sigmagp_r=(1.0-((channelmass+StarlightConstants::mp)*(channelmass+StarlightConstants::mp))/(Wgp*Wgp));
       sigmagp_r*=sigmagp_r;
       sigmagp_r*=1.E-4*0.00406*exp(0.65*log(Wgp));
@@ -622,11 +657,10 @@ double Gammaacrosssection::sigmagp(double Wgp)
 }
 //______________________________________________________________________________
 double Gammaacrosssection::sigma_A(double sig_N)
-{                                                                                                                                                        
-  //     >> Nuclear Cross Section
-  //     >> sig_N,sigma_A in (fm**2)
-                                                                                                                                                        
-  
+{                                                         
+  // Nuclear Cross Section
+  // sig_N,sigma_A in (fm**2) 
+
   double sum;
   double b,bmax,Pint,arg,sigma_A_r;
   
@@ -644,7 +678,6 @@ double Gammaacrosssection::sigma_A(double sig_N)
      .985611511545268335, .997263861849481564
     };
   
-                                                                                                                                                        
   double ag[17]=
     {.0,
      .0965400885147278006, .0956387200792748594,
@@ -659,11 +692,9 @@ double Gammaacrosssection::sigma_A(double sig_N)
   
   NGAUSS=16;
   
+  // CALCULATE P(int) FOR b=0.0 - bmax (fm)
   bmax = 25.0;
   sum  = 0.;
-  //     >> CALCULATE P(int) FOR b=0.0 - bmax (fm)
-  
-  
   for(int IB=1;IB<=NGAUSS;IB++){
     
     b = 0.5*bmax*xg[IB]+0.5*bmax;
@@ -677,14 +708,14 @@ double Gammaacrosssection::sigma_A(double sig_N)
     arg=-sig_N*bbs.getBeam1().getrho0()*bbs.getBeam1().Thickness(b);
     Pint=1.0-exp(arg);
     sum=sum+2.*StarlightConstants::pi*b*Pint*ag[IB];
+
   }
-                                                                                                                                                        
+
   sum=0.5*bmax*sum;
   
   sigma_A_r=sum;
  
   return sigma_A_r;
-      
 }
 //______________________________________________________________________________
 double Gammaacrosssection::getdefaultC()
@@ -695,36 +726,27 @@ double Gammaacrosssection::getdefaultC()
 double Gammaacrosssection::breitwigner(double W,double C)
 {
   
-  
-  //Relativistic Breit-Wigner according to J.D. Jackson,
-  //    Nuovo Cimento 34, 6692 (1964), with nonresonant term. A is the strength
-  //    of the resonant term and b the strength of the non-resonant
-  //     term. C is an overall normalization.
-  //I think the page is 1644, you can find a copy on Jackson's page on lbl.gov?
-  
-  
-                                                                                                                                               
+  // Relativistic Breit-Wigner according to J.D. Jackson,
+  // Nuovo Cimento 34, 6692 (1964), with nonresonant term. A is the strength
+  // of the resonant term and b the strength of the non-resonant
+  // term. C is an overall normalization.
+
   double ppi=0.,ppi0=0.,GammaPrim,rat;
   double aa,bb,cc;
   
-  // return value
-  
   double nrbw_r;
-  
-                                                                                                                                               
+
   // width depends on energy - Jackson Eq. A.2
   // if below threshold, then return 0.  Added 5/3/2001 SRK
   // 0.5% extra added for safety margin
-  if( SigmaPID==StarlightConstants::RHO ||SigmaPID==StarlightConstants::RHOZEUS){                                                                         
- 
+  if( SigmaPID==StarlightConstants::RHO ||SigmaPID==StarlightConstants::RHOZEUS){  
     if (W < 2.01*StarlightConstants::mpi){
       nrbw_r=0.;
       return nrbw_r;
     }
-    
     ppi=sqrt( ((W/2.)*(W/2.)) - StarlightConstants::mpi*StarlightConstants::mpi );
     ppi0=0.358;
-  }                                                                                                                                               
+  }
   
   // handle phi-->K+K- properly
   if (SigmaPID  ==  StarlightConstants::PHI){
@@ -735,29 +757,40 @@ double Gammaacrosssection::breitwigner(double W,double C)
       ppi=sqrt( ((W/2.)*(W/2.))- StarlightConstants::mK*StarlightConstants::mK);
       ppi0=sqrt( ((channelmass/2.)*(channelmass/2.))-StarlightConstants::mK*StarlightConstants::mK);
   }
+
   //handle J/Psi-->e+e- properly
   if (SigmaPID==StarlightConstants::JPSI || SigmaPID==StarlightConstants::JPSI2S){
-    
     if(W<2.*StarlightConstants::mel){
       nrbw_r=0.;
       return nrbw_r;
     }
-    
     ppi=sqrt(((W/2.)*(W/2.))-StarlightConstants::mel*StarlightConstants::mel);
     ppi0=sqrt(((channelmass/2.)*(channelmass/2.))-StarlightConstants::mel*StarlightConstants::mel);
-    
   }
-  if(SigmaPID==StarlightConstants::UPSILON || SigmaPID==StarlightConstants::UPSILON2S ||SigmaPID==StarlightConstants::UPSILON3S ){
-    
+  if (SigmaPID==StarlightConstants::JPSI_ee){
+    if(W<2.*StarlightConstants::mel){
+      nrbw_r=0.;
+      return nrbw_r;
+    }
+    ppi=sqrt(((W/2.)*(W/2.))-StarlightConstants::mel*StarlightConstants::mel);
+    ppi0=sqrt(((channelmass/2.)*(channelmass/2.))-StarlightConstants::mel*StarlightConstants::mel);   
+  }
+  if (SigmaPID==StarlightConstants::JPSI_mumu){
+    if(W<2.*StarlightConstants::mmu){
+      nrbw_r=0.;
+      return nrbw_r;
+    }
+    ppi=sqrt(((W/2.)*(W/2.))-StarlightConstants::mmu*StarlightConstants::mmu);
+    ppi0=sqrt(((channelmass/2.)*(channelmass/2.))-StarlightConstants::mmu*StarlightConstants::mmu); 
+  }
+
+  if(SigmaPID==StarlightConstants::UPSILON || SigmaPID==StarlightConstants::UPSILON2S ||SigmaPID==StarlightConstants::UPSILON3S ){ 
     if (W<2.*StarlightConstants::mmu){
       nrbw_r=0.;
       return nrbw_r;
     }
-	
-
     ppi=sqrt(((W/2.)*(W/2.))-StarlightConstants::mmu*StarlightConstants::mmu);
     ppi0=sqrt(((channelmass/2.)*(channelmass/2.))-StarlightConstants::mmu*StarlightConstants::mmu);
-    
   }
   
   if(ppi==0.&&ppi0==0.) 
@@ -769,22 +802,19 @@ double Gammaacrosssection::breitwigner(double W,double C)
   aa=ANORM*sqrt(GammaPrim*channelmass*W);
   bb=W*W-channelmass*channelmass;
   cc=channelmass*GammaPrim;
-                                                                                                                                               
-  //  real part^2
   
+  // First real part squared 
   nrbw_r = (( (aa*bb)/(bb*bb+cc*cc) + BNORM)*( (aa*bb)/(bb*bb+cc*cc) + BNORM));
   
-  // imaginary part^2
-                                                                                                                                               
+  // Then imaginary part squared 
   nrbw_r = nrbw_r + (( (aa*cc)/(bb*bb+cc*cc) )*( (aa*cc)/(bb*bb+cc*cc) ));
-                                                                                                                                               
-                                                                                                                                               
+
   //  Alternative, a simple, no-background BW, following J. Breitweg et al.
   //  Eq. 15 of Eur. Phys. J. C2, 247 (1998).  SRK 11/10/2000
   //      nrbw_r = (ANORM*mass*GammaPrim/(bb*bb+cc*cc))**2
   
   nrbw_r = C*nrbw_r;
-                                                                                                                                               
+  
   return nrbw_r;
     
 }
@@ -935,10 +965,9 @@ Narrowresonancesigma::~Narrowresonancesigma()
 //______________________________________________________________________________
 void Narrowresonancesigma::crosssectioncalculation(double bwnormsave)
 {
-                                                                                                                                     
   
-  //     This subroutine calculates the vector meson cross section assuming
-  //     a narrow resonance.  For reference, see STAR Note 386.
+  // This subroutine calculates the vector meson cross section assuming
+  // a narrow resonance.  For reference, see STAR Note 386.
   
   double Av,Wgp,cs,cvma;
   double W,dY;
@@ -977,22 +1006,23 @@ void Narrowresonancesigma::crosssectioncalculation(double bwnormsave)
       continue;
     if(ega2 > getMaxPhotonEnergy()) 
       continue;
-                                                                                                                                     
+
     csgA1=getcsgA(ega1,W);
     
-    //       >> Middle Point                      =====>>>
-    
-    csgA12=getcsgA(ega12,W);                                                                                                                          
-    //       >> Second Point                      =====>>>
+    // Middle Point                      =====>>>
+    csgA12=getcsgA(ega12,W); 
+
+    // Second Point                      =====>>>
     csgA2=getcsgA(ega2,W);
     
-    //       >> Sum the contribution for this W,Y.
+    // Sum the contribution for this W,Y.
     dR  = ega1*photonflux(ega1)*csgA1;
     dR  = dR + 4.*ega12*photonflux(ega12)*csgA12;
     dR  = dR + ega2*photonflux(ega2)*csgA2;
     tmp = tmp+2.*dR*(dY/6.);
     dR  = dR*(dY/6.);
-    //       >> The 2 accounts for the 2 beams
+
+    // The 2 accounts for the 2 beams
     //Not dAu
     //Double for identical beams.  
     //If the beams are different in Z by a large amount
