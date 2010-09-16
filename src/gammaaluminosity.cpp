@@ -24,7 +24,7 @@
 #include <fstream>
 
 using namespace std;
-                                                                                                                                                           
+
 #include <math.h>
 #include "inputparameters.h"
 #include "beambeamsystem.h"
@@ -37,7 +37,6 @@ using namespace std;
 Gammaaluminosity::Gammaaluminosity(Inputparameters& input, Beambeamsystem& bbsystem)
   :Gammaacrosssection(input,bbsystem),inputgammaa(input)
 {
-  
   cout <<"Creating Luminosity Tables."<<endl;
   gammaadifferentialluminosity();
   cout <<"Luminosity Tables created."<<endl;
@@ -45,28 +44,23 @@ Gammaaluminosity::Gammaaluminosity(Inputparameters& input, Beambeamsystem& bbsys
 //______________________________________________________________________________
 void Gammaaluminosity::gammaadifferentialluminosity()
 {
+
   double Av,Wgp,cs,cvma;
   double W,dW,dY;
   double Egamma,Y;
   double t,tmin,tmax,testint,dndWdY;
   double csgA,ax,bx;
-  double C;
-  
+  double C;  
 
   ofstream wylumfile;
   wylumfile.precision(15);
   
   double  bwnorm,Eth;
 
-  
   dW = (inputgammaa.getWmax()-inputgammaa.getWmin())/inputgammaa.getnumw();
   dY  = (inputgammaa.getYmax()-(-1.0)*inputgammaa.getYmax())/inputgammaa.getnumy();
-  
-  //     Normalize the Breit-Wigner Distribution
-  testint=0.0;
-  
-  // Write the values of W used in the calculation to starlight.dat.
-  
+    
+  // Write the values of W used in the calculation to slight.txt.  
   wylumfile.open("slight.txt");
   wylumfile << getbbs().getBeam1().getZin() <<endl;
   wylumfile << getbbs().getBeam1().getAin() <<endl;
@@ -88,26 +82,23 @@ void Gammaaluminosity::gammaadifferentialluminosity()
   wylumfile << inputgammaa.getmaximuminterpt() <<endl;
   wylumfile << inputgammaa.getNPT() <<endl;
   
+  //     Normalize the Breit-Wigner Distribution and write values of W to slight.txt
+  testint=0.0;
   //Grabbing default value for C in the breit-wigner calculation
   C=getdefaultC();
-  for(int i=0;i<=inputgammaa.getnumw()-1;i++){
-    
+  for(int i=0;i<=inputgammaa.getnumw()-1;i++){    
     W = inputgammaa.getWmin() + double(i)*dW + 0.5*dW;
     testint = testint + breitwigner(W,C)*dW;
     wylumfile << W << endl;
   }
+  bwnorm = 1./testint;
   
-  //     Write the values of Y used in the calculation to starlight.dat.
-  
+  //     Write the values of Y used in the calculation to slight.txt.
   for(int i=0;i<=inputgammaa.getnumy()-1;i++){
     Y = -1.0*inputgammaa.getYmax() + double(i)*dY + 0.5*dY;
     wylumfile << Y << endl;
   }
-  
-  bwnorm = 1./testint;
-  
-  cout<<" BW Norm: "<<bwnorm<<endl;
-  
+    
   Eth=0.5*(((inputgammaa.getWmin()+StarlightConstants::mp)*(inputgammaa.getWmin()
 							    +StarlightConstants::mp)-StarlightConstants::mp*StarlightConstants::mp)/
 	   (inputgammaa.getProtonEnergy()+sqrt(inputgammaa.getProtonEnergy()*
@@ -122,25 +113,19 @@ void Gammaaluminosity::gammaadifferentialluminosity()
       Y = -1.0*inputgammaa.getYmax() + double(j)*dY + 0.5*dY;
       Egamma = 0.5*W*exp(Y);
       
-      if(Egamma < Eth){
-	dndWdY=0.;
-	goto L80_vm;
-      }
-      //  at very high photon energies, the flux ~ 0 anyway, so this
-      //  cutoff is fine.
-       
-      if(Egamma > getMaxPhotonEnergy()){	
-              Egamma = getMaxPhotonEnergy();
+      dndWdY = 0.; 
+
+      if(Egamma > Eth){
+        if(Egamma > getMaxPhotonEnergy())Egamma = getMaxPhotonEnergy();
+        csgA=getcsgA(Egamma,W);
+        dndWdY = Egamma*photonflux(Egamma)*csgA*breitwigner(W,bwnorm);
       }
 
-      csgA=getcsgA(Egamma,W);
-      dndWdY = Egamma*photonflux(Egamma)*csgA*breitwigner(W,bwnorm);
-     
-L80_vm:
       wylumfile << dndWdY << endl;
       
     }
   }
+
   wylumfile.close();
   
   if(inputgammaa.getinterferencemode()==1) 
