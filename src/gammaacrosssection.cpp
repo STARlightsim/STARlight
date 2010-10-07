@@ -40,141 +40,149 @@ using namespace std;
 #include "bessel.h"
 //______________________________________________________________________________
 Gammaacrosssection::Gammaacrosssection (Inputparameters& input,
-                                       Beambeamsystem& bbsystem):bbs(bbsystem)
+					Beambeamsystem& bbsystem):bbs(bbsystem)
 {
-	SigmaProtonEnergy=input.getProtonEnergy();
-	SigmaGamma_em=input.getgamma_em();
-	SigmaPID=input.getpidtest();
-	SigmaBreakup=input.getbreakupmode();
-	SigmaCoherence=input.getincoherentorcoherent();
-	SigmaCoherenceFactor=input.getincoherentfactor();
-	SigmaNucleus=bbs.getBeam2().getAin();
+  SigmaProtonEnergy=input.getProtonEnergy();
+  SigmaGamma_em=input.getgamma_em();
+  SigmaPID=input.getpidtest();
+  SigmaBreakup=input.getbreakupmode();
+  SigmaCoherence=input.getincoherentorcoherent();
+  SigmaCoherenceFactor=input.getincoherentfactor();
+  SigmaNucleus=bbs.getBeam2().getAin();
 
-	switch(bbs.getBeam1().getZin())
-        {
-                case 79://Au
-                        lum=2.0;
-                        break;
-                case 53://I
-                        lum=27.;
-                        break;
-                case 49://Indium,uses same as Iodine
-                        lum-27.;
-                        break;
-                case 29://Cu
-                        lum=95.;
-                        break;
-                case 14://Si
-                        lum=440.;
-                        break;
-                case 8://O
-                        lum=980.;
-                        break;
-                case 82://Pb
-                        lum=1.;
-                        break;
-                case 20://Ca
-                        lum=2000.;
-                        break;
-                case 1://proton
-                        lum=1.E8;
-                        break;
-                default:
-        cout <<"Warning:Luminosity not defined.Gammaacrosssection::getlum"<<endl;
-	}
-	switch(SigmaPID)
-        {
-                case StarlightConstants::RHO:
-                        bslope= 11.0;
-			f2o4pi= 2.02;
-			ANORM= -2.75;
-			BNORM= 0.0;
-			defaultC=     1.0;
-			channelmass=0.7685;
-			width=0.1507;
-                        break;
-                case StarlightConstants::RHOZEUS:
-                        bslope=11.0;
-			f2o4pi=2.02;
-			ANORM=-2.75;
-			BNORM=1.84;
-			defaultC=1.0;
-			channelmass=0.7685;
-			width=0.1507;
-                        break;
-                case StarlightConstants::OMEGA:
-                        bslope=10.0;
-			f2o4pi=23.13;
-			ANORM=-2.75;
-			BNORM=0.0;
-			defaultC=1.0;
-			channelmass=0.78194;
-			width=0.00843;
-                        break;
-                case StarlightConstants::PHI:
-                        bslope=7.0;
-			f2o4pi=13.71;
-			ANORM=-2.75;
-			BNORM=0.0;
-			defaultC=1.0;
-			channelmass=1.019413;
-			width=0.00443;
-                        break;
-                case StarlightConstants::JPSI:
-                case StarlightConstants::JPSI_ee:
-                case StarlightConstants::JPSI_mumu:
-                        bslope=4.0;
-			f2o4pi=10.45;
-			ANORM=-2.75;//Artificial Breit-Wigner parameters--no direct pions
-			BNORM=0.0;
-			defaultC=1.0;
-			channelmass=3.09692;//JN 3.09688
-			width=0.000091;//JN 0.000087
-                        break;
-                case StarlightConstants::JPSI2S:
-                        bslope=4.3;
-			f2o4pi=26.39;
-			ANORM=-2.75;//Artificial
-			BNORM=0.0;
-			defaultC=1.0;
-			channelmass=3.686093;
-			width=0.000337;
-                        break;
-                case StarlightConstants::UPSILON:
-                        bslope=4.0;
-			f2o4pi=125.37;
-			ANORM=-2.75;//Artificial
-			BNORM=0.0;
-			defaultC=1.0;
-			channelmass=9.46030;
-			width=0.00005402;
-                        break;
-                case StarlightConstants::UPSILON2S:
-                        bslope=4.0;
-			f2o4pi=290.84;
-			ANORM=-2.75;
-			BNORM=0.0;
-			defaultC=1.0;
-			channelmass=10.02326;
-			width=0.00003198;
-                        break;
-                case StarlightConstants::UPSILON3S:
-                        bslope=4.0;
-			f2o4pi=415.10;
-			ANORM=-2.75;
-			BNORM=0.0;
-			defaultC=1.0;
-			channelmass=10.3552;
-			width=0.00002032;
-                        break;
-                default:
-   cout <<"No sigma constants parameterized for pid: "<<SigmaPID
-   <<" GammaAcrosssection"<<endl;
-        }
+  switch(bbs.getBeam1().getZin())
+    {
+    case 79://Au
+      lum=2.0;
+      break;
+    case 53://I
+      lum=27.;
+      break;
+    case 49://Indium,uses same as Iodine
+      lum-27.;
+      break;
+    case 29://Cu
+      lum=95.;
+      break;
+    case 14://Si
+      lum=440.;
+      break;
+    case 8://O
+      lum=980.;
+      break;
+    case 82://Pb
+      lum=1.;
+      break;
+    case 20://Ca
+      lum=2000.;
+      break;
+    case 1://proton
+      lum=1.E8;
+      break;
+    default:
+      cout <<"Warning:Luminosity not defined.Gammaacrosssection::getlum"<<endl;
+    }
+  switch(SigmaPID)
+    {
+    case StarlightConstants::RHO:
+      bslope= 11.0;
+      f2o4pi= 2.02;
+      ANORM= -2.75;
+      BNORM= 0.0;
+      defaultC=     1.0;
+      channelmass=0.7685;
+      width=0.1507;
+      break;
+    case StarlightConstants::RHOZEUS:
+      bslope=11.0;
+      f2o4pi=2.02;
+      ANORM=-2.75;
+      BNORM=1.84;
+      defaultC=1.0;
+      channelmass=0.7685;
+      width=0.1507;
+      break;
+    case StarlightConstants::OMEGA:
+      bslope=10.0;
+      f2o4pi=23.13;
+      ANORM=-2.75;
+      BNORM=0.0;
+      defaultC=1.0;
+      channelmass=0.78194;
+      width=0.00843;
+      break;
+    case StarlightConstants::PHI:
+      bslope=7.0;
+      f2o4pi=13.71;
+      ANORM=-2.75;
+      BNORM=0.0;
+      defaultC=1.0;
+      channelmass=1.019413;
+      width=0.00443;
+      break;
+    case StarlightConstants::JPSI:
+    case StarlightConstants::JPSI_ee:
+    case StarlightConstants::JPSI_mumu:
+      bslope=4.0;
+      f2o4pi=10.45;
+      ANORM=-2.75;//Artificial Breit-Wigner parameters--no direct pions
+      BNORM=0.0;
+      defaultC=1.0;
+      channelmass=3.09692;//JN 3.09688
+      width=0.000091;//JN 0.000087
+      break;
+    case StarlightConstants::JPSI2S:
+    case StarlightConstants::JPSI2S_ee:
+    case StarlightConstants::JPSI2S_mumu:
+      bslope=4.3;
+      f2o4pi=26.39;
+      ANORM=-2.75;//Artificial
+      BNORM=0.0;
+      defaultC=1.0;
+      channelmass=3.686093;
+      width=0.000337;
+      break;
+    case StarlightConstants::UPSILON:
+    case StarlightConstants::UPSILON_ee:
+    case StarlightConstants::UPSILON_mumu:
+      bslope=4.0;
+      f2o4pi=125.37;
+      ANORM=-2.75;//Artificial
+      BNORM=0.0;
+      defaultC=1.0;
+      channelmass=9.46030;
+      width=0.00005402;
+      break;
+    case StarlightConstants::UPSILON2S:
+    case StarlightConstants::UPSILON2S_ee:
+    case StarlightConstants::UPSILON2S_mumu:
+      bslope=4.0;
+      f2o4pi=290.84;
+      ANORM=-2.75;
+      BNORM=0.0;
+      defaultC=1.0;
+      channelmass=10.02326;
+      width=0.00003198;
+      break;
+    case StarlightConstants::UPSILON3S:
+    case StarlightConstants::UPSILON3S_ee:
+    case StarlightConstants::UPSILON3S_mumu:
+      bslope=4.0;
+      f2o4pi=415.10;
+      ANORM=-2.75;
+      BNORM=0.0;
+      defaultC=1.0;
+      channelmass=10.3552;
+      width=0.00002032;
+      break;
+    default:
+      cout <<"No sigma constants parameterized for pid: "<<SigmaPID
+	   <<" GammaAcrosssection"<<endl;
+    }
 
-	EgMax= 4.*SigmaGamma_em*StarlightConstants::hbarc/bbs.getBeam1().RNuc(); 
-	//Max photon energy( for VM only, in GeV, lab frame, use beam energy
-    //, nuclear size cutoff)
+  EgMax= 4.*SigmaGamma_em*StarlightConstants::hbarc/bbs.getBeam1().RNuc(); 
+  //Max photon energy( for VM only, in GeV, lab frame, use beam energy
+  //, nuclear size cutoff)
 
 }
 //______________________________________________________________________________
@@ -185,37 +193,37 @@ Gammaacrosssection::~Gammaacrosssection()
 //______________________________________________________________________________
 Beambeamsystem Gammaacrosssection::getbbs()
 {
-return bbs;
+  return bbs;
 }
 //______________________________________________________________________________
 double Gammaacrosssection::getBNORM()
 {
-return BNORM;
+  return BNORM;
 }
 //______________________________________________________________________________
 double Gammaacrosssection::getlum()
 {
-return lum;
+  return lum;
 }
 //______________________________________________________________________________
 double Gammaacrosssection::getf2o4pi()
 {
-return f2o4pi;
+  return f2o4pi;
 }
 //______________________________________________________________________________
 double Gammaacrosssection::getchannelmass()
 {
-return channelmass;
+  return channelmass;
 }
 //______________________________________________________________________________
 double Gammaacrosssection::getbslope()
 {
-return bslope;
+  return bslope;
 }
 //______________________________________________________________________________
 void Gammaacrosssection::crosssectioncalculation(double bwnormsave)
 {
-cout <<"Neither narrow/wide resonance cross-section calculation.--Derived"<<endl;
+  cout <<"Neither narrow/wide resonance cross-section calculation.--Derived"<<endl;
 }
 //______________________________________________________________________________
 double Gammaacrosssection::getcsgA(double Egamma,double W)
@@ -291,8 +299,8 @@ double Gammaacrosssection::getcsgA(double Egamma,double W)
       // For typical AA interactions.
       // Calculate V.M.+proton cross section
       cs=sqrt(16.*StarlightConstants::pi*f2o4pi*bslope
-	    *StarlightConstants::hbarc*StarlightConstants::hbarc*sigmagp(Wgp)
-	    /StarlightConstants::alpha);
+	      *StarlightConstants::hbarc*StarlightConstants::hbarc*sigmagp(Wgp)
+	      /StarlightConstants::alpha);
     
       //  Calculate V.M.+Nucleus cross section
       cvma=sigma_A(cs); 
@@ -315,7 +323,7 @@ double Gammaacrosssection::getcsgA(double Egamma,double W)
       csgA = 0.5*(tmax-tmin)*csgA;
       csgA = Av*csgA;
 
-  }
+    }
   return csgA;	
 }
 //______________________________________________________________________________
@@ -634,6 +642,8 @@ double Gammaacrosssection::sigmagp(double Wgp)
       // sigmagp_r=1.E-4*0.0015*exp(0.80*log(Wgp));
       break;
     case StarlightConstants::JPSI2S:
+    case StarlightConstants::JPSI2S_ee:
+    case StarlightConstants::JPSI2S_mumu:
       sigmagp_r=(1.0-((channelmass+StarlightConstants::mp)*(channelmass+StarlightConstants::mp))/(Wgp*Wgp));
       sigmagp_r*=sigmagp_r;
       sigmagp_r*=1.E-4*0.00406*exp(0.65*log(Wgp));
@@ -641,13 +651,19 @@ double Gammaacrosssection::sigmagp(double Wgp)
       //      sigmagp_r=0.166*(1.E-4*0.0015*exp(0.80*log(Wgp)));
       break;
     case StarlightConstants::UPSILON:
+    case StarlightConstants::UPSILON_ee:
+    case StarlightConstants::UPSILON_mumu:
       //       >> This is W**1.7 dependence from QCD calculations
       sigmagp_r=1.E-10*(0.060)*exp(1.70*log(Wgp));
       break;
     case StarlightConstants::UPSILON2S:
+    case StarlightConstants::UPSILON2S_ee:
+    case StarlightConstants::UPSILON2S_mumu:
       sigmagp_r=1.E-10*(0.0259)*exp(1.70*log(Wgp));
       break;
     case StarlightConstants::UPSILON3S:
+    case StarlightConstants::UPSILON3S_ee:
+    case StarlightConstants::UPSILON3S_mumu:
       sigmagp_r=1.E-10*(0.0181)*exp(1.70*log(Wgp));
       break;
     default: cout<< "!!!  ERROR: Unidentified Vector Meson: "<< SigmaPID <<endl;
@@ -750,12 +766,12 @@ double Gammaacrosssection::breitwigner(double W,double C)
   
   // handle phi-->K+K- properly
   if (SigmaPID  ==  StarlightConstants::PHI){
-      if (W < 2.*StarlightConstants::mK){
-	nrbw_r=0.;
-	return nrbw_r;
-      }
-      ppi=sqrt( ((W/2.)*(W/2.))- StarlightConstants::mK*StarlightConstants::mK);
-      ppi0=sqrt( ((channelmass/2.)*(channelmass/2.))-StarlightConstants::mK*StarlightConstants::mK);
+    if (W < 2.*StarlightConstants::mK){
+      nrbw_r=0.;
+      return nrbw_r;
+    }
+    ppi=sqrt( ((W/2.)*(W/2.))- StarlightConstants::mK*StarlightConstants::mK);
+    ppi0=sqrt( ((channelmass/2.)*(channelmass/2.))-StarlightConstants::mK*StarlightConstants::mK);
   }
 
   //handle J/Psi-->e+e- properly
@@ -776,6 +792,22 @@ double Gammaacrosssection::breitwigner(double W,double C)
     ppi0=sqrt(((channelmass/2.)*(channelmass/2.))-StarlightConstants::mel*StarlightConstants::mel);   
   }
   if (SigmaPID==StarlightConstants::JPSI_mumu){
+    if(W<2.*StarlightConstants::mmu){
+      nrbw_r=0.;
+      return nrbw_r;
+    }
+    ppi=sqrt(((W/2.)*(W/2.))-StarlightConstants::mmu*StarlightConstants::mmu);
+    ppi0=sqrt(((channelmass/2.)*(channelmass/2.))-StarlightConstants::mmu*StarlightConstants::mmu); 
+  }
+  if (SigmaPID==StarlightConstants::JPSI2S_ee){
+    if(W<2.*StarlightConstants::mel){
+      nrbw_r=0.;
+      return nrbw_r;
+    }
+    ppi=sqrt(((W/2.)*(W/2.))-StarlightConstants::mel*StarlightConstants::mel);
+    ppi0=sqrt(((channelmass/2.)*(channelmass/2.))-StarlightConstants::mel*StarlightConstants::mel);   
+  }
+  if (SigmaPID==StarlightConstants::JPSI2S_mumu){
     if(W<2.*StarlightConstants::mmu){
       nrbw_r=0.;
       return nrbw_r;
@@ -821,17 +853,17 @@ double Gammaacrosssection::breitwigner(double W,double C)
 //______________________________________________________________________________
 double Gammaacrosssection::getMaxPhotonEnergy()
 {
-	return EgMax;
+  return EgMax;
 }
 //_____________________/~~WIDE~~_________________________________________________________
 Wideresonancesigma::Wideresonancesigma(Inputparameters& input,Beambeamsystem& bbsystem)
-                                       :Gammaacrosssection(input,bbsystem)//hrm
+  :Gammaacrosssection(input,bbsystem)//hrm
 {
-	WideWmax=input.getWmax();
-	WideWmin=input.getWmin();
-	WideYmax=input.getYmax();
-	WideYmin=-1.0*WideYmax;
-	Ep=input.getProtonEnergy();
+  WideWmax=input.getWmax();
+  WideWmin=input.getWmin();
+  WideYmax=input.getYmax();
+  WideYmin=-1.0*WideYmax;
+  Ep=input.getProtonEnergy();
 
 }
 //______________________________________________________________________________
@@ -861,7 +893,7 @@ void Wideresonancesigma::crosssectioncalculation(double bwnormsave)
   double bwnorm =bwnormsave;//used to transfer the bwnorm from the luminosity tables
 
   // --------------------------------------------------------------------
-	//gamma+nucleon threshold.
+  //gamma+nucleon threshold.
 
   Eth=0.5*(((WideWmin+StarlightConstants::mp)*(WideWmin+StarlightConstants::mp)
 	    -StarlightConstants::mp*StarlightConstants::mp)/(Ep+sqrt(Ep*Ep-StarlightConstants::mp*StarlightConstants::mp)));
@@ -951,10 +983,10 @@ Narrowresonancesigma::Narrowresonancesigma(Inputparameters& input,Beambeamsystem
   :Gammaacrosssection(input,bbsystem)
 {
 	
-        NarrowYmax=input.getYmax();
-        NarrowYmin=-1.0*NarrowYmax;
-	NarrowNumY=input.getnumy();
-        Ep=input.getProtonEnergy();	
+  NarrowYmax=input.getYmax();
+  NarrowYmin=-1.0*NarrowYmax;
+  NarrowNumY=input.getnumy();
+  Ep=input.getProtonEnergy();	
 
 }
 //______________________________________________________________________________

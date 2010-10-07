@@ -70,18 +70,26 @@ Gammaavectormeson::Gammaavectormeson(Inputparameters& input,Beambeamsystem& bbsy
     mass=3.09692;
     break;
   case StarlightConstants::JPSI2S:
+  case StarlightConstants::JPSI2S_ee:
+  case StarlightConstants::JPSI2S_mumu:
     width=0.000337;
     mass=3.686093;
     break;
   case StarlightConstants::UPSILON:
+  case StarlightConstants::UPSILON_ee:
+  case StarlightConstants::UPSILON_mumu:
     width=0.00005402;
     mass=9.46030;
     break;
   case StarlightConstants::UPSILON2S:
+  case StarlightConstants::UPSILON2S_ee:
+  case StarlightConstants::UPSILON2S_mumu:
     width=0.00003198;
     mass=10.02326;
     break;
   case StarlightConstants::UPSILON3S:
+  case StarlightConstants::UPSILON3S_ee:
+  case StarlightConstants::UPSILON3S_mumu:
     width=0.00002032;
     mass=10.3552;
     break;
@@ -206,6 +214,15 @@ double Gammaavectormeson::getdaughtermass(StarlightConstants::particle &ipid)
     mdec = StarlightConstants::mmu;
     ipid = StarlightConstants::MUON;
     break; 
+  case StarlightConstants::JPSI2S_ee:
+    mdec = StarlightConstants::mel;
+    ipid = StarlightConstants::ELECTRON;
+    break; 
+  case StarlightConstants::JPSI2S_mumu:
+    mdec = StarlightConstants::mmu;
+    ipid = StarlightConstants::MUON;
+    break; 
+
   case StarlightConstants::JPSI2S:
   case StarlightConstants::UPSILON:
   case StarlightConstants::UPSILON2S:
@@ -215,6 +232,18 @@ double Gammaavectormeson::getdaughtermass(StarlightConstants::particle &ipid)
     
     mdec = StarlightConstants::mmu;
     ipid = StarlightConstants::MUON;
+    break;
+  case StarlightConstants::UPSILON_ee:
+  case StarlightConstants::UPSILON2S_ee:
+  case StarlightConstants::UPSILON3S_ee:
+    mdec = StarlightConstants::mel;
+    ipid = StarlightConstants::ELECTRON;
+    break;
+  case StarlightConstants::UPSILON_mumu:
+  case StarlightConstants::UPSILON2S_mumu:
+  case StarlightConstants::UPSILON3S_mumu:
+    mdec = StarlightConstants::mmu;
+    ipid = StarlightConstants::MUON;   
     break;
   default: cout<<"No daughtermass defined, gammaavectormeson::getdaughtermass"<<endl;
   }

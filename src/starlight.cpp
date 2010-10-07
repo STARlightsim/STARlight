@@ -1,9 +1,9 @@
-// starlight.cpp
+//starlight.cpp
 /*
  * $Id: starlight.cpp,v 1.0 2010/07/04  $
  *
  *
- * /author 
+ *   /author 
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -228,11 +228,19 @@ int Starlight::CreateEventChannel()
     case StarlightConstants::PHI:
     case StarlightConstants::JPSI:
     case StarlightConstants::JPSI2S:
+    case StarlightConstants::JPSI2S_ee:
+    case StarlightConstants::JPSI2S_mumu:
     case StarlightConstants::JPSI_ee:
     case StarlightConstants::JPSI_mumu:
     case StarlightConstants::UPSILON:
+    case StarlightConstants::UPSILON_ee:
+    case StarlightConstants::UPSILON_mumu:
     case StarlightConstants::UPSILON2S:
+    case StarlightConstants::UPSILON2S_ee:
+    case StarlightConstants::UPSILON2S_mumu:
     case StarlightConstants::UPSILON3S:
+    case StarlightConstants::UPSILON3S_ee:
+    case StarlightConstants::UPSILON3S_mumu:
     {
         if (fInputParameters->getinteractiontest()==2) {
             fEventChannel = new Gammaanarrowvm(*fInputParameters, *fBeamSystem);

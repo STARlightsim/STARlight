@@ -233,6 +233,22 @@ int Inputparameters::Init(std::string filename)
     pidtest=StarlightConstants::JPSI2S;
     decaytest=StarlightConstants::NARROWVMDEFAULT;
   }
+  else if(pid==444011){
+    mass          =  3.686093;      //J/psi
+    width         =  0.000337;
+    Wmin_default  =  mass - 5.*width;
+    Wmax          =  mass + 5.*width;
+    pidtest=StarlightConstants::JPSI2S_ee;
+    decaytest=StarlightConstants::NARROWVMDEFAULT;
+  }
+  else if(pid==444013){
+    mass          =  3.686093;      //J/psi
+    width         =  0.000337;
+    Wmin_default  =  mass - 5.*width;
+    Wmax          =  mass + 5.*width;
+    pidtest=StarlightConstants::JPSI2S_mumu;
+    decaytest=StarlightConstants::NARROWVMDEFAULT;
+  }
   else if(pid==443011){
     mass          =  3.09692;  // JN  3.09688;      //J/psi
     width         =  0.000091; //JN  0.000087;
@@ -257,6 +273,22 @@ int Inputparameters::Init(std::string filename)
     pidtest=StarlightConstants::UPSILON;
     decaytest=StarlightConstants::NARROWVMDEFAULT;
   }
+  else if(pid==553011){
+    mass          =  9.46030;      //Upsilon
+    width         =  0.00005402;
+    Wmin_default  =  mass - 5.*width;
+    Wmax          =  mass + 5.*width;
+    pidtest=StarlightConstants::UPSILON_ee;
+    decaytest=StarlightConstants::NARROWVMDEFAULT;
+  }
+  else if(pid==553013){
+    mass          =  9.46030;      //Upsilon
+    width         =  0.00005402;
+    Wmin_default  =  mass - 5.*width;
+    Wmax          =  mass + 5.*width;
+    pidtest=StarlightConstants::UPSILON_mumu;
+    decaytest=StarlightConstants::NARROWVMDEFAULT;
+  }
   else if(pid==554){
     mass          =  10.02326;      //Upsilon(2S)
     width         =  0.00003198;
@@ -265,12 +297,44 @@ int Inputparameters::Init(std::string filename)
     pidtest=StarlightConstants::UPSILON2S;
     decaytest=StarlightConstants::NARROWVMDEFAULT;
   }
+  else if(pid==554011){
+    mass          =  10.02326;      //Upsilon(2S)
+    width         =  0.00003198;
+    Wmin_default  =  mass - 5.*width;
+    Wmax          =  mass + 5.*width;
+    pidtest=StarlightConstants::UPSILON2S_ee;
+    decaytest=StarlightConstants::NARROWVMDEFAULT;
+  }
+  else if(pid==554013){
+    mass          =  10.02326;      //Upsilon(2S)
+    width         =  0.00003198;
+    Wmin_default  =  mass - 5.*width;
+    Wmax          =  mass + 5.*width;
+    pidtest=StarlightConstants::UPSILON2S_mumu;
+    decaytest=StarlightConstants::NARROWVMDEFAULT;
+  }
   else if(pid==555){
     mass          =  10.3552;      //Upsilon(3S)
     width         =  0.00002032;
     Wmin_default  =  mass - 5.*width;
     Wmax          =  mass + 5.*width;
     pidtest=StarlightConstants::UPSILON3S;
+    decaytest=StarlightConstants::NARROWVMDEFAULT;
+  }
+  else if(pid==555011){
+    mass          =  10.3552;      //Upsilon(3S)
+    width         =  0.00002032;
+    Wmin_default  =  mass - 5.*width;
+    Wmax          =  mass + 5.*width;
+    pidtest=StarlightConstants::UPSILON3S_ee;
+    decaytest=StarlightConstants::NARROWVMDEFAULT;
+  }
+  else if(pid==555013){
+    mass          =  10.3552;      //Upsilon(3S)
+    width         =  0.00002032;
+    Wmin_default  =  mass - 5.*width;
+    Wmax          =  mass + 5.*width;
+    pidtest=StarlightConstants::UPSILON3S_mumu;
     decaytest=StarlightConstants::NARROWVMDEFAULT;
   }
   else{
