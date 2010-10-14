@@ -825,6 +825,24 @@ double Gammaacrosssection::breitwigner(double W,double C)
     ppi0=sqrt(((channelmass/2.)*(channelmass/2.))-StarlightConstants::mmu*StarlightConstants::mmu);
   }
   
+  if(SigmaPID==StarlightConstants::UPSILON_mumu || SigmaPID==StarlightConstants::UPSILON2S_mumu ||SigmaPID==StarlightConstants::UPSILON3S_mumu ){ 
+    if (W<2.*StarlightConstants::mmu){
+      nrbw_r=0.;
+      return nrbw_r;
+    }
+    ppi=sqrt(((W/2.)*(W/2.))-StarlightConstants::mmu*StarlightConstants::mmu);
+    ppi0=sqrt(((channelmass/2.)*(channelmass/2.))-StarlightConstants::mmu*StarlightConstants::mmu);
+  }
+  
+  if(SigmaPID==StarlightConstants::UPSILON_ee || SigmaPID==StarlightConstants::UPSILON2S_ee ||SigmaPID==StarlightConstants::UPSILON3S_ee ){ 
+    if (W<2.*StarlightConstants::mel){
+      nrbw_r=0.;
+      return nrbw_r;
+    }
+    ppi=sqrt(((W/2.)*(W/2.))-StarlightConstants::mel*StarlightConstants::mel);
+    ppi0=sqrt(((channelmass/2.)*(channelmass/2.))-StarlightConstants::mel*StarlightConstants::mel);
+  }
+  
   if(ppi==0.&&ppi0==0.) 
     cout<<"Improper Gammaacrosssection::breitwigner, ppi&ppi0=0."<<endl;
   
