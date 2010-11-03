@@ -102,6 +102,15 @@ Gammaacrosssection::Gammaacrosssection (Inputparameters& input,
       channelmass=0.7685;
       width=0.1507;
       break;
+    case StarlightConstants::FOURPRONG:
+      bslope      = 11.0;
+      f2o4pi      = 2.02;
+      ANORM       = -2.75;
+      BNORM       = 0;  // no coherent background component is implemented for four-prong
+      defaultC    = 11.0;
+      channelmass = 1.350;
+      width       = 0.360;
+      break;
     case StarlightConstants::OMEGA:
       bslope=10.0;
       f2o4pi=23.13;
@@ -625,6 +634,7 @@ double Gammaacrosssection::sigmagp(double Wgp)
     { 
     case StarlightConstants::RHO:
     case StarlightConstants::RHOZEUS:
+    case StarlightConstants::FOURPRONG:
       sigmagp_r=1.E-4*(5.0*exp(0.22*log(Wgp))+26.0*exp(-1.23*log(Wgp)));
       break;
     case StarlightConstants::OMEGA:
@@ -741,7 +751,17 @@ double Gammaacrosssection::getdefaultC()
 //______________________________________________________________________________
 double Gammaacrosssection::breitwigner(double W,double C)
 {
-  
+	// use simple fixed-width s-wave Breit-Wigner without coherent backgorund for rho'
+	// (PDG '08 eq. 38.56)
+	if(SigmaPID==StarlightConstants::FOURPRONG) {
+		if (W < 4.01 * StarlightConstants::mpi)
+			return 0;
+		const double termA  = channelmass * width;
+		const double termA2 = termA * termA;
+		const double termB  = W * W - channelmass * channelmass;
+		return C * ANORM * ANORM * termA2 / (termB * termB + termA2);
+	}
+
   // Relativistic Breit-Wigner according to J.D. Jackson,
   // Nuovo Cimento 34, 6692 (1964), with nonresonant term. A is the strength
   // of the resonant term and b the strength of the non-resonant

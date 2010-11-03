@@ -224,6 +224,7 @@ int Starlight::CreateEventChannel()
     }
     case StarlightConstants::RHO:
     case StarlightConstants::RHOZEUS:
+    case StarlightConstants::FOURPRONG:
     case StarlightConstants::OMEGA://Will probably be three body
     case StarlightConstants::PHI:
     case StarlightConstants::JPSI:

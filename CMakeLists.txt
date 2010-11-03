@@ -85,6 +85,7 @@ set(SRCS
    src/eventfilewriter.cpp
    src/starlightparticlecodes.cpp
    src/starlightstandalone.cpp
+   src/nBodyPhaseSpaceGen.cpp
    )
 
 if(ENABLE_PYTHIA) 

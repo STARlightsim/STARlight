@@ -201,6 +201,14 @@ int Inputparameters::Init(std::string filename)
     pidtest=StarlightConstants::RHOZEUS;
     decaytest=StarlightConstants::WIDEVMDEFAULT;
   }
+  else if (pid == 999) {  // pi+pi-pi+pi- decay
+    mass         = 1.350;
+    width        = 0.360;
+    Wmin_default = 4 * StarlightConstants::mpi;
+    Wmax         = 3;
+    pidtest      = StarlightConstants::FOURPRONG;
+    decaytest    = StarlightConstants::WIDEVMDEFAULT;
+  }
   else if(pid==223){
     mass          =  0.78194;          //omega(782)
     width         =  0.00843;

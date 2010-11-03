@@ -8,6 +8,7 @@
 #include "randomgenerator.h"
 #include "eventchannel.h"
 #include "upcevent.h"
+#include "nBodyPhaseSpaceGen.h"
 
 class Gammaavectormeson:public Eventchannel//:public Readinluminosity
 {
@@ -23,6 +24,7 @@ class Gammaavectormeson:public Eventchannel//:public Readinluminosity
   void momenta(double W,double Y,double &E,double &px,double &py,double &pz,int &tcheck);
   void vmpt(double W,double Y,double &E,double &px,double &py, double &pz,int &tcheck);
   void twodecay(StarlightConstants::particle &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,double &pz2,int &iFbadevent);
+  bool fourdecay(StarlightConstants::particle& ipid, const double E, const double W, const double* p, LorentzVector* decayMoms, int& iFbadevent);
   double getmass();
   double getwidth();
   virtual double gettheta(StarlightConstants::particle ipid);
@@ -47,6 +49,8 @@ class Gammaavectormeson:public Eventchannel//:public Readinluminosity
   double width;
   double VMptmax;
   double VMdpt;
+  nBodyPhaseSpaceGen* phaseSpaceGen;
+	
 };
 class Gammaanarrowvm:public Gammaavectormeson
 {

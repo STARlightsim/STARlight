@@ -33,7 +33,7 @@ fSpaceVec()
 
 LorentzVector::LorentzVector(double x, double y, double z, double t) :
 fSpaceVec(x, y, z)
-,fTime(0)
+,fTime(t)
 {
    
 }
