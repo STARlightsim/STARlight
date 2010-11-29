@@ -59,7 +59,7 @@ Gammaacrosssection::Gammaacrosssection (Inputparameters& input,
       lum=27.;
       break;
     case 49://Indium,uses same as Iodine
-      lum-27.;
+      lum=27.;
       break;
     case 29://Cu
       lum=95.;
@@ -230,7 +230,7 @@ double Gammaacrosssection::getbslope()
   return bslope;
 }
 //______________________________________________________________________________
-void Gammaacrosssection::crosssectioncalculation(double bwnormsave)
+void Gammaacrosssection::crosssectioncalculation(double)
 {
   cout <<"Neither narrow/wide resonance cross-section calculation.--Derived"<<endl;
 }
@@ -916,15 +916,17 @@ void Wideresonancesigma::crosssectioncalculation(double bwnormsave)
   //     (Breit-Wigner) resonance.
                                                                                                                                                       
 
-  double Av,Wgp,cs,cvma;
+  // double Av,Wgp,cs,cvma;
   double W,dW,dY;
   double y1,y2,y12,ega1,ega2,ega12;
-  double t,tmin,tmax;
+  // double t,tmin,tmax;
   double csgA1,csgA2,csgA12,int_r,dR,rate;
   double dsigdW,dsigdWalt,dndW,tmp;
   double dsigdW2;
-  double ax,bx, Eth;
-  int    I,J,K,NW,NY,NGAUSS;
+  // double ax,bx;
+  double Eth;
+  int    I,J,NW,NY;
+  // int    K,NGAUSS;
                                                                                                                                                       
   // ----------------- !!!!!!!!!!!!!!!!!!!! -----------------------------
                                                                                                                                                       
@@ -1033,20 +1035,22 @@ Narrowresonancesigma::~Narrowresonancesigma()
 
 }
 //______________________________________________________________________________
-void Narrowresonancesigma::crosssectioncalculation(double bwnormsave)
+void Narrowresonancesigma::crosssectioncalculation(double)  // bwnormsave (unused)
 {
   
   // This subroutine calculates the vector meson cross section assuming
   // a narrow resonance.  For reference, see STAR Note 386.
   
-  double Av,Wgp,cs,cvma;
+  // double Av,Wgp,cs,cvma;
   double W,dY;
   double y1,y2,y12,ega1,ega2,ega12;
-  double t,tmin,tmax;
+  // double t,tmin,tmax;
   double csgA1,csgA2,csgA12,int_r,dR,rate;
   double tmp;
-  double ax,bx, Eth;
-  int          J,K,NY,NGAUSS;
+  // double ax,bx;
+  double Eth;
+  int    J,NY;
+  // int    K,NGAUSS;
   
   NY   =  NarrowNumY;
   dY   = (NarrowYmax-NarrowYmin)/double(NY);

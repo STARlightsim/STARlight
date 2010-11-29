@@ -21,25 +21,26 @@
  *
  */
 
+
 #include <iostream>
+
+#include "reportingUtils.h"
 #include "starlight.h"
 #include "eventfilewriter.h"
-#include <starlightstandalone.h>
+#include "starlightstandalone.h"
 
-int main(int argc, const char** argv)
+
+int
+main(int,
+     const char**)
 {
-
-  
-
-   // Creating a Starlight standalone object
-   StarlightStandalone sl;
-   
-   // Initialising Starlight
-   sl.Init();
-   
-   // Run Starlight
-   int res = sl.Run();
-   
-   return res;
-   
+	printCompilerInfo();
+	printSvnVersion  ();
+	
+	// creating a starlight standalone object
+	StarlightStandalone sl;
+	// initialising starlight
+	sl.Init();
+	// running starlight
+	return sl.Run();
 }

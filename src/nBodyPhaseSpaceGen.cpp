@@ -1,41 +1,34 @@
+///////////////////////////////////////////////////////////////////////////
 //
-// calculates n-body phase space (constant matrix element) using various algorithms
+//    Copyright 2010
 //
-// the n-body decay is split up into (n - 2) successive 2-body decays
-// each 2-body decay is considered in its own center-of-mass frame thereby
-// seperating the mass from the (trivial) angular dependence
+//    This file is part of Starlight.
 //
-// the event is boosted into the same frame in which the n-body system is
-// given
-// 
-// based on:
-// GENBOD (CERNLIB W515), see F. James, "Monte Carlo Phase Space", CERN 68-15 (1968)
-// NUPHAZ, see M. M. Block, "Monte Carlo phase space evaluation", Comp. Phys. Commun. 69, 459 (1992)
-// S. U. Chung, "Spin Formalism", CERN Yellow Report
-// S. U. Chung et. al., "Diffractive Dissociation for COMPASS"
+//    Starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//	  
+//    Starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//	  
+//    You should have received a copy of the GNU General Public License
+//    along with Starlight. If not, see <http://www.gnu.org/licenses/>.
 //
-// index convention:
-// - all vectors have the same size (= number of decay daughters)
-// - index i corresponds to the respective value in the (i + 1)-body system: effective mass M, break-up momentum, angles
-// - thus some vector elements are not used like breakupMom[0], theta[0], phi[0], ...
-//   this overhead is negligible compared to the ease of notation
+///////////////////////////////////////////////////////////////////////////
 //
-// the following graph illustrates how the n-body decay is decomposed into a sequence of two-body decays
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
 //
-// n-body       ...                   3-body                 2-body                 single daughter
+// Description:
+//     see nBodyPhaseSpaceGen.h
 //
-// m[n - 1]                           m[2]                   m[1]
-//  ^                                  ^                      ^
-//  |                                  |                      |
-//  |                                  |                      |
-// M[n - 1] --> ... -->               M[2] -->               M[1] -->               M    [0] = m[0]
-// theta[n - 1] ...                   theta[2]               theta[1]               theta[0] = 0 (not used)
-// phi  [n - 1] ...                   phi  [2]               phi  [1]               phi  [0] = 0 (not used)
-// mSum [n - 1] ...                   mSum [2]               mSum [1]               mSum [0] = m[0]
-// = sum_0^(n - 1) m[i]               = m[2] + m[1] + m[0]   = m[1] + m[0]
-// breakUpMom[n - 1] ...              breakUpMom[2]          breakUpMom[1]          breakUpMom[0] = 0 (not used)
-// = q(M[n - 1], m[n - 1], M[n - 2])  = q(M[2], m[2], M[1])  = q(M[1], m[1], m[0])
-// 
+//
+///////////////////////////////////////////////////////////////////////////
 
 
 #include <algorithm>

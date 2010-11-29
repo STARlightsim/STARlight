@@ -13,7 +13,7 @@ class StarlightParticle : public LorentzVector
       void SetPdgCode(int pdgCode) { fPdgCode = pdgCode; }
       int GetPdgCode() const { return fPdgCode; }
       
-      short SetCharge(short charge) { fCharge = charge; }
+      void SetCharge(short charge) { fCharge = charge; }
       short GetCharge() const { return fCharge; }
       
    private:

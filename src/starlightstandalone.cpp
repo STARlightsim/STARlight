@@ -63,7 +63,8 @@ int StarlightStandalone::Init()
 
     // Initialising starlight
     fStarlight->Init();
-
+    
+    return 0;
 }
 
 int StarlightStandalone::Run()

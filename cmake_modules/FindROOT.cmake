@@ -1,166 +1,333 @@
-# -*- mode: cmake -*-
-# Taken  from AliRoot
-# - Finds ROOT instalation
-# This module sets up ROOT information 
-# We suppose root-config to be in the PATH. Otherwise we stop.
+###########################################################################
+#
+#    Copyright 2010
+#
+#    This file is part of Starlight.
+#
+#    Starlight is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#	  
+#    Starlight is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#    GNU General Public License for more details.
+#	  
+#    You should have received a copy of the GNU General Public License
+#    along with Starlight. If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+#
+# File and Version Information:
+# $Rev::                             $: revision of last commit
+# $Author::                          $: author of last commit
+# $Date::                            $: date of last commit
+#
+# Description:
+#     cmake module for finding ROOT installation
+#     requires root-config to be in PATH
+#     based on AliRoots's FindROOT.cmake (r41015)
+#     in https://alisoft.cern.ch/AliRoot/trunk/cmake/modules
+#
+#     following variables are defined:
+#     ROOT_CONFIG_EXECUTABLE - path to root-config program
+#     ROOTSYS                - path to root installation directory
+#     ROOT_TARGET            - target architecture
+#     ROOT_F77               - Fortran complier used building ROOT
+#     ROOT_CC                - C complier used building ROOT
+#     ROOT_CPP               - C++ complier used building ROOT
+#     ROOT_VERSION           - ROOT version
+#     ROOT_SVN_REVISION      - ROOT subversion revision
+#     ROOT_BIN_DIR           - ROOT executable directory
+#     ROOT_INCLUDE_DIR       - ROOT header directory
+#     ROOT_LIBRARY_DIR       - ROOT library directory
+#     ROOT_LIBRARIES         - linker flags for ROOT libraries
+#     ROOT_AUX_LIBRARIES     - linker flags for auxiliary libraries
+#     ROOTCINT_EXECUTABLE    - path to rootcint program
+#     ROOT_MAJOR_VERSION     - ROOT major version
+#     ROOT_MINOR_VERSION     - ROOT minor version
+#     ROOT_PATCH_VERSION     - ROOT patch level
+#     ROOT_LIBS              - list of ROOT library files
+#
+#     Example usage:
+#         find_package(ROOT 5.26 REQUIRED Minuit2)
+#
+#
+#     The module also provides a function to generate ROOT dictionaries.
+#     Example usage:
+#         set(ROOTPWA_DICTIONARY ${CMAKE_CURRENT_BINARY_DIR}/someDict.cc)  # set dictionary path
+#         root_generate_dictionary(
+#           "${ROOTPWA_DICTIONARY}"            # path to dictionary to generate
+#           "${INCLUDE_DIR1};${INCLUDE_DIR2}"  # list of includes
+#           "class1.h;class2.h;class3.h"       # list of classes to process
+#           "someLinkDef.h"                    # ROOT linkDef file
+#         )
+#         set(SOURCES ${SOURCES} ${ROOTPWA_DICTIONARY})  # append dictionary to sources
+#
+#
+###########################################################################
 
-Find_program(ROOT_CONFIG root-config)
 
-If (${ROOT_CONFIG} MATCHES "ROOT_CONFIG-NOTFOUND")
-  Set(ROOT_FOUND FALSE)
-  Message(STATUS "Install Root and make sure it is in the PATH")
+set(ROOT_FOUND        FALSE)
+set(ROOT_ERROR_REASON "")
+set(ROOT_DEFINITIONS  "")
+set(ROOT_LIBS)
 
-Else (${ROOT_CONFIG} MATCHES "ROOT_CONFIG-NOTFOUND")  
+
+find_program(ROOT_CONFIG_EXECUTABLE root-config)
+if(NOT ROOT_CONFIG_EXECUTABLE)
+  set(ROOT_ERROR_REASON "${ROOT_ERROR_REASON} Cannot find root-config.")
+else()
   
-  Set(ROOT_FOUND TRUE)
+  set(ROOT_FOUND TRUE)
 
-  Execute_process(
-    COMMAND root-config --prefix 
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --prefix 
     OUTPUT_VARIABLE ROOTSYS 
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  Execute_process(
-    COMMAND root-config --arch
-    OUTPUT_VARIABLE ALICE_TARGET
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --arch
+    OUTPUT_VARIABLE ROOT_TARGET
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  Execute_process(
-    COMMAND root-config --f77 
-    OUTPUT_VARIABLE _f77 
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --f77 
+    OUTPUT_VARIABLE ROOT_F77 
     OUTPUT_STRIP_TRAILING_WHITESPACE)
-  If(APPLE)
-    Execute_process(
-      COMMAND which ${_f77}
-      OUTPUT_VARIABLE _f77path
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-    Set(ENV{F77} ${_f77path})
-  Else(APPLE)
-    Set(ENV{F77} ${_f77})
-  Endif(APPLE)
 
-  Execute_process(
-    COMMAND root-config --cc
-    OUTPUT_VARIABLE _cc 
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --cc
+    OUTPUT_VARIABLE ROOT_CC 
     OUTPUT_STRIP_TRAILING_WHITESPACE)
-  If(APPLE)
-    Execute_process(
-      COMMAND which ${_cc}
-      OUTPUT_VARIABLE _ccpath
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-    Set(ENV{CC} ${_ccpath})
-  Else(APPLE)
-    Set(ENV{CC} ${_cc})
-  Endif(APPLE)
 
-  Execute_process(
-    COMMAND root-config --cxx
-    OUTPUT_VARIABLE _cxx
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --cxx
+    OUTPUT_VARIABLE ROOT_CPP
     OUTPUT_STRIP_TRAILING_WHITESPACE)
-  If(APPLE)
-    Execute_process(
-      COMMAND which ${_cxx}
-      OUTPUT_VARIABLE _cxxpath
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-    Set(ENV{CXX} ${_cxxpath})
-  Else(APPLE)
-    Set(ENV{CXX} ${_cxx})
-  Endif(APPLE)
 
-  Execute_process(
-    COMMAND root-config --version 
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --version
     OUTPUT_VARIABLE ROOT_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  Execute_process(
-    COMMAND root-config --incdir
-    OUTPUT_VARIABLE ROOT_INCLUDE_DIR
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --svn-revision
+    OUTPUT_VARIABLE ROOT_SVN_REVISION
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  Execute_process(
-    COMMAND root-config --glibs
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --bindir
+    OUTPUT_VARIABLE ROOT_BIN_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if(NOT EXISTS "${ROOT_BIN_DIR}")
+    set(ROOT_FOUND FALSE)
+    set(ROOT_ERROR_REASON "${ROOT_ERROR_REASON} ROOT executable directory ${ROOT_BIN_DIR} does not exist.")
+  endif()
+
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --incdir
+    OUTPUT_VARIABLE ROOT_INCLUDE_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if(NOT EXISTS "${ROOT_INCLUDE_DIR}")
+    set(ROOT_FOUND FALSE)
+    set(ROOT_ERROR_REASON "${ROOT_ERROR_REASON} ROOT include directory ${ROOT_INCLUDE_DIR} does not exist.")
+  endif()
+
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --libdir
+    OUTPUT_VARIABLE ROOT_LIBRARY_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if(NOT EXISTS "${ROOT_LIBRARY_DIR}")
+    set(ROOT_FOUND FALSE)
+    set(ROOT_ERROR_REASON "${ROOT_ERROR_REASON} ROOT library directory ${ROOT_LIBRARY_DIR} does not exist.")
+  endif()
+
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --noauxlibs --glibs
     OUTPUT_VARIABLE ROOT_LIBRARIES
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  Find_program(ROOTCINT rootcint)
-  If(NOT ROOTCINT)
-    Message(FATAL_ERROR "Found ROOT but not rootcint, your ROOT installation is corrupted")
-  EndIf(NOT ROOTCINT)
+  execute_process(
+    COMMAND ${ROOT_CONFIG_EXECUTABLE} --auxlibs
+    OUTPUT_VARIABLE ROOT_AUX_LIBRARIES
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  Set(ROOT_LIBRARIES ${ROOT_LIBRARIES} -lThread -lMinuit -lHtml -lVMC -lEG -lGeom -lTreePlayer -lXMLIO -lProof)
-  Set(ROOT_LIBRARIES ${ROOT_LIBRARIES} -lProofPlayer -lMLP -lSpectrum -lEve -lRGL -lGed -lXMLParser -lPhysics)
-  Set(ROOT_LIBRARY_DIR ${ROOTSYS}/lib)
+  find_program(ROOTCINT_EXECUTABLE rootcint)
+  if(NOT ROOTCINT_EXECUTABLE)
+    set(ROOT_FOUND FALSE)
+    set(ROOT_ERROR_REASON "${ROOT_ERROR_REASON} Cannot find rootcint.")
+  endif()
 
-  # Make variables changeble to the advanced user
-  Mark_as_advanced(ROOT_LIBRARY_DIR ROOT_INCLUDE_DIR ROOT_DEFINITIONS)
-
-  Set(LD_LIBRARY_PATH ${LD_LIBRARY_PATH} ${ROOT_LIBRARY_DIR})
-
-  Message(STATUS "Found Root ${ROOT_VERSION} in ${ROOTSYS}/bin/root")   
-
-# we need at least version 5.00/00
-  If (NOT ROOT_MIN_VERSION)
-    Set(ROOT_MIN_VERSION "5.00/00")
-  Endif (NOT ROOT_MIN_VERSION)
-   
-  # now parse the parts of the user given version string into variables
-  String(REGEX REPLACE "^([0-9]+)\\.[0-9][0-9]+\\/[0-9][0-9]+" "\\1" req_root_major_vers "${ROOT_MIN_VERSION}")
-  String(REGEX REPLACE "^[0-9]+\\.([0-9][0-9])+\\/[0-9][0-9]+.*" "\\1" req_root_minor_vers "${ROOT_MIN_VERSION}")
-  String(REGEX REPLACE "^[0-9]+\\.[0-9][0-9]+\\/([0-9][0-9]+)" "\\1" req_root_patch_vers "${ROOT_MIN_VERSION}")
-   
-  # and now the version string given by qmake
-  String(REGEX REPLACE "^([0-9]+)\\.[0-9][0-9]+\\/[0-9][0-9]+.*" "\\1" found_root_major_vers "${ROOT_VERSION}")
-  String(REGEX REPLACE "^[0-9]+\\.([0-9][0-9])+\\/[0-9][0-9]+.*" "\\1" found_root_minor_vers "${ROOT_VERSION}")
-  String(REGEX REPLACE "^[0-9]+\\.[0-9][0-9]+\\/([0-9][0-9]+).*" "\\1" found_root_patch_vers "${ROOT_VERSION}")
-
-  If (found_root_major_vers LESS 5)
-    Message(FATAL_ERROR "Invalid ROOT version \"${ROOT_VERSION}\", at least major version 4 is required, e.g. \"5.00/00\"")
-  Endif(found_root_major_vers LESS 5)
-
+  # parse version string
+  string(REGEX REPLACE "^([0-9]+)\\.[0-9][0-9]+\\/[0-9][0-9]+.*" "\\1"
+    ROOT_MAJOR_VERSION "${ROOT_VERSION}")
+  string(REGEX REPLACE "^[0-9]+\\.([0-9][0-9])+\\/[0-9][0-9]+.*" "\\1"
+    ROOT_MINOR_VERSION "${ROOT_VERSION}")
+  string(REGEX REPLACE "^[0-9]+\\.[0-9][0-9]+\\/([0-9][0-9]+).*" "\\1"
+    ROOT_PATCH_VERSION "${ROOT_VERSION}")
+  # make sure minor version is specified
+  if(ROOT_FIND_VERSION AND NOT ROOT_FIND_VERSION_MINOR)
+    message(SEND_ERROR "When requesting a specific version of ROOT, you must provide at least the major and minor version numbers, e.g., 5.22")
+  endif()
+  # set patchlevel to 0, if not specified
+  if(NOT ROOT_FIND_VERSION_PATCH)
+    set(ROOT_FIND_VERSION_PATCH 0)
+  endif()
   # compute an overall version number which can be compared at once
-  Math(EXPR req_vers "${req_root_major_vers}*10000 + ${req_root_minor_vers}*100 + ${req_root_patch_vers}")
-  Math(EXPR found_vers "${found_root_major_vers}*10000 + ${found_root_minor_vers}*100 + ${found_root_patch_vers}")
-   
-  If (found_vers LESS req_vers)
-    Set(ROOT_FOUND FALSE)
-    Set(ROOT_INSTALLED_VERSION_TOO_OLD TRUE)
-  Else (found_vers LESS req_vers)
-    Set(ROOT_FOUND TRUE)
-  Endif (found_vers LESS req_vers)
+  math(EXPR _ROOT_FIND_VERSION "${ROOT_FIND_VERSION_MAJOR} * 10000 + ${ROOT_FIND_VERSION_MINOR} * 100 + ${ROOT_FIND_VERSION_PATCH}")
+  math(EXPR _ROOT_VERSION "${ROOT_MAJOR_VERSION} * 10000 + ${ROOT_MINOR_VERSION} * 100 + ${ROOT_PATCH_VERSION}")
+  # compare version
+  if(ROOT_FIND_VERSION_EXACT)
+    if(NOT _ROOT_VERSION EQUAL "${_ROOT_FIND_VERSION}")
+      set(ROOT_FOUND FALSE)
+      set(ROOT_ERROR_REASON "${ROOT_ERROR_REASON} ROOT version ${ROOT_VERSION} does not match requested version ${ROOT_FIND_VERSION_MAJOR}.${ROOT_FIND_VERSION_MINOR}/${ROOT_FIND_VERSION_PATCH}.")
+    endif()
+  else()
+    if(_ROOT_VERSION LESS "${_ROOT_FIND_VERSION}")
+      set(ROOT_FOUND FALSE)
+      set(ROOT_ERROR_REASON "${ROOT_ERROR_REASON} ROOT version ${ROOT_VERSION} is lower than requested version ${ROOT_FIND_VERSION_MAJOR}.${ROOT_FIND_VERSION_MINOR}/${ROOT_FIND_VERSION_PATCH}.")
+    endif()
+  endif()
 
-Endif (${ROOT_CONFIG} MATCHES "ROOT_CONFIG-NOTFOUND")  
+endif()
 
 
-#####################################################################################
+# generate list of ROOT libraries
+if(ROOT_FOUND)
+
+  # create list of internal libraries from root-config output
+  set(_LIBRARY_NAMES)
+  set(_EXTERNAL_ZLIB)
+  separate_arguments(ROOT_LIBRARIES)
+  # remove first -L entry
+  list(REMOVE_AT ROOT_LIBRARIES 0)
+  # loop over -l entries
+  foreach(_LIBRARY ${ROOT_LIBRARIES})
+    # extract library name from compiler flag and append to list
+    string(REGEX REPLACE "^-.(.*)$" "\\1" _LIBNAME "${_LIBRARY}")
+    # workaround for root-config inconsistency: if ROOT is built with --disable-builtin-zlib
+    # root-config returns the flag for the external zlib together with the internal libraries
+    if(_LIBNAME STREQUAL "z")
+      set(_EXTERNAL_ZLIB "-lz")
+    else()
+      list(APPEND _LIBRARY_NAMES ${_LIBNAME})
+    endif()
+  endforeach()
+
+  # append components
+  list(REMOVE_DUPLICATES ROOT_FIND_COMPONENTS)
+  if(ROOT_FIND_COMPONENTS)
+    set(_LIBRARY_NAMES "${_LIBRARY_NAMES};${ROOT_FIND_COMPONENTS}")
+  endif()
+  
+  # check whether libraries exist
+  foreach(_LIBNAME ${_LIBRARY_NAMES})
+    find_library(_ROOT_LIB_${_LIBNAME}
+      NAMES ${_LIBNAME}
+      PATHS ${ROOT_LIBRARY_DIR}
+      NO_DEFAULT_PATH)
+    if(NOT _ROOT_LIB_${_LIBNAME})
+      set(ROOT_FOUND FALSE)
+      set(ROOT_ERROR_REASON "${ROOT_ERROR_REASON} Cannot find ROOT library ${_LIBNAME} in ${ROOT_LIBRARY_DIR}.")
+    else()
+      list(APPEND ROOT_LIBS ${_ROOT_LIB_${_LIBNAME}})
+    endif()
+  endforeach()
+
+  # create list of external libraries from root-config output
+  separate_arguments(ROOT_AUX_LIBRARIES)
+  # append external zlib to auxiliary libraries
+  if(_EXTERNAL_ZLIB)
+    list(APPEND ROOT_AUX_LIBRARIES ${_EXTERNAL_ZLIB})
+  endif()
+  # loop over -l entries
+  foreach(_LIBRARY ${ROOT_AUX_LIBRARIES})
+    # extract library name from compiler flag
+    string(REGEX MATCH "^-l(.*)$" _LIBNAME "${_LIBRARY}")
+    if(_LIBNAME)
+      string(REGEX REPLACE "^-.(.*)$" "\\1" _LIBNAME "${_LIBNAME}")
+      # check whether libraries exist
+      find_library(_AUX_LIB_${_LIBNAME}
+	NAMES ${_LIBNAME})
+      if(NOT _AUX_LIB_${_LIBNAME})
+	set(ROOT_FOUND FALSE)
+	set(ROOT_ERROR_REASON "${ROOT_ERROR_REASON} Cannot find ROOT library ${_LIBNAME}.")
+      else()
+	list(APPEND ROOT_LIBS ${_AUX_LIB_${_LIBNAME}})
+      endif()
+    endif()
+  endforeach()
+
+endif()
 
 
-Macro(ROOT_GENERATE_DICTIONARY INFILES LINKDEF_FILE OUTFILE INCLUDE_DIRS_IN)
+# make variables changeable
+mark_as_advanced(
+  ROOT_INCLUDE_DIR
+  ROOT_LIBRARY_DIR
+  ROOT_LIBRARIES
+  ROOT_LIBS
+  ROOT_DEFINITIONS
+)
+
+
+# report result
+if(ROOT_FOUND)
+  message(STATUS "Found ROOT version ${ROOT_VERSION} r${ROOT_SVN_REVISION} in ${ROOTSYS}")
+  message(STATUS "Using ROOT include dir ${ROOT_INCLUDE_DIR}")
+  message(STATUS "Using ROOT library dir ${ROOT_LIBRARY_DIR}")
+  message(STATUS "Using ROOT libraries: ${ROOT_LIBRARIES}")
+  #message(STATUS "Using ROOT libraries: ${ROOT_LIBS}")
+  message(STATUS "Using ROOT additional components: ${ROOT_FIND_COMPONENTS}")
+else()
+  if(ROOT_FIND_REQUIRED)
+    message(SEND_ERROR "Unable to find requested ROOT installation:${ROOT_ERROR_REASON}")
+  else()
+    if(NOT ROOT_FIND_QUIETLY)
+      message(STATUS "ROOT was not found.")
+    endif()
+  endif()
+endif()
+
+
+# macro that generates ROOT dictionary
+function(root_generate_dictionary DICT_FILE INCLUDE_DIRS HEADER_FILES LINKDEF_FILE)
+
+  if(NOT ROOT_FOUND)
+    message(SEND_ERROR "Impossible to generate dictionary ${DICT_FILE}, because no ROOT installation was found.")
+  endif()
  
-  Set(_special_settings "${ARGV4}")
-  Set(INCLUDE_DIRS)
-  Set(infiles_nopath)
+  # prepare command line argument for compiler definitions (put -D in front)
+  set(_DEFINITIONS)
+  get_property(_DEFS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY COMPILE_DEFINITIONS)
+  foreach(_DEF ${_DEFS})
+    set(_DEFINITIONS "${_DEFINITIONS} -D${_DEF}")
+  endforeach()
+  separate_arguments(_DEFINITIONS)
 
-  Foreach (_current_FILE ${INCLUDE_DIRS_IN})
-    Set(INCLUDE_DIRS ${INCLUDE_DIRS} -I${_current_FILE})   
-  Endforeach (_current_FILE ${INCLUDE_DIRS_IN})
+  # prepare command line argument for include directories (put -I in front)
+  set(_INCLUDES)
+  foreach(_FILE ${INCLUDE_DIRS})
+    set(_INCLUDES ${_INCLUDES} -I${_FILE})
+  endforeach()
  
-  String(REGEX REPLACE "^(.*)\\.(.*)$" "\\1.h" bla "${OUTFILE}")
-  Set(OUTFILES ${OUTFILE} ${bla})
+  # strip paths from header file names
+  set(_HEADERS)
+  foreach(_FILE ${HEADER_FILES})
+    get_filename_component(_NAME ${_FILE} NAME)
+    set(_HEADERS ${_HEADERS} ${_NAME})
+  endforeach()
 
-  Foreach (_current_FILE ${INFILES})
-    Get_filename_component(name_wo_path ${_current_FILE} NAME)
-    Set(infiles_nopath ${infiles_nopath} ${name_wo_path})   
-  Endforeach (_current_FILE ${INFILES})
+  # add dictionary header file to output files
+  string(REGEX REPLACE "^(.*)\\.(.*)$" "\\1.h" _DICT_HEADER "${DICT_FILE}")
+  set(OUTPUT_FILES ${DICT_FILE} ${_DICT_HEADER})
 
-  Get_property(_defs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY COMPILE_DEFINITIONS)
-  Set(_ddefs)
-  Foreach (_def ${_defs})
-    Set(_ddefs "${_ddefs} -D${_def}")
-  Endforeach (_def ${_defs})
-  Separate_arguments(_ddefs)
+  add_custom_command(OUTPUT ${OUTPUT_FILES}
+    COMMAND ${ROOTCINT_EXECUTABLE}
+    ARGS -f ${DICT_FILE} -c -DHAVE_CONFIG_H ${_DEFINITIONS} ${_INCLUDES} ${_HEADERS} ${LINKDEF_FILE}
+    DEPENDS ${HEADER_FILES} ${LINKDEF_FILE}
+  )
 
-  Add_custom_command(OUTPUT ${OUTFILES}
-     COMMAND DYLD_LIBRARY_PATH=$ENV{DYLD_LIBRARY_PATH}:${ROOT_LIBRARY_DIR} ${ROOTCINT}
-     ARGS -f ${OUTFILE} -c -DHAVE_CONFIG_H ${_ddefs} ${_special_settings} ${INCLUDE_DIRS} ${infiles_nopath} ${LINKDEF_FILE} 
-     DEPENDS ${INFILES} ${LINKDEF_FILE})
-
-Endmacro(ROOT_GENERATE_DICTIONARY)
+endfunction(root_generate_dictionary)

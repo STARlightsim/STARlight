@@ -43,11 +43,6 @@ Eventchannel::~Eventchannel()
 
 }
 //______________________________________________________________________________
-StarlightConstants::event Eventchannel::produceevent(int &ievent)
-{
-
-}
-//______________________________________________________________________________
 void Eventchannel::transform(double betax,double betay,double betaz,double &E,
                              double &px,double &py,double &pz,int &iFbadevent)
 {

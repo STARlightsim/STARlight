@@ -353,7 +353,9 @@ int Inputparameters::Init(std::string filename)
   }
   else{  
     Wmin = Wmininput;
-  }	
+  }
+
+  return 0;
 }
 //______________________________________________________________________________
 int Inputparameters::getZ1()

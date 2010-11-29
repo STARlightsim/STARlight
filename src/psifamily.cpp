@@ -54,7 +54,7 @@ Psifamily::~Psifamily()
 {
 }
 
-double Psifamily::gettheta(StarlightConstants::particle ipid)
+double Psifamily::gettheta(StarlightConstants::particle)
 {
 //should probably merge the psi fmaily back to the vm stuff.
 

@@ -34,8 +34,8 @@ using namespace std;
 #include "nucleus.h"
 #include "bessel.h"
 //______________________________________________________________________________
-Beambeamsystem::Beambeamsystem(Beam& beam_1,Beam& beam_2,double luminosity,
-Inputparameters& input):Beam1( beam_1 ), Beam2( beam_2 )
+Beambeamsystem::Beambeamsystem(Beam& beam_1,Beam& beam_2,double,
+Inputparameters&):Beam1( beam_1 ), Beam2( beam_2 )
 {
 
 }
@@ -54,10 +54,10 @@ Beambeamsystem::Beambeamsystem(Beam& beam_1,Beam& beam_2,Inputparameters& input)
 }
 //______________________________________________________________________________
 Beambeamsystem::Beambeamsystem(Inputparameters &input) :
-Beam1(input.getZ1(), input.getA1(), input.getbford(), input.getincoherentorcoherent(), input)
-,Beam2(input.getZ2(), input.getA2(), input.getbford(), input.getincoherentorcoherent(), input)
-,BBSInputGamma_em(input.getgamma_em())
-,BBSInputBreakupmode(input.getbreakupmode())
+	BBSInputGamma_em(input.getgamma_em())
+	,BBSInputBreakupmode(input.getbreakupmode())
+	,Beam1(input.getZ1(), input.getA1(), input.getbford(), input.getincoherentorcoherent(), input)
+	,Beam2(input.getZ2(), input.getA2(), input.getbford(), input.getincoherentorcoherent(), input)
 {
  
 }
@@ -76,8 +76,10 @@ double Beambeamsystem::probabilityofbreakup(double D)
 {
 
     static int ifirst = 0;
-    double BIter=0., Bmin=0., Step=0., kmax=0., PHadr=0., PPhoton=0.;
-    double gammatarg=0., P1n=0., Pxn=0., DLow=0., DeltaD=0., DeltaP=0.;
+    double BIter=0., Bmin=0., Step=0.;
+    // double kmax=0., PHadr=0., PPhoton=0.;
+    // double gammatarg=0., P1n=0., Pxn=0.;
+    double DLow=0., DeltaD=0., DeltaP=0.;
     double PofB = 0.;
     static double ProbTot[1000];
     static int NStep = 1426;// 1000;

@@ -36,12 +36,13 @@ using namespace std;
 #include "bessel.h"
 #include "twophotonluminosity.h"
 //______________________________________________________________________________
-Twophotonluminosity::Twophotonluminosity(Beam beam_1,Beam beam_2,int mode,double luminosity,Inputparameters& input):Beambeamsystem(beam_1,beam_2,luminosity,input),input2photon(input)
+Twophotonluminosity::Twophotonluminosity(Beam beam_1,Beam beam_2,int,double luminosity,Inputparameters& input)
+ :Beambeamsystem(beam_1,beam_2,luminosity,input),input2photon(input)
 {
   
 }
 //______________________________________________________________________________
-Twophotonluminosity::Twophotonluminosity(Beam beam_1,Beam beam_2,int mode,Inputparameters& input):Beambeamsystem(beam_1,beam_2,input),input2photon(input)
+Twophotonluminosity::Twophotonluminosity(Beam beam_1,Beam beam_2,int,Inputparameters& input):Beambeamsystem(beam_1,beam_2,input),input2photon(input)
 {
   cout <<"Inside 2photonlumin, beam_1 woodsaxon: "<<beam_1.getWoodSaxonradius()<<endl;
   cout <<"Inside 2photonlumin, beam_2 woodsaxon: "<<beam_2.getWoodSaxonradius()<<endl;
@@ -503,7 +504,8 @@ double Twophotonluminosity::radmul(int N,double *A,double *B,int MINPTS,int MAXP
     return 1;
 }
 //______________________________________________________________________________
-double Twophotonluminosity::integrand(double N,double X[])
+double Twophotonluminosity::integrand(double ,  // N (unused)
+                                      double X[])
 {
   
   double  b1 = X[0];      //1

@@ -45,11 +45,13 @@ Gammaaluminosity::Gammaaluminosity(Inputparameters& input, Beambeamsystem& bbsys
 void Gammaaluminosity::gammaadifferentialluminosity()
 {
 
-  double Av,Wgp,cs,cvma;
+	// double Av,Wgp,cs,cvma;
   double W,dW,dY;
   double Egamma,Y;
-  double t,tmin,tmax,testint,dndWdY;
-  double csgA,ax,bx;
+  // double t,tmin,tmax;
+  double testint,dndWdY;
+  double csgA;
+  // double ax,bx;
   double C;  
 
   ofstream wylumfile;

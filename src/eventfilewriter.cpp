@@ -38,7 +38,7 @@ int EventFileWriter::WriteEvent(UPCEvent &event, int eventnumber)
    //TODO: Write code also for the pythia part!
    
     int numberoftracks = event.GetParticles()->size();
-    int numberofvertices = event.GetVertices()->size();
+    // int numberofvertices = event.GetVertices()->size();
 
     // sometimes we don't have tracks due to wrongly picked W , check it
     if(numberoftracks){

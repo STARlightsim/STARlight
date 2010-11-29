@@ -324,7 +324,13 @@ double Gammagammaleptonpair::pp(double E)
 
 }
 //______________________________________________________________________________
-void Gammagammaleptonpair::twodecay(StarlightConstants::particle &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double &pz1,double &px2,double &py2,double &pz2,int &iFbadevent)
+void Gammagammaleptonpair::twodecay(StarlightConstants::particle &ipid,
+                                    double  ,  // E (unused)
+                                    double  W,
+                                    double  px0, double  py0, double  pz0,
+                                    double& px1, double& py1, double& pz1,
+                                    double& px2, double& py2, double& pz2,
+                                    int&    iFbadevent)
 {
 
 
@@ -332,9 +338,10 @@ void Gammagammaleptonpair::twodecay(StarlightConstants::particle &ipid,double E,
     //     taking spin into account
 
     double mdec=0.,E1=0.,E2=0.;
-    double pmag, anglelep[20001],ytest=0.;
-    double phi,theta,xtest,dndtheta,Ecm;
-    double  betax,betay,betaz;
+    double pmag, anglelep[20001];
+    // double ytest=0.,dndtheta;
+    double phi,theta,xtest,Ecm;
+    double betax,betay,betaz;
     double hirestheta,hirestest,hiresw;  //added from JN->needed precision
 
     //    set the mass of the daughter particles

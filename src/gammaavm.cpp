@@ -138,14 +138,21 @@ void Gammaavectormeson::pickwy(double &W, double &Y)
   
 }         
 //______________________________________________________________________________                                               
-void Gammaavectormeson::twodecay(StarlightConstants::particle &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,double &pz2,int &iFbadevent)
+void Gammaavectormeson::twodecay(StarlightConstants::particle &ipid,
+                                 double,  // E (unused)
+                                 double  W,
+                                 double  px0, double  py0, double  pz0,
+                                 double& px1, double& py1, double& pz1,
+                                 double& px2, double& py2, double& pz2,
+                                 int&    iFbadevent)
 {
   
   // This routine decays a particle into two particles of mass mdec,
   // taking spin into account
 
-  double pmag, anglelep[20001],ytest=0.;
-  double phi,theta,xtest,dndtheta,Ecm;
+	double pmag;
+	// double anglelep[20001],xtest,ytest=0.,dndtheta;
+  double phi,theta,Ecm;
   double betax,betay,betaz;
   double mdec=0.0;
   double E1=0.0,E2=0.0;
@@ -197,7 +204,7 @@ void Gammaavectormeson::twodecay(StarlightConstants::particle &ipid,double E,dou
 // decays a particle into four particles with isotropic angular distribution
 bool Gammaavectormeson::fourdecay
 (StarlightConstants::particle& ipid,
- const double                  E,
+ const double                  ,           // E (unused)
  const double                  W,          // mass of produced particle
  const double*                 p,          // momentum of produced particle; expected to have size 3
  LorentzVector*                decayVecs,  // array of Lorentz vectors of daughter particles; expected to have size 4
@@ -482,7 +489,8 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 
 }
 //______________________________________________________________________________
-void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, double &pz,int &tcheck)
+void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, double &pz,
+                             int&) // tcheck (unused)
 {
   //    This function calculates momentum and energy of vector meson
   //     given W and Y, including interference.
@@ -580,9 +588,10 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
   if(Randy.Rndom()>=0.5) pz = -pz;
 }
 //______________________________________________________________________________
-StarlightConstants::event Gammaavectormeson::produceevent(int &ievent)
+StarlightConstants::event Gammaavectormeson::produceevent(int&)
 {
-// Not used 
+// Not used; return default event
+	return StarlightConstants::event();
 }
 //------------------------------------------------------------------------------
 UPCEvent Gammaavectormeson::ProduceEvent()

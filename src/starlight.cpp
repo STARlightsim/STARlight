@@ -74,7 +74,7 @@ int Starlight::Init()
 
     fBeamSystem = new Beambeamsystem(*fInputParameters);
 
-    std::streamsize precision(15);
+    // std::streamsize precision(15);
     std::cout.setf(std::ios_base::fixed,std::ios_base::floatfield);
     std::cout.precision(15);
 
@@ -131,7 +131,7 @@ bool Starlight::CheckForLuminosityTable()
     int Z1test=0,A1test=0,Z2test=0,A2test=0,numwtest=0,numytest=0,gg_or_gPtest=0,ibreakuptest=0,iinterferetest=0,NPTtest=0,in_or_cotest=0;
     double Gammatest=0.,Wmaxtest=0.,Wmintest=0.,Ymaxtest=0.,xinterferetest=0.,ptmaxtest=0.,bfordtest=0.,incoherentfactortest=0.;
     bool flag = false;
-    bool b;
+    // bool b;
     wylumfile >> Z1test;
     wylumfile >> A1test;
     wylumfile >> Z2test;
