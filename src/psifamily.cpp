@@ -1,60 +1,72 @@
-// psifamily.cpp
-/*
- * $Id: psifamily.cpp,v 1.0 2010/07/04  $
- *
- * /author Joseph Butterwoth
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- * $Log: $
- *
- */
-
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////
 
 
 #include <iostream>
 #include <fstream>
-using namespace std;
+#include <cmath>
 
-#include <math.h>
 #include "psifamily.h"
 
-Psifamily::Psifamily(Inputparameters& input,Beambeamsystem& bbsystem):Gammaanarrowvm(input,bbsystem)
+
+using namespace std;
+
+
+psiFamily::psiFamily(inputParameters& input,beamBeamSystem& bbsystem):Gammaanarrowvm(input,bbsystem)
 {
-//Defining width and mass...
+//Defining _width and mass...
  
 
-	// switch(input.getpidtest()){
-	// 	case StarlightConstants::JPSI:
+	// switch(input.getPidTest()){
+	// 	case starlightConstants::JPSI:
 	// 	  cout << "JPSI goddamnit!" << endl;
-        //                 width=0.000091;
+        //                 _width=0.000091;
         //                 mass=3.09692;
         //         break;
-        //         case StarlightConstants::JPSI2S:
-        //                 width=0.000337;
+        //         case starlightConstants::JPSI2S:
+        //                 _width=0.000337;
         //                 mass=3.686093;
         //         break;
-	// 	default: cout<<"This PSI Family Member Has Not Been Defined, Psifamily::Psifamily()"<<endl;
+	// 	default: cout<<"This PSI Family Member Has Not Been Defined, psiFamily::psiFamily()"<<endl;
 	// }
 
 }
 
-Psifamily::~Psifamily()
-{
-}
 
-double Psifamily::gettheta(StarlightConstants::particle)
+psiFamily::~psiFamily()
+{ }
+
+
+double psiFamily::getTheta(starlightConstants::particle)
 {
 //should probably merge the psi fmaily back to the vm stuff.
 
@@ -65,8 +77,8 @@ double theta=0.;
 double xtest=0.;
 double dndtheta=0.;
         L200td:
-          theta = StarlightConstants::pi*Randy.Rndom();//random()/(RAND_MAX+1.0);
-          xtest = Randy.Rndom();//random()/(RAND_MAX+1.0);
+          theta = starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
+          xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
           //  Follow distribution for helicity +/-1
           //  Eq. 19 of J. Breitweg et al., Eur. Phys. J. C2, 247 (1998)//Does Not Apply for J/psi?
           //  SRK 11/14/2000
@@ -77,22 +89,21 @@ double dndtheta=0.;
         return theta;
 }
 
-double Psifamily::getdaughtermass(StarlightConstants::particle &ipid)
+
+double psiFamily::getDaughterMass(starlightConstants::particle &ipid)
 {
 	double ytest=0.,mdec=0.;
 	//  decays 50% to e+/e-, 50% to mu+/mu-
-        ytest = Randy.Rndom();//random()/(RAND_MAX+1.0);
+        ytest = _randy.Rndom();//random()/(RAND_MAX+1.0);
         if(ytest >= 0.5)
         {
-	        mdec = StarlightConstants::mel;
-        	ipid = StarlightConstants::ELECTRON;
+	        mdec = starlightConstants::mel;
+        	ipid = starlightConstants::ELECTRON;
         }
         else
         {
-	        mdec = StarlightConstants::mmu;
-        	ipid = StarlightConstants::MUON;
+	        mdec = starlightConstants::mmu;
+        	ipid = starlightConstants::MUON;
         }
 	return mdec;
-
-
 }

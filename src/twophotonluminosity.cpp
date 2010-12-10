@@ -1,33 +1,40 @@
-// twophotonluminosity.cpp
-/*
- * $Id: twophotonluminosity.cpp,v 1.0 2010/07/04  $
- *
- * /author Joseph Butterwoth
- *
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- * 
- * $Log: $
- * Added incoherent factor to luminosity table output--Joey
- */
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//    Added incoherent factor to luminosity table output--Joey
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
+
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
-using namespace std;
-
-#include <math.h>
 #include "inputparameters.h"
 #include "beambeamsystem.h"
 #include "beam.h"
@@ -35,75 +42,81 @@ using namespace std;
 #include "nucleus.h"
 #include "bessel.h"
 #include "twophotonluminosity.h"
+
+
+using namespace std;
+
+
 //______________________________________________________________________________
-Twophotonluminosity::Twophotonluminosity(Beam beam_1,Beam beam_2,int,double luminosity,Inputparameters& input)
- :Beambeamsystem(beam_1,beam_2,luminosity,input),input2photon(input)
-{
-  
-}
+twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2,int,double luminosity,inputParameters& input)
+ :beamBeamSystem(beam_1,beam_2,luminosity,input),_input2photon(input)
+{ }
+
+
 //______________________________________________________________________________
-Twophotonluminosity::Twophotonluminosity(Beam beam_1,Beam beam_2,int,Inputparameters& input):Beambeamsystem(beam_1,beam_2,input),input2photon(input)
+twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2,int,inputParameters& input):beamBeamSystem(beam_1,beam_2,input),_input2photon(input)
 {
-  cout <<"Inside 2photonlumin, beam_1 woodsaxon: "<<beam_1.getWoodSaxonradius()<<endl;
-  cout <<"Inside 2photonlumin, beam_2 woodsaxon: "<<beam_2.getWoodSaxonradius()<<endl;
+  cout <<"Inside 2photonlumin, beam_1 woodsaxon: "<<beam_1.getWoodSaxonRadius()<<endl;
+  cout <<"Inside 2photonlumin, beam_2 woodsaxon: "<<beam_2.getWoodSaxonRadius()<<endl;
   //Lets check to see if we need to recalculate the luminosity tables
-  twophotondifferentialluminosity();
+  twoPhotonDifferentialLuminosity();
 }
+
+
 //______________________________________________________________________________
-Twophotonluminosity::~Twophotonluminosity()
-{
-  
-}
+twoPhotonLuminosity::~twoPhotonLuminosity()
+{ }
+
+
 //______________________________________________________________________________
-void Twophotonluminosity::twophotondifferentialluminosity()
+void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
 {
- 
   ofstream wylumfile;
   wylumfile.precision(15);
   wylumfile.open("slight.txt");
-  double w[StarlightLimits::MAXWBINS];
-  double y[StarlightLimits::MAXYBINS];
+  double w[starlightLimits::MAXWBINS];
+  double y[starlightLimits::MAXYBINS];
   double xlum = 0., wmev=0,Normalize = 0.,OldNorm;
  
-  Normalize = 1./sqrt(1*(double)input2photon.getnumw()*input2photon.getnumy()); //if your grid is very fine, you'll want high accuracy-->small Normalize
+  Normalize = 1./sqrt(1*(double)_input2photon.getnumw()*_input2photon.getnumy()); //if your grid is very fine, you'll want high accuracy-->small Normalize
   OldNorm   = Normalize;
   
-  //Writing out our input parameters+(w,y)grid+diff.lum.
+  //Writing out our input parameters+(w,y)grid+diff._lum.
   wylumfile << getBeam1().getZin() <<endl;
   wylumfile << getBeam1().getAin() <<endl;
   wylumfile << getBeam2().getZin() <<endl;
   wylumfile << getBeam2().getAin() <<endl;
-  wylumfile << input2photon.getgamma_em() <<endl;
-  wylumfile << input2photon.getWmax() <<endl;
-  wylumfile << input2photon.getWmin() <<endl;
-  wylumfile << input2photon.getnumw() <<endl;
-  wylumfile << input2photon.getYmax() <<endl;
-  wylumfile << input2photon.getnumy() <<endl;
-  wylumfile << input2photon.getgg_or_gP() <<endl;
-  wylumfile << input2photon.getbreakupmode() <<endl;
-  wylumfile << input2photon.getinterferencemode() <<endl;
-  wylumfile << input2photon.getinterferencepercent() <<endl;
-  wylumfile << input2photon.getincoherentorcoherent() <<endl;
-  wylumfile << input2photon.getincoherentfactor() <<endl;
-  wylumfile << input2photon.getbford() <<endl;
-  wylumfile << input2photon.getmaximuminterpt() <<endl;
-  wylumfile << input2photon.getNPT() <<endl;
-  for (int i = 1; i <= input2photon.getnumw(); i++){
-    w[i] = input2photon.getWmin() + (input2photon.getWmax()-input2photon.getWmin())/input2photon.getnumw()*i;
+  wylumfile << _input2photon.getgamma_em() <<endl;
+  wylumfile << _input2photon.getWmax() <<endl;
+  wylumfile << _input2photon.getWmin() <<endl;
+  wylumfile << _input2photon.getnumw() <<endl;
+  wylumfile << _input2photon.getYmax() <<endl;
+  wylumfile << _input2photon.getnumy() <<endl;
+  wylumfile << _input2photon.getgg_or_gP() <<endl;
+  wylumfile << _input2photon.getBreakupMode() <<endl;
+  wylumfile << _input2photon.getInterferenceMode() <<endl;
+  wylumfile << _input2photon.getInterferencePercent() <<endl;
+  wylumfile << _input2photon.getIncoherentOrCoherent() <<endl;
+  wylumfile << _input2photon.getIncoherentFactor() <<endl;
+  wylumfile << _input2photon.getbford() <<endl;
+  wylumfile << _input2photon.getMaximumInterPt() <<endl;
+  wylumfile << _input2photon.getNPT() <<endl;
+  for (int i = 1; i <= _input2photon.getnumw(); i++){
+    w[i] = _input2photon.getWmin() + (_input2photon.getWmax()-_input2photon.getWmin())/_input2photon.getnumw()*i;
     //Old code had it write to a table for looking up...
     wylumfile << w[i] <<endl;
   }
-  for (int i = 1; i<=input2photon.getnumy(); i++){
-    y[i] = input2photon.getYmax()*(i-1.)/input2photon.getnumy();
+  for (int i = 1; i<=_input2photon.getnumy(); i++){
+    y[i] = _input2photon.getYmax()*(i-1.)/_input2photon.getnumy();
     //Old code had it write to a table for looking up...
     wylumfile << y[i] <<endl;
   }
-  for (int i = 1; i<=input2photon.getnumw(); i++){   //For each (w,y) pair, calculate the diff. lum
+  for (int i = 1; i<=_input2photon.getnumw(); i++){   //For each (w,y) pair, calculate the diff. _lum
       //double SUM = 0.;not used
-      for (int j = 1; j<=input2photon.getnumy(); j++){
+      for (int j = 1; j<=_input2photon.getnumy(); j++){
 	wmev = w[i]*1000.;
 	xlum = wmev * D2LDMDY(wmev,y[j],Normalize);   //Convert photon flux dN/dW to Lorentz invariant photon number WdN/dW
-	if (j==1) OldNorm = Normalize;       //Save value of Integral for each new W(i) and Y(i)
+	if (j==1) OldNorm = Normalize;       //Save value of integral for each new W(i) and Y(i)
 	wylumfile << xlum <<endl;
       }
       Normalize = OldNorm;
@@ -111,26 +124,30 @@ void Twophotonluminosity::twophotondifferentialluminosity()
   wylumfile.close();
   return;
 }
+
+
 //______________________________________________________________________________
-double Twophotonluminosity::D2LDMDY(double M,double Y,double &Normalize)
+double twoPhotonLuminosity::D2LDMDY(double M,double Y,double &Normalize)
 {
   // double differential luminosity 
 
   double D2LDMDYx = 0.;
   
-  W1    =  M/2.0*exp(Y);
-  W2    =  M/2.0*exp(-Y);
-  gamma = input2photon.getgamma_em();
+  _W1    =  M/2.0*exp(Y);
+  _W2    =  M/2.0*exp(-Y);
+  _gamma = _input2photon.getgamma_em();
   int Zin=getBeam1().getZin();
-  D2LDMDYx = 2.0/M*Zin*Zin*Zin*Zin*(StarlightConstants::alpha*StarlightConstants::alpha)*Integral(Normalize);  //treats it as a symmetric collision
+  D2LDMDYx = 2.0/M*Zin*Zin*Zin*Zin*(starlightConstants::alpha*starlightConstants::alpha)*integral(Normalize);  //treats it as a symmetric collision
   Normalize = D2LDMDYx*M/(2.0*getBeam1().getZin()*getBeam1().getZin()*
 			  getBeam1().getZin()*getBeam1().getZin()*
-			  StarlightConstants::alpha*StarlightConstants::alpha); 
+			  starlightConstants::alpha*starlightConstants::alpha); 
   //Normalization also treats it as symmetric
   return D2LDMDYx;
 }
+
+
 //______________________________________________________________________________ 
-double Twophotonluminosity::Integral(double Normalize)
+double twoPhotonLuminosity::integral(double Normalize)
 {
   int NIter = 0;
   int NIterMin = 0;
@@ -150,15 +167,15 @@ double Twophotonluminosity::Integral(double Normalize)
 
   EPS = .01*Normalize;   //This is EPS for integration, 1% of previous integral value.
   // Change this to the Woods-Saxon radius to be consistent with the older calculations (JN 230710) 
-  //  RM  = getBeam1().RNuc()/StarlightConstants::hbarcmev;  //Assumes symmetry?
-  RM  = getBeam1().getWoodSaxonradius()/StarlightConstants::hbarcmev;  
+  //  RM  = getBeam1().RNuc()/starlightConstants::hbarcmev;  //Assumes symmetry?
+  RM  = getBeam1().getWoodSaxonRadius()/starlightConstants::hbarcmev;  
 
   NIter = 10000 + (int)1000000*(int)Normalize; //if integral value is very small, we don't do too many intertions to get precision down to 1%
   NIterMin = 600;
-  u1 = 9.*gamma/W1; //upper boundary in B1
-  u2 = 9.*gamma/W2; //upper boundary in B2
-  B1 = .4*gamma/W1; //intermediate boundary in B1
-  B2 = .4*gamma/W2; //intermediate boundary in B2
+  u1 = 9.*_gamma/_W1; //upper boundary in B1
+  u2 = 9.*_gamma/_W2; //upper boundary in B2
+  B1 = .4*_gamma/_W1; //intermediate boundary in B1
+  B2 = .4*_gamma/_W2; //intermediate boundary in B2
   //The trick is that u1,2 and b1,2 could be less than RM-the lower integration boundary, thus integration area splits into 4,2 or 1 pieces
   
   if (u1 < RM){
@@ -179,7 +196,7 @@ double Twophotonluminosity::Integral(double Normalize)
       Lower[0]   = RM;       //1
       Lower[1]   = RM;       //2
       Lower[2]   = 0.;       //3
-      Upper[2]   = 2.*StarlightConstants::pi;    //3
+      Upper[2]   = 2.*starlightConstants::pi;    //3
       Upper[0]   = B1;       //1
       Upper[1]   = B2;       //2
       radmul(3,Lower,Upper,NIterMin,NIter,EPS,WK,NIter,Result,ResErr,NFNEVL,Summary);
@@ -212,14 +229,14 @@ double Twophotonluminosity::Integral(double Normalize)
       NEval      = NEval + NFNEVL;
     }
     else {
-      //Integral has 2 parts, b2 integral has only 1 component
+      //integral has 2 parts, b2 integral has only 1 component
       Integrala   = 0;
       totsummary = 20000;
       NEval      = 0;
       Lower[0]   = RM;       //1
       Lower[1]   = RM;       //2
       Lower[2]   = 0.;       //3
-      Upper[2]   = 2.*StarlightConstants::pi;    //3
+      Upper[2]   = 2.*starlightConstants::pi;    //3
       Upper[0]   = B1;       //1
       Upper[1]   = u2;       //2
       radmul(3,Lower,Upper,NIterMin,NIter,EPS,WK,NIter,Result,ResErr,NFNEVL,Summary);
@@ -241,14 +258,14 @@ double Twophotonluminosity::Integral(double Normalize)
       NEval      = 0;
     }
     else if (B2 > RM){
-      //Integral has 2 parts, b1 integral has only 1 component
+      //integral has 2 parts, b1 integral has only 1 component
       Integrala   = 0;
       totsummary = 20000;
       NEval      = 0;
       Lower[0]   = RM;       //1
       Lower[1]   = RM;       //2
       Lower[2]   = 0.;       //2
-      Upper[2]   = 2.*StarlightConstants::pi;    //3
+      Upper[2]   = 2.*starlightConstants::pi;    //3
       Upper[0]   = u1;       //1
       Upper[1]   = B2;       //2
       radmul(3,Lower,Upper,NIterMin,NIter,EPS,WK,NIter,Result,ResErr,NFNEVL,Summary);
@@ -262,14 +279,14 @@ double Twophotonluminosity::Integral(double Normalize)
       totsummary = totsummary + Summary;
       NEval      = NEval + NFNEVL;
     }
-    else{                 //Integral has 1 part
+    else{                 //integral has 1 part
       Integrala   = 0;
       totsummary = 10000;
       NEval      = 0;
       Lower[0]   = RM;       //1
       Lower[1]   = RM;       //2
       Lower[2]   = 0.;       //3
-      Upper[2]   = 2.*StarlightConstants::pi;    //3
+      Upper[2]   = 2.*starlightConstants::pi;    //3
       Upper[0]   = u1;       //1
       Upper[1]   = u2;       //2
       radmul(3,Lower,Upper,NIterMin,NIter,EPS,WK,NIter,Result,ResErr,NFNEVL,Summary);
@@ -278,11 +295,13 @@ double Twophotonluminosity::Integral(double Normalize)
       NEval      = NEval + NFNEVL;
     }
   }
-  Integrala = 2*StarlightConstants::pi*Integrala;
+  Integrala = 2*starlightConstants::pi*Integrala;
   return Integrala;
 }
+
+
 //______________________________________________________________________________ 
-double Twophotonluminosity::radmul(int N,double *A,double *B,int MINPTS,int MAXPTS,double EPS,double *WK,int IWK,double &RESULT,double &RELERR,double &NFNEVL,double &IFAIL)
+double twoPhotonLuminosity::radmul(int N,double *A,double *B,int MINPTS,int MAXPTS,double EPS,double *WK,int IWK,double &RESULT,double &RELERR,double &NFNEVL,double &IFAIL)
 {
   double wn1[14] = {       -0.193872885230909911, -0.555606360818980835,
 			   -0.876695625666819078, -1.15714067977442459,  -1.39694152314179743,
@@ -503,23 +522,26 @@ double Twophotonluminosity::radmul(int N,double *A,double *B,int MINPTS,int MAXP
     NFNEVL=IFNCLS;
     return 1;
 }
+
+
 //______________________________________________________________________________
-double Twophotonluminosity::integrand(double ,  // N (unused)
+double twoPhotonLuminosity::integrand(double ,  // N (unused)
                                       double X[])
 {
-  
   double  b1 = X[0];      //1
   double  b2 = X[1];      //2
   double  theta = X[2];   //3
   //breakup effects distances in fermis, so convert to fermis(factor of hbarcmev)
-  double  D = sqrt(b1*b1+b2*b2-2*b1*b2*cos(theta))*StarlightConstants::hbarcmev;
-  double  integrandx = Nphoton(W1,gamma,b1)*Nphoton(W2,gamma,b2)*b1*b2*probabilityofbreakup(D); 
+  double  D = sqrt(b1*b1+b2*b2-2*b1*b2*cos(theta))*starlightConstants::hbarcmev;
+  double  integrandx = Nphoton(_W1,_gamma,b1)*Nphoton(_W2,_gamma,b2)*b1*b2*probabilityOfBreakup(D); 
   //why not just use gamma?
-  //switching input2photon.getgamma_em()to gamma
+  //switching _input2photon.getgamma_em()to gamma
   return integrandx;
 }
+
+
 //______________________________________________________________________________
-double Twophotonluminosity::Nphoton(double W,double gamma,double Rho)
+double twoPhotonLuminosity::Nphoton(double W,double gamma,double Rho)
 {
  double Nphoton1 =0.;
  double WGamma = W/gamma;
@@ -527,7 +549,6 @@ double Twophotonluminosity::Nphoton(double W,double gamma,double Rho)
  //factor of Z^2*alpha is omitted
  double Wphib = WGamma*bessel::dbesk1(WGR);
 
- Nphoton1 = 1.0/(StarlightConstants::pi*StarlightConstants::pi)*(Wphib*Wphib);
+ Nphoton1 = 1.0/(starlightConstants::pi*starlightConstants::pi)*(Wphib*Wphib);
  return Nphoton1;
 }
-

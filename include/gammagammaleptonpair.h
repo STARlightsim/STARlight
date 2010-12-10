@@ -1,54 +1,90 @@
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
+
 #ifndef GAMMAGAMMALEPTONPAIR_H
 #define GAMMAGAMMALEPTONPAIR_H
 
 #include <vector>
+
 #include "starlightconstants.h"
 #include "readinluminosity.h"
 #include "starlightlimits.h"
 #include "eventchannel.h"
 
-class Gammagammaleptonpair:  public Eventchannel
+
+class Gammagammaleptonpair : public eventChannel
 {
-  
  public:
-  Gammagammaleptonpair(Inputparameters& input,Beambeamsystem& bbsystem);
+  Gammagammaleptonpair(inputParameters& input, beamBeamSystem& bbsystem);
   ~Gammagammaleptonpair();
   
-  void twoleptoncrosssection();
-  void tablecalc();
+  void twoLeptonCrossSection();
+  void calculateTable();
 
-  StarlightConstants::event produceevent(int &ievent);
-  UPCEvent ProduceEvent();
+  starlightConstants::event produceEvent(int &ievent);
+  upcEvent produceEvent();
 
  private:
-  double sigmax[StarlightLimits::MAXWBINS][StarlightLimits::MAXYBINS];//=new double[500][500];   //decreased from 1000*1000; too big! causes fault!
-  double sigmasum;
-  double sigfint[StarlightLimits::MAXWBINS];
-  double sigofw[StarlightLimits::MAXWBINS];
-  double signormw;
-  double wdelta;  //Added 7/26/07 for passing sigmadelta to pickw
-  double remainwd;// "
-  int ivalwd;     // "
-  double dgammade[1000];
-  double tautolangle[100];
+  double _sigmax[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];//=new double[500][500];   //decreased from 1000*1000; too big! causes fault!
+  double _sigmaSum;
+  double _sigfint[starlightLimits::MAXWBINS];
+  double _sigofw[starlightLimits::MAXWBINS];
+  double _signormw;
+  double _wdelta;  //Added 7/26/07 for passing sigmadelta to pickw
+  double _remainwd;// "
+  int _ivalwd;     // "
+  double _dgammade[1000];
+  double _tautolangle[100];
   
-  double twomuoncrosssection(double w);
+  double twoMuonCrossSection(double w);
   void pickw(double &w);
   void picky(double &y);
   
-  void pairmomentum(double w,double y,double &E,double &px,double &py,double&pz);
+  void pairMomentum(double w,double y,double &E,double &px,double &py,double&pz);
   double pp(double E);
-  void twodecay(StarlightConstants::particle &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,/*double &py2,*/double &pz2,int &iFbadevent);
+  void twoBodyDecay(starlightConstants::particle &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,/*double &py2,*/double &pz2,int &iFbadevent);
   double thetalep(double W,double theta);
-  void taudecay(double &px1,double &py1,double &pz1,double &E1,double &px2,double &py2,double &pz2,double &E2);
+  void tauDecay(double &px1,double &py1,double &pz1,double &E1,double &px2,double &py2,double &pz2,double &E2);
   
-  double getmass();
-  double getwidth();
-  double getspin();
+  double getMass();
+  double getWidth();
+  double getSpin();
   
-  StarlightConstants::particle GGlepInputpidtest;
-  int GGlepInputnumw;
-  int GGlepInputnumy;
-  double GGlepInputGamma_em;
+  starlightConstants::particle _GGlepInputpidtest;
+  int _GGlepInputnumw;
+  int _GGlepInputnumy;
+  double _GGlepInputGamma_em;
 };
-#endif //GAMMAGAMMALEPTONPAIR_H
+
+
+#endif  // GAMMAGAMMALEPTONPAIR_H

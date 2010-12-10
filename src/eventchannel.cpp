@@ -1,52 +1,63 @@
-// eventchannel.cpp
-/*
- * $Id: eventchannel.cpp,v 1.0 2010/07/04   $
- *  
- * Class needed for root output 
- * 
- * /author XXX XXX  
- *
- * $Log: $
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//    Class needed for root output
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
+
 #include <iostream>
 #include <fstream>
 #include <cmath>
 
+#include "eventchannel.h"
+
+
 using namespace std;
 
-#include "eventchannel.h"
+
 //______________________________________________________________________________
-Eventchannel::Eventchannel(Inputparameters& input,Beambeamsystem& bbsystem):
-          Readinluminosity(input),bbs(bbsystem)
+eventChannel::eventChannel(inputParameters& input, beamBeamSystem& bbsystem)
+: readLuminosity(input), _bbs(bbsystem)
 {
-
-Randy.SetSeed(input.getseed());
-
+  _randy.SetSeed(input.getSeed());
 }
-//______________________________________________________________________________
-Eventchannel::~Eventchannel()
-{
 
-}
+
 //______________________________________________________________________________
-void Eventchannel::transform(double betax,double betay,double betaz,double &E,
+eventChannel::~eventChannel()
+{ }
+
+
+//______________________________________________________________________________
+void eventChannel::transform(double betax,double betay,double betaz,double &E,
                              double &px,double &py,double &pz,int &iFbadevent)
 {
-                                                                                                                                                          
   //     carries out a lorentz transform of the frame.  (Not a
   //     boost!)
   double beta,gamma,gob;
@@ -71,7 +82,4 @@ void Eventchannel::transform(double betax,double betay,double betaz,double &E,
   py = -gamma*betay*E0 + gob*betay*betax*px0+  (1. + gob*betay*betay)*py0 + gob*betay*betaz*pz0;
                                                                                                                                                           
   pz = -gamma*betaz*E0 +  gob*betaz*betax*px0 +  gob*betaz*betay*py0 + (1. + gob*betaz*betaz)*pz0;
-                                                                                                                                                          
 }
-
-

@@ -2,20 +2,20 @@
 //
 //    Copyright 2010
 //
-//    This file is part of Starlight.
+//    This file is part of starlight.
 //
-//    Starlight is free software: you can redistribute it and/or modify
+//    starlight is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //	  
-//    Starlight is distributed in the hope that it will be useful,
+//    starlight is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //    GNU General Public License for more details.
 //	  
 //    You should have received a copy of the GNU General Public License
-//    along with Starlight. If not, see <http://www.gnu.org/licenses/>.
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
 //
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -90,6 +90,7 @@ factorial(const unsigned int n)
 	return fac;
 }
 
+
 // computes breakup momentum of 2-body decay
 inline
 double
@@ -101,6 +102,7 @@ breakupMomentum(const double M,   // mass of mother particle
     return 0;
   return sqrt((M - m1 - m2) * (M + m1 + m2) * (M - m1 + m2) * (M + m1 - m2)) / (2 * M);
 }
+
 
 template<typename T>
 inline
@@ -114,6 +116,7 @@ operator << (std::ostream&         out,
   out << vec[vec.size() - 1] << "}";
   return out;
 }
+
 
 class nBodyPhaseSpaceGen {
 
@@ -134,10 +137,10 @@ public:
 
 	// high-level generator interface
 	/// generates full event with certain n-body mass and momentum and returns event weight
-	double generateDecay        (const LorentzVector& nBody);          // Lorentz vector of n-body system in lab frame
+	double generateDecay        (const lorentzVector& nBody);          // Lorentz vector of n-body system in lab frame
 	/// \brief generates full event with certain n-body mass and momentum only when event is accepted (return value = true)
 	/// this function is more efficient, if only weighted events are needed
-	bool   generateDecayAccepted(const LorentzVector& nBody,           // Lorentz vector of n-body system in lab frame
+	bool   generateDecayAccepted(const lorentzVector& nBody,           // Lorentz vector of n-body system in lab frame
 	                             const double         maxWeight = 0);  // if positive, given value is used as maximum weight, otherwise _maxWeight
 
 	void   setMaxWeight          (const double maxWeight) { _maxWeight = maxWeight;    }  ///< sets maximum weight used for hit-miss MC
@@ -158,8 +161,8 @@ public:
 
 	//----------------------------------------------------------------------------
 	// trivial accessors
-	const LorentzVector&              daughter        (const int index) const { return _daughters[index];  }  ///< returns Lorentz vector of daughter at index
-	const std::vector<LorentzVector>& daughters       ()                const { return _daughters;         }  ///< returns Lorentz vectors of all daughters
+	const lorentzVector&              daughter        (const int index) const { return _daughters[index];  }  ///< returns Lorentz vector of daughter at index
+	const std::vector<lorentzVector>& daughters       ()                const { return _daughters;         }  ///< returns Lorentz vectors of all daughters
 	unsigned int                      nmbOfDaughters  ()                const { return _n;                 }  ///< returns number of daughters
 	double                            daughterMass    (const int index) const { return _m[index];          }  ///< returns invariant mass of daughter at index
 	double                            intermediateMass(const int index) const { return _M[index];          }  ///< returns intermediate mass of (index + 1)-body system
@@ -189,7 +192,7 @@ private:
 		
 	/// \brief calculates full event kinematics from the effective masses of the (i + 1)-body systems and the Lorentz vector of the decaying system
 	/// uses the break-up momenta calculated by calcWeight() and angles from pickAngles()
-	void calcEventKinematics(const LorentzVector& nBody);  // Lorentz vector of n-body system in lab frame
+	void calcEventKinematics(const lorentzVector& nBody);  // Lorentz vector of n-body system in lab frame
 
 	// external parameters
 	std::vector<double> _m;  ///< masses of daughter particles
@@ -201,13 +204,13 @@ private:
 	std::vector<double>        _phi;                ///< azimuthal angle of the 2-body decay of the (i + 1)-body system
 	std::vector<double>        _mSum;               ///< sums of daughter particle masses
 	std::vector<double>        _breakupMom;         ///< breakup momenta for the two-body decays: (i + 1)-body --> daughter_(i + 1) + i-body
-	std::vector<LorentzVector> _daughters;          ///< Lorentz vectors of the daughter particles
+	std::vector<lorentzVector> _daughters;          ///< Lorentz vectors of the daughter particles
 	double                     _norm;               ///< normalization value
 	double                     _weight;             ///< phase space weight of generated event
 	double                     _maxWeightObserved;  ///< maximum event weight calculated processing the input data
 	double                     _maxWeight;          ///< maximum weight used to weight events in hit-miss MC
 
-	Randomgenerator _rnd;  ///< random number generator instance
+	randomGenerator _rnd;  ///< random number generator instance
 
 };
 
@@ -218,7 +221,7 @@ nBodyPhaseSpaceGen::pickAngles()
 {
 	for (unsigned int i = 1; i < _n; ++i) {  // loop over 2- to n-bodies
 		_cosTheta[i] = 2 * random() - 1;  // range [-1,    1]
-		_phi[i]      = StarlightConstants::twoPi * random();  // range [ 0, 2 pi]
+		_phi[i]      = starlightConstants::twoPi * random();  // range [ 0, 2 pi]
 	}
 }
 

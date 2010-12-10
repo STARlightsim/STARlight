@@ -1,18 +1,53 @@
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
+
 #ifndef LORENTZVECTOR_H
 #define LORENTZVECTOR_H
+
 
 #include "vector3.h"
 #include <vector>
 
-class LorentzVector
+
+class lorentzVector
 {
    public:
       
-      LorentzVector();
-      virtual ~LorentzVector();
+      lorentzVector();
+      virtual ~lorentzVector();
       
-      LorentzVector(double x, double y, double z, double t);
-      //LorentzVector(double px, double py, double pz, double e);
+      lorentzVector(double x, double y, double z, double t);
+      //lorentzVector(double px, double py, double pz, double e);
       
       void SetXYZT(double x, double y, double z, double t);
 	    void SetPxPyPzE(double px, double py, double pz, double e) { SetXYZT(px, py, pz, e); };
@@ -22,13 +57,13 @@ class LorentzVector
       double GetPz() const { return fSpaceVec.GetVector()[2]; }
       double GetE() const { return fTime; }
 
-	    LorentzVector& operator +=(const LorentzVector& vec)
+	    lorentzVector& operator +=(const lorentzVector& vec)
 	    {
 		    fSpaceVec += vec.fSpaceVec;
 		    fTime     += vec.fTime;
 		    return *this;
 	    }
-	    LorentzVector& operator -=(const LorentzVector& vec)
+	    lorentzVector& operator -=(const lorentzVector& vec)
 	    {
 		    fSpaceVec -= vec.fSpaceVec;
 		    fTime     -= vec.fTime;
@@ -42,9 +77,9 @@ class LorentzVector
 	      return (mag2 < 0) ? -sqrt(-mag2) : sqrt(mag2);
       }
 
-	    Vector3 BoostVector() const
-	    { return Vector3(fSpaceVec.X() / fTime, fSpaceVec.Y() / fTime, fSpaceVec.Z() / fTime); }
-	    void Boost(const Vector3& beta)
+	    vector3 BoostVector() const
+	    { return vector3(fSpaceVec.X() / fTime, fSpaceVec.Y() / fTime, fSpaceVec.Z() / fTime); }
+	    void Boost(const vector3& beta)
 	    {
 		    const double beta2        = beta.Mag2();
 		    const double gamma        = 1 / sqrt(1 - beta2);
@@ -57,7 +92,7 @@ class LorentzVector
 	    }
       
 	    friend std::ostream& operator << (std::ostream&        out,
-	                                      const LorentzVector& vec)
+	                                      const lorentzVector& vec)
 	    {
 		    out << "(" << vec.GetPx() << ", " << vec.GetPy() << ", " << vec.GetPz()
 		        << "; " << vec.GetE() << ")";
@@ -66,9 +101,10 @@ class LorentzVector
 
    private:
       
-      Vector3 fSpaceVec;
+      vector3 fSpaceVec;
       double fTime;
       
 };
 
-#endif // LORENTZVECTOR_H
+
+#endif  // LORENTZVECTOR_H

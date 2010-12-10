@@ -1,80 +1,94 @@
-// beam.cpp
-/*
- * $Id: beam.cpp,v 1.0 2010/07/04   $
- *
- * /author you name or location where you obtained this code 
- *
- * $Log: $
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////
 
- */
 
-#include "filewriter.h"
 #include <iostream>
 #include <exception>
 #include <cstdlib>
 
-FileWriter::FileWriter() :
-        fFilename("")
-        ,fFileStream()
-{
-}
+#include "filewriter.h"
 
-FileWriter::FileWriter(std::string filename) :
-        fFilename(filename)
-        ,fFileStream(filename.c_str())
-{
 
-}
+using namespace std;
 
-FileWriter::~FileWriter()
-{
-}
 
-int FileWriter::Open()
+fileWriter::fileWriter()
+: _fileName(""),
+  _fileStream()
+{ }
+
+
+fileWriter::fileWriter(const string& fileName) :
+        _fileName(fileName)
+        ,_fileStream(fileName.c_str())
+{ }
+
+
+fileWriter::~fileWriter()
+{ }
+
+
+int fileWriter::open()
 {
     try
     {
-        fFileStream.open(fFilename.c_str());
+        _fileStream.open(_fileName.c_str());
     }
-    catch (const std::ios::failure & error)
+    catch (const ios::failure & error)
     {
-        std::cerr << "I/O exception: " << error.what() << std::endl;
+        cerr << "I/O exception: " << error.what() << endl;
         return EXIT_FAILURE;
     }
     return 0;
 }
 
-int FileWriter::Open(std::string filename)
+
+int fileWriter::open(const string& fileName)
 {
-    fFilename = filename;
-    return Open();
+    _fileName = fileName;
+    return open();
 }
 
-int FileWriter::Close()
+
+int fileWriter::close()
 {
     try
     {
-        fFileStream.close();
+        _fileStream.close();
     }
-    catch (const std::ios::failure & error)
+    catch (const ios::failure & error)
     {
-        std::cerr << "I/O exception: " << error.what() << std::endl;
+        cerr << "I/O exception: " << error.what() << endl;
         return EXIT_FAILURE;
     }
     return 0;
-
 }

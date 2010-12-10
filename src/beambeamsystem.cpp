@@ -1,80 +1,100 @@
-// beambeam.cpp
-/*
- * $Id: beam.cpp,v 1.0 2010/07/04   $
- *
- * /author Joseph Butterwoth
- *
- * $Log: $
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- */
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
 
 #include <iostream>
 #include <fstream>
-using namespace std;
+#include <cmath>
 
-#include <math.h>
 #include "beambeamsystem.h"
 #include "beam.h"
 #include "inputparameters.h"
 #include "starlightconstants.h"
 #include "nucleus.h"
 #include "bessel.h"
-//______________________________________________________________________________
-Beambeamsystem::Beambeamsystem(Beam& beam_1,Beam& beam_2,double,
-Inputparameters&):Beam1( beam_1 ), Beam2( beam_2 )
-{
 
-}
+
+using namespace std;
+
+
 //______________________________________________________________________________
-Beambeamsystem::Beambeamsystem(Beam& beam_1,Beam& beam_2,Inputparameters& input)
-:Beam1( beam_1 ), Beam2( beam_2 )
+beamBeamSystem::beamBeamSystem(beam& beam_1, beam& beam_2, double, inputParameters&)
+: _beam1(beam_1), _beam2(beam_2)
+{ }
+
+
+//______________________________________________________________________________
+beamBeamSystem::beamBeamSystem(beam& beam_1, beam& beam_2, inputParameters& input)
+: _beam1(beam_1 ), _beam2(beam_2)
 {
-	//cout <<"bbsys, beam1 woodsaxon: "<<beam_1.getWoodSaxonradius()<<endl;
-	//cout <<"bbsys, beam2 woodsaxon: "<<beam_2.getWoodSaxonradius()<<endl;
+	//cout <<"bbsys, beam1 woodsaxon: "<<beam_1.getWoodSaxonRadius()<<endl;
+	//cout <<"bbsys, beam2 woodsaxon: "<<beam_2.getWoodSaxonRadius()<<endl;
 	//Storing input parameters to protected variables
-	BBSInputGamma_em=input.getgamma_em();
-	BBSInputBreakupmode=input.getbreakupmode();
-	
+	_BBSInputGamma_em=input.getgamma_em();
+	_BBSInputBreakupmode=input.getBreakupMode();
+}
 
 
-}
 //______________________________________________________________________________
-Beambeamsystem::Beambeamsystem(Inputparameters &input) :
-	BBSInputGamma_em(input.getgamma_em())
-	,BBSInputBreakupmode(input.getbreakupmode())
-	,Beam1(input.getZ1(), input.getA1(), input.getbford(), input.getincoherentorcoherent(), input)
-	,Beam2(input.getZ2(), input.getA2(), input.getbford(), input.getincoherentorcoherent(), input)
-{
- 
-}
-//______________________________________________________________________________
-Beam Beambeamsystem::getBeam1()
-{
-	return Beam1;
-}
-//______________________________________________________________________________
-Beam Beambeamsystem::getBeam2()
-{
-	return Beam2;
-}
-//______________________________________________________________________________
-double Beambeamsystem::probabilityofbreakup(double D)
-{
+beamBeamSystem::beamBeamSystem(inputParameters &input) :
+	_BBSInputGamma_em(input.getgamma_em())
+	,_BBSInputBreakupmode(input.getBreakupMode())
+	,_beam1(input.getZ1(), input.getA1(), input.getbford(), input.getIncoherentOrCoherent(), input)
+	,_beam2(input.getZ2(), input.getA2(), input.getbford(), input.getIncoherentOrCoherent(), input)
+{ }
 
+
+//______________________________________________________________________________
+beamBeamSystem::~beamBeamSystem()
+{ }
+
+
+//______________________________________________________________________________
+beam beamBeamSystem::getBeam1()
+{
+	return _beam1;
+}
+
+
+//______________________________________________________________________________
+beam beamBeamSystem::getBeam2()
+{
+	return _beam2;
+}
+
+
+//______________________________________________________________________________
+double beamBeamSystem::probabilityOfBreakup(double D)
+{
     static int ifirst = 0;
     double BIter=0., Bmin=0., Step=0.;
     // double kmax=0., PHadr=0., PPhoton=0.;
@@ -84,18 +104,17 @@ double Beambeamsystem::probabilityofbreakup(double D)
     static double ProbTot[1000];
     static int NStep = 1426;// 1000;
     int Zz = 0, Az = 0;
-        
    
-    Bmin = 1.75*(Beam1.RNuc());  
+    Bmin = 1.75*(_beam1.RNuc());  
     //  Bmin = 12.2815005;
 
     //Using the 1st nucleus, not sure which to start with...symmetry
     if (ifirst==0) {
         NStep = 1000;
-        //kmax  = 1.E7;  //Done in pphotonbreakup now
+        //kmax  = 1.E7;  //Done in _pPhotonBreakup now
         //if (gamma_em > 500) kmax = 1.E10;
-        Az =(Beam1.getAin()); ///Using first nucleus....symmetry
-        Zz = (Beam1.getZin());
+        Az =(_beam1.getAin()); ///Using first nucleus....symmetry
+        Zz = (_beam1.getZin());
         //Bmin = 1.75*RNuc; //for hard sphere ions Bmin = 2*RNuc
 	// Step = 1.007;//.01; //We will multiplicateively increase Biter by 1%
         Step =1.007;
@@ -105,57 +124,57 @@ double Beambeamsystem::probabilityofbreakup(double D)
 	    //PofB = 1 means that there will be a UPC event and PofB=0 means no UPC
 
 
-        if(BBSInputBreakupmode==1) //Replacing RGeo, should be Rnuc1+Rnuc2?
-        cout<<"Hard Sphere Break criteria. b > "<<2.*Beam1.RNuc()<<endl;
-        if(BBSInputBreakupmode==2) 
+        if(_BBSInputBreakupmode==1) //Replacing RGeo, should be Rnuc1+Rnuc2?
+        cout<<"Hard Sphere Break criteria. b > "<<2.*_beam1.RNuc()<<endl;
+        if(_BBSInputBreakupmode==2) 
         cout<<"Requiring XnXn [Coulomb] breakup. bmin= "<<Bmin<<endl;
-        if(BBSInputBreakupmode==3) 
+        if(_BBSInputBreakupmode==3) 
         cout<<"Requiring 1n1n [Coulomb only] breakup. bmin = "<<Bmin<<endl;
-        if(BBSInputBreakupmode==4) 
+        if(_BBSInputBreakupmode==4) 
         cout<<"Requiring both nuclei to remain intact. bmin = "<<Bmin<<endl;
-        if(BBSInputBreakupmode==5) 
+        if(_BBSInputBreakupmode==5) 
         cout<<"Requiring no hadronic interactions. bmin= "<<Bmin<<endl;
-        if(BBSInputBreakupmode==6) 
+        if(_BBSInputBreakupmode==6) 
         cout<<"Requiring breakup of one or both nuclei. bmin= "<<Bmin<<endl;
-        if(BBSInputBreakupmode==7) 
+        if(_BBSInputBreakupmode==7) 
         cout<<"Requiring breakup of one nucleus (Xn,0n). bmin= "<<Bmin<<endl;
-        if( (Beam1.getZin())!=1 && (Beam1.getAin())!=1){
+        if( (_beam1.getZin())!=1 && (_beam1.getAin())!=1){
         //pp may cause segmentation fault in here and it does not use this...
             for ( int k = 1;k <= NStep; k++) {
-                phadronbreakup = 0.;
-                pphotonbreakup = 0.;
+                _pHadronBreakup = 0.;
+                _pPhotonBreakup = 0.;
 
-                probabilityofhadronbreakup(BIter); 
+                probabilityOfHadronBreakup(BIter); 
                 //moved gammatarg into photonbreakup
-                probabilityofphotonbreakup(BIter,BBSInputBreakupmode);
+                probabilityOfPhotonBreakup(BIter,_BBSInputBreakupmode);
 
 		//What was probability of photonbreakup depending upon mode selection,
         // is now done in the photonbreakupfunction
         
 
-        if (( BBSInputBreakupmode) == 1) {
-                        if (BIter > 2.*( Beam1.RNuc())) {   //Symmetry
-                            phadronbreakup = 0.0;
+        if (( _BBSInputBreakupmode) == 1) {
+                        if (BIter > 2.*( _beam1.RNuc())) {   //Symmetry
+                            _pHadronBreakup = 0.0;
                             }
                         else                 {
-                            phadronbreakup = 999.;
+                            _pHadronBreakup = 999.;
                             }
                 }
 //cout <<"BIter= "<<BIter<<" PHadr= "<<PHadr<<" P1n= "<<P1n<<" Pxn= "
 //<<Pxn<<" PPhoton= "<<PPhoton<<endl;
                 BIter = BIter*Step;
-                ProbTot[k] = exp(-1*phadronbreakup)*pphotonbreakup;
+                ProbTot[k] = exp(-1*_pHadronBreakup)*_pPhotonBreakup;
                 }
           ifirst = 1;
           }
 	}
 // Do pp here
-        if( (Beam1.getZin())==1 && (Beam1.getAin())==1){  
+        if( (_beam1.getZin())==1 && (_beam1.getAin())==1){  
             //Again, using first beam, should be split up to be more specific
                 //ppslope=19.8;
                 //GammaProfile = exp(-D*D/(2.*hbarc*hbarc*ppslope));
                 //PofB = (1.-GammaProfile)*(1.-GammaProfile);
-                if( D < 2.*(Beam1.RNuc())){   
+                if( D < 2.*(_beam1.RNuc())){   
                     //Should be the total of RNuc1+Rnuc2,used only beam #1
                         PofB = 0.0;
                 }
@@ -191,20 +210,21 @@ double Beambeamsystem::probabilityofbreakup(double D)
        }//if(D>0.0)
 //        cout <<"PofB= "<<PofB<<endl;
  return PofB;
-
 }
+
+
 //______________________________________________________________________________
-double Beambeamsystem::probabilityofhadronbreakup(double impactparameter)
+double beamBeamSystem::probabilityOfHadronBreakup(double impactparameter)
 {
 //	double pbreakup =0.; 
 //probability of hadron breakup, 
 //this is what is returned when the function is called
-	double gamma = BBSInputGamma_em; 
+	double gamma = _BBSInputGamma_em; 
     //input for gamma_em
     //this will need to be StarlightInputParameters::gamma or whatever
 	double b = impactparameter;
-	int ap = Beam1.getAin();  
-    //Notice this is  taking from Nucleus 1.Still assuming symmetric system?
+	int ap = _beam1.getAin();  
+    //Notice this is  taking from nucleus 1.Still assuming symmetric system?
 
     static int IFIRSTH = 0;
     static double DELL=0., DELR=0., SIGNN=0., R1=0., A1=0., R2=0., RHO1=0.;
@@ -224,9 +244,9 @@ double Beambeamsystem::probabilityofhadronbreakup(double impactparameter)
     SIGNN = 5.2;
     if ( gamma > 500. ) SIGNN = 8.8;
     //use parameter from Constants
-    R1 = ( Beam1.RNuc());  //remember beam2? better way to do this generically
+    R1 = ( _beam1.RNuc());  //remember _beam2? better way to do this generically
     A1 = 0.535; //This is woodsaxonskindepth?
-    //write(6,12)r1,a1,signn  Here is where we could probably set this up asymmetrically R2=Beam2.RNuc() and RHO2=ap2=Beam2.getAin()
+    //write(6,12)r1,a1,signn  Here is where we could probably set this up asymmetrically R2=_beam2.RNuc() and RHO2=ap2=_beam2.getAin()
     R2 = R1;
     RHO1 = ap;
     RHO2 = RHO1;
@@ -266,8 +286,8 @@ double Beambeamsystem::probabilityofhadronbreakup(double impactparameter)
     //.1 to turn mb into fm^2
     //Calculate breakup probability here
     L100:
-        phadronbreakup = 0.;
-    if ( b > 25. ) return phadronbreakup;
+        _pHadronBreakup = 0.;
+    if ( b > 25. ) return _pHadronBreakup;
     Y = -.5*DELL;
     for ( int IY = 1; IY <= NY; IY++) {
         Y = Y+DELL;
@@ -283,32 +303,33 @@ double Beambeamsystem::probabilityofhadronbreakup(double impactparameter)
             T1   = DEN2[(int)IRUT]*RHO2/AN2;
             T2   = DEN1[(int)IRUP]*RHO1/AN1;
     //Eq.6 BCW, Baltz, Chasman, White, Nucl. Inst. & Methods A 417, 1 (1998)
-            phadronbreakup=phadronbreakup+2.*T1*(1.-exp(-SIGNN*T2))*DELL*DELL;
+            _pHadronBreakup=_pHadronBreakup+2.*T1*(1.-exp(-SIGNN*T2))*DELL*DELL;
             }//for(IX)
     }//for(IY)
-	return phadronbreakup;
-
+	return _pHadronBreakup;
 }
+
+
 //______________________________________________________________________________
-double Beambeamsystem::probabilityofphotonbreakup(double impactparameter,int mode)
+double beamBeamSystem::probabilityOfPhotonBreakup(double impactparameter, int mode)
 {
 static double ee[10001], eee[162], se[10001];
 
    //double gamma_em=108.4;  //This will be an input value.
-   pphotonbreakup =0.;   //Might default the probability with a different value?
+   _pPhotonBreakup =0.;   //Might default the probability with a different value?
    double b = impactparameter;
-   int zp = Beam1.getZin();  //What about beam2? Generic approach?
-   int ap = Beam1.getAin();
+   int zp = _beam1.getZin();  //What about _beam2? Generic approach?
+   int ap = _beam1.getAin();
 	
    //Was initialized at the start of the function originally, been moved inward.
    double pxn=0.;
    double p1n=0.;
 
 //Used to be done prior to entering the function. Done properly for assymetric?
-   double gammatarg = 2.*BBSInputGamma_em*BBSInputGamma_em-1.;	
+   double gammatarg = 2.*_BBSInputGamma_em*_BBSInputGamma_em-1.;	
    double omaxx =0.;
 	//This was done prior entering the function as well
-   	if (BBSInputGamma_em > 500.){
+   	if (_BBSInputGamma_em > 500.){
 	omaxx=1.E10;
 	}
 	else{
@@ -454,9 +475,9 @@ static double ee[10001], eee[162], se[10001];
      delo = .05;
      //.1 to turn mb into fm^2
      scon = .1*g1*g1*si1;
-     zcon = zp/(gammatarg*( StarlightConstants::pi)*( 
-     StarlightConstants::hbarcmev))*zp/(gammatarg*( StarlightConstants::pi)*
-     ( StarlightConstants::hbarcmev))/137.04;
+     zcon = zp/(gammatarg*( starlightConstants::pi)*( 
+     starlightConstants::hbarcmev))*zp/(gammatarg*( starlightConstants::pi)*
+     ( starlightConstants::hbarcmev))/137.04;
 
      //single neutron from GDR, Veyssiere et al. Nucl. Phys. A159, 561 (1970)
      for ( int i = 1; i <= 160; i++) {
@@ -538,13 +559,13 @@ static double ee[10001], eee[162], se[10001];
      //start XN calculation
      //what's the b-dependent highest energy of interest?
 
-     omax = min(omaxx,4.*gammatarg*( StarlightConstants::hbarcmev)/b);
-     if ( omax < o0 ) return pphotonbreakup;
-     gk1m = bessel::dbesk1(ee[1]*b/(( StarlightConstants::hbarcmev)*gammatarg));
+     omax = min(omaxx,4.*gammatarg*( starlightConstants::hbarcmev)/b);
+     if ( omax < o0 ) return _pPhotonBreakup;
+     gk1m = bessel::dbesk1(ee[1]*b/(( starlightConstants::hbarcmev)*gammatarg));
      int k = 2;
      L212:
      if (ee[k] < omax ) {
-        gk1 = bessel::dbesk1(ee[k]*b/(( StarlightConstants::hbarcmev)*gammatarg));
+        gk1 = bessel::dbesk1(ee[k]*b/(( starlightConstants::hbarcmev)*gammatarg));
         //Eq. 3 of BCW--NIM in Physics Research A 417 (1998) pp1-8:
         pxn=pxn+zcon*(ee[k]-ee[k-1])*.5*(se[k-1]*ee[k-1]*gk1m*gk1m+se[k]*ee[k]*gk1*gk1);
         k = k + 1;
@@ -552,12 +573,12 @@ static double ee[10001], eee[162], se[10001];
         goto L212;
         }
      //one neutron dissociation
-     omax = min(omax1n,4.*gammatarg*( StarlightConstants::hbarcmev)/b);
-     gk1m = bessel::dbesk1(eee[1]*b/(( StarlightConstants::hbarcmev)*gammatarg));
+     omax = min(omax1n,4.*gammatarg*( starlightConstants::hbarcmev)/b);
+     gk1m = bessel::dbesk1(eee[1]*b/(( starlightConstants::hbarcmev)*gammatarg));
      k = 2;
      L102:
      if (eee[k] < omax ) {
-        gk1 = bessel::dbesk1(eee[k]*b/(( StarlightConstants::hbarcmev)*gammatarg));
+        gk1 = bessel::dbesk1(eee[k]*b/(( starlightConstants::hbarcmev)*gammatarg));
         //Like Eq3 but with only the one neutron out GDR photo cross section input
         p1n = p1n+zcon*(eee[k]-eee[k-1])*.5*(sa[k-1]*eee[k-1]*gk1m*gk1m+sa[k]*eee[k]*gk1*gk1);
         k = k+1;
@@ -567,24 +588,15 @@ static double ee[10001], eee[162], se[10001];
 
 
 	//This used to be done externally, now it is done internally.
-    if (( mode) == 1) pphotonbreakup = 1.;
-    if (( mode) == 2) pphotonbreakup = (1-exp(-1*pxn))*(1-exp(-1*pxn));
-    if (( mode) == 3) pphotonbreakup = (p1n*exp(-1*pxn))*(p1n*exp(-1*pxn));
-    if (( mode) == 4) pphotonbreakup = exp(-2*pxn);
-    if (( mode) == 5) pphotonbreakup = 1.;
-    if (( mode) == 6) pphotonbreakup = (1. - exp(-2.*pxn));
-    if (( mode) == 7) pphotonbreakup = 2.*exp(-pxn)*(1.-exp(-pxn));
+    if (( mode) == 1) _pPhotonBreakup = 1.;
+    if (( mode) == 2) _pPhotonBreakup = (1-exp(-1*pxn))*(1-exp(-1*pxn));
+    if (( mode) == 3) _pPhotonBreakup = (p1n*exp(-1*pxn))*(p1n*exp(-1*pxn));
+    if (( mode) == 4) _pPhotonBreakup = exp(-2*pxn);
+    if (( mode) == 5) _pPhotonBreakup = 1.;
+    if (( mode) == 6) _pPhotonBreakup = (1. - exp(-2.*pxn));
+    if (( mode) == 7) _pPhotonBreakup = 2.*exp(-pxn)*(1.-exp(-pxn));
 
     //cout<<pxn<<" "<<zcon<<" "<<ee[k]<<" "<<se[k-1]<<" "<<gk1m<<"  "<<gk1<<"  "<<k<<"  "<<ee[k+1]<< "  "<<b<< endl;
 
-     return pphotonbreakup;
-
-
-
+     return _pPhotonBreakup;
 }
-//______________________________________________________________________________
-Beambeamsystem::~Beambeamsystem()
-{
-
-}
-

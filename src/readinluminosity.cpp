@@ -1,118 +1,130 @@
-// readinluminosity.cpp
-/*
- * $Id: readinluminosity.cpp,v 1.0 2010/07/04  $
- *
- *
- * /author Joseph Butterwoth
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- * 
- * $Log: $
- *  Added 18->19 for reading in the luminosity table
- *  Incoherent factor added to table --Joey
- */
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//    Added 18->19 for reading in the luminosity table
+//    Incoherent factor added to table --Joey
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
+
 #include <iostream>
 #include <fstream>
-
-using namespace std;
 
 #include "readinluminosity.h"
 #include "starlightconstants.h"
 #include "inputparameters.h"
-//______________________________________________________________________________
-Readinluminosity::Readinluminosity(Inputparameters& input)//:inputread(input)
-{
 
+
+using namespace std;
+
+
+//______________________________________________________________________________
+readLuminosity::readLuminosity(inputParameters& input)//:inputread(input)
+{
   //storing inputparameters into protected variables for the object to use them
-  ReadInputNPT=input.getNPT();
-  ReadInputnumy=input.getnumy();
-  ReadInputnumw=input.getnumw();
-  ReadInputgg_or_gP=input.getgg_or_gP();
-  ReadInputinterferencemode=input.getinterferencemode();
+  _ReadInputNPT=input.getNPT();
+  _ReadInputnumy=input.getnumy();
+  _ReadInputnumw=input.getnumw();
+  _ReadInputgg_or_gP=input.getgg_or_gP();
+  _ReadInputinterferencemode=input.getInterferenceMode();
   
 }
-//______________________________________________________________________________
-Readinluminosity::~Readinluminosity()
-{
 
-}
+
 //______________________________________________________________________________
-void Readinluminosity::read()
+readLuminosity::~readLuminosity()
+{ }
+
+
+//______________________________________________________________________________
+void readLuminosity::read()
 {
   double dummy[19]; //14//18
-  double (*finterm)[StarlightLimits::MAXWBINS]=new double[StarlightLimits::MAXWBINS][StarlightLimits::MAXYBINS];  
+  double (*finterm)[starlightLimits::MAXWBINS]=new double[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];  
   //decreased from 1000*1000; too big! causes fault!
   double fpart =0.;
   double fptsum=0.;
   ifstream wylumfile;
 
-  f_max=0.0;
-
+  _f_max=0.0;
 
   wylumfile.open("slight.txt");
   for(int i=0;i < 19;i++){ // was 14; this is to account for sergei's additional parameters ie d-Au//was19
     wylumfile >> dummy[i];
   }
-  for(int i=0;i<ReadInputnumw;i++){
-    wylumfile >> Warray[i];
+  for(int i=0;i<_ReadInputnumw;i++){
+    wylumfile >> _Warray[i];
   }
-  for(int i=0;i<ReadInputnumy;i++){
-    wylumfile >> Yarray[i];
+  for(int i=0;i<_ReadInputnumy;i++){
+    wylumfile >> _Yarray[i];
   }
-  for(int i=0;i<ReadInputnumw;i++){
-    for(int j=0;j<ReadInputnumy;j++){
-      wylumfile >> Farray[i][j];
-      if( Farray[i][j] > f_max ) f_max=Farray[i][j];
+  for(int i=0;i<_ReadInputnumw;i++){
+    for(int j=0;j<_ReadInputnumy;j++){
+      wylumfile >> _Farray[i][j];
+      if( _Farray[i][j] > _f_max ) _f_max=_Farray[i][j];
     }
   }
   //Normalize farray (JN 010402)
-  for(int i=0;i<ReadInputnumw;i++){
-    for(int j=0;j<ReadInputnumy;j++){
-      Farray[i][j]=Farray[i][j]/f_max;
+  for(int i=0;i<_ReadInputnumw;i++){
+    for(int j=0;j<_ReadInputnumy;j++){
+      _Farray[i][j]=_Farray[i][j]/_f_max;
     }
   }
 
-  if(ReadInputgg_or_gP == 1) goto L1000;
-  if(ReadInputinterferencemode == 0) goto L1000;
+  if(_ReadInputgg_or_gP == 1) goto L1000;
+  if(_ReadInputinterferencemode == 0) goto L1000;
   // only numy/2 y bins here, from 0 (not -ymax) to ymax
  
-  for (int i=0;i<ReadInputnumy/2;i++){
+  for (int i=0;i<_ReadInputnumy/2;i++){
     //fmax=0;
-    //we want to convert fptarray to an integral array where fpt(i,j) is near 0, and fpt(j,NPT) ~1. This will facilitate a simple table loookup
+    //we want to convert _fptarray to an integral array where fpt(i,j) is near 0, and fpt(j,NPT) ~1. This will facilitate a simple table loookup
     fptsum=0.;
-    for(int j=0;j<ReadInputNPT;j++){
+    for(int j=0;j<_ReadInputNPT;j++){
       wylumfile >> fpart;
       finterm[i][j] = fpart;
-      fptarray[i][j]=0.;
+      _fptarray[i][j]=0.;
       fptsum=fptsum+fpart;
     }
     //convert array to integral
-    fptarray[i][0]=finterm[i][0]/fptsum;
-    for(int j=1;j<ReadInputNPT;j++){
+    _fptarray[i][0]=finterm[i][0]/fptsum;
+    for(int j=1;j<_ReadInputNPT;j++){
       for(int k=0;k<=j;k++){
-	fptarray[i][j]=fptarray[i][j]+finterm[i][k];
+	_fptarray[i][j]=_fptarray[i][j]+finterm[i][k];
       }
-      fptarray[i][j]=fptarray[i][j]/fptsum;
+      _fptarray[i][j]=_fptarray[i][j]/fptsum;
     }
   }
 
  L1000:
 
-  wylumfile >> bwnormsave;
+  wylumfile >> _bwnormsave;
   wylumfile.close();
   delete[] finterm;	
   return;
 }
-

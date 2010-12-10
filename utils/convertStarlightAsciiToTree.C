@@ -18,7 +18,7 @@ void readStarlightAscii(const char* inFileName  = "slight.out",
 
 	// create output tree
 	TFile* outFile = new TFile(outFileName, "RECREATE");
-	if (not outFile) {
+	if (!outFile) {
 		cerr << "    error: could not create output file '" << outFileName << "'" << endl;
 		return;
 	}
@@ -38,16 +38,16 @@ void readStarlightAscii(const char* inFileName  = "slight.out",
 		// read EVENT
 		string label;
 		int    eventNmb, nmbTracks;
-		if (not getline(inFile, line))
+		if (!getline(inFile, line))
 			break;
 		++countLines;
 		lineStream.str(line);
 		assert(lineStream >> label >> eventNmb >> nmbTracks);
-		if (not (label == "EVENT:"))
+		if (!(label == "EVENT:"))
 			continue;
 		
 		// read vertex
-		if (not getline(inFile, line))
+		if (!getline(inFile, line))
 			break;
 		++countLines;
 		lineStream.str(line);
@@ -59,7 +59,7 @@ void readStarlightAscii(const char* inFileName  = "slight.out",
 			// read tracks
 			int    particleCode;
 			double momentum[3];
-			if (not getline(inFile, line))
+			if (!getline(inFile, line))
 				break;
 			++countLines;
 			lineStream.str(line);

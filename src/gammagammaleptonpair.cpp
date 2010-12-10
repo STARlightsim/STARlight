@@ -1,174 +1,192 @@
-// gammagammaleptonpair.cpp
-/*
- * $Id: gammagammaleptonpair.cpp,v 1.0 2010/07/04   $
- *
- * /author Joseph Butterwoth
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * $Log: $
- *
- * Nystrand 220710
- * Fixed bug which gave incorrect minv distribution in gammagammaleptonpair.
- * Moved loop over W and Y from pickw to twoleptoncrosssection in
- * gammagammaleptonpair to speed up event generation.
- * Changed to Woods-Saxon radius in twophotonluminosity to be consistent
- * with old starligt.
- */
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//    Nystrand 220710
+//    Fixed bug which gave incorrect minv distribution in gammagammaleptonpair.
+//    Moved loop over W and Y from pickw to twoLeptonCrossSection in
+//    gammagammaleptonpair to speed up event generation.
+//    Changed to Woods-Saxon radius in twophotonluminosity to be consistent
+//    with old starligt.
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
+
 #include <iostream>
 #include <fstream>
-using namespace std;
-
-#include <math.h>
+#include <cmath>
 #include <vector>
+
 #include "starlightconstants.h"
 #include "gammagammaleptonpair.h"
-//_____________________________________________________________________________
-Gammagammaleptonpair::Gammagammaleptonpair(Inputparameters& input,Beambeamsystem& bbsystem):Eventchannel(input,bbsystem)
-{
 
+
+using namespace std;
+
+
+//_____________________________________________________________________________
+Gammagammaleptonpair::Gammagammaleptonpair(inputParameters& input, beamBeamSystem& bbsystem)
+: eventChannel(input, bbsystem)
+{
     //Initialize randomgenerator with our seed.
-    Randy.SetSeed(input.getseed());
-    cout<<"Randy in leptonpair construction: "<<Randy.Rndom()<<endl;
+    _randy.SetSeed(input.getSeed());
+    cout<<"Randy in leptonpair construction: "<<_randy.Rndom()<<endl;
     //Storing inputparameters into protected members for use
-    GGlepInputnumw=input.getnumw();
-    GGlepInputnumy=input.getnumy();
-    GGlepInputpidtest=input.getpidtest();
-    GGlepInputGamma_em=input.getgamma_em();
+    _GGlepInputnumw=input.getnumw();
+    _GGlepInputnumy=input.getnumy();
+    _GGlepInputpidtest=input.getPidTest();
+    _GGlepInputGamma_em=input.getgamma_em();
     //Let us read in the luminosity tables
     read();
     //Now we will calculate the crosssection
-    twoleptoncrosssection();
+    twoLeptonCrossSection();
     //If it is a tauon, calculate its tables
-    if(input.getparticleid()==StarlightConstants::TAUON) tablecalc();
+    if(input.getParticleId()==starlightConstants::TAUON) calculateTable();
 }
-//______________________________________________________________________________
-void Gammagammaleptonpair::twoleptoncrosssection()
-{
 
+
+//______________________________________________________________________________
+Gammagammaleptonpair::~Gammagammaleptonpair()
+{ }
+
+
+//______________________________________________________________________________
+void Gammagammaleptonpair::twoLeptonCrossSection()
+{
     //This function calculates section for 2-particle decay. For reference, see STAR Note 243, Eq. 9.
     //calculate the 2-lepton differential cross section
     //the 100 is to convert to barns
     //the 2 is to account for the fact that we integrate only over one half of the rapidity range
-    //Multiply all Farray[] by f_max
+    //Multiply all _Farray[] by _f_max
 
-    for(int i=0;i<GGlepInputnumw;i++)
+    for(int i=0;i<_GGlepInputnumw;i++)
     {
-	for(int j=0;j<GGlepInputnumy;j++)
+	for(int j=0;j<_GGlepInputnumy;j++)
 	{
-	    // sigmax[i][j]=2.*Gammagammaleptonpair::twomuoncrosssection(Warray[i])*f_max*Farray[i][j]/100.;
-            sigmax[i][j]=2.*twomuoncrosssection(Warray[i])*f_max*Farray[i][j]/(100.*Warray[i]);
+	    // _sigmax[i][j]=2.*Gammagammaleptonpair::twoMuonCrossSection(_Warray[i])*_f_max*_Farray[i][j]/100.;
+            _sigmax[i][j]=2.*twoMuonCrossSection(_Warray[i])*_f_max*_Farray[i][j]/(100.*_Warray[i]);
 	}
     }
     //calculate the total two-lepton cross section
     double sigmasum =0.;
-    for(int i=0;i<GGlepInputnumw-1;i++)
+    for(int i=0;i<_GGlepInputnumw-1;i++)
     {
-	for(int j=0;j<GGlepInputnumy-1;j++)
+	for(int j=0;j<_GGlepInputnumy-1;j++)
 	{
-	    // sigmasum = sigmasum +2.*((sigmax[i][j]+sigmax[i+1][j]+sigmax[i][j+1]+sigmax[i+1][j+1])/4.*(Yarray[j+1]-Yarray[j])*(Warray[i+1]-Warray[i])/((Warray[i+1]+Warray[i])/2.));
-	    // sigmasum = sigmasum +((sigmax[i][j]+sigmax[i+1][j]+sigmax[i][j+1]+sigmax[i+1][j+1])/4.*(Yarray[j+1]-Yarray[j])*(Warray[i+1]-Warray[i])/((Warray[i+1]+Warray[i])/2.));
-          sigmasum = sigmasum +(sigmax[i][j]+sigmax[i+1][j]+sigmax[i][j+1]+sigmax[i+1][j+1])/4.*(Yarray[j+1]-Yarray[j])*(Warray[i+1]-Warray[i]);
+	    // _sigmaSum = _sigmaSum +2.*((_sigmax[i][j]+_sigmax[i+1][j]+_sigmax[i][j+1]+_sigmax[i+1][j+1])/4.*(_Yarray[j+1]-_Yarray[j])*(_Warray[i+1]-_Warray[i])/((_Warray[i+1]+_Warray[i])/2.));
+	    // _sigmaSum = _sigmaSum +((_sigmax[i][j]+_sigmax[i+1][j]+_sigmax[i][j+1]+_sigmax[i+1][j+1])/4.*(_Yarray[j+1]-_Yarray[j])*(_Warray[i+1]-_Warray[i])/((_Warray[i+1]+_Warray[i])/2.));
+          sigmasum = sigmasum +(_sigmax[i][j]+_sigmax[i+1][j]+_sigmax[i][j+1]+_sigmax[i+1][j+1])/4.*(_Yarray[j+1]-_Yarray[j])*(_Warray[i+1]-_Warray[i]);
 	}
     }
-    cout << "The total "<<GGlepInputpidtest<<" cross-section is: "<<sigmasum<<" barns."<<endl;
+    cout << "The total "<<_GGlepInputpidtest<<" cross-section is: "<<sigmasum<<" barns."<<endl;
 
     // Do this integration here, once per run rather than once per event (JN 220710) 
     //integrate sigma down to a function of just w
 
     double sgf=0.;
 
-    for(int i=0;i<ReadInputnumw;i++)
+    for(int i=0;i<_ReadInputnumw;i++)
     {
-            sigofw[i]=0.;
-            for(int j=0;j<ReadInputnumy-1;j++)
+            _sigofw[i]=0.;
+            for(int j=0;j<_ReadInputnumy-1;j++)
             {
-                sigofw[i] = sigofw[i]+(Yarray[j+1]-Yarray[j])*(sigmax[i][j+1]+sigmax[i][j])/2.;
+                _sigofw[i] = _sigofw[i]+(_Yarray[j+1]-_Yarray[j])*(_sigmax[i][j+1]+_sigmax[i][j])/2.;
             }
     }
 
     //calculate the unnormalized sgfint array
-    sigfint[0]=0.;
-    for(int i=0;i<ReadInputnumw-1;i++)
+    _sigfint[0]=0.;
+    for(int i=0;i<_ReadInputnumw-1;i++)
     {
-        sgf=(sigofw[i+1]+sigofw[i])*(Warray[i+1]-Warray[i])/2.;
-        sigfint[i+1]=sigfint[i]+sgf;
+        sgf=(_sigofw[i+1]+_sigofw[i])*(_Warray[i+1]-_Warray[i])/2.;
+        _sigfint[i+1]=_sigfint[i]+sgf;
      }
 
      //normalize sgfint array
-     signormw=sigfint[ReadInputnumw-1];
-     for(int i=0;i<ReadInputnumw;i++)
+     _signormw=_sigfint[_ReadInputnumw-1];
+     for(int i=0;i<_ReadInputnumw;i++)
      {
-          sigfint[i]=sigfint[i]/signormw;
+          _sigfint[i]=_sigfint[i]/_signormw;
      }
-
-
-
     return;
-
-
 }
+
+
 //______________________________________________________________________________
-double Gammagammaleptonpair::twomuoncrosssection(double w)
+double Gammagammaleptonpair::twoMuonCrossSection(double w)
 {
     //This function gives the two muon cross section as a function of Y&W. Using the formula given in G.Soff et. al Nuclear Equation of State, part B, 579
     double s=0.,Etest=0.,deltat=0.,xL=0.,sigmuix=0.,alphasquared=0.,hbarcsquared=0.;
     s = w*w;
-    Etest = 4.*getmass()*getmass()/s;  
+    Etest = 4.*getMass()*getMass()/s;  
     deltat = s * sqrt(1.-Etest);
-    xL = 2.*log(sqrt(s)/(2.*getmass())+sqrt(1./Etest-1.));
-    alphasquared = StarlightConstants::alpha*StarlightConstants::alpha;
-    hbarcsquared = StarlightConstants::hbarc*StarlightConstants::hbarc;
-    sigmuix = 4.*StarlightConstants::pi*alphasquared/s*hbarcsquared*((1+Etest-0.5*Etest*Etest)*xL-(1./s+Etest/s)*deltat);
+    xL = 2.*log(sqrt(s)/(2.*getMass())+sqrt(1./Etest-1.));
+    alphasquared = starlightConstants::alpha*starlightConstants::alpha;
+    hbarcsquared = starlightConstants::hbarc*starlightConstants::hbarc;
+    sigmuix = 4.*starlightConstants::pi*alphasquared/s*hbarcsquared*((1+Etest-0.5*Etest*Etest)*xL-(1./s+Etest/s)*deltat);
     if(Etest > 1.) 
 	sigmuix = 0.;
     return sigmuix;
 }
+
+
 //______________________________________________________________________________
 void Gammagammaleptonpair::pickw(double &w)
 {
-
 //  This function picks a w for the 2-photon calculation.
 
     double x=0.,remainarea=0.,remainw=0.,a=0.,b=0.,c=0.;
     int ivalw=0;
 
-    if(wdelta != 0)
+    if(_wdelta != 0)
     {
-	w=wdelta;
-	ivalw=ivalwd;
-	remainw=remainwd;
+	w=_wdelta;
+	ivalw=_ivalwd;
+	remainw=_remainwd;
     }
     else{
 	//deal with the case where sigma is an array
-	//sigofw is simga integrated over y using a linear interpolation
+	//_sigofw is simga integrated over y using a linear interpolation
 	//sigint is the integral of sgfint, normalized
 
 	//pick a random number
-	x = Randy.Rndom();//random()/(RAND_MAX+1.0);
+	x = _randy.Rndom();//random()/(RAND_MAX+1.0);
 	//compare x and sgfint to find the ivalue which is just less than the random number x
-	for(int i=0;i<GGlepInputnumw;i++)
+	for(int i=0;i<_GGlepInputnumw;i++)
 	{
-	    if(x > sigfint[i]) ivalw=i;
+	    if(x > _sigfint[i]) ivalw=i;
 	}
 	//remainder above ivalw
-	remainarea = x - sigfint[ivalw];
+	remainarea = x - _sigfint[ivalw];
 
 	//figure out what point corresponds to the excess area in remainarea
-	c = -remainarea*signormw/(Warray[ivalw+1]-Warray[ivalw]);
-	b = sigofw[ivalw];
-	a = (sigofw[ivalw+1]-sigofw[ivalw])/2.;
+	c = -remainarea*_signormw/(_Warray[ivalw+1]-_Warray[ivalw]);
+	b = _sigofw[ivalw];
+	a = (_sigofw[ivalw+1]-_sigofw[ivalw])/2.;
 	if(a==0.)
 	{
 	    remainw = -c/b;
@@ -176,56 +194,56 @@ void Gammagammaleptonpair::pickw(double &w)
 	else{
 	    remainw = (-b+sqrt(b*b-4.*a*c))/(2.*a);
 	}
-	ivalwd = ivalw;
-	remainwd = remainw;
+	_ivalwd = ivalw;
+	_remainwd = remainw;
 	//calculate the w value
-	w = Warray[ivalw]+(Warray[ivalw+1]-Warray[ivalw])*remainw;
+	w = _Warray[ivalw]+(_Warray[ivalw+1]-_Warray[ivalw])*remainw;
 
     }
-
 }
+
+
 //______________________________________________________________________________
 void Gammagammaleptonpair::picky(double &y)
 {
-
     // This function picks a y given a W 
 
     double * sigofy;
     double * sgfint;
-    sigofy = new double[StarlightLimits::MAXYBINS];
-    sgfint = new double[StarlightLimits::MAXWBINS];
+    sigofy = new double[starlightLimits::MAXYBINS];
+    sgfint = new double[starlightLimits::MAXWBINS];
 	
     double remainw =0.,remainarea=0.,remainy=0.,a=0.,b=0.,c=0.,sgf=0.,signorm=0.,x=0.;
     int ivalw=0,ivaly=0;
 
-    ivalw=ivalwd;
-    remainw=remainwd;
+    ivalw=_ivalwd;
+    remainw=_remainwd;
     //average over two colums to get y array
-    for(int j=0;j<GGlepInputnumy;j++)
+    for(int j=0;j<_GGlepInputnumy;j++)
     {
-	sigofy[j]=sigmax[ivalw][j]+(sigmax[ivalw+1][j]-sigmax[ivalw][j])*remainw;
+	sigofy[j]=_sigmax[ivalw][j]+(_sigmax[ivalw+1][j]-_sigmax[ivalw][j])*remainw;
     }
 
     //calculate the unnormalized sgfint
     sgfint[0]=0.;
-    for(int j=0;j<GGlepInputnumy-1;j++)
+    for(int j=0;j<_GGlepInputnumy-1;j++)
     {
 	sgf = (sigofy[j+1]+sigofy[j])/2.;
-	sgfint[j+1]=sgfint[j]+sgf*(Yarray[j+1]-Yarray[j]);
+	sgfint[j+1]=sgfint[j]+sgf*(_Yarray[j+1]-_Yarray[j]);
     }
 
     //normalize the sgfint array
-    signorm = sgfint[GGlepInputnumy-1];
+    signorm = sgfint[_GGlepInputnumy-1];
 
-    for(int j=0;j<GGlepInputnumy;j++)
+    for(int j=0;j<_GGlepInputnumy;j++)
     {
 	sgfint[j]=sgfint[j]/signorm;
     }
 
     //pick a random number
-    x = Randy.Rndom();//random()/(RAND_MAX+1.0);
+    x = _randy.Rndom();//random()/(RAND_MAX+1.0);
     //compare x and sgfint to find the ivalue which is just less then the random number x
-    for(int i=0;i<GGlepInputnumy;i++)
+    for(int i=0;i<_GGlepInputnumy;i++)
     {
 	if(x > sgfint[i]) ivaly = i;
     }
@@ -233,7 +251,7 @@ void Gammagammaleptonpair::picky(double &y)
     remainarea = x - sgfint[ivaly];
 
     //figure what point corresponds to the leftover area in remainarea
-    c = -remainarea*signorm/(Yarray[ivaly+1]-Yarray[ivaly]);
+    c = -remainarea*signorm/(_Yarray[ivaly+1]-_Yarray[ivaly]);
     b = sigofy[ivaly];
     a = (sigofy[ivaly+1]-sigofy[ivaly])/2.;
     if(a==0.)
@@ -244,15 +262,15 @@ void Gammagammaleptonpair::picky(double &y)
 	remainy = (-b + sqrt(b*b-4.*a*c))/(2.*a);
     }
     //calculate the y value
-    y = Yarray[ivaly]+(Yarray[ivaly+1]-Yarray[ivaly])*remainy;
+    y = _Yarray[ivaly]+(_Yarray[ivaly+1]-_Yarray[ivaly])*remainy;
     delete[] sigofy;
     delete[] sgfint;
-
 }
-//______________________________________________________________________________
-void Gammagammaleptonpair::pairmomentum(double w,double y,double &E,double &px,double &py,double &pz)
-{
 
+
+//______________________________________________________________________________
+void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,double &py,double &pz)
+{
     //this function calculates px,py,pz,and E given w and y
 
     double anglepp1=0.,anglepp2=0.,pp1=0.,pp2=0.,E1=0.,E2=0.,signpx=0.,pt=0.;
@@ -263,13 +281,13 @@ void Gammagammaleptonpair::pairmomentum(double w,double y,double &E,double &px,d
 
     //calculate px and py
     //to get x and y components-- phi is random between 0 and 2*pi
-    anglepp1 = Randy.Rndom();//random()/(RAND_MAX+1.0);
-    anglepp2 = Randy.Rndom();//random()/(RAND_MAX+1.0);
+    anglepp1 = _randy.Rndom();//random()/(RAND_MAX+1.0);
+    anglepp2 = _randy.Rndom();//random()/(RAND_MAX+1.0);
 
     pp1 = pp(E1);
     pp2 = pp(E2);
-    px = pp1*cos(2.*StarlightConstants::pi*anglepp1)+pp2*cos(2.*StarlightConstants::pi*anglepp2);
-    py = pp1*sin(2.*StarlightConstants::pi*anglepp1)+pp2*sin(2.*StarlightConstants::pi*anglepp2);
+    px = pp1*cos(2.*starlightConstants::pi*anglepp1)+pp2*cos(2.*starlightConstants::pi*anglepp2);
+    py = pp1*sin(2.*starlightConstants::pi*anglepp1)+pp2*sin(2.*starlightConstants::pi*anglepp2);
 
     //Compute vector sum Pt=Pt1+Pt2 to find pt for the produced particle
     pt = sqrt(px*px+py*py);
@@ -277,54 +295,56 @@ void Gammagammaleptonpair::pairmomentum(double w,double y,double &E,double &px,d
     //W is the mass of the produced particle (not necessarily on-mass-shell).Now compute its energy and pz
     E = sqrt(w*w+pt*pt)*cosh(y);
     pz= sqrt(w*w+pt*pt)*sinh(y);
-    signpx = Randy.Rndom();//random()/(RAND_MAX+1.0);
+    signpx = _randy.Rndom();//random()/(RAND_MAX+1.0);
 
     //pick the z direction
     if(signpx > 0.5) pz = -pz;
-
 }
+
+
 //______________________________________________________________________________
 double Gammagammaleptonpair::pp(double E)
 {
-//will probably have to pass in beambeamsys? that way we can do beam1.formfactor(t) or beam2..., careful with the way sergey did it for asymmetry
+//will probably have to pass in beambeamsys? that way we can do beam1.formFactor(t) or beam2..., careful with the way sergey did it for asymmetry
 
 //returns on random draw from pp(E) distribution
     double ereds =0.,Cm=0.,Coef=0.,x=0.,pp=0.,test=0.,u=0.;
     double singleformfactorCm=0.,singleformfactorpp1=0.,singleformfactorpp2=0.;
     int satisfy =0;
         
-    ereds = (E/GGlepInputGamma_em)*(E/GGlepInputGamma_em);
+    ereds = (E/_GGlepInputGamma_em)*(E/_GGlepInputGamma_em);
     //sqrt(3)*E/gamma_em is p_t where the distribution is a maximum
-    Cm = sqrt(3.)*E/GGlepInputGamma_em;
+    Cm = sqrt(3.)*E/_GGlepInputGamma_em;
     //the amplitude of the p_t spectrum at the maximum
-    singleformfactorCm=bbs.getBeam1().formfactor(Cm*Cm+ereds);//Doing this once and then storing it as a double, which we square later...SYMMETRY?using beam1 for now.
-    Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(StarlightConstants::pi)*(ereds+Cm*Cm))*(2.*(StarlightConstants::pi)*(ereds+Cm*Cm)));
+    singleformfactorCm=_bbs.getBeam1().formFactor(Cm*Cm+ereds);//Doing this once and then storing it as a double, which we square later...SYMMETRY?using beam1 for now.
+    Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(starlightConstants::pi)*(ereds+Cm*Cm))*(2.*(starlightConstants::pi)*(ereds+Cm*Cm)));
         
     //pick a test value pp, and find the amplitude there
-    x = Randy.Rndom();//random()/(RAND_MAX+1.0);
-    pp = x*5.*StarlightConstants::hbarc/bbs.getBeam1().RNuc(); //Will use nucleus #1, there should be two for symmetry//nextline
-    singleformfactorpp1=bbs.getBeam1().formfactor(pp*pp+ereds);
-    test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*StarlightConstants::pi*(ereds+pp*pp))*(2.*StarlightConstants::pi*(ereds+pp*pp)));
+    x = _randy.Rndom();//random()/(RAND_MAX+1.0);
+    pp = x*5.*starlightConstants::hbarc/_bbs.getBeam1().RNuc(); //Will use nucleus #1, there should be two for symmetry//nextline
+    singleformfactorpp1=_bbs.getBeam1().formFactor(pp*pp+ereds);
+    test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
 
     while(satisfy==0){
-	u = Randy.Rndom();//random()/(RAND_MAX+1.0);
+	u = _randy.Rndom();//random()/(RAND_MAX+1.0);
 	if(u*Coef <= test)
 	{
 	    satisfy =1;
 	}
 	else{
-	    x =Randy.Rndom();//random()/(RAND_MAX+1.0);
-	    pp = 5*StarlightConstants::hbarc/bbs.getBeam1().RNuc()*x;
-	    singleformfactorpp2=bbs.getBeam1().formfactor(pp*pp+ereds);//Symmetry
-	    test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*StarlightConstants::pi*(ereds+pp*pp)*2.*StarlightConstants::pi*(ereds+pp*pp));
+	    x =_randy.Rndom();//random()/(RAND_MAX+1.0);
+	    pp = 5*starlightConstants::hbarc/_bbs.getBeam1().RNuc()*x;
+	    singleformfactorpp2=_bbs.getBeam1().formFactor(pp*pp+ereds);//Symmetry
+	    test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
 	}
     }
 
     return pp;
-
 }
+
+
 //______________________________________________________________________________
-void Gammagammaleptonpair::twodecay(StarlightConstants::particle &ipid,
+void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particle &ipid,
                                     double  ,  // E (unused)
                                     double  W,
                                     double  px0, double  py0, double  pz0,
@@ -332,8 +352,6 @@ void Gammagammaleptonpair::twodecay(StarlightConstants::particle &ipid,
                                     double& px2, double& py2, double& pz2,
                                     int&    iFbadevent)
 {
-
-
     //     This routine decays a particle into two particles of mass mdec,
     //     taking spin into account
 
@@ -346,7 +364,7 @@ void Gammagammaleptonpair::twodecay(StarlightConstants::particle &ipid,
 
     //    set the mass of the daughter particles
 
-    mdec = getmass();
+    mdec = getMass();
     if(W < 2*mdec)
     {
 	cout<<" ERROR: W="<<W<<endl;
@@ -357,12 +375,12 @@ void Gammagammaleptonpair::twodecay(StarlightConstants::particle &ipid,
 
     //     pick an orientation, based on the spin
     //      phi has a flat distribution in 2*pi
-    phi = Randy.Rndom()*2.*StarlightConstants::pi; //(random()/(RAND_MAX+1.0))* 2.*StarlightConstants::pi;
+    phi = _randy.Rndom()*2.*starlightConstants::pi; //(random()/(RAND_MAX+1.0))* 2.*starlightConstants::pi;
 
     //     find theta, the angle between one of the outgoing particles and
     //    the beamline, in the frame of the two photons
 
-    if(getspin()==0.5){
+    if(getSpin()==0.5){
 	//  calculate a table of integrated angle values for leptons
 	//  JN05: Go from 1000->20000bins, use double precision for anglelep and thetalep. needed when W >6Gev.
 	hiresw = W;
@@ -371,7 +389,7 @@ void Gammagammaleptonpair::twodecay(StarlightConstants::particle &ipid,
 
 	for(int i =1;i<=20000;i++)
 	{
-	    hirestheta = StarlightConstants::pi * double(i) /20000.;
+	    hirestheta = starlightConstants::pi * double(i) /20000.;
 
 	    //  Added sin(theta) phase space factor (not in thetalep) and changed E to W in thetalep call
 	    //  11/9/2000 SRK
@@ -382,19 +400,19 @@ void Gammagammaleptonpair::twodecay(StarlightConstants::particle &ipid,
 	}
 
 	hirestheta = 0.;
-	xtest = Randy.Rndom();//random()/(RAND_MAX+1.0);
+	xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
 	hirestest = xtest;
 	for(int i =1;i<=20000;i++)
 	{
 	    if(xtest > (anglelep[i]/anglelep[20000]))
-                hirestheta = StarlightConstants::pi * double(i) / 20000.;
+                hirestheta = starlightConstants::pi * double(i) / 20000.;
 	}
 	theta=hirestheta;
 
     }
 
-    if(getspin() != 0.5)
-        cout<<" This model cannot yet handle this spin value for lepton pairs: "<<getspin()<<endl; 
+    if(getSpin() != 0.5)
+        cout<<" This model cannot yet handle this spin value for lepton pairs: "<<getSpin()<<endl; 
 
 
     //     compute unboosted momenta
@@ -413,8 +431,8 @@ void Gammagammaleptonpair::twodecay(StarlightConstants::particle &ipid,
     E2 = sqrt(mdec*mdec+px2*px2+py2*py2+pz2*pz2);
     //        decay tau to electrons
     //        note that after this routine px1, etc., refer to the electrons
-    if(GGlepInputpidtest == StarlightConstants::TAUON)
-        taudecay(px1,py1,pz1,E1,px2,py2,pz2,E2);
+    if(_GGlepInputpidtest == starlightConstants::TAUON)
+        tauDecay(px1,py1,pz1,E1,px2,py2,pz2,E2);
 
     //     Lorentz transform into the lab frame
     // betax,betay,betaz are the boost of the complete system
@@ -429,15 +447,16 @@ void Gammagammaleptonpair::twodecay(StarlightConstants::particle &ipid,
     if(iFbadevent == 1)
         return;
 
-    //       change particle id from that of parent to that of daughters
-    // change taoun id into electron id, already switched particles in taudecay
-    if(GGlepInputpidtest == StarlightConstants::TAUON)
-        ipid = StarlightConstants::ELECTRON;
+    // change particle id from that of parent to that of daughters
+    // change taoun id into electron id, already switched particles in tau decay
+    if(_GGlepInputpidtest == starlightConstants::TAUON)
+        ipid = starlightConstants::ELECTRON;
     //        electrons remain electrons; muons remain muons
-    if ((GGlepInputpidtest == StarlightConstants::ELECTRON) || (GGlepInputpidtest == StarlightConstants::MUON))
-        ipid = GGlepInputpidtest;
-
+    if ((_GGlepInputpidtest == starlightConstants::ELECTRON) || (_GGlepInputpidtest == starlightConstants::MUON))
+        ipid = _GGlepInputpidtest;
 }
+
+
 //______________________________________________________________________________
 double Gammagammaleptonpair::thetalep(double W,double theta)
 {
@@ -453,12 +472,11 @@ double Gammagammaleptonpair::thetalep(double W,double theta)
 
     //    real function thetalep (W,theta)
 
-
     double moverw=0., W1sq=0.;
     double thetalep_r=0.,denominator=0.;
 
     W1sq = (W / 2.)*(W/2.);
-    moverw = getmass()*getmass() / W1sq;
+    moverw = getMass()*getMass() / W1sq;
     denominator = (1. - (1. - moverw)*(cos(theta)*cos(theta)));
 
     thetalep_r = 2. + 4.*(1.-moverw)*((1.-moverw)*sin(theta)*sin(theta)*cos(theta)*cos(theta) + moverw) / (denominator*denominator);
@@ -466,42 +484,44 @@ double Gammagammaleptonpair::thetalep(double W,double theta)
     return thetalep_r;
 
 }
+
+
 //______________________________________________________________________________
-StarlightConstants::event Gammagammaleptonpair::produceevent(int &ievent)
+starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
 {//returns the vector with the decay particles inside.
-    StarlightConstants::event leptonpair; //This object will store all the tracks for a single event
+    starlightConstants::event leptonpair; //This object will store all the tracks for a single event
     double comenergy = 0.;
     double rapidity = 0.;
     double pairE = 0.;
     double pairmomx=0.,pairmomy=0.,pairmomz=0.;
     int iFbadevent=0;
-    StarlightConstants::particle ipid = StarlightConstants::UNKNOWN;
+    starlightConstants::particle ipid = starlightConstants::UNKNOWN;
 	
     double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
 //this function decays particles and writes events to a file
     //zero out the event structure
-    leptonpair.numberoftracks=0;
+    leptonpair._numberOfTracks=0;
     for(int i=0;i<4;i++)
     {
 	leptonpair.px[i]=0.;
 	leptonpair.py[i]=0.;
 	leptonpair.pz[i]=0.;
-	leptonpair.fsparticle[i]=StarlightConstants::UNKNOWN;
-	leptonpair.charge[i]=0;
+	leptonpair._fsParticle[i]=starlightConstants::UNKNOWN;
+	leptonpair._charge[i]=0;
     }
 
     pickw(comenergy);
 
     picky(rapidity);
 
-    pairmomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
+    pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
 
-    twodecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+    twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
 
     if (iFbadevent==0){
 	int q1=0,q2=0; 
 
-	double xtest = Randy.Rndom();//random()/(RAND_MAX+1.0);
+	double xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
 	if (xtest<0.5)
 	{
 	    q1=1;
@@ -511,37 +531,39 @@ StarlightConstants::event Gammagammaleptonpair::produceevent(int &ievent)
 	    q1=-1;
 	    q2=1;
 	}	
-	leptonpair.numberoftracks=2;//leptonpairs are two tracks...
+	leptonpair._numberOfTracks=2;//leptonpairs are two tracks...
 	leptonpair.px[0]=px1;
 	leptonpair.py[0]=py1;
 	leptonpair.pz[0]=pz1;
-	leptonpair.fsparticle[0]=ipid; 
-	leptonpair.charge[0]=q1;
+	leptonpair._fsParticle[0]=ipid; 
+	leptonpair._charge[0]=q1;
 
 	leptonpair.px[1]=px2;
 	leptonpair.py[1]=py2;
 	leptonpair.pz[1]=pz2;
-	leptonpair.fsparticle[1]=ipid;
-	leptonpair.charge[1]=q2;
+	leptonpair._fsParticle[1]=ipid;
+	leptonpair._charge[1]=q2;
 
 	ievent=ievent+1;
     }
 
     return leptonpair;
 }
+
+
 //______________________________________________________________________________
-UPCEvent Gammagammaleptonpair::ProduceEvent()
+upcEvent Gammagammaleptonpair::produceEvent()
 {
 //returns the vector with the decay particles inside.
 
-   UPCEvent event;
+   upcEvent event;
 
    double comenergy = 0.;
    double rapidity = 0.;
    double pairE = 0.;
    double pairmomx=0.,pairmomy=0.,pairmomz=0.;
    int iFbadevent=0;
-   StarlightConstants::particle ipid = StarlightConstants::UNKNOWN;
+   starlightConstants::particle ipid = starlightConstants::UNKNOWN;
    
    double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
    
@@ -552,14 +574,14 @@ UPCEvent Gammagammaleptonpair::ProduceEvent()
 
    picky(rapidity);
    
-   pairmomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
+   pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
    
-   twodecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+   twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
    
    if (iFbadevent==0){
      int q1=0,q2=0; 
      
-     double xtest = Randy.Rndom();//random()/(RAND_MAX+1.0);
+     double xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
      if (xtest<0.5)
        {
 	 q1=1;
@@ -570,21 +592,20 @@ UPCEvent Gammagammaleptonpair::ProduceEvent()
        q2=1;
      }
      // The new stuff
-     StarlightParticle particle1(px1, py1, pz1, StarlightConstants::UNKNOWN, StarlightConstants::UNKNOWN, ipid, q1);
-     event.AddParticle(particle1);
+     starlightParticle particle1(px1, py1, pz1, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, ipid, q1);
+     event.addParticle(particle1);
      
-     StarlightParticle particle2(px2, py2, pz2, StarlightConstants::UNKNOWN, StarlightConstants::UNKNOWN, ipid, q2);
-     event.AddParticle(particle2);
+     starlightParticle particle2(px2, py2, pz2, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, ipid, q2);
+     event.addParticle(particle2);
      
     }
    return event;
 }
 
+
 //______________________________________________________________________________
-
-void Gammagammaleptonpair::tablecalc()
+void Gammagammaleptonpair::calculateTable()
 {
-
     //     this subroutine calculates the tables that are used
     //     elsewhere in the montecarlo
     //     the tauon decay is taken from V-A theory, 1 - 1/3 cos(theta)
@@ -595,33 +616,33 @@ void Gammagammaleptonpair::tablecalc()
     //     the highest energy attainable by the electron in such a system is
     //     .5 * mass of the tau
 
-    //    subroutine tablecalc
+    //    subroutine calculateTable
 
 
     double E,theta;
 
-    tautolangle[0] = 0.;
-    dgammade[0] = 0.;
+    _tautolangle[0] = 0.;
+    _dgammade[0] = 0.;
 
 
     for(int i =1;i<=100;i++)
     {
 	//     calculate energy of tau decay
-	E = double(i)/100. * .5 * StarlightConstants::mtau;
-	dgammade[i] = dgammade[i-1] + E*E * (1. - 4.*E/(3.*StarlightConstants::mtau));
+	E = double(i)/100. * .5 * starlightConstants::mtau;
+	_dgammade[i] = _dgammade[i-1] + E*E * (1. - 4.*E/(3.*starlightConstants::mtau));
 
 	//     calculate angles for tau
-	theta = StarlightConstants::pi * double(i) / 100.;
-	tautolangle[i] = tautolangle[i-1] + (1 + 0.3333333 * cos(theta));
+	theta = starlightConstants::pi * double(i) / 100.;
+	_tautolangle[i] = _tautolangle[i-1] + (1 + 0.3333333 * cos(theta));
     }
 
 
 }
+
+
 //______________________________________________________________________________
-
-void Gammagammaleptonpair::taudecay(double &px1,double &py1,double &pz1,double &E1,double &px2,double &py2,double &pz2,double &E2)
+void Gammagammaleptonpair::tauDecay(double &px1,double &py1,double &pz1,double &E1,double &px2,double &py2,double &pz2,double &E2)
 {
-
     //     this routine assumes that the tauons decay to electrons and
     //     calculates the directons of the decays
 
@@ -637,8 +658,8 @@ void Gammagammaleptonpair::taudecay(double &px1,double &py1,double &pz1,double &
     //     get two random numbers to compare with
 
 
-    ran1 = Randy.Rndom()*dgammade[100];//(random()/(RAND_MAX+1.0)) * dgammade[100];
-    ran2 = Randy.Rndom()*dgammade[100];//(random()/(RAND_MAX+1.0)) * dgammade[100];
+    ran1 = _randy.Rndom()*_dgammade[100];//(random()/(RAND_MAX+1.0)) * _dgammade[100];
+    ran2 = _randy.Rndom()*_dgammade[100];//(random()/(RAND_MAX+1.0)) * _dgammade[100];
 
     //     compute the energies that correspond to those numbers
     Ee1 = 0.;
@@ -646,35 +667,35 @@ void Gammagammaleptonpair::taudecay(double &px1,double &py1,double &pz1,double &
 
     for( int i =1;i<=100;i++)
     {
-	if (ran1 > dgammade[i])
-	    Ee1 = double(i) /100. * .5 * getmass();
-	if (ran2 > dgammade[i])
-	    Ee2 = double(i) /100. * .5 * getmass();
+	if (ran1 > _dgammade[i])
+	    Ee1 = double(i) /100. * .5 * getMass();
+	if (ran2 > _dgammade[i])
+	    Ee2 = double(i) /100. * .5 * getMass();
     }
 
     //     to find the direction of emmission, first
     //     we determine if the tauons have spin of +1 or -1 along the
     //     direction of the beam line
     dir = 1.;
-    if ( Randy.Rndom() < 0.5 )//(random()/(RAND_MAX+1.0)) < 0.5)
+    if ( _randy.Rndom() < 0.5 )//(random()/(RAND_MAX+1.0)) < 0.5)
 	dir = -1.;
 
     //     get two random numbers to compare with
-    ran1 = Randy.Rndom()*tautolangle[100];//(random()/(RAND_MAX+1.0))  * tautolangle[100];
-    ran2 = Randy.Rndom()*tautolangle[100];//(random()/(RAND_MAX+1.0))  * tautolangle[100];
+    ran1 = _randy.Rndom()*_tautolangle[100];//(random()/(RAND_MAX+1.0))  * _tautolangle[100];
+    ran2 = _randy.Rndom()*_tautolangle[100];//(random()/(RAND_MAX+1.0))  * _tautolangle[100];
 
     //     find the angles corrsponding to those numbers
     theta1 = 0.;
     theta2 = 0.;
     for( int i =1;i<=100;i++)
     {
-	if (ran1 > tautolangle[i]) theta1 = StarlightConstants::pi * double(i) /100.;
-	if (ran2 > tautolangle[i]) theta2 = StarlightConstants::pi * double(i) /100.;
+	if (ran1 > _tautolangle[i]) theta1 = starlightConstants::pi * double(i) /100.;
+	if (ran2 > _tautolangle[i]) theta2 = starlightConstants::pi * double(i) /100.;
     }
 
     //     grab another two random numbers to determine phi's
-    phi1 = Randy.Rndom()*2.*StarlightConstants::pi;// (random()/(RAND_MAX+1.0))* 2. * StarlightConstants::pi;
-    phi2 = Randy.Rndom()*2.*StarlightConstants::pi;// (random()/(RAND_MAX+1.0))* 2. * StarlightConstants::pi;
+    phi1 = _randy.Rndom()*2.*starlightConstants::pi;// (random()/(RAND_MAX+1.0))* 2. * starlightConstants::pi;
+    phi2 = _randy.Rndom()*2.*starlightConstants::pi;// (random()/(RAND_MAX+1.0))* 2. * starlightConstants::pi;
     //     figure out the momenta of the electron in the frames of the
     //     tauons from which they decayed, that is electron1 is in the
     //     rest frame of tauon1 and e2 is in the rest fram of tau2
@@ -711,20 +732,21 @@ void Gammagammaleptonpair::taudecay(double &px1,double &py1,double &pz1,double &
     pz1 = pez1;
     pz2 = pez2;
 }
-//______________________________________________________________________________
-double Gammagammaleptonpair::getmass()
-{
 
+
+//______________________________________________________________________________
+double Gammagammaleptonpair::getMass()
+{
     double leptonmass=0.;
-    switch(GGlepInputpidtest){
-    case StarlightConstants::ELECTRON:
-	leptonmass=StarlightConstants::mel;
+    switch(_GGlepInputpidtest){
+    case starlightConstants::ELECTRON:
+	leptonmass=starlightConstants::mel;
 	break;
-    case StarlightConstants::MUON:
-	leptonmass=StarlightConstants::mmu;
+    case starlightConstants::MUON:
+	leptonmass=starlightConstants::mmu;
 	break;
-    case StarlightConstants::TAUON:
-	leptonmass=StarlightConstants::mtau;
+    case starlightConstants::TAUON:
+	leptonmass=starlightConstants::mtau;
 	break;
     default:
 	cout<<"Not a recognized lepton, Gammagammaleptonpair::getmass(), mass = 0."<<endl;
@@ -732,23 +754,20 @@ double Gammagammaleptonpair::getmass()
 
     return leptonmass;
 }
-//______________________________________________________________________________
-double Gammagammaleptonpair::getwidth()
-{
 
+
+//______________________________________________________________________________
+double Gammagammaleptonpair::getWidth()
+{
     double leptonwidth=0.;
     return leptonwidth;
 
 }
+
+
 //______________________________________________________________________________
-double Gammagammaleptonpair::getspin()
+double Gammagammaleptonpair::getSpin()
 {
     double leptonspin=0.5;
-
     return leptonspin;
-}
-//______________________________________________________________________________
-Gammagammaleptonpair::~Gammagammaleptonpair()
-{
-
 }

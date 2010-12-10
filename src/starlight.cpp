@@ -1,31 +1,45 @@
-//starlight.cpp
-/*
- * $Id: starlight.cpp,v 1.0 2010/07/04  $
- *
- *
- *   /author 
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
- * 
- * $Log: $
- */
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////
  
 
-#include "starlight.h"
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
+
+#ifdef ENABLE_PYTHIA
+#include "PythiaStarlight.h"
+#endif
+
+#include "starlight.h"
 #include "inputparameters.h"
 #include "eventchannel.h"
 #include "gammagammaleptonpair.h"
@@ -34,97 +48,91 @@
 #include "psifamily.h"
 #include "twophotonluminosity.h"
 #include "gammaaluminosity.h"
-#include <cstdlib>
-
-#ifdef ENABLE_PYTHIA
-#include "PythiaStarlight.h"
-#endif
-#include <upcevent.h>
-#include <eventfilewriter.h>
+#include "upcevent.h"
+#include "eventfilewriter.h"
 
 
+starlight::starlight() :
+        _inputParameters(0)
+        ,_beam0(0)
+        ,_beam1(0)
+        ,_beamSystem(0)
+        ,_eventChannel(0)
+        ,_configFileName("slight.in")
+        ,_numberOfEventsPerFile(100)
+        ,_numberOfEventsToGenerate(10)
+        ,_standardFilename("slight.out")
+        ,_isInitialised(false)
+{ }
 
-Starlight::Starlight() :
-        fInputParameters(0)
-        ,fBeam0(0)
-        ,fBeam1(0)
-        ,fBeamSystem(0)
-        ,fEventChannel(0)
-        ,fConfigFileName("slight.in")
-        ,fNumberOfEventsPerFile(100)
-        ,fNumberOfEventsToGenerate(10)
-        ,fStandardFilename("slight.out")
-        ,fIsInitialised(false)
+
+starlight::~starlight()
+{ }
+
+
+int starlight::init()
 {
-}
-
-Starlight::~Starlight()
-{
-}
-
-int Starlight::Init()
-{
-
     std::cout << "##################################" << std::endl;
     std::cout << " Initialising Starlight v" << Starlight_VERSION_MAJOR << "." << Starlight_VERSION_MINOR << "..." << std::endl;
     std::cout << "##################################" << std::endl;
 
-    fNumberOfEventsToGenerate = fInputParameters->getnumberofevents();
-    fNumberOfEventsPerFile = fNumberOfEventsToGenerate; // For now we write only one file...
+    _numberOfEventsToGenerate = _inputParameters->getNumberOfEvents();
+    _numberOfEventsPerFile = _numberOfEventsToGenerate; // For now we write only one file...
 
-    fBeamSystem = new Beambeamsystem(*fInputParameters);
+    _beamSystem = new beamBeamSystem(*_inputParameters);
 
     // std::streamsize precision(15);
     std::cout.setf(std::ios_base::fixed,std::ios_base::floatfield);
     std::cout.precision(15);
 
-    bool flag = CheckForLuminosityTable();
+    bool flag = checkForLuminosityTable();
 
-    switch (fInputParameters->getinteractiontest())
+    switch (_inputParameters->getInteractionTest())
     {
-    case StarlightConstants::PHOTONPHOTON:
+    case starlightConstants::PHOTONPHOTON:
         if (flag==true) {
             std::cout << "CREATING LUMINOSITY TABLE FOR PHOTONPHOTON" << std::endl;
-            Twophotonluminosity(fBeamSystem->getBeam1(), fBeamSystem->getBeam2(), fInputParameters->getbreakupmode(), *fInputParameters);
+            twoPhotonLuminosity(_beamSystem->getBeam1(), _beamSystem->getBeam2(), _inputParameters->getBreakupMode(), *_inputParameters);
         }
         break;
-    case StarlightConstants::PHOTONPOMERONNARROW://Both narrow and wide use the same luminosity function.
-    case StarlightConstants::PHOTONPOMERONWIDE:
+    case starlightConstants::PHOTONPOMERONNARROW://Both narrow and wide use the same luminosity function.
+    case starlightConstants::PHOTONPOMERONWIDE:
         if (flag==true) {
             std::cout << "CREATING LUMINOSITY TABLE FOR GAMMA" << std::endl;
             //Luminosity function
-            Gammaaluminosity(*fInputParameters, *fBeamSystem);
+            photonNucleusLuminosity(*_inputParameters, *_beamSystem);
         }
         break;
     default :
         std::cout << "Please go back and define an appropriate interaction type. Thank you."<<std::endl;
     }
 
-    int res = CreateEventChannel();
+    int res = createEventChannel();
 
     if (res)
     {
         return -1;
     }
     
-    fIsInitialised = true;
+    _isInitialised = true;
     
     return 0;
 }
 
-UPCEvent Starlight::ProduceEvent()
+
+upcEvent starlight::produceEvent()
 {
-   if(!fIsInitialised)
+   if(!_isInitialised)
    {
       std::cerr << "Trying to produce event but Starlight is not initialised, exiting..." << std::endl;
       exit(-1);
    }
-   return fEventChannel->ProduceEvent();
+   return _eventChannel->produceEvent();
 }
 
-bool Starlight::CheckForLuminosityTable()
+bool starlight::checkForLuminosityTable()
 {
-    std::cout<<"ISEED: "<<fInputParameters->getseed()<<std::endl;
+    std::cout<<"ISEED: "<<_inputParameters->getSeed()<<std::endl;
     std::ifstream wylumfile;
     wylumfile.precision(15);
     wylumfile.open("slight.txt");
@@ -154,24 +162,24 @@ bool Starlight::CheckForLuminosityTable()
     wylumfile.close();
 
     if ( !(
-                fInputParameters->getZ1() == Z1test
-                && fInputParameters->getA1() == A1test
-                && fInputParameters->getZ2() == Z2test
-                && fInputParameters->getA2() == A2test
-                && fInputParameters->getgamma_em() == Gammatest
-                && fInputParameters->getnumw() == numwtest
-                && fInputParameters->getWmin() == Wmintest
-                && fInputParameters->getYmax() == Ymaxtest
-                && fInputParameters->getnumy() == numytest
-                && fInputParameters->getgg_or_gP() == gg_or_gPtest
-                && fInputParameters->getbreakupmode() == ibreakuptest
-                && fInputParameters->getinterferencemode() == iinterferetest
-                && fInputParameters->getinterferencepercent() == xinterferetest
-                && fInputParameters->getbford() == bfordtest
-                && fInputParameters->getincoherentorcoherent() == in_or_cotest
-		&& fInputParameters->getincoherentfactor() == incoherentfactortest
-                && fInputParameters->getmaximuminterpt() == ptmaxtest
-                && fInputParameters->getNPT() == NPTtest )
+                _inputParameters->getZ1() == Z1test
+                && _inputParameters->getA1() == A1test
+                && _inputParameters->getZ2() == Z2test
+                && _inputParameters->getA2() == A2test
+                && _inputParameters->getgamma_em() == Gammatest
+                && _inputParameters->getnumw() == numwtest
+                && _inputParameters->getWmin() == Wmintest
+                && _inputParameters->getYmax() == Ymaxtest
+                && _inputParameters->getnumy() == numytest
+                && _inputParameters->getgg_or_gP() == gg_or_gPtest
+                && _inputParameters->getBreakupMode() == ibreakuptest
+                && _inputParameters->getInterferenceMode() == iinterferetest
+                && _inputParameters->getInterferencePercent() == xinterferetest
+                && _inputParameters->getbford() == bfordtest
+                && _inputParameters->getIncoherentOrCoherent() == in_or_cotest
+		&& _inputParameters->getIncoherentFactor() == incoherentfactortest
+                && _inputParameters->getMaximumInterPt() == ptmaxtest
+                && _inputParameters->getNPT() == NPTtest )
        )
     {
         //okay, if we are in this loop, it means the input parameters are different than the one's used to create the last set of luminosity tables
@@ -184,22 +192,23 @@ bool Starlight::CheckForLuminosityTable()
 
 }
 
-int Starlight::CreateEventChannel()
+
+int starlight::createEventChannel()
 {
-    switch (fInputParameters->getpidtest()) {
-    case StarlightConstants::ELECTRON:
-    case StarlightConstants::MUON:
-    case StarlightConstants::TAUON:
+    switch (_inputParameters->getPidTest()) {
+    case starlightConstants::ELECTRON:
+    case starlightConstants::MUON:
+    case starlightConstants::TAUON:
     {
-        fEventChannel = new Gammagammaleptonpair(*fInputParameters, *fBeamSystem);
-        if (fEventChannel) return 0;
+        _eventChannel = new Gammagammaleptonpair(*_inputParameters, *_beamSystem);
+        if (_eventChannel) return 0;
         else return -1;
     }
-    case StarlightConstants::A2://jetset
-    case StarlightConstants::ETA://jetset
-    case StarlightConstants::ETAPRIME://jetset
-    case StarlightConstants::ETAC://jetset
-    case StarlightConstants::F0://jetset
+    case starlightConstants::A2://jetset
+    case starlightConstants::ETA://jetset
+    case starlightConstants::ETAPRIME://jetset
+    case starlightConstants::ETAC://jetset
+    case starlightConstants::F0://jetset
     {
 #ifdef ENABLE_PYTHIA
 //	    PythiaOutput=true;
@@ -209,64 +218,64 @@ int Starlight::CreateEventChannel()
         return -1;
         //This way we can output mother and daughter listings.
     }
-    case StarlightConstants::F2:
-    case StarlightConstants::F2PRIME:
-    case StarlightConstants::ZOVERZ03:
+    case starlightConstants::F2:
+    case starlightConstants::F2PRIME:
+    case starlightConstants::ZOVERZ03:
     {
 #ifdef ENABLE_PYTHIA
-        fEventChannel= new Gammagammasingle(*fInputParameters, *fBeamSystem);
-        if (fEventChannel) return 0;
+        _eventChannel= new Gammagammasingle(*_inputParameters, *_beamSystem);
+        if (_eventChannel) return 0;
         else return -1;
 #endif
         std::cout << "Starlight is not compiled against Pythia8, gamma-gamma single cannot be used" << std::endl;
         return -1;
 
     }
-    case StarlightConstants::RHO:
-    case StarlightConstants::RHOZEUS:
-    case StarlightConstants::FOURPRONG:
-    case StarlightConstants::OMEGA://Will probably be three body
-    case StarlightConstants::PHI:
-    case StarlightConstants::JPSI:
-    case StarlightConstants::JPSI2S:
-    case StarlightConstants::JPSI2S_ee:
-    case StarlightConstants::JPSI2S_mumu:
-    case StarlightConstants::JPSI_ee:
-    case StarlightConstants::JPSI_mumu:
-    case StarlightConstants::UPSILON:
-    case StarlightConstants::UPSILON_ee:
-    case StarlightConstants::UPSILON_mumu:
-    case StarlightConstants::UPSILON2S:
-    case StarlightConstants::UPSILON2S_ee:
-    case StarlightConstants::UPSILON2S_mumu:
-    case StarlightConstants::UPSILON3S:
-    case StarlightConstants::UPSILON3S_ee:
-    case StarlightConstants::UPSILON3S_mumu:
+    case starlightConstants::RHO:
+    case starlightConstants::RHOZEUS:
+    case starlightConstants::FOURPRONG:
+    case starlightConstants::OMEGA://Will probably be three body
+    case starlightConstants::PHI:
+    case starlightConstants::JPSI:
+    case starlightConstants::JPSI2S:
+    case starlightConstants::JPSI2S_ee:
+    case starlightConstants::JPSI2S_mumu:
+    case starlightConstants::JPSI_ee:
+    case starlightConstants::JPSI_mumu:
+    case starlightConstants::UPSILON:
+    case starlightConstants::UPSILON_ee:
+    case starlightConstants::UPSILON_mumu:
+    case starlightConstants::UPSILON2S:
+    case starlightConstants::UPSILON2S_ee:
+    case starlightConstants::UPSILON2S_mumu:
+    case starlightConstants::UPSILON3S:
+    case starlightConstants::UPSILON3S_ee:
+    case starlightConstants::UPSILON3S_mumu:
     {
-        if (fInputParameters->getinteractiontest()==2) {
-            fEventChannel = new Gammaanarrowvm(*fInputParameters, *fBeamSystem);
-            if (fEventChannel) return 0;
+        if (_inputParameters->getInteractionTest()==2) {
+            _eventChannel = new Gammaanarrowvm(*_inputParameters, *_beamSystem);
+            if (_eventChannel) return 0;
             else return -1;
         }
 
-        if (fInputParameters->getinteractiontest()==3) {
-            fEventChannel = new Gammaawidevm(*fInputParameters, *fBeamSystem);
-            if (fEventChannel) return 0;
+        if (_inputParameters->getInteractionTest()==3) {
+            _eventChannel = new Gammaawidevm(*_inputParameters, *_beamSystem);
+            if (_eventChannel) return 0;
             else return -1;
         }
         std::cout<<"Please go back and adjust gg_or_gp to 2 or 3 for a VM, main.cpp"<<std::endl;
         return -1;
     }
-    //    case StarlightConstants::JPSI:
-    //    case StarlightConstants::JPSI2S:
+    //    case starlightConstants::JPSI:
+    //    case starlightConstants::JPSI2S:
     //    {
-    //        fEventChannel = new Psifamily(*fInputParameters, *fBeamSystem);
-    //        if (fEventChannel) return 0;
+    //        _eventChannel = new psiFamily(*_inputParameters, *_beamSystem);
+    //        if (_eventChannel) return 0;
     //        else return -1;
     //    }
     //rhoprime
     default:
         std::cout<<"Hi and welcome to default event channel(null), main::CreateEventChannel"<<std::endl;
-        return -1;//Maybe return empty Eventchannel object?
+        return -1;//Maybe return empty eventChannel object?
     }
 }

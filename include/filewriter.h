@@ -1,44 +1,79 @@
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
 
 #ifndef FILEWRITER_H
 #define FILEWRITER_H
 
+
 #include <string>
-#include "upcevent.h"
 #include <fstream>
 
-class FileWriter
+#include "upcevent.h"
+
+
+class fileWriter
 {
 public:
 
     /** Default constructor */
-    FileWriter();
+    fileWriter();
 
     /** Constructor with filename */
-    FileWriter(std::string filename);
+    fileWriter(const std::string& fileName);
 
     /** Destructor */
-    virtual ~FileWriter();
+    virtual ~fileWriter();
 
-    /** Open the file */
-    int Open();
+    /** open the file */
+    int open();
 
-    /** Open file with given filename */
-    int Open(std::string filename);
+    /** open file with given filename */
+    int open(const std::string& fileName);
     
-    /** Close the file */
-    int Close();
+    /** close the file */
+    int close();
 
     /** Set the filename we're writing to */
-    void SetFileName(std::string filename) {fFilename = filename; }
+    void setFileName(const std::string& fileName) { _fileName = fileName; }
 
 protected:
 
    /** The file name */
-    std::string fFilename;
+    std::string _fileName;
 
     /** The file stream */ 
-    std::ofstream fFileStream;
-
+    std::ofstream _fileStream;
 };
 
-#endif // FILEWRITER_H
+
+#endif  // FILEWRITER_H

@@ -1,144 +1,163 @@
-// gammaavm.cpp
-/*
- * $Id: gammaavm.cpp,v 1.0 2010/07/04   $
- *
- * /author 
- *
- * $Log: $
- * Added incoherent t2-> pt2 selection.  Following pp selection scheme
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//    Added incoherent t2-> pt2 selection.  Following pp selection scheme
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
+
 #include <iostream>
 #include <fstream>
 #include <cassert>
+#include <cmath>
 
-using namespace std;
-                                                                                
-#include <math.h>
 #include "gammaavm.h"
 #include "gammaacrosssection.h"
-//______________________________________________________________________________
-Gammaavectormeson::Gammaavectormeson(Inputparameters& input,Beambeamsystem& bbsystem):Eventchannel(input,bbsystem), phaseSpaceGen(0)  //:Readinluminosity(input),bbs(bbsystem)
-{
-  VMNPT=input.getNPT();
-  VMWmax=input.getWmax();
-  VMWmin=input.getWmin();
-  VMYmax=input.getYmax();
-  VMYmin=-1.*VMYmax;
-  VMnumw=input.getnumw();
-  VMnumy=input.getnumy();
-  VMgamma_em=input.getgamma_em();
-  VMinterferencemode=input.getinterferencemode();
-  VMbslope=0.;//Will define in wide/narrow constructor
-  VMpidtest=input.getpidtest();
-  VMptmax=input.getmaximuminterpt();
-  VMdpt=input.getdpt();
-  Randy.SetSeed(input.getseed());
-  VMCoherence=input.getincoherentorcoherent();
-  VMCoherenceFactor=input.getincoherentorcoherent();//probably not needed
 
-  switch(VMpidtest){
-  case StarlightConstants::RHO:
-  case StarlightConstants::RHOZEUS:
-    width=0.1507;
-    mass=0.7685;
+
+using namespace std;
+
+
+//______________________________________________________________________________
+Gammaavectormeson::Gammaavectormeson(inputParameters& input,beamBeamSystem& bbsystem):eventChannel(input,bbsystem), _phaseSpaceGen(0)  //:readLuminosity(input),_bbs(bbsystem)
+{
+  _VMNPT=input.getNPT();
+  _VMWmax=input.getWmax();
+  _VMWmin=input.getWmin();
+  _VMYmax=input.getYmax();
+  _VMYmin=-1.*_VMYmax;
+  _VMnumw=input.getnumw();
+  _VMnumy=input.getnumy();
+  _VMgamma_em=input.getgamma_em();
+  _VMinterferencemode=input.getInterferenceMode();
+  _VMbslope=0.;//Will define in wide/narrow constructor
+  _VMpidtest=input.getPidTest();
+  _VMptmax=input.getMaximumInterPt();
+  _VMdpt=input.getdpt();
+  _randy.SetSeed(input.getSeed());
+  _VMCoherence=input.getIncoherentOrCoherent();
+  _VMCoherenceFactor=input.getIncoherentOrCoherent();//probably not needed
+
+  switch(_VMpidtest){
+  case starlightConstants::RHO:
+  case starlightConstants::RHOZEUS:
+    _width=0.1507;
+    _mass=0.7685;
     break;
-  case StarlightConstants::FOURPRONG:
+  case starlightConstants::FOURPRONG:
 	  // create n-body phase-space generator instance
-	  phaseSpaceGen = new nBodyPhaseSpaceGen();
-	  phaseSpaceGen->setSeed(input.getseed());
-	  width = 0.360;
-	  mass  = 1.350;
+	  _phaseSpaceGen = new nBodyPhaseSpaceGen();
+	  _phaseSpaceGen->setSeed(input.getSeed());
+	  _width = 0.360;
+	  _mass  = 1.350;
 	  break;
-  case StarlightConstants::OMEGA:
-    width=0.00843;
-    mass=0.78194;
+  case starlightConstants::OMEGA:
+    _width=0.00843;
+    _mass=0.78194;
     break;
-  case StarlightConstants::PHI:
-    width=0.00443;
-    mass=1.019413;
+  case starlightConstants::PHI:
+    _width=0.00443;
+    _mass=1.019413;
     break;
-  case StarlightConstants::JPSI:
-  case StarlightConstants::JPSI_ee:
-  case StarlightConstants::JPSI_mumu:
-    width=0.000091;
-    mass=3.09692;
+  case starlightConstants::JPSI:
+  case starlightConstants::JPSI_ee:
+  case starlightConstants::JPSI_mumu:
+    _width=0.000091;
+    _mass=3.09692;
     break;
-  case StarlightConstants::JPSI2S:
-  case StarlightConstants::JPSI2S_ee:
-  case StarlightConstants::JPSI2S_mumu:
-    width=0.000337;
-    mass=3.686093;
+  case starlightConstants::JPSI2S:
+  case starlightConstants::JPSI2S_ee:
+  case starlightConstants::JPSI2S_mumu:
+    _width=0.000337;
+    _mass=3.686093;
     break;
-  case StarlightConstants::UPSILON:
-  case StarlightConstants::UPSILON_ee:
-  case StarlightConstants::UPSILON_mumu:
-    width=0.00005402;
-    mass=9.46030;
+  case starlightConstants::UPSILON:
+  case starlightConstants::UPSILON_ee:
+  case starlightConstants::UPSILON_mumu:
+    _width=0.00005402;
+    _mass=9.46030;
     break;
-  case StarlightConstants::UPSILON2S:
-  case StarlightConstants::UPSILON2S_ee:
-  case StarlightConstants::UPSILON2S_mumu:
-    width=0.00003198;
-    mass=10.02326;
+  case starlightConstants::UPSILON2S:
+  case starlightConstants::UPSILON2S_ee:
+  case starlightConstants::UPSILON2S_mumu:
+    _width=0.00003198;
+    _mass=10.02326;
     break;
-  case StarlightConstants::UPSILON3S:
-  case StarlightConstants::UPSILON3S_ee:
-  case StarlightConstants::UPSILON3S_mumu:
-    width=0.00002032;
-    mass=10.3552;
+  case starlightConstants::UPSILON3S:
+  case starlightConstants::UPSILON3S_ee:
+  case starlightConstants::UPSILON3S_mumu:
+    _width=0.00002032;
+    _mass=10.3552;
     break;
   default: cout<<"No proper vector meson defined, gammaavectormeson::gammaavectormeson"<<endl;
   }  
 }
+
+
 //______________________________________________________________________________
 Gammaavectormeson::~Gammaavectormeson()
 {
-	if (phaseSpaceGen)
-		delete phaseSpaceGen;
+	if (_phaseSpaceGen)
+		delete _phaseSpaceGen;
 }
+
+
 //______________________________________________________________________________
 void Gammaavectormeson::pickwy(double &W, double &Y)
 {
   double dW, dY, xw,xy,xtest;
   int  IW,IY;
   
-  dW = (VMWmax-VMWmin)/double(VMnumw);
-  dY = (VMYmax-VMYmin)/double(VMnumy);
+  dW = (_VMWmax-_VMWmin)/double(_VMnumw);
+  dY = (_VMYmax-_VMYmin)/double(_VMnumy);
   
  L201pwy:
 
-  xw = Randy.Rndom();// random()/(RAND_MAX+1.0);
-  W = VMWmin + xw*(VMWmax-VMWmin);
+  xw = _randy.Rndom();// random()/(RAND_MAX+1.0);
+  W = _VMWmin + xw*(_VMWmax-_VMWmin);
 
-  if (W < 2*StarlightConstants::mpi)
+  if (W < 2*starlightConstants::mpi)
     goto L201pwy;
   
-  IW = int((W-VMWmin)/dW); //+ 1;
-  xy = Randy.Rndom();//random()/(RAND_MAX+1.0);
-  Y = VMYmin + xy*(VMYmax-VMYmin);
-  IY = int((Y-VMYmin)/dY); //+ 1;
-  xtest = Randy.Rndom();//random()/(RAND_MAX+1.0);
+  IW = int((W-_VMWmin)/dW); //+ 1;
+  xy = _randy.Rndom();//random()/(RAND_MAX+1.0);
+  Y = _VMYmin + xy*(_VMYmax-_VMYmin);
+  IY = int((Y-_VMYmin)/dY); //+ 1;
+  xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
 
-  if( xtest > Farray[IW][IY] )
+  if( xtest > _Farray[IW][IY] )
     goto L201pwy;
   
 }         
+
+
 //______________________________________________________________________________                                               
-void Gammaavectormeson::twodecay(StarlightConstants::particle &ipid,
+void Gammaavectormeson::twoBodyDecay(starlightConstants::particle &ipid,
                                  double,  // E (unused)
                                  double  W,
                                  double  px0, double  py0, double  pz0,
@@ -146,7 +165,6 @@ void Gammaavectormeson::twodecay(StarlightConstants::particle &ipid,
                                  double& px2, double& py2, double& pz2,
                                  int&    iFbadevent)
 {
-  
   // This routine decays a particle into two particles of mass mdec,
   // taking spin into account
 
@@ -158,7 +176,7 @@ void Gammaavectormeson::twodecay(StarlightConstants::particle &ipid,
   double E1=0.0,E2=0.0;
 
   //    set the mass of the daughter particles
-  mdec=getdaughtermass(ipid);
+  mdec=getDaughterMass(ipid);
 
   //     calculate the magnitude of the momenta
   if(W < 2*mdec){
@@ -170,12 +188,12 @@ void Gammaavectormeson::twodecay(StarlightConstants::particle &ipid,
   
   //     pick an orientation, based on the spin
   //      phi has a flat distribution in 2*pi
-  phi = Randy.Rndom()*2.*StarlightConstants::pi;//(random()/(RAND_MAX+1.0))* 2.*pi;
+  phi = _randy.Rndom()*2.*starlightConstants::pi;//(random()/(RAND_MAX+1.0))* 2.*pi;
                                                                                                                 
   //     find theta, the angle between one of the outgoing particles and
   //    the beamline, in the frame of the two photons
 
-  theta=gettheta(ipid);
+  theta=getTheta(ipid);
  
   //     compute unboosted momenta
   px1 = sin(theta)*cos(phi)*pmag;
@@ -200,20 +218,22 @@ void Gammaavectormeson::twodecay(StarlightConstants::particle &ipid,
     return;
 
 }
+
+
 //______________________________________________________________________________                                               
 // decays a particle into four particles with isotropic angular distribution
-bool Gammaavectormeson::fourdecay
-(StarlightConstants::particle& ipid,
+bool Gammaavectormeson::fourBodyDecay
+(starlightConstants::particle& ipid,
  const double                  ,           // E (unused)
  const double                  W,          // mass of produced particle
  const double*                 p,          // momentum of produced particle; expected to have size 3
- LorentzVector*                decayVecs,  // array of Lorentz vectors of daughter particles; expected to have size 4
+ lorentzVector*                decayVecs,  // array of Lorentz vectors of daughter particles; expected to have size 4
  int&                          iFbadevent)
 {
 	const double parentMass = W;
 
   // set the mass of the daughter particles
-  const double daughterMass = getdaughtermass(ipid);
+  const double daughterMass = getDaughterMass(ipid);
   if (parentMass < 4 * daughterMass){
 	  cout << " ERROR: W=" << parentMass << " GeV too small" << endl;
 	  iFbadevent = 1;
@@ -223,97 +243,100 @@ bool Gammaavectormeson::fourdecay
   // construct parent four-vector
   const double        parentEnergy = sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]
                                           + parentMass * parentMass);
-  const LorentzVector parentVec(p[0], p[1], p[2], parentEnergy);
+  const lorentzVector parentVec(p[0], p[1], p[2], parentEnergy);
 
   // setup n-body phase-space generator
-  assert(phaseSpaceGen);
+  assert(_phaseSpaceGen);
   static bool firstCall = true;
   if (firstCall) {
 	  const double m[4] = {daughterMass, daughterMass, daughterMass, daughterMass};
-	  phaseSpaceGen->setDecay(4, m);
+	  _phaseSpaceGen->setDecay(4, m);
 	  // estimate maximum phase-space weight
-	  phaseSpaceGen->setMaxWeight(1.01 * phaseSpaceGen->estimateMaxWeight(VMWmax));
+	  _phaseSpaceGen->setMaxWeight(1.01 * _phaseSpaceGen->estimateMaxWeight(_VMWmax));
 	  firstCall = false;
   }
 
   // generate phase-space event
-  if (!phaseSpaceGen->generateDecayAccepted(parentVec))
+  if (!_phaseSpaceGen->generateDecayAccepted(parentVec))
 	  return false;
 
   // set Lorentzvectors of decay daughters
   for (unsigned int i = 0; i < 4; ++i)
-	  decayVecs[i] = phaseSpaceGen->daughter(i);
+	  decayVecs[i] = _phaseSpaceGen->daughter(i);
   return true;
 }
+
+
 //______________________________________________________________________________
-double Gammaavectormeson::getdaughtermass(StarlightConstants::particle &ipid)
+double Gammaavectormeson::getDaughterMass(starlightConstants::particle &ipid)
 {
-  
   //This will return the daughter particles mass, and the final particles outputed id...
   double ytest=0.,mdec=0.;
   
-  switch(VMpidtest){
-  case StarlightConstants::RHO:
-  case StarlightConstants::RHOZEUS:
-  case StarlightConstants::FOURPRONG:
-  case StarlightConstants::OMEGA:
-    mdec = StarlightConstants::mpi;
-    ipid = StarlightConstants::PION;
+  switch(_VMpidtest){
+  case starlightConstants::RHO:
+  case starlightConstants::RHOZEUS:
+  case starlightConstants::FOURPRONG:
+  case starlightConstants::OMEGA:
+    mdec = starlightConstants::mpi;
+    ipid = starlightConstants::PION;
     break;
-  case StarlightConstants::PHI:
-    mdec = StarlightConstants::mK;
-    ipid = StarlightConstants::KAONCHARGE;
+  case starlightConstants::PHI:
+    mdec = starlightConstants::mK;
+    ipid = starlightConstants::KAONCHARGE;
     break;
-  case StarlightConstants::JPSI:
-    mdec = StarlightConstants::mel;
-    ipid = StarlightConstants::ELECTRON;
+  case starlightConstants::JPSI:
+    mdec = starlightConstants::mel;
+    ipid = starlightConstants::ELECTRON;
     break; 
-  case StarlightConstants::JPSI_ee:
-    mdec = StarlightConstants::mel;
-    ipid = StarlightConstants::ELECTRON;
+  case starlightConstants::JPSI_ee:
+    mdec = starlightConstants::mel;
+    ipid = starlightConstants::ELECTRON;
     break; 
-  case StarlightConstants::JPSI_mumu:
-    mdec = StarlightConstants::mmu;
-    ipid = StarlightConstants::MUON;
+  case starlightConstants::JPSI_mumu:
+    mdec = starlightConstants::mmu;
+    ipid = starlightConstants::MUON;
     break; 
-  case StarlightConstants::JPSI2S_ee:
-    mdec = StarlightConstants::mel;
-    ipid = StarlightConstants::ELECTRON;
+  case starlightConstants::JPSI2S_ee:
+    mdec = starlightConstants::mel;
+    ipid = starlightConstants::ELECTRON;
     break; 
-  case StarlightConstants::JPSI2S_mumu:
-    mdec = StarlightConstants::mmu;
-    ipid = StarlightConstants::MUON;
+  case starlightConstants::JPSI2S_mumu:
+    mdec = starlightConstants::mmu;
+    ipid = starlightConstants::MUON;
     break; 
 
-  case StarlightConstants::JPSI2S:
-  case StarlightConstants::UPSILON:
-  case StarlightConstants::UPSILON2S:
-  case StarlightConstants::UPSILON3S:
+  case starlightConstants::JPSI2S:
+  case starlightConstants::UPSILON:
+  case starlightConstants::UPSILON2S:
+  case starlightConstants::UPSILON3S:
     //  decays 50% to e+/e-, 50% to mu+/mu-
-    ytest = Randy.Rndom();//random()/(RAND_MAX+1.0);
+    ytest = _randy.Rndom();//random()/(RAND_MAX+1.0);
     
-    mdec = StarlightConstants::mmu;
-    ipid = StarlightConstants::MUON;
+    mdec = starlightConstants::mmu;
+    ipid = starlightConstants::MUON;
     break;
-  case StarlightConstants::UPSILON_ee:
-  case StarlightConstants::UPSILON2S_ee:
-  case StarlightConstants::UPSILON3S_ee:
-    mdec = StarlightConstants::mel;
-    ipid = StarlightConstants::ELECTRON;
+  case starlightConstants::UPSILON_ee:
+  case starlightConstants::UPSILON2S_ee:
+  case starlightConstants::UPSILON3S_ee:
+    mdec = starlightConstants::mel;
+    ipid = starlightConstants::ELECTRON;
     break;
-  case StarlightConstants::UPSILON_mumu:
-  case StarlightConstants::UPSILON2S_mumu:
-  case StarlightConstants::UPSILON3S_mumu:
-    mdec = StarlightConstants::mmu;
-    ipid = StarlightConstants::MUON;   
+  case starlightConstants::UPSILON_mumu:
+  case starlightConstants::UPSILON2S_mumu:
+  case starlightConstants::UPSILON3S_mumu:
+    mdec = starlightConstants::mmu;
+    ipid = starlightConstants::MUON;   
     break;
   default: cout<<"No daughtermass defined, gammaavectormeson::getdaughtermass"<<endl;
   }
   
   return mdec;
 }
+
+
 //______________________________________________________________________________
-double Gammaavectormeson::gettheta(StarlightConstants::particle ipid)
+double Gammaavectormeson::getTheta(starlightConstants::particle ipid)
 {
   //This depends on the decay angular distribution
   //Valid for rho, phi, omega.
@@ -322,22 +345,22 @@ double Gammaavectormeson::gettheta(StarlightConstants::particle ipid)
   double dndtheta=0.;
  L200td:
                                                                                                                                                  
-  theta = StarlightConstants::pi*Randy.Rndom();//random()/(RAND_MAX+1.0);
-  xtest = Randy.Rndom();//random()/(RAND_MAX+1.0);
+  theta = starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
+  xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
   //  Follow distribution for helicity +/-1
   //  Eq. 19 of J. Breitweg et al., Eur. Phys. J. C2, 247 (1998)
   //  SRK 11/14/2000
   
   switch(ipid){
 	  
-  case StarlightConstants::MUON:
-  case StarlightConstants::ELECTRON:
+  case starlightConstants::MUON:
+  case starlightConstants::ELECTRON:
     //primarily for upsilon/j/psi.  VM->ee/mumu
     dndtheta = sin(theta)*(1.+((cos(theta))*(cos(theta))));
     break;
     
-  case StarlightConstants::PION:
-  case StarlightConstants::KAONCHARGE:
+  case starlightConstants::PION:
+  case starlightConstants::KAONCHARGE:
     //rhos etc
     dndtheta= sin(theta)*(1.-((cos(theta))*(cos(theta))));
     break;
@@ -351,21 +374,29 @@ double Gammaavectormeson::gettheta(StarlightConstants::particle ipid)
   return theta;
   
 }
+
+
 //______________________________________________________________________________
-double Gammaavectormeson::getwidth()
+double Gammaavectormeson::getWidth()
 {
-  return width;
+  return _width;
 }
+
+
 //______________________________________________________________________________
-double Gammaavectormeson::getmass()
+double Gammaavectormeson::getMass()
 {
-  return mass;
+  return _mass;
 }
+
+
 //______________________________________________________________________________
-double Gammaavectormeson::getspin()
+double Gammaavectormeson::getSpin()
 {
   return 1.0; //VM spins are the same
 }
+
+
 //______________________________________________________________________________
 void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &py,double &pz,int &tcheck)
 {
@@ -380,18 +411,18 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
   double photon_spectrum;
   double t1,t2;
 
-  dW = (VMWmax-VMWmin)/double(VMnumw);
-  dY  = (VMYmax-VMYmin)/double(VMnumy);
+  dW = (_VMWmax-_VMWmin)/double(_VMnumw);
+  dY  = (_VMYmax-_VMYmin)/double(_VMnumy);
   
   //Find Egam,Epom in CM frame
   Egam = 0.5*W*exp(Y);
   Epom = 0.5*W*exp(-Y);
   
  L202vm:
-  xt = Randy.Rndom();//random()/(RAND_MAX+1.0);
+  xt = _randy.Rndom();//random()/(RAND_MAX+1.0);
   pt1  = 0.5*xt;
 
-  tmin = ((Egam/VMgamma_em)*(Egam/VMgamma_em));
+  tmin = ((Egam/_VMgamma_em)*(Egam/_VMgamma_em));
   if(tmin > 0.5)
     {
       cout<< " WARNING: tmin= "<<tmin<<endl;
@@ -400,9 +431,9 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
       return;
     }
  
-  xtest = Randy.Rndom();//random()/(RAND_MAX+1.0);
+  xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
   t1 = tmin + pt1*pt1;
-  photon_spectrum = (bbs.getBeam1().formfactor(t1)*bbs.getBeam1().formfactor(t1)*pt1*pt1*pt1)/(t1*t1);
+  photon_spectrum = (_bbs.getBeam1().formFactor(t1)*_bbs.getBeam1().formFactor(t1)*pt1*pt1*pt1)/(t1*t1);
   
   photon_spectrum = 16.*sqrt(tmin)*photon_spectrum/(3.*sqrt(3.));
                                                                                                                                   
@@ -412,26 +443,26 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
     }
   if( xtest > photon_spectrum )
     goto L202vm;
-  phi1 = 2.*StarlightConstants::pi*Randy.Rndom();//random()/(RAND_MAX+1.0);
+  phi1 = 2.*starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
 
-  if( bbs.getBeam1().getZin()==1 && bbs.getBeam1().getAin()==1) {
-    //dsig/dt= exp(-VMbslope*t)
-    xtest = Randy.Rndom();//random()/(RAND_MAX+1.0);
-    t2 = (-1./VMbslope)*log(xtest);
+  if( _bbs.getBeam1().getZin()==1 && _bbs.getBeam1().getAin()==1) {
+    //dsig/dt= exp(-_VMbslope*t)
+    xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+    t2 = (-1./_VMbslope)*log(xtest);
     pt2 = sqrt(1.*t2);
   }
   else{
   L203vm:
-    xt = Randy.Rndom(); //random()/(RAND_MAX+1.0);
+    xt = _randy.Rndom(); //random()/(RAND_MAX+1.0);
     //dAu--Sergey
-    if(bbs.getBeam2().getZin()==1&&bbs.getBeam2().getAin()==2){
+    if(_bbs.getBeam2().getZin()==1&&_bbs.getBeam2().getAin()==2){
       pt2  = 0.8*xt; //it was 0.5,0.8, 1.0  (Sergey)
     }
     else{
-      if(VMCoherence==1) pt2  = 0.5*xt;
+      if(_VMCoherence==1) pt2  = 0.5*xt;
     }
     //       >> Check tmin
-    tmin = ((Epom/VMgamma_em)*(Epom/VMgamma_em));
+    tmin = ((Epom/_VMgamma_em)*(Epom/_VMgamma_em));
 	
     if(tmin > 0.5){
       cout<<" WARNING: tmin= "<<tmin<<endl;
@@ -440,31 +471,31 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
       return;
     }
     
-    xtest = Randy.Rndom();
+    xtest = _randy.Rndom();
     t2 = tmin + pt2*pt2;
     
-    if(bbs.getBeam2().getZin()==1&&bbs.getBeam2().getAin()==2){
-      if(1.0 < bbs.getBeam2().formfactor(t2)*pt2)  cout <<"POMERON"<<endl;
-      if( xtest > bbs.getBeam2().formfactor(t2)*pt2) goto L203vm;
+    if(_bbs.getBeam2().getZin()==1&&_bbs.getBeam2().getAin()==2){
+      if(1.0 < _bbs.getBeam2().formFactor(t2)*pt2)  cout <<"POMERON"<<endl;
+      if( xtest > _bbs.getBeam2().formFactor(t2)*pt2) goto L203vm;
     }
     else{
-	if(VMCoherence==1){
-      		if(1.0 < bbs.getBeam2().formfactor(t2)*bbs.getBeam2().formfactor(t2)*pt2) cout <<"POMERON:Sergey"<<endl;
-      		if( xtest > bbs.getBeam2().formfactor(t2)*bbs.getBeam2().formfactor(t2)*pt2 )
+	if(_VMCoherence==1){
+      		if(1.0 < _bbs.getBeam2().formFactor(t2)*_bbs.getBeam2().formFactor(t2)*pt2) cout <<"POMERON:Sergey"<<endl;
+      		if( xtest > _bbs.getBeam2().formFactor(t2)*_bbs.getBeam2().formFactor(t2)*pt2 )
 		goto L203vm;
 	}
     }//dAu else end
 
-        if(VMCoherence==0 && (!(bbs.getBeam2().getZin()==1&&bbs.getBeam2().getAin()==2))){
+        if(_VMCoherence==0 && (!(_bbs.getBeam2().getZin()==1&&_bbs.getBeam2().getAin()==2))){
 		  //Incoherent pt2 selection
-                  //dsig/dt= exp(-VMbslope*t)
-                  xtest = Randy.Rndom();//random()/(RAND_MAX+1.0);
-                  t2 = (-1./VMbslope)*log(xtest);//-1./(VMbslope*VMNucleus)?
+                  //dsig/dt= exp(-_VMbslope*t)
+                  xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+                  t2 = (-1./_VMbslope)*log(xtest);//-1./(_VMbslope*VMNucleus)?
                   pt2 = sqrt(1.*t2);
                   }
 
   }//else end from pp
-  phi2 = 2.*StarlightConstants::pi*Randy.Rndom();//random()/(RAND_MAX+1.0);
+  phi2 = 2.*starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
   
   px1 = pt1*cos(phi1);
   py1 = pt1*sin(phi1);
@@ -480,14 +511,16 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
   pz = sqrt(W*W+pt*pt)*sinh(Y);
 
   // Randomly choose to make pz negative 50% of the time
-  if(bbs.getBeam2().getZin()==1&&bbs.getBeam2().getAin()==2){
+  if(_bbs.getBeam2().getZin()==1&&_bbs.getBeam2().getAin()==2){
     pz = -pz;
   }
   else{
-    if (Randy.Rndom() >= 0.5) pz = -pz;
+    if (_randy.Rndom() >= 0.5) pz = -pz;
   }
 
 }
+
+
 //______________________________________________________________________________
 void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, double &pz,
                              int&) // tcheck (unused)
@@ -498,72 +531,72 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
   double dW=0.,dY=0.,yleft=0.,yfract=0.,xpt=0.,pt1=0.,ptfract=0.,pt=0.,pt2=0.,theta=0.;
   int IY=0,j=0;
   
-  dW = (VMWmax-VMWmin)/double(VMnumw);
-  dY  = (VMYmax-VMYmin)/double(VMnumy);
+  dW = (_VMWmax-_VMWmin)/double(_VMnumw);
+  dY  = (_VMYmax-_VMYmin)/double(_VMnumy);
   
   //  Y is already fixed; choose a pt
   //  Follow the approavh in pickwy.f
-  // in   fptarray(IY,pt) IY=1 corresponds to Y=0, IY=numy/2 corresponds to +y
+  // in   _fptarray(IY,pt) IY=1 corresponds to Y=0, IY=numy/2 corresponds to +y
   
   IY=int(fabs(Y)/dY);//+1;
-  if (IY > (VMnumy/2)-1){
-    IY=(VMnumy/2)-1;
+  if (IY > (_VMnumy/2)-1){
+    IY=(_VMnumy/2)-1;
   }
   
   yleft=fabs(Y)-(IY)*dY;
   yfract=yleft*dY;
                                                                                                                                   
-  xpt=Randy.Rndom(); //random()/(RAND_MAX+1.0);
+  xpt=_randy.Rndom(); //random()/(RAND_MAX+1.0);
                                                                                                                                   
-  for(j=0;j<VMNPT+1;j++){
-    if (xpt < fptarray[IY][j]) goto L60;
+  for(j=0;j<_VMNPT+1;j++){
+    if (xpt < _fptarray[IY][j]) goto L60;
   }
  L60:
   
   //  now do linear interpolation - start with extremes
   
   if (j == 0){
-    pt1=xpt/fptarray[IY][j]*VMdpt/2.;
+    pt1=xpt/_fptarray[IY][j]*_VMdpt/2.;
     goto L80;
   }
-  if (j == VMNPT){
-    pt1=(VMptmax-VMdpt/2.) + VMdpt/2.*(xpt-fptarray[IY][j])/(1.-fptarray[IY][j]);
+  if (j == _VMNPT){
+    pt1=(_VMptmax-_VMdpt/2.) + _VMdpt/2.*(xpt-_fptarray[IY][j])/(1.-_fptarray[IY][j]);
     goto L80;
   }
   
   //  we're in the middle
   
-  ptfract=(xpt-fptarray[IY][j])/(fptarray[IY][j+1]-fptarray[IY][j]);
-  pt1=(j+1)*VMdpt+ptfract*VMdpt;
+  ptfract=(xpt-_fptarray[IY][j])/(_fptarray[IY][j+1]-_fptarray[IY][j]);
+  pt1=(j+1)*_VMdpt+ptfract*_VMdpt;
   
   //  at an extreme in y?
-  if (IY == (VMnumy/2)-1){
+  if (IY == (_VMnumy/2)-1){
     pt=pt1;
     goto L120;
   }
  L80:
   //  interpolate in y repeat for next fractional y bin
                                                                                                                                   
-  for(j=0;j<VMNPT+1;j++){
-    if (xpt < fptarray[IY+1][j]) goto L90;
+  for(j=0;j<_VMNPT+1;j++){
+    if (xpt < _fptarray[IY+1][j]) goto L90;
   }
  L90:
   
   //  now do linear interpolation - start with extremes
                                                                                                                                   
   if (j == 0){
-    pt2=xpt/fptarray[IY+1][j]*VMdpt/2.;
+    pt2=xpt/_fptarray[IY+1][j]*_VMdpt/2.;
     goto L100;
   }
-  if (j == VMNPT){
-    pt2=(VMptmax-VMdpt/2.) + VMdpt/2.*(xpt-fptarray[IY+1][j])/(1.-fptarray[IY+1][j]);
+  if (j == _VMNPT){
+    pt2=(_VMptmax-_VMdpt/2.) + _VMdpt/2.*(xpt-_fptarray[IY+1][j])/(1.-_fptarray[IY+1][j]);
     goto L100;
   }
   
   //  we're in the middle
                                                                                                                                   
-  ptfract=(xpt-fptarray[IY+1][j])/(fptarray[IY+1][j+1]-fptarray[IY+1][j]);
-  pt2=(j+1)*VMdpt+ptfract*VMdpt;
+  ptfract=(xpt-_fptarray[IY+1][j])/(_fptarray[IY+1][j+1]-_fptarray[IY+1][j]);
+  pt2=(j+1)*_VMdpt+ptfract*_VMdpt;
                                                                                                                                   
  L100:
                                                                                                                                   
@@ -575,7 +608,7 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
                                                                                                                                   
   //  we have a pt
                                                                                                                                   
-  theta=2.*StarlightConstants::pi*Randy.Rndom();//(random()/(RAND_MAX+1.0))*2.*pi;
+  theta=2.*starlightConstants::pi*_randy.Rndom();//(random()/(RAND_MAX+1.0))*2.*pi;
   px=pt*cos(theta);
   py=pt*sin(theta);
                                                                                                                                   
@@ -585,47 +618,51 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
   E  = sqrt(W*W+pt*pt)*cosh(Y);
   pz = sqrt(W*W+pt*pt)*sinh(Y);
   //      randomly choose to make pz negative 50% of the time
-  if(Randy.Rndom()>=0.5) pz = -pz;
+  if(_randy.Rndom()>=0.5) pz = -pz;
 }
+
+
 //______________________________________________________________________________
-StarlightConstants::event Gammaavectormeson::produceevent(int&)
+starlightConstants::event Gammaavectormeson::produceEvent(int&)
 {
 // Not used; return default event
-	return StarlightConstants::event();
+	return starlightConstants::event();
 }
-//------------------------------------------------------------------------------
-UPCEvent Gammaavectormeson::ProduceEvent()
+
+
+//______________________________________________________________________________
+upcEvent Gammaavectormeson::produceEvent()
 {
     // The new event type
-    UPCEvent event;
+    upcEvent event;
 
     int iFbadevent=0;
     int tcheck=0;
-    StarlightConstants::particle ipid = StarlightConstants::UNKNOWN;
+    starlightConstants::particle ipid = starlightConstants::UNKNOWN;
 
-    if (VMpidtest == StarlightConstants::FOURPRONG) {
+    if (_VMpidtest == starlightConstants::FOURPRONG) {
 	    double        comenergy = 0;
 	    double        mom[3]    = {0, 0, 0};
 	    double        E         = 0;
-	    LorentzVector decayVecs[4];
+	    lorentzVector decayVecs[4];
 	    do {
 		    double rapidity = 0;
 		    pickwy(comenergy, rapidity);
-		    if (VMinterferencemode == 0)
+		    if (_VMinterferencemode == 0)
 			    momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
-		    else if (VMinterferencemode==1)
+		    else if (_VMinterferencemode==1)
 			    vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
-	    } while (!fourdecay(ipid, E, comenergy, mom, decayVecs, iFbadevent));
+	    } while (!fourBodyDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent));
 	    if ((iFbadevent == 0) and (tcheck == 0))
 		    for (unsigned int i = 0; i < 4; ++i) {
-			    StarlightParticle daughter(decayVecs[i].GetPx(),
+			    starlightParticle daughter(decayVecs[i].GetPx(),
 			                               decayVecs[i].GetPy(),
 			                               decayVecs[i].GetPz(),
-			                               StarlightConstants::UNKNOWN,  // energy 
-			                               StarlightConstants::UNKNOWN,  // mass
+			                               starlightConstants::UNKNOWN,  // energy 
+			                               starlightConstants::UNKNOWN,  // _mass
 			                               ipid,
 			                               (i < 2) ? -1 : +1);
-			    event.AddParticle(daughter);
+			    event.addParticle(daughter);
 		    }
     } else {
 	    double comenergy = 0.;
@@ -637,18 +674,18 @@ UPCEvent Gammaavectormeson::ProduceEvent()
 
 	    pickwy(comenergy,rapidity);
 
-	    if (VMinterferencemode==0){
+	    if (_VMinterferencemode==0){
 		    momenta(comenergy,rapidity,E,momx,momy,momz,tcheck);
-	    } else if (VMinterferencemode==1){
+	    } else if (_VMinterferencemode==1){
 		    vmpt(comenergy,rapidity,E,momx,momy,momz,tcheck);
 	    }
 
-	    twodecay(ipid,E,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+	    twoBodyDecay(ipid,E,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
 
 	    if (iFbadevent==0&&tcheck==0) {
 		    int q1=0,q2=0;
 
-		    double xtest = Randy.Rndom(); 
+		    double xtest = _randy.Rndom(); 
 		    if (xtest<0.5)
 			    {
 				    q1=1;
@@ -660,11 +697,11 @@ UPCEvent Gammaavectormeson::ProduceEvent()
 		    }
 
 		    //     The new stuff
-		    StarlightParticle particle1(px1, py1, pz1, StarlightConstants::UNKNOWN, StarlightConstants::UNKNOWN, ipid, q1);
-		    event.AddParticle(particle1);
+		    starlightParticle particle1(px1, py1, pz1, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, ipid, q1);
+		    event.addParticle(particle1);
 
-		    StarlightParticle particle2(px2, py2, pz2, StarlightConstants::UNKNOWN, StarlightConstants::UNKNOWN, ipid, q2);
-		    event.AddParticle(particle2);
+		    starlightParticle particle2(px2, py2, pz2, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, ipid, q2);
+		    event.addParticle(particle2);
 		    //     End of the new stuff
 
 	    }
@@ -673,37 +710,41 @@ UPCEvent Gammaavectormeson::ProduceEvent()
     return event;
 
 }
+
+
 //______________________________________________________________________________
-Gammaanarrowvm::Gammaanarrowvm(Inputparameters& input,Beambeamsystem& bbsystem):Gammaavectormeson(input,bbsystem)
+Gammaanarrowvm::Gammaanarrowvm(inputParameters& input,beamBeamSystem& bbsystem):Gammaavectormeson(input,bbsystem)
 {
   //Need to make sigma object/run it and read in luminosity tables.
   //will just do that outside...of it?
   cout<<"Reading in luminosity tables. Gammaanarrowvm()"<<endl;
   read();
   cout<<"Creating and calculating crosssection. Gammaanarrowvm()"<<endl;
-  Narrowresonancesigma sigma(input,bbsystem);
-  sigma.crosssectioncalculation(bwnormsave);
-  VMbslope=sigma.getbslope(); 
+  narrowResonanceCrossSection sigma(input,bbsystem);
+  sigma.crossSectionCalculation(_bwnormsave);
+  _VMbslope=sigma.getbslope(); 
 }
+
+
 //______________________________________________________________________________
 Gammaanarrowvm::~Gammaanarrowvm()
-{
-  
-}
+{ }
+
+
 //______________________________________________________________________________
-Gammaawidevm::Gammaawidevm(Inputparameters& input,Beambeamsystem& bbsystem):Gammaavectormeson(input,bbsystem)
+Gammaawidevm::Gammaawidevm(inputParameters& input,beamBeamSystem& bbsystem):Gammaavectormeson(input,bbsystem)
 {
   cout<<"Reading in luminosity tables. Gammaawidevm()"<<endl;
   read();
   cout<<"Creating and calculating crosssection. Gammaawidevm()"<<endl;
-  Wideresonancesigma sigma(input,bbsystem);
-  sigma.crosssectioncalculation(bwnormsave);
-  VMbslope=sigma.getbslope();
+  wideResonanceCrossSection sigma(input,bbsystem);
+  sigma.crossSectionCalculation(_bwnormsave);
+  _VMbslope=sigma.getbslope();
 }
+
+
 //______________________________________________________________________________
 Gammaawidevm::~Gammaawidevm()
-{
-
-}
+{ }
 
 

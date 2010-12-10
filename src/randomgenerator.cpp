@@ -1,10 +1,45 @@
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
+
 #include <iostream>
 #include <fstream>
+#include <cmath>
+
+#include "randomgenerator.h"
+
 
 using namespace std;
 
-#include <math.h>
-#include "randomgenerator.h"
 
 //USED IN ROOT under TRANDOM3
 // Random number generator class based on
@@ -45,7 +80,8 @@ using namespace std;
 /* with an appropriate reference to your work.                     */
 /////////////////////////////////////////////////////////////////////
 
-void Randomgenerator::SetSeed(unsigned int seed)
+
+void randomGenerator::SetSeed(unsigned int seed)
 {
 //  Set the random generator sequence
 // if seed is 0 (default value) a TUUID is generated and used to fill
@@ -55,18 +91,19 @@ void Randomgenerator::SetSeed(unsigned int seed)
 // with many zero in the bit pattern (like 2**28).
 // see http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/MT2002/emt19937ar.html
 
-  fCount624 = 624;
+  _count624 = 624;
   int i,j;
   
-  fMt[0] = seed;
+  _Mt[0] = seed;
   j = 1;
   // use multipliers from  Knuth's "Art of Computer Programming" Vol. 2, 3rd Ed. p.106
   for(i=j; i<624; i++) {
-    fMt[i] = (1812433253 * ( fMt[i-1]  ^ ( fMt[i-1] >> 30)) + i);
+    _Mt[i] = (1812433253 * ( _Mt[i-1]  ^ ( _Mt[i-1] >> 30)) + i);
   }
 }
 
-double Randomgenerator::Rndom(int)
+
+double randomGenerator::Rndom(int)
 {
 
 //  Machine independent random number generator.
@@ -83,25 +120,25 @@ double Randomgenerator::Rndom(int)
    const unsigned int kLowerMask =       0x7fffffff;
    const unsigned int kMatrixA =         0x9908b0df;
 
-   if (fCount624 >= kN) {
+   if (_count624 >= kN) {
       register int i;
 
       for (i=0; i < kN-kM; i++) {
-         y = (fMt[i] & kUpperMask) | (fMt[i+1] & kLowerMask);
-         fMt[i] = fMt[i+kM] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
+         y = (_Mt[i] & kUpperMask) | (_Mt[i+1] & kLowerMask);
+         _Mt[i] = _Mt[i+kM] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
       }
 
       for (   ; i < kN-1    ; i++) {
-         y = (fMt[i] & kUpperMask) | (fMt[i+1] & kLowerMask);
-         fMt[i] = fMt[i+kM-kN] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
+         y = (_Mt[i] & kUpperMask) | (_Mt[i+1] & kLowerMask);
+         _Mt[i] = _Mt[i+kM-kN] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
       }
 
-      y = (fMt[kN-1] & kUpperMask) | (fMt[0] & kLowerMask);
-      fMt[kN-1] = fMt[kM-1] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
-      fCount624 = 0;
+      y = (_Mt[kN-1] & kUpperMask) | (_Mt[0] & kLowerMask);
+      _Mt[kN-1] = _Mt[kM-1] ^ (y >> 1) ^ ((y & 0x1) ? kMatrixA : 0x0);
+      _count624 = 0;
    }
 
-   y = fMt[fCount624++];
+   y = _Mt[_count624++];
    y ^=  (y >> 11);
    y ^= ((y << 7 ) & kTemperingMaskB );
    y ^= ((y << 15) & kTemperingMaskC );
@@ -110,4 +147,3 @@ double Randomgenerator::Rndom(int)
    if (y) return ( (double) y * 2.3283064365386963e-10); // * Power(2,-32)
    return Rndom();
 }
-

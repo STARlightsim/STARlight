@@ -1,7 +1,42 @@
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
+
 #ifndef GAMMAAVM_H
 #define GAMMAAVM_H
 
+
 #include <vector>
+
 #include "starlightconstants.h"
 #include "readinluminosity.h"
 #include "beambeamsystem.h"
@@ -10,59 +45,65 @@
 #include "upcevent.h"
 #include "nBodyPhaseSpaceGen.h"
 
-class Gammaavectormeson:public Eventchannel//:public Readinluminosity
+
+class Gammaavectormeson : public eventChannel
 {
   
  public:
-  Gammaavectormeson(Inputparameters& input,Beambeamsystem& bbsystem);
+  Gammaavectormeson(inputParameters& input,beamBeamSystem& bbsystem);
   virtual ~Gammaavectormeson();
-  StarlightConstants::event produceevent(int &ievent);
+  starlightConstants::event produceEvent(int &ievent);
   
-   UPCEvent ProduceEvent();
+   upcEvent produceEvent();
 
   void pickwy(double &W, double &Y);
   void momenta(double W,double Y,double &E,double &px,double &py,double &pz,int &tcheck);
   void vmpt(double W,double Y,double &E,double &px,double &py, double &pz,int &tcheck);
-  void twodecay(StarlightConstants::particle &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,double &pz2,int &iFbadevent);
-  bool fourdecay(StarlightConstants::particle& ipid, const double E, const double W, const double* p, LorentzVector* decayMoms, int& iFbadevent);
-  double getmass();
-  double getwidth();
-  virtual double gettheta(StarlightConstants::particle ipid);
-  double getspin();
-  double VMbslope;
-  virtual double getdaughtermass(StarlightConstants::particle &ipid);                
+  void twoBodyDecay(starlightConstants::particle &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,double &pz2,int &iFbadevent);
+  bool fourBodyDecay(starlightConstants::particle& ipid, const double E, const double W, const double* p, lorentzVector* decayMoms, int& iFbadevent);
+  double getMass();
+  double getWidth();
+  virtual double getTheta(starlightConstants::particle ipid);
+  double getSpin();
+  double _VMbslope;
+  virtual double getDaughterMass(starlightConstants::particle &ipid);                
   
  private:
-  StarlightConstants::particle VMpidtest;
-  int VMnumw;
-  int VMnumy;
-  int VMinterferencemode;
-  int VMCoherence;
-  double VMCoherenceFactor;
-  double VMgamma_em;
-  double VMNPT;
-  double VMWmax;
-  double VMWmin;
-  double VMYmax;
-  double VMYmin;
-  double mass;
-  double width;
-  double VMptmax;
-  double VMdpt;
-  nBodyPhaseSpaceGen* phaseSpaceGen;
+  starlightConstants::particle _VMpidtest;
+  int _VMnumw;
+  int _VMnumy;
+  int _VMinterferencemode;
+  int _VMCoherence;
+  double _VMCoherenceFactor;
+  double _VMgamma_em;
+  double _VMNPT;
+  double _VMWmax;
+  double _VMWmin;
+  double _VMYmax;
+  double _VMYmin;
+  double _mass;
+  double _width;
+  double _VMptmax;
+  double _VMdpt;
+  nBodyPhaseSpaceGen* _phaseSpaceGen;
 	
 };
-class Gammaanarrowvm:public Gammaavectormeson
+
+
+class Gammaanarrowvm : public Gammaavectormeson
 {
  public:
-  Gammaanarrowvm(Inputparameters& input,Beambeamsystem& bbsystem);
+  Gammaanarrowvm(inputParameters& input, beamBeamSystem& bbsystem);
   virtual ~Gammaanarrowvm();
-                                                                                                                                
 };
-class Gammaawidevm:public Gammaavectormeson
+
+
+class Gammaawidevm : public Gammaavectormeson
 {  
  public:
-  Gammaawidevm(Inputparameters& input,Beambeamsystem& bbsystem);
+  Gammaawidevm(inputParameters& input, beamBeamSystem& bbsystem);
   virtual ~Gammaawidevm();
 };
-#endif //GAMMAAVM_H
+
+
+#endif  // GAMMAAVM_H

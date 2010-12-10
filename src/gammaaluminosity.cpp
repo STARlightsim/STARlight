@@ -1,31 +1,40 @@
-// gammaaluminosity.cpp
-/*
- * $Id: gammaaluminosity.cpp,v 1.0 2010/07/04   $
- *
- * /author Joseph Butterwoth
- *
- * $Log: $
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
+
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
-using namespace std;
-
-#include <math.h>
 #include "inputparameters.h"
 #include "beambeamsystem.h"
 #include "beam.h"
@@ -33,18 +42,29 @@ using namespace std;
 #include "nucleus.h"
 #include "bessel.h"
 #include "gammaaluminosity.h"
+
+
+using namespace std;
+
+
 //______________________________________________________________________________
-Gammaaluminosity::Gammaaluminosity(Inputparameters& input, Beambeamsystem& bbsystem)
-  :Gammaacrosssection(input,bbsystem),inputgammaa(input)
+photonNucleusLuminosity::photonNucleusLuminosity(inputParameters& input, beamBeamSystem& bbsystem)
+  : photonNucleusCrossSection(input, bbsystem), _inputgammaa(input)
 {
   cout <<"Creating Luminosity Tables."<<endl;
-  gammaadifferentialluminosity();
+  photonNucleusDifferentialLuminosity();
   cout <<"Luminosity Tables created."<<endl;
 }
-//______________________________________________________________________________
-void Gammaaluminosity::gammaadifferentialluminosity()
-{
 
+
+//______________________________________________________________________________
+photonNucleusLuminosity::~photonNucleusLuminosity()
+{ }
+
+
+//______________________________________________________________________________
+void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
+{
 	// double Av,Wgp,cs,cvma;
   double W,dW,dY;
   double Egamma,Y;
@@ -59,8 +79,8 @@ void Gammaaluminosity::gammaadifferentialluminosity()
   
   double  bwnorm,Eth;
 
-  dW = (inputgammaa.getWmax()-inputgammaa.getWmin())/inputgammaa.getnumw();
-  dY  = (inputgammaa.getYmax()-(-1.0)*inputgammaa.getYmax())/inputgammaa.getnumy();
+  dW = (_inputgammaa.getWmax()-_inputgammaa.getWmin())/_inputgammaa.getnumw();
+  dY  = (_inputgammaa.getYmax()-(-1.0)*_inputgammaa.getYmax())/_inputgammaa.getnumy();
     
   // Write the values of W used in the calculation to slight.txt.  
   wylumfile.open("slight.txt");
@@ -68,51 +88,51 @@ void Gammaaluminosity::gammaadifferentialluminosity()
   wylumfile << getbbs().getBeam1().getAin() <<endl;
   wylumfile << getbbs().getBeam2().getZin() <<endl;
   wylumfile << getbbs().getBeam2().getAin() <<endl;
-  wylumfile << inputgammaa.getgamma_em() <<endl;
-  wylumfile << inputgammaa.getWmax() <<endl;
-  wylumfile << inputgammaa.getWmin() <<endl;
-  wylumfile << inputgammaa.getnumw() <<endl;
-  wylumfile << inputgammaa.getYmax() <<endl;
-  wylumfile << inputgammaa.getnumy() <<endl;
-  wylumfile << inputgammaa.getgg_or_gP() <<endl;
-  wylumfile << inputgammaa.getbreakupmode() <<endl;
-  wylumfile << inputgammaa.getinterferencemode() <<endl;
-  wylumfile << inputgammaa.getinterferencepercent() <<endl;
-  wylumfile << inputgammaa.getincoherentorcoherent() <<endl;
-  wylumfile << inputgammaa.getincoherentfactor() <<endl;
-  wylumfile << inputgammaa.getbford() <<endl;
-  wylumfile << inputgammaa.getmaximuminterpt() <<endl;
-  wylumfile << inputgammaa.getNPT() <<endl;
+  wylumfile << _inputgammaa.getgamma_em() <<endl;
+  wylumfile << _inputgammaa.getWmax() <<endl;
+  wylumfile << _inputgammaa.getWmin() <<endl;
+  wylumfile << _inputgammaa.getnumw() <<endl;
+  wylumfile << _inputgammaa.getYmax() <<endl;
+  wylumfile << _inputgammaa.getnumy() <<endl;
+  wylumfile << _inputgammaa.getgg_or_gP() <<endl;
+  wylumfile << _inputgammaa.getBreakupMode() <<endl;
+  wylumfile << _inputgammaa.getInterferenceMode() <<endl;
+  wylumfile << _inputgammaa.getInterferencePercent() <<endl;
+  wylumfile << _inputgammaa.getIncoherentOrCoherent() <<endl;
+  wylumfile << _inputgammaa.getIncoherentFactor() <<endl;
+  wylumfile << _inputgammaa.getbford() <<endl;
+  wylumfile << _inputgammaa.getMaximumInterPt() <<endl;
+  wylumfile << _inputgammaa.getNPT() <<endl;
   
   //     Normalize the Breit-Wigner Distribution and write values of W to slight.txt
   testint=0.0;
   //Grabbing default value for C in the breit-wigner calculation
-  C=getdefaultC();
-  for(int i=0;i<=inputgammaa.getnumw()-1;i++){    
-    W = inputgammaa.getWmin() + double(i)*dW + 0.5*dW;
-    testint = testint + breitwigner(W,C)*dW;
+  C=getDefaultC();
+  for(int i=0;i<=_inputgammaa.getnumw()-1;i++){    
+    W = _inputgammaa.getWmin() + double(i)*dW + 0.5*dW;
+    testint = testint + breitWigner(W,C)*dW;
     wylumfile << W << endl;
   }
   bwnorm = 1./testint;
   
   //     Write the values of Y used in the calculation to slight.txt.
-  for(int i=0;i<=inputgammaa.getnumy()-1;i++){
-    Y = -1.0*inputgammaa.getYmax() + double(i)*dY + 0.5*dY;
+  for(int i=0;i<=_inputgammaa.getnumy()-1;i++){
+    Y = -1.0*_inputgammaa.getYmax() + double(i)*dY + 0.5*dY;
     wylumfile << Y << endl;
   }
     
-  Eth=0.5*(((inputgammaa.getWmin()+StarlightConstants::mp)*(inputgammaa.getWmin()
-							    +StarlightConstants::mp)-StarlightConstants::mp*StarlightConstants::mp)/
-	   (inputgammaa.getProtonEnergy()+sqrt(inputgammaa.getProtonEnergy()*
-					       inputgammaa.getProtonEnergy()-StarlightConstants::mp*StarlightConstants::mp)));
+  Eth=0.5*(((_inputgammaa.getWmin()+starlightConstants::mp)*(_inputgammaa.getWmin()
+							    +starlightConstants::mp)-starlightConstants::mp*starlightConstants::mp)/
+	   (_inputgammaa.getProtonEnergy()+sqrt(_inputgammaa.getProtonEnergy()*
+					       _inputgammaa.getProtonEnergy()-starlightConstants::mp*starlightConstants::mp)));
   
-  for(int i=0;i<=inputgammaa.getnumw()-1;i++){
+  for(int i=0;i<=_inputgammaa.getnumw()-1;i++){
 
-    W = inputgammaa.getWmin() + double(i)*dW + 0.5*dW;
+    W = _inputgammaa.getWmin() + double(i)*dW + 0.5*dW;
     
-    for(int j=0;j<=inputgammaa.getnumy()-1;j++){
+    for(int j=0;j<=_inputgammaa.getnumy()-1;j++){
 
-      Y = -1.0*inputgammaa.getYmax() + double(j)*dY + 0.5*dY;
+      Y = -1.0*_inputgammaa.getYmax() + double(j)*dY + 0.5*dY;
       Egamma = 0.5*W*exp(Y);
       
       dndWdY = 0.; 
@@ -120,7 +140,7 @@ void Gammaaluminosity::gammaadifferentialluminosity()
       if(Egamma > Eth){
         if(Egamma > getMaxPhotonEnergy())Egamma = getMaxPhotonEnergy();
         csgA=getcsgA(Egamma,W);
-        dndWdY = Egamma*photonflux(Egamma)*csgA*breitwigner(W,bwnorm);
+        dndWdY = Egamma*photonFlux(Egamma)*csgA*breitWigner(W,bwnorm);
       }
 
       wylumfile << dndWdY << endl;
@@ -130,17 +150,18 @@ void Gammaaluminosity::gammaadifferentialluminosity()
 
   wylumfile.close();
   
-  if(inputgammaa.getinterferencemode()==1) 
+  if(_inputgammaa.getInterferenceMode()==1) 
     pttablegen();
  
   wylumfile.open("slight.txt",ios::app);
   cout << "bwnorm: "<< bwnorm <<endl;
   wylumfile << bwnorm << endl;
   wylumfile.close();
-	
 }
+
+
 //______________________________________________________________________________
-void Gammaaluminosity::pttablegen()
+void photonNucleusLuminosity::pttablegen()
 {
   //  Calculates the pt spectra for VM production with interference
   //  Follows S. Klein and J. Nystrand, Phys. Rev Lett. 84, 2330 (2000).
@@ -194,13 +215,13 @@ void Gammaaluminosity::pttablegen()
   NGAUSS=16;
 
   //Setting input calls to variables/less calls this way.
-  double Ymax=inputgammaa.getYmax();
-  int numy = inputgammaa.getnumy();
-  double Ep = inputgammaa.getProtonEnergy();
-  int ibreakup = inputgammaa.getbreakupmode();
-  double NPT = inputgammaa.getNPT();
-  double gamma_em=inputgammaa.getgamma_em();
-  double mass= getchannelmass();
+  double Ymax=_inputgammaa.getYmax();
+  int numy = _inputgammaa.getnumy();
+  double Ep = _inputgammaa.getProtonEnergy();
+  int ibreakup = _inputgammaa.getBreakupMode();
+  double NPT = _inputgammaa.getNPT();
+  double gamma_em=_inputgammaa.getgamma_em();
+  double mass= getChannelMass();
   
   //  loop over y from 0 (not -ymax) to yma
   
@@ -208,8 +229,8 @@ void Gammaaluminosity::pttablegen()
   for(int jy=1;jy<=numy/2;jy++){
     Yp=(double(jy)-0.5)*dY;
     
-    //  Find the photon energies.  Yp >= 0, so Egamma2 is smaller
-    //  Use the vector meson mass for W here - neglect the width
+    // Find the photon energies.  Yp >= 0, so Egamma2 is smaller
+    // Use the vector meson mass for W here - neglect the width
     
     Egamma1 = 0.5*mass*exp(Yp);
     Egamma2 = 0.5*mass*exp(-Yp);
@@ -218,23 +239,23 @@ void Gammaaluminosity::pttablegen()
     //  Photonuclear Cross Section 1
     //  Gamma-proton CM energy
     
-    Wgp=sqrt(2.*Egamma1*(Ep+sqrt(Ep*Ep-StarlightConstants::mp*
-				 StarlightConstants::mp))+StarlightConstants::mp*StarlightConstants::mp);
+    Wgp=sqrt(2.*Egamma1*(Ep+sqrt(Ep*Ep-starlightConstants::mp*
+				 starlightConstants::mp))+starlightConstants::mp*starlightConstants::mp);
     
     // Calculate V.M.+proton cross section
     
-    cs=sqrt(16.*StarlightConstants::pi*getf2o4pi()*getbslope()*
-	    StarlightConstants::hbarc*StarlightConstants::hbarc*sigmagp(Wgp)
-	    /StarlightConstants::alpha);
+    cs=sqrt(16.*starlightConstants::pi*getf2o4pi()*getbslope()*
+	    starlightConstants::hbarc*starlightConstants::hbarc*sigmagp(Wgp)
+	    /starlightConstants::alpha);
     
-    // Calculate V.M.+Nucleus cross section
+    // Calculate V.M.+nucleus cross section
     
     cvma=sigma_A(cs);
     
     // Calculate Av = dsigma/dt(t=0) Note Units: fm**2/Gev**2
     
-    Av=(StarlightConstants::alpha*cvma*cvma)/(16.*StarlightConstants::pi
-					      *getf2o4pi()*StarlightConstants::hbarc*StarlightConstants::hbarc);
+    Av=(starlightConstants::alpha*cvma*cvma)/(16.*starlightConstants::pi
+					      *getf2o4pi()*starlightConstants::hbarc*starlightConstants::hbarc);
     
     tmin  = ((mass*mass)/(4.*Egamma1*gamma_em)*(mass*mass)/(4.*Egamma1*gamma_em));
     tmax  = tmin + 0.25;
@@ -244,9 +265,9 @@ void Gammaaluminosity::pttablegen()
     
     for(int k=0;k<NGAUSS;k++){
       t     = sqrt(ax*xg[k]+bx);
-      csgA  = csgA + ag[k]*getbbs().getBeam2().formfactor(t)*getbbs().getBeam2().formfactor(t);
+      csgA  = csgA + ag[k]*getbbs().getBeam2().formFactor(t)*getbbs().getBeam2().formFactor(t);
       t     = sqrt(ax*(-xg[k])+bx);
-      csgA  = csgA + ag[k]*getbbs().getBeam2().formfactor(t)*getbbs().getBeam2().formfactor(t);
+      csgA  = csgA + ag[k]*getbbs().getBeam2().formFactor(t)*getbbs().getBeam2().formFactor(t);
     }
     
     csgA = 0.5*(tmax-tmin)*csgA;
@@ -255,16 +276,16 @@ void Gammaaluminosity::pttablegen()
 	   
     // Photonuclear Cross Section 2
     
-    Wgp=sqrt(2.*Egamma2*(Ep+sqrt(Ep*Ep-StarlightConstants::mp*
-				 StarlightConstants::mp))+StarlightConstants::mp*StarlightConstants::mp);
+    Wgp=sqrt(2.*Egamma2*(Ep+sqrt(Ep*Ep-starlightConstants::mp*
+				 starlightConstants::mp))+starlightConstants::mp*starlightConstants::mp);
     
-    cs=sqrt(16.*StarlightConstants::pi*getf2o4pi()*getbslope()*
-	    StarlightConstants::hbarc*StarlightConstants::hbarc*sigmagp(Wgp)/StarlightConstants::alpha);
+    cs=sqrt(16.*starlightConstants::pi*getf2o4pi()*getbslope()*
+	    starlightConstants::hbarc*starlightConstants::hbarc*sigmagp(Wgp)/starlightConstants::alpha);
     
     cvma=sigma_A(cs);
     
-    Av=(StarlightConstants::alpha*cvma*cvma)/(16.*StarlightConstants::pi
-					      *getf2o4pi()*StarlightConstants::hbarc*StarlightConstants::hbarc);
+    Av=(starlightConstants::alpha*cvma*cvma)/(16.*starlightConstants::pi
+					      *getf2o4pi()*starlightConstants::hbarc*starlightConstants::hbarc);
     
     tmin  = (((mass*mass)/(4.*Egamma2*gamma_em))*((mass*mass)/(4.*Egamma2*gamma_em)));
     tmax  = tmin + 0.25;
@@ -274,9 +295,9 @@ void Gammaaluminosity::pttablegen()
     
     for(int k=0;k<NGAUSS;k++){
       t     = sqrt(ax*xg[k]+bx);
-      csgA  = csgA + ag[k]*getbbs().getBeam2().formfactor(t)*getbbs().getBeam2().formfactor(t);
+      csgA  = csgA + ag[k]*getbbs().getBeam2().formFactor(t)*getbbs().getBeam2().formFactor(t);
       t     = sqrt(ax*(-xg[k])+bx);
-      csgA  = csgA + ag[k]*getbbs().getBeam2().formfactor(t)*getbbs().getBeam2().formfactor(t);
+      csgA  = csgA + ag[k]*getbbs().getBeam2().formFactor(t)*getbbs().getBeam2().formFactor(t);
     }
 	   
     csgA = 0.5*(tmax-tmin)*csgA;
@@ -293,7 +314,7 @@ void Gammaaluminosity::pttablegen()
     
     //  set  bmax according to the smaller photon energy, following flux.f
     
-    bmax=bmin+6.*StarlightConstants::hbarc*gamma_em/Egamma2;
+    bmax=bmin+6.*starlightConstants::hbarc*gamma_em/Egamma2;
     bmin = getbbs().getBeam1().RNuc()+getbbs().getBeam2().RNuc();
     //  if we allow for nuclear breakup, use a slightly smaller bmin
     
@@ -306,7 +327,7 @@ void Gammaaluminosity::pttablegen()
     // loop over pt
     for(int i=1;i<=NPT;i++){
       
-      pt = (float(i)-0.5)*inputgammaa.getdpt();
+      pt = (float(i)-0.5)*_inputgammaa.getdpt();
       sum1=0.0;
       // loop over b
       for(int j=1;j<=NBIN;j++){
@@ -319,31 +340,33 @@ void Gammaaluminosity::pttablegen()
 	//  do this as a Gaussian integral, from 0 to pi
 	for(int k=0;k<NGAUSS;k++){
 	  
-	  theta=xg[k]*StarlightConstants::pi;
+	  theta=xg[k]*starlightConstants::pi;
 	  //  allow for a linear sum of interfering and non-interfering amplitudes
-	  amp_i_2 = A1 + A2 - 2.*inputgammaa.getinterferencepercent()
-	    *sqrt(A1*A2)*cos(pt*b*cos(theta)/StarlightConstants::hbarc);
+	  amp_i_2 = A1 + A2 - 2.*_inputgammaa.getInterferencePercent()
+	    *sqrt(A1*A2)*cos(pt*b*cos(theta)/starlightConstants::hbarc);
 	  sumg  = sumg+ag[k]*amp_i_2;
 	}
 	//  this is dn/dpt^2
 	//  The factor of 2 is because the theta integral is only from 0 to pi
 	sumint=2.*sumg*b*db;
 	if (ibreakup > 1)
-	  sumint=sumint*getbbs().probabilityofbreakup(b);
+	  sumint=sumint*getbbs().probabilityOfBreakup(b);
 	sum1 = sum1 + sumint;
       }
       //  normalization is done in readDiffLum.f
       //  This is d^2sigma/dpt^2; convert to dsigma/dpt
       //CHECK THIS OUT---->      write(20,*)sum1*pt*dpt
-      wylumfile << sum1*pt*inputgammaa.getdpt() <<endl;
+      wylumfile << sum1*pt*_inputgammaa.getdpt() <<endl;
       //  end of pt loop
     }
     //  end of y loop
   }
   wylumfile.close();
 }
+
+
 //______________________________________________________________________________
-double *Gammaaluminosity::vmsigmapt(double W,double Egamma,double *SIGMAPT)
+double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGMAPT)
 {
   //
   //  This subroutine calculates the effect of the nuclear form factor
@@ -376,8 +399,8 @@ double *Gammaaluminosity::vmsigmapt(double W,double Egamma,double *SIGMAPT)
   NGAUSS=16;
 
   //     >> Initialize
-  pxmax = 10.*(StarlightConstants::hbarc/getbbs().getBeam1().RNuc());
-  pymax = 10.*(StarlightConstants::hbarc/getbbs().getBeam1().RNuc());
+  pxmax = 10.*(starlightConstants::hbarc/getbbs().getBeam1().RNuc());
+  pymax = 10.*(starlightConstants::hbarc/getbbs().getBeam1().RNuc());
   
   Nxbin = 500;
   
@@ -386,9 +409,9 @@ double *Gammaaluminosity::vmsigmapt(double W,double Egamma,double *SIGMAPT)
   
   //     >> Loop over total Pt to find distribution
       
-      for(int k=1;k<=inputgammaa.getNPT();k++){
+      for(int k=1;k<=_inputgammaa.getNPT();k++){
 	
-              pt=inputgammaa.getdpt()*(double(k)-0.5);
+              pt=_inputgammaa.getdpt()*(double(k)-0.5);
               
               px0 = pt;
               py0 = 0.0;
@@ -408,26 +431,26 @@ double *Gammaaluminosity::vmsigmapt(double W,double Egamma,double *SIGMAPT)
 		  pt1 = sqrt( px*px + py*py );
 		  //  pomeron pt
 		  pt2 = sqrt( (px-px0)*(px-px0) + (py-py0)*(py-py0) );
-		  q1  = sqrt( ((Egamma/inputgammaa.getgamma_em())*(Egamma/inputgammaa.getgamma_em())) + pt1*pt1 );        
-		  q2  = sqrt( ((Epom/inputgammaa.getgamma_em())*(Epom/inputgammaa.getgamma_em()))   + pt2*pt2 );
+		  q1  = sqrt( ((Egamma/_inputgammaa.getgamma_em())*(Egamma/_inputgammaa.getgamma_em())) + pt1*pt1 );        
+		  q2  = sqrt( ((Epom/_inputgammaa.getgamma_em())*(Epom/_inputgammaa.getgamma_em()))   + pt2*pt2 );
 		  
 		  //  photon form factor
 		  // add in phase space factor?
-		  f1  = (getbbs().getBeam1().formfactor(q1*q1)*getbbs().getBeam1().formfactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
+		  f1  = (getbbs().getBeam1().formFactor(q1*q1)*getbbs().getBeam1().formFactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
 		  
 		  //  Pomeron form factor
-		  f2  = getbbs().getBeam1().formfactor(q2*q2)*getbbs().getBeam1().formfactor(q2*q2);
+		  f2  = getbbs().getBeam1().formFactor(q2*q2)*getbbs().getBeam1().formFactor(q2*q2);
 		  sumy= sumy + ag[j]*f1*f2;
 		  
 		  //  now consider other half of py phase space - why is this split?
 		  py = 0.5*pymax*(-xg[j])+0.5*pymax;
 		  pt1 = sqrt( px*px + py*py );
 		  pt2 = sqrt( (px-px0)*(px-px0) + (py-py0)*(py-py0) );
-		  q1  = sqrt( ((Egamma/inputgammaa.getgamma_em())*Egamma/inputgammaa.getgamma_em()) + pt1*pt1 );
-		  q2  = sqrt( ((Epom/inputgammaa.getgamma_em())*(Epom/inputgammaa.getgamma_em()))   + pt2*pt2 );
+		  q1  = sqrt( ((Egamma/_inputgammaa.getgamma_em())*Egamma/_inputgammaa.getgamma_em()) + pt1*pt1 );
+		  q2  = sqrt( ((Epom/_inputgammaa.getgamma_em())*(Epom/_inputgammaa.getgamma_em()))   + pt2*pt2 );
 		  //  add in phase space factor?
-		  f1  = (getbbs().getBeam1().formfactor(q1*q1)*getbbs().getBeam1().formfactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
-		  f2  = getbbs().getBeam1().formfactor(q2*q2)*getbbs().getBeam1().formfactor(q2*q2);
+		  f1  = (getbbs().getBeam1().formFactor(q1*q1)*getbbs().getBeam1().formFactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
+		  f2  = getbbs().getBeam1().formFactor(q2*q2)*getbbs().getBeam1().formFactor(q2*q2);
 		  sumy= sumy + ag[j]*f1*f2;
       
 		}
@@ -442,8 +465,10 @@ double *Gammaaluminosity::vmsigmapt(double W,double Egamma,double *SIGMAPT)
       }
       return (SIGMAPT);
 }
+
+
 //______________________________________________________________________________
-double Gammaaluminosity::nofe(double Egamma,double bimp)
+double photonNucleusLuminosity::nofe(double Egamma, double bimp)
 {
   //Function for the calculation of the "photon density".
   //nofe=numberofgammas/(energy*area)
@@ -451,21 +476,16 @@ double Gammaaluminosity::nofe(double Egamma,double bimp)
   
   double X=0.,nofex=0.,factor1=0.,factor2=0.,factor3=0.;
   
-  X = (bimp*Egamma)/(inputgammaa.getgamma_em()*StarlightConstants::hbarc);
+  X = (bimp*Egamma)/(_inputgammaa.getgamma_em()*starlightConstants::hbarc);
   
   if( X <= 0.0) 
     cout<<"In nofe, X= "<<X<<endl;
   
   factor1 = (double(getbbs().getBeam1().getZin()*getbbs().getBeam1().getZin())
-	     *StarlightConstants::alpha)/(StarlightConstants::pi*StarlightConstants::pi);
+	     *starlightConstants::alpha)/(starlightConstants::pi*starlightConstants::pi);
 
   factor2 = 1./(Egamma*bimp*bimp);
   factor3 = X*X*(bessel::dbesk1(X))*(bessel::dbesk1(X));
   nofex    = factor1*factor2*factor3;
   return nofex;
-}
-//______________________________________________________________________________
-Gammaaluminosity::~Gammaaluminosity()
-{
-
 }

@@ -2,20 +2,20 @@
 //
 //    Copyright 2010
 //
-//    This file is part of Starlight.
+//    This file is part of starlight.
 //
-//    Starlight is free software: you can redistribute it and/or modify
+//    starlight is free software: you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
 //    the Free Software Foundation, either version 3 of the License, or
 //    (at your option) any later version.
 //	  
-//    Starlight is distributed in the hope that it will be useful,
+//    starlight is distributed in the hope that it will be useful,
 //    but WITHOUT ANY WARRANTY; without even the implied warranty of
 //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 //    GNU General Public License for more details.
 //	  
 //    You should have received a copy of the GNU General Public License
-//    along with Starlight. If not, see <http://www.gnu.org/licenses/>.
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
 //
 ///////////////////////////////////////////////////////////////////////////
 //
@@ -37,7 +37,7 @@
 
 
 using namespace std;
-using namespace StarlightConstants;
+using namespace starlightConstants;
 
 
 nBodyPhaseSpaceGen::nBodyPhaseSpaceGen()
@@ -85,7 +85,7 @@ nBodyPhaseSpaceGen::setDecay(const vector<double>& daughterMasses)  // array of 
 	_breakupMom.resize(_n, 0);
 	// prepare vector for daughter Lorentz vectors
 	_daughters.clear();
-	_daughters.resize(_n, LorentzVector(0, 0, 0, 0));
+	_daughters.resize(_n, lorentzVector(0, 0, 0, 0));
 	// calculate normalization
 	_norm = 1 / (2 * pow(twoPi, 2 * (int)_n - 3) * factorial(_n - 2));
 	resetMaxWeightObserved();
@@ -109,7 +109,7 @@ nBodyPhaseSpaceGen::setDecay(const unsigned int nmbOfDaughters,  // number of da
 // generates event with certain n-body mass and momentum and returns event weigth
 // general purpose function
 double
-nBodyPhaseSpaceGen::generateDecay(const LorentzVector& nBody)  // Lorentz vector of n-body system in lab frame
+nBodyPhaseSpaceGen::generateDecay(const lorentzVector& nBody)  // Lorentz vector of n-body system in lab frame
 {
 	const double nBodyMass = nBody.M();
 	if (_n < 2) {
@@ -132,7 +132,7 @@ nBodyPhaseSpaceGen::generateDecay(const LorentzVector& nBody)  // Lorentz vector
 // generates full event with certain n-body mass and momentum only, when event is accepted (return value = true)
 // this function is more efficient, if only weighted evens are needed
 bool
-nBodyPhaseSpaceGen::generateDecayAccepted(const LorentzVector& nBody,      // Lorentz vector of n-body system in lab frame
+nBodyPhaseSpaceGen::generateDecayAccepted(const lorentzVector& nBody,      // Lorentz vector of n-body system in lab frame
                                           const double         maxWeight)  // if positive, given value is used as maximum weight, otherwise _maxWeight
 {
 	const double nBodyMass = nBody.M();
@@ -195,16 +195,16 @@ nBodyPhaseSpaceGen::calcWeight()
 // systems, the Lorentz vector of the decaying system, and the decay angles
 // uses the break-up momenta calculated by calcWeight()
 void
-nBodyPhaseSpaceGen::calcEventKinematics(const LorentzVector& nBody)  // Lorentz vector of n-body system in lab frame
+nBodyPhaseSpaceGen::calcEventKinematics(const lorentzVector& nBody)  // Lorentz vector of n-body system in lab frame
 {
 	// build event starting in n-body RF going down to 2-body RF
 	// is more efficicient than Raubold-Lynch method, since it requitres only one rotation and boost per daughter
-	LorentzVector P = nBody;  // Lorentz of (i + 1)-body system in lab frame
+	lorentzVector P = nBody;  // Lorentz of (i + 1)-body system in lab frame
 	for (unsigned int i = _n - 1; i >= 1; --i) {  // loop from n-body down to 2-body
 		// construct Lorentz vector of daughter _m[i] in (i + 1)-body RF
 		const double   sinTheta = sqrt(1 - _cosTheta[i] * _cosTheta[i]);
 		const double   pT       = _breakupMom[i] * sinTheta;
-		LorentzVector& daughter = _daughters[i];
+		lorentzVector& daughter = _daughters[i];
 		daughter.SetPxPyPzE(pT * cos(_phi[i]),
 		                    pT * sin(_phi[i]),
 		                    _breakupMom[i] * _cosTheta[i],

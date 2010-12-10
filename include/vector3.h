@@ -1,3 +1,36 @@
+///////////////////////////////////////////////////////////////////////////
+//
+//    Copyright 2010
+//
+//    This file is part of starlight.
+//
+//    starlight is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    starlight is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
+//
+///////////////////////////////////////////////////////////////////////////
+//
+// File and Version Information:
+// $Rev::                             $: revision of last commit
+// $Author::                          $: author of last commit
+// $Date::                            $: date of last commit
+//
+// Description:
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////
+
+
 #ifndef VECTOR3_H
 #define VECTOR3_H
 
@@ -6,49 +39,49 @@
 #include <cmath>
 
 
-class Vector3
+class vector3
 {
    public:
-      Vector3();
-      Vector3(double *vec);
-      Vector3(double x, double y, double z);
-      virtual ~Vector3();
+      vector3();
+      vector3(double *vec);
+      vector3(double x, double y, double z);
+      virtual ~vector3();
       
-      const double* GetVector() const { return fVec; }
+      const double* GetVector() const { return _vec; }
       
       void SetVector(double x, double y, double z);
       void SetVector(double *vec);
 
-	    Vector3& operator =(const Vector3& vec)
+	    vector3& operator =(const vector3& vec)
 	    {
 		    if (this != &vec)
 			    for (unsigned int i = 0; i < 3; ++i)
-				    fVec[i] = vec.fVec[i];
+				    _vec[i] = vec._vec[i];
 		    return *this;
 	    }
 
-	    Vector3& operator +=(const Vector3& vec)
+	    vector3& operator +=(const vector3& vec)
 	    {
 		    for (unsigned int i = 0; i < 3; ++i)
-			    fVec[i] += vec.fVec[i];
+			    _vec[i] += vec._vec[i];
 		    return *this;
 	    }
-	    Vector3& operator -=(const Vector3& vec)
+	    vector3& operator -=(const vector3& vec)
 	    {
 		    for (unsigned int i = 0; i < 3; ++i)
-			    fVec[i] -= vec.fVec[i];
+			    _vec[i] -= vec._vec[i];
 		    return *this;
 	    }
 
-	    double X() const { return fVec[0]; }
-	    double Y() const { return fVec[1]; }
-	    double Z() const { return fVec[2]; }
+	    double X() const { return _vec[0]; }
+	    double Y() const { return _vec[1]; }
+	    double Z() const { return _vec[2]; }
 
-	    double Mag2() const { return fVec[0] * fVec[0] + fVec[1] * fVec[1] + fVec[2] * fVec[2]; }
+	    double Mag2() const { return _vec[0] * _vec[0] + _vec[1] * _vec[1] + _vec[2] * _vec[2]; }
 	    double Mag () const { return sqrt(Mag2()); }
       
 	    friend std::ostream& operator << (std::ostream&  out,
-	                                      const Vector3& vec)
+	                                      const vector3& vec)
 	    {
 		    out << "(" << vec.X() << ", " << vec.Y() << ", " << vec.Z() << ")";
 		    return out;
@@ -56,8 +89,9 @@ class Vector3
 	
    private:
       
-      double fVec[3];
+      double _vec[3];
    
 };
 
-#endif // VECTOR3_H
+
+#endif  // VECTOR3_H
