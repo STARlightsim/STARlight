@@ -78,7 +78,7 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   double y[starlightLimits::MAXYBINS];
   double xlum = 0., wmev=0,Normalize = 0.,OldNorm;
  
-  Normalize = 1./sqrt(1*(double)_input2photon.getnumw()*_input2photon.getnumy()); //if your grid is very fine, you'll want high accuracy-->small Normalize
+  Normalize = 1./sqrt(1*(double)_input2photon.numWBins()*_input2photon.nmbRapidityBins()); //if your grid is very fine, you'll want high accuracy-->small Normalize
   OldNorm   = Normalize;
   
   //Writing out our input parameters+(w,y)grid+diff._lum.
@@ -86,34 +86,34 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   wylumfile << getBeam1().getAin() <<endl;
   wylumfile << getBeam2().getZin() <<endl;
   wylumfile << getBeam2().getAin() <<endl;
-  wylumfile << _input2photon.getgamma_em() <<endl;
-  wylumfile << _input2photon.getWmax() <<endl;
-  wylumfile << _input2photon.getWmin() <<endl;
-  wylumfile << _input2photon.getnumw() <<endl;
-  wylumfile << _input2photon.getYmax() <<endl;
-  wylumfile << _input2photon.getnumy() <<endl;
-  wylumfile << _input2photon.getgg_or_gP() <<endl;
-  wylumfile << _input2photon.getBreakupMode() <<endl;
-  wylumfile << _input2photon.getInterferenceMode() <<endl;
-  wylumfile << _input2photon.getInterferencePercent() <<endl;
-  wylumfile << _input2photon.getIncoherentOrCoherent() <<endl;
-  wylumfile << _input2photon.getIncoherentFactor() <<endl;
+  wylumfile << _input2photon.beamLorentzGamma() <<endl;
+  wylumfile << _input2photon.maxW() <<endl;
+  wylumfile << _input2photon.minW() <<endl;
+  wylumfile << _input2photon.numWBins() <<endl;
+  wylumfile << _input2photon.maxRapidity() <<endl;
+  wylumfile << _input2photon.nmbRapidityBins() <<endl;
+  wylumfile << _input2photon.productionMode() <<endl;
+  wylumfile << _input2photon.beamBreakupMode() <<endl;
+  wylumfile << _input2photon.interferenceEnabled() <<endl;
+  wylumfile << _input2photon.interferenceStrength() <<endl;
+  wylumfile << _input2photon.coherentProduction() <<endl;
+  wylumfile << _input2photon.incoherentFactor() <<endl;
   wylumfile << _input2photon.getbford() <<endl;
-  wylumfile << _input2photon.getMaximumInterPt() <<endl;
-  wylumfile << _input2photon.getNPT() <<endl;
-  for (int i = 1; i <= _input2photon.getnumw(); i++){
-    w[i] = _input2photon.getWmin() + (_input2photon.getWmax()-_input2photon.getWmin())/_input2photon.getnumw()*i;
+  wylumfile << _input2photon.maxPtInterference() <<endl;
+  wylumfile << _input2photon.nmbPtBinsInterference() <<endl;
+  for (unsigned int i = 1; i <= _input2photon.numWBins(); ++i) {
+    w[i] = _input2photon.minW() + (_input2photon.maxW()-_input2photon.minW())/_input2photon.numWBins()*i;
     //Old code had it write to a table for looking up...
     wylumfile << w[i] <<endl;
   }
-  for (int i = 1; i<=_input2photon.getnumy(); i++){
-    y[i] = _input2photon.getYmax()*(i-1.)/_input2photon.getnumy();
+  for (unsigned int i = 1; i <= _input2photon.nmbRapidityBins(); ++i) {
+    y[i] = _input2photon.maxRapidity()*(i-1.)/_input2photon.nmbRapidityBins();
     //Old code had it write to a table for looking up...
     wylumfile << y[i] <<endl;
   }
-  for (int i = 1; i<=_input2photon.getnumw(); i++){   //For each (w,y) pair, calculate the diff. _lum
+  for (unsigned int i = 1; i <= _input2photon.numWBins(); ++i) {   //For each (w,y) pair, calculate the diff. _lum
       //double SUM = 0.;not used
-      for (int j = 1; j<=_input2photon.getnumy(); j++){
+      for (unsigned int j = 1; j <= _input2photon.nmbRapidityBins(); ++j) {
 	wmev = w[i]*1000.;
 	xlum = wmev * D2LDMDY(wmev,y[j],Normalize);   //Convert photon flux dN/dW to Lorentz invariant photon number WdN/dW
 	if (j==1) OldNorm = Normalize;       //Save value of integral for each new W(i) and Y(i)
@@ -135,7 +135,7 @@ double twoPhotonLuminosity::D2LDMDY(double M,double Y,double &Normalize)
   
   _W1    =  M/2.0*exp(Y);
   _W2    =  M/2.0*exp(-Y);
-  _gamma = _input2photon.getgamma_em();
+  _gamma = _input2photon.beamLorentzGamma();
   int Zin=getBeam1().getZin();
   D2LDMDYx = 2.0/M*Zin*Zin*Zin*Zin*(starlightConstants::alpha*starlightConstants::alpha)*integral(Normalize);  //treats it as a symmetric collision
   Normalize = D2LDMDYx*M/(2.0*getBeam1().getZin()*getBeam1().getZin()*
@@ -535,7 +535,7 @@ double twoPhotonLuminosity::integrand(double ,  // N (unused)
   double  D = sqrt(b1*b1+b2*b2-2*b1*b2*cos(theta))*starlightConstants::hbarcmev;
   double  integrandx = Nphoton(_W1,_gamma,b1)*Nphoton(_W2,_gamma,b2)*b1*b2*probabilityOfBreakup(D); 
   //why not just use gamma?
-  //switching _input2photon.getgamma_em()to gamma
+  //switching _input2photon.beamLorentzGamma()to gamma
   return integrandx;
 }
 

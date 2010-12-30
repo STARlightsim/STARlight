@@ -37,6 +37,7 @@
 
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <vector>
 
@@ -130,6 +131,71 @@ operator << (std::ostream&         out,
 	for (unsigned int i = 0; i < (vec.size() - 1); ++i)
 		out << "[" << i << "] = " << vec[i] << ", ";
 	return out << "[" << vec.size() - 1 << "] = " << vec[vec.size() - 1] << "}";
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// various stuff
+
+// indicates progess by printing relative or absolute progress in regular intervals
+inline
+std::ostream&
+progressIndicator(const unsigned int currentPos,
+                  const unsigned int nmbTotal,
+                  const bool         absolute   = false,
+                  const unsigned int fieldWidth = 3,
+                  const unsigned int nmbSteps   = 10,
+                  std::ostream&      out        = std::cout)
+{
+	const double step = nmbTotal / (double)nmbSteps;
+	if ((int)(currentPos / step) - (int)((currentPos - 1) / step) != 0) {
+		if (absolute)
+			out << "    " << std::setw(fieldWidth) << currentPos << " of " << nmbTotal << std::endl;
+		else
+			out << "    " << std::setw(fieldWidth) << (int)(currentPos / step) * nmbSteps << " %" << std::endl;
+	}
+	return out;
+} 
+
+
+// converts bool to "true"/"false" string
+inline
+std::string trueFalse(const bool val)
+{
+	if (val)
+		return "true";
+	else
+		return "false";
+}
+
+// converts bool to "yes"/"no" string
+inline
+std::string yesNo(const bool val)
+{
+	if (val)
+		return "yes";
+	else
+		return "no";
+}
+
+// converts bool to "on"/"off" string
+inline
+std::string onOff(const bool val)
+{
+	if (val)
+		return "on";
+	else
+		return "off";
+}
+
+// converts bool to "enabled"/"disabled" string
+inline
+std::string enDisabled(const bool val)
+{
+	if (val)
+		return "enabled";
+	else
+		return "disabled";
 }
 
 

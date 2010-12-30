@@ -48,11 +48,11 @@ using namespace std;
 readLuminosity::readLuminosity(inputParameters& input)//:inputread(input)
 {
   //storing inputparameters into protected variables for the object to use them
-  _ReadInputNPT=input.getNPT();
-  _ReadInputnumy=input.getnumy();
-  _ReadInputnumw=input.getnumw();
-  _ReadInputgg_or_gP=input.getgg_or_gP();
-  _ReadInputinterferencemode=input.getInterferenceMode();
+  _ReadInputNPT=input.nmbPtBinsInterference();
+  _ReadInputnumy=input.nmbRapidityBins();
+  _ReadInputnumw=input.numWBins();
+  _ReadInputgg_or_gP=input.productionMode();
+  _ReadInputinterferencemode=input.interferenceEnabled();
   
 }
 

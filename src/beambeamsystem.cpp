@@ -59,17 +59,17 @@ beamBeamSystem::beamBeamSystem(beam& beam_1, beam& beam_2, inputParameters& inpu
 	//cout <<"bbsys, beam1 woodsaxon: "<<beam_1.getWoodSaxonRadius()<<endl;
 	//cout <<"bbsys, beam2 woodsaxon: "<<beam_2.getWoodSaxonRadius()<<endl;
 	//Storing input parameters to protected variables
-	_BBSInputGamma_em=input.getgamma_em();
-	_BBSInputBreakupmode=input.getBreakupMode();
+	_BBSInputGamma_em=input.beamLorentzGamma();
+	_BBSInputBreakupmode=input.beamBreakupMode();
 }
 
 
 //______________________________________________________________________________
 beamBeamSystem::beamBeamSystem(inputParameters &input) :
-	_BBSInputGamma_em(input.getgamma_em())
-	,_BBSInputBreakupmode(input.getBreakupMode())
-	,_beam1(input.getZ1(), input.getA1(), input.getbford(), input.getIncoherentOrCoherent(), input)
-	,_beam2(input.getZ2(), input.getA2(), input.getbford(), input.getIncoherentOrCoherent(), input)
+	_BBSInputGamma_em(input.beamLorentzGamma())
+	,_BBSInputBreakupmode(input.beamBreakupMode())
+	,_beam1(input.beam1Z(), input.beam1A(), input.getbford(), input.coherentProduction(), input)
+	,_beam2(input.beam2Z(), input.beam2A(), input.getbford(), input.coherentProduction(), input)
 { }
 
 

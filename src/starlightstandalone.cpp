@@ -33,19 +33,23 @@
 
 #include <iostream>
 
-#include "starlightstandalone.h"
+#include "reportingUtils.h"
 #include "starlight.h"
 #include "inputparameters.h"
 #include "eventfilewriter.h"
+#include "starlightstandalone.h"
 
 
-starlightStandalone::starlightStandalone() :
-        _starlight(0)
-        ,_inputParameters(0)
-        ,_configFileName(std::string("slight.in"))
-        ,_numberOfEvents(1)
-        ,_numberOfEventsPerFile(_numberOfEvents)
-        ,_fileName(std::string("slight.out"))
+using namespace std;
+
+
+starlightStandalone::starlightStandalone()
+	:	_configFileName       ("slight.in"),
+		_dataFileName         ("slight.out"),
+		_starlight            (0),
+		_inputParameters      (0),
+		_nmbEventsTot       (1),
+		_nmbEventsPerFile(_nmbEventsTot)
 { }
 
 
@@ -53,49 +57,56 @@ starlightStandalone::~starlightStandalone()
 { }
 
 
-int starlightStandalone::init()
+bool
+starlightStandalone::init()
 {
-    // Reading input parameters from config file
-    _inputParameters = new inputParameters();
-    _inputParameters->init(_configFileName);
+	// read input parameters from config file
+	_inputParameters = new inputParameters();
+	if (!_inputParameters->init(_configFileName)) {
+		printWarn << "problems initializing input parameters. cannot initialize starlight.";
+		return false;
+	}
 
-    // Get the number of events, for now we write everything to one file
-    _numberOfEvents = _inputParameters->getNumberOfEvents();
-    _numberOfEventsPerFile = _numberOfEvents;
+	// get the number of events
+	// for now we write everything to one file
+	_nmbEventsTot     = _inputParameters->nmbEvents();
+	_nmbEventsPerFile = _nmbEventsTot;
 
-    // Creating the starlight object
-    _starlight = new starlight();
-
-    // Give starlight the input parameters
-    _starlight->setInputParameters(_inputParameters);
-
-    // Initialising starlight
-    _starlight->init();
+	// create the starlight object
+	_starlight = new starlight();
+	// give starlight the input parameters
+	_starlight->setInputParameters(_inputParameters);
+	// initialize starlight
+	_starlight->init();
     
-    return 0;
+	return true;
 }
 
 
-int starlightStandalone::run()
+bool
+starlightStandalone::run()
 {
-    int ntotev = 0;
+	if (!_starlight) {
+		printWarn << "null pointer to starlight object. make sure that init() was called. "
+		          << "cannot generate events." << endl;
+		return false;
+	}
 
-    eventFileWriter fw;
+	// open output file
+	eventFileWriter fileWriter;
+	fileWriter.open(_dataFileName);
 
-    fw.open(_fileName);
+	printInfo << "generating events:" << endl;
+	unsigned int nmbEvents = 0;
+	while (nmbEvents < _nmbEventsTot) {
+		for (unsigned int iEvent = 0; (iEvent < _nmbEventsPerFile) && (nmbEvents < _nmbEventsTot);
+		     ++iEvent, ++nmbEvents) {
+			progressIndicator(iEvent, _nmbEventsTot, true, 4);
+			upcEvent event = _starlight->produceEvent();
+			fileWriter.writeEvent(event, iEvent);
+		}
+	}
+	fileWriter.close();
 
-    while (ntotev < _numberOfEvents)
-    {
-        for (int nev = 0; nev < _numberOfEventsPerFile && ntotev < _numberOfEvents; nev++, ntotev++)
-        {
-	   if(ntotev%10000 == 0)  std::cout << "PRODUCING EVENT #: " << nev << std::endl;
-            upcEvent event = _starlight->produceEvent();
-            //std::cout << "Number of tracks in event: " << event.getParticles()->size() << std::endl;
-            fw.writeEvent(event, nev);
-        }
-    }
-    
-    fw.close();
-
-    return 0;
+	return true;
 }

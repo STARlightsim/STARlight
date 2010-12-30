@@ -67,13 +67,13 @@ Gammagammasingle::Gammagammasingle(inputParameters& input, beamBeamSystem& bbsys
     }
 
   //Initialize randomgenerator with our seed.
-  _randy.SetSeed(input.getSeed());
+  _randy.SetSeed(input.randomSeed());
   cout<<"Randy in Single Meson construction: "<<_randy.Rndom()<<endl;
   //Storing inputparameters into protected members for use
-  _GGsingInputnumw=input.getnumw();
-  _GGsingInputnumy=input.getnumy();
+  _GGsingInputnumw=input.numWBins();
+  _GGsingInputnumy=input.nmbRapidityBins();
   _GGsingInputpidtest=input.getPidTest();
-  _GGsingInputGamma_em=input.getgamma_em();
+  _GGsingInputGamma_em=input.beamLorentzGamma();
   cout<<"SINGLE MESON pid test: "<<_GGsingInputpidtest<<endl;
   //reading in luminosity tables
   read();

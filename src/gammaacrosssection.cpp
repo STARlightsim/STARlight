@@ -54,11 +54,11 @@ photonNucleusCrossSection::photonNucleusCrossSection (inputParameters& input, be
 : _bbs(bbsystem)
 {
   _sigmaProtonEnergy=input.getProtonEnergy();
-  _sigmaGamma_em=input.getgamma_em();
+  _sigmaGamma_em=input.beamLorentzGamma();
   _sigmaPID=input.getPidTest();
-  _sigmaBreakup=input.getBreakupMode();
-  _sigmaCoherence=input.getIncoherentOrCoherent();
-  _sigmaCoherenceFactor=input.getIncoherentFactor();
+  _sigmaBreakup=input.beamBreakupMode();
+  _sigmaCoherence=input.coherentProduction();
+  _sigmaCoherenceFactor=input.incoherentFactor();
   _sigmaNucleus=_bbs.getBeam2().getAin();
 
   switch(_bbs.getBeam1().getZin())
@@ -278,7 +278,7 @@ double photonNucleusCrossSection::getcsgA(double Egamma, double W)
   
   //       Find gamma-proton CM energy
   Wgp=sqrt(2.*Egamma*(_sigmaProtonEnergy+sqrt(_sigmaProtonEnergy*_sigmaProtonEnergy-
-					     starlightConstants::mp*starlightConstants::mp))+starlightConstants::mp*starlightConstants::mp);
+					     starlightConstants::protonMass*starlightConstants::protonMass))+starlightConstants::protonMass*starlightConstants::protonMass);
 	
   //Used for d-A and A-A
   tmin   = (W*W/(4.*Egamma*_sigmaGamma_em) )*(W*W/(4.*Egamma*_sigmaGamma_em) );
@@ -677,7 +677,7 @@ double photonNucleusCrossSection::sigmagp(double Wgp)
     case starlightConstants::JPSI:
     case starlightConstants::JPSI_ee:
     case starlightConstants::JPSI_mumu:
-      sigmagp_r=(1.0-((_channelMass+starlightConstants::mp)*(_channelMass+starlightConstants::mp))/(Wgp*Wgp));
+      sigmagp_r=(1.0-((_channelMass+starlightConstants::protonMass)*(_channelMass+starlightConstants::protonMass))/(Wgp*Wgp));
       sigmagp_r*=sigmagp_r;
       sigmagp_r*=1.E-4*0.00406*exp(0.65*log(Wgp));
       // sigmagp_r=1.E-4*0.0015*exp(0.80*log(Wgp));
@@ -685,7 +685,7 @@ double photonNucleusCrossSection::sigmagp(double Wgp)
     case starlightConstants::JPSI2S:
     case starlightConstants::JPSI2S_ee:
     case starlightConstants::JPSI2S_mumu:
-      sigmagp_r=(1.0-((_channelMass+starlightConstants::mp)*(_channelMass+starlightConstants::mp))/(Wgp*Wgp));
+      sigmagp_r=(1.0-((_channelMass+starlightConstants::protonMass)*(_channelMass+starlightConstants::protonMass))/(Wgp*Wgp));
       sigmagp_r*=sigmagp_r;
       sigmagp_r*=1.E-4*0.00406*exp(0.65*log(Wgp));
       sigmagp_r*=0.166;  
@@ -790,7 +790,7 @@ double photonNucleusCrossSection::breitWigner(double W, double C)
 	// use simple fixed-width s-wave Breit-Wigner without coherent backgorund for rho'
 	// (PDG '08 eq. 38.56)
 	if(_sigmaPID==starlightConstants::FOURPRONG) {
-		if (W < 4.01 * starlightConstants::mpi)
+		if (W < 4.01 * starlightConstants::protonMass)
 			return 0;
 		const double termA  = _channelMass * _width;
 		const double termA2 = termA * termA;
@@ -812,11 +812,11 @@ double photonNucleusCrossSection::breitWigner(double W, double C)
   // if below threshold, then return 0.  Added 5/3/2001 SRK
   // 0.5% extra added for safety margin
   if( _sigmaPID==starlightConstants::RHO ||_sigmaPID==starlightConstants::RHOZEUS){  
-    if (W < 2.01*starlightConstants::mpi){
+    if (W < 2.01*starlightConstants::protonMass){
       nrbw_r=0.;
       return nrbw_r;
     }
-    ppi=sqrt( ((W/2.)*(W/2.)) - starlightConstants::mpi*starlightConstants::mpi );
+    ppi=sqrt( ((W/2.)*(W/2.)) - starlightConstants::protonMass * starlightConstants::protonMass);
     ppi0=0.358;
   }
   
@@ -937,9 +937,9 @@ double photonNucleusCrossSection::getMaxPhotonEnergy()
 wideResonanceCrossSection::wideResonanceCrossSection(inputParameters& input, beamBeamSystem& bbsystem)
   : photonNucleusCrossSection(input, bbsystem)//hrm
 {
-  _wideWmax=input.getWmax();
-  _wideWmin=input.getWmin();
-  _wideYmax=input.getYmax();
+  _wideWmax=input.maxW();
+  _wideWmin=input.minW();
+  _wideYmax=input.maxRapidity();
   _wideYmin=-1.0*_wideYmax;
   _Ep=input.getProtonEnergy();
 }
@@ -977,8 +977,8 @@ void wideResonanceCrossSection::crossSectionCalculation(double bwnormsave)
   // --------------------------------------------------------------------
   //gamma+nucleon threshold.
 
-  Eth=0.5*(((_wideWmin+starlightConstants::mp)*(_wideWmin+starlightConstants::mp)
-	    -starlightConstants::mp*starlightConstants::mp)/(_Ep+sqrt(_Ep*_Ep-starlightConstants::mp*starlightConstants::mp)));
+  Eth=0.5*(((_wideWmin+starlightConstants::protonMass)*(_wideWmin+starlightConstants::protonMass)
+	    -starlightConstants::protonMass*starlightConstants::protonMass)/(_Ep+sqrt(_Ep*_Ep-starlightConstants::protonMass*starlightConstants::protonMass)));
                                                                                                                                                       
   NW   = 100;
   dW   = (_wideWmax-_wideWmin)/double(NW);
@@ -1065,9 +1065,9 @@ void wideResonanceCrossSection::crossSectionCalculation(double bwnormsave)
 narrowResonanceCrossSection::narrowResonanceCrossSection(inputParameters& input,beamBeamSystem& bbsystem)
   :photonNucleusCrossSection(input,bbsystem)
 {
-  _narrowYmax=input.getYmax();
+  _narrowYmax=input.maxRapidity();
   _narrowYmin=-1.0*_narrowYmax;
-  _narrowNumY=input.getnumy();
+  _narrowNumY=input.nmbRapidityBins();
   _Ep=input.getProtonEnergy();	
 }
 
@@ -1100,8 +1100,8 @@ void narrowResonanceCrossSection::crossSectionCalculation(double)  // _bwnormsav
   cout<<" Using Narrow Resonance ..."<<endl;
   
   W = getChannelMass();
-  Eth=0.5*(((W+starlightConstants::mp)*(W+starlightConstants::mp)-
-	    starlightConstants::mp*starlightConstants::mp)/(_Ep+sqrt(_Ep*_Ep-starlightConstants::mp*starlightConstants::mp)));
+  Eth=0.5*(((W+starlightConstants::protonMass)*(W+starlightConstants::protonMass)-
+	    starlightConstants::protonMass*starlightConstants::protonMass)/(_Ep+sqrt(_Ep*_Ep-starlightConstants::protonMass*starlightConstants::protonMass)));
   
   cout<<" gamma+nucleon  Threshold: "<<Eth<<endl;
   int_r=0.;

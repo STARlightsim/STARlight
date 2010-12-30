@@ -49,7 +49,7 @@ beam::beam(int Zin, int Ain, double bdeuteron, int in_or_co, inputParameters& in
 	: nucleus(Zin, Ain, bdeuteron, in_or_co)
 {
   //Setting needed inputparameters to protected variables
-  _beamInputGamma_em=input.getgamma_em();
+  _beamInputGamma_em=input.beamLorentzGamma();
 }
 
 

@@ -42,26 +42,31 @@ class starlight;
 class inputParameters;
 
 
-class starlightStandalone
-{
+class starlightStandalone {
+
 public:
 
-    starlightStandalone();
-    ~starlightStandalone();
+	starlightStandalone();
+	~starlightStandalone();
 
-    int init();
-    int run();
+	bool init();  ///< reads configuration file and initializes startlight
+	bool run ();  ///< creates output file and runs starlight
 
-    void setConfigFileName(std::string filename) { _configFileName = filename; } 
+	const std::string& configFileName() const { return _configFileName; }  ///< returns path to config file
+	const std::string& dataFileName  () const { return _dataFileName;   }  ///< returns path to output file
+
+	void setConfigFileName(const std::string& configFileName) { _configFileName = configFileName; }  ///< sets path to config file
+	void setDataFileName  (const std::string& dataFileName  ) { _dataFileName   = dataFileName;   }  ///< sets path to output file
 
 private:
 
-   starlight* _starlight;
-   inputParameters* _inputParameters;
-    std::string _configFileName;
-    int _numberOfEvents;
-    int _numberOfEventsPerFile;
-    std::string _fileName;
+	std::string      _configFileName;    ///< path to configuration file
+	std::string      _dataFileName;      ///< path to output file
+
+	starlight*       _starlight;         ///< pointer to starlight instance
+	inputParameters* _inputParameters;   ///< pointer to parameter instance
+	unsigned int     _nmbEventsTot;      ///< total number of events to generate (taken from configuration file)
+	unsigned int     _nmbEventsPerFile;  ///< maximum number of events written to a single file (not yet implemented)
 
 };
 

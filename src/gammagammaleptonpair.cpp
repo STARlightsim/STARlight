@@ -53,19 +53,19 @@ Gammagammaleptonpair::Gammagammaleptonpair(inputParameters& input, beamBeamSyste
 : eventChannel(input, bbsystem)
 {
     //Initialize randomgenerator with our seed.
-    _randy.SetSeed(input.getSeed());
+    _randy.SetSeed(input.randomSeed());
     cout<<"Randy in leptonpair construction: "<<_randy.Rndom()<<endl;
     //Storing inputparameters into protected members for use
-    _GGlepInputnumw=input.getnumw();
-    _GGlepInputnumy=input.getnumy();
+    _GGlepInputnumw=input.numWBins();
+    _GGlepInputnumy=input.nmbRapidityBins();
     _GGlepInputpidtest=input.getPidTest();
-    _GGlepInputGamma_em=input.getgamma_em();
+    _GGlepInputGamma_em=input.beamLorentzGamma();
     //Let us read in the luminosity tables
     read();
     //Now we will calculate the crosssection
     twoLeptonCrossSection();
     //If it is a tauon, calculate its tables
-    if(input.getParticleId()==starlightConstants::TAUON) calculateTable();
+    if(input.prodParticleId()==starlightConstants::TAUON) calculateTable();
 }
 
 

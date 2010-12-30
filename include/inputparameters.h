@@ -39,80 +39,110 @@
 //This is where we read in our input values.
 
 
-class inputParameters
-{
- public:
-  inputParameters();
-  ~inputParameters();
+class inputParameters {
 
-  int init(const std::string& filename = "config/slight.in");
+public:
 
-  int getZ1();
-  int getA1();
-  int getZ2();
-  int getA2();
-  double getgamma_em();
-  double getWmax();
-  double getWmin();
-  int getnumw();
-  double getYmax();
-  int getnumy();
-  int getgg_or_gP();
-  int getNumberOfEvents();
-  int getParticleId();
-  int getSeed();
-  int getOutputMode();
-  int getBreakupMode();
-  int getInterferenceMode();
-  double getInterferencePercent();
-  int getIncoherentOrCoherent();
-  double getIncoherentFactor();
-  double getbford();
-  double getMaximumInterPt();
-  int getNPT();
-  double getdpt();
-  starlightConstants::particle getPidTest();
-  starlightConstants::decaytype getDecayTest();
-  starlightConstants::interactiontype getInteractionTest();
-  double getf2o4pi();
-  double getbslope();
-  double getProtonEnergy();
+	inputParameters();
+	~inputParameters();
+
+	bool init(const std::string& configFileName = "./config/slight.in");
+
+	unsigned int beam1Z                () const { return _beam1Z;                 }  ///< returns atomic number of beam particle 1
+	unsigned int beam1A                () const { return _beam1A;                 }  ///< returns atomic mass number of beam particle 1
+	unsigned int beam2Z                () const { return _beam2Z;                 }  ///< returns atomic number of beam particle 2
+	unsigned int beam2A                () const { return _beam2A;                 }  ///< returns atomic mass number of beam particle 2
+	double       beamLorentzGamma      () const { return _beamLorentzGamma;       }  ///< returns Lorentz gamma factor of beams in collider frame
+	double       maxW                  () const { return _maxW;                   }  ///< returns maximum mass W of produced hadronic system [GeV/c^2]
+	double       minW                  () const { return _minW;                   }  ///< returns minimum mass W of produced hadronic system [GeV/c^2]
+	unsigned int numWBins              () const { return _nmbWBins;               }  ///< returns number of W bins in lookup table
+	double       maxRapidity           () const { return _maxRapidity;            }  ///< returns maximum absolute value of rapidity
+	unsigned int nmbRapidityBins       () const { return _nmbRapidityBins;        }  ///< returns number of rapidity bins in lookup table
+	int          productionMode        () const { return _productionMode;         }  ///< returns production mode
+	unsigned int nmbEvents             () const { return _nmbEventsTot;           }  ///< returns total number of events to generate
+	int          prodParticleId        () const { return _prodParticleId;         }  ///< returns PDG particle ID of produced particle
+	int          randomSeed            () const { return _randomSeed;             }  ///< returns seed for random number generator
+	int          outputFormat          () const { return _outputFormat;           }  ///< returns output format
+	int          beamBreakupMode       () const { return _beamBreakupMode;        }  ///< returns breakup mode for beam particles
+	bool         interferenceEnabled   () const { return _interferenceEnabled;    }  ///< returns whether interference is taken into account
+	double       interferenceStrength  () const { return _interferenceStrength;   }  ///< returns percentage of interference
+	bool         coherentProduction    () const { return _coherentProduction;     }  ///< returns whether production is coherent or incoherent
+	double       incoherentFactor      () const { return _incoherentFactor;       }  ///< returns incoherent contribution in vector meson production
+	double       getbford              () const { return _bford;                  }  ///< returns ???
+	double       maxPtInterference     () const { return _maxPtInterference;      }  ///< returns maximum p_T for interference calculation [GeV/c]
+	int          nmbPtBinsInterference () const { return _nmbPtBinsInterference;  }  ///< returns number of p_T bins for interference calculation
+	double       ptBinWidthInterference() const { return _ptBinWidthInterference; }  ///< returns width of p_T bins for interference calculation [GeV/c]
+
+	starlightConstants::particle getPidTest();
+	starlightConstants::decaytype getDecayTest();
+	starlightConstants::interactiontype getInteractionTest();
+	// double getf2o4pi();
+	// double getbslope();
+	double getProtonEnergy();
+
+	std::ostream& print(std::ostream& out) const;  ///< prints parameter summary
+	std::ostream& write(std::ostream& out) const;  ///< writes parameters back to an ostream
+
   
- private:
+private:
 
-  /** Name of the configuration file (default: slight.in) */
-  std::string _configFileName; 
+	std::string _configFileName;  ///< path to configuration file (default = ./config/slight.in)
 
-  int    _Z1;          // Atomic Number
-  int    _A1;          //Atomic Mass
-  int    _Z2;
-  int    _A2;
-  double _gamma_em;   //gamma for the colliding ions
-  double _Wmax;       //gamma-gamma center of mass Energy, max
-  double _Wmin;       //min for Energy, -1 is default
-  int    _numw;          //number of bins for energy in the calculations
-  double _Ymax;       //max value for the rapidity
-  int    _numy;       //number of bins used
-  int    _gg_or_gP;   //1=2 photon channels,2=vector meson with narrow resonance,3=vector meson with wide resonance(B-W)
-  int    _ievents;          //number of events to generate
-  int    _pid;           //pdg ID --channel choice //ip
-  int    _iseed;        //random number seed
-  int    _iout;             //output format,1=text,2=GSTARtext,3=ntuple
-  int    _ibreakup;             //1=hard sphere nuclei (b>2),2=both nuclei break up (XnXn),3=a single neutron from each nucleus (1n1n),
-  //4=require that neither nucleon break up (with b>2R),5=require that there be no hadronic break up (This is similar to option one, but with the actual hadronic interaction)
-  int    _iinterfere;             //0= no interference, 1= interference
-  double _xinterfere;            //When there is interference, this gives the %age of interference, 0=none to 1=full
-  int    _in_or_co;//0 for incoherent 1 for coherent
-  double _incoherentFactor; //Variable allows the user to scale the incoherent contribution in VM production
-  double _bford;
-  double _ptMax;          //When there is interference, this is the max pt considered
-  int    _NPT;           //When there is interference, this is the number of pt bins
-  double _dpt;
-  starlightConstants::particle _pidTest;   //Testing the starlightconstants particle enumeration here...
-  starlightConstants::decaytype _decayTest;
-  starlightConstants::interactiontype _interactionTest;
-  double _protonEnergy;
+	// config file parameters
+	unsigned int _beam1Z;                 ///< atomic number of beam particle 1
+	unsigned int _beam1A;                 ///< atomic mass number of beam particle 1
+	unsigned int _beam2Z;                 ///< atomic number of beam particle 2
+	unsigned int _beam2A;                 ///< atomic mass number of beam particle 2
+	double       _beamLorentzGamma;       ///< Lorentz gamma factor of beams in collider frame
+	double       _maxW;                   ///< maximum mass W of produced hadronic system [GeV/c^2]
+	double       _minW;                   ///< minimum mass W of produced hadronic system; if set to -1 default value is taken [GeV/c^2]
+	unsigned int _nmbWBins;               ///< number of W bins in lookup table
+	double       _maxRapidity;            ///< maximum absolute value of rapidity
+	unsigned int _nmbRapidityBins;        ///< number of rapidity bins in lookup table
+	int          _productionMode;         ///< \brief production mode
+	                                      ///<
+	                                      ///< 1 = photon-photon fusion,
+	                                      ///< 2 = narrow vector meson resonance in photon-Pomeron fusion,
+	                                      ///< 3 = Breit-Wigner vector meson resonance in photon-Pomeron fusion
+	unsigned int _nmbEventsTot;           ///< total number of events to generate
+	int          _prodParticleId;         ///< PDG particle ID of produced particle
+	int          _randomSeed;             ///< seed for random number generator
+	int          _outputFormat;           ///< \brief output format
+	                                      ///<
+	                                      ///< 1 = ASCII
+	                                      ///< 2 = GSTARtext,
+	                                      ///< 3 = PAW ntuple (not working)
+	int          _beamBreakupMode;        ///< \brief breakup mode for beam particles
+	                                      ///<
+	                                      ///< 1 = hard sphere nuclei (b > 2R),
+	                                      ///< 2 = both nuclei break up (XnXn),
+	                                      ///< 3 = a single neutron from each nucleus (1n1n),
+	                                      ///< 4 = neither nucleon breaks up (with b > 2R),
+	                                      ///< 5 = no hadronic break up (similar to option 1, but with the actual hadronic interaction)
+	bool         _interferenceEnabled;    ///< if true, interference is taken into account
+	double       _interferenceStrength;   ///< percentage of interference: from 0 = none to 1 = full
+	bool         _coherentProduction;     ///< if true, production is coherent, else incoherent
+	double       _incoherentFactor;       ///< allows to scale the incoherent contribution in vector meson production
+	double       _bford;                  ///< ???
+	double       _maxPtInterference;      ///< maximum p_T for interference calculation [GeV/c]
+	int          _nmbPtBinsInterference;  ///< number of p_T bins for interference calculation
+
+	double       _ptBinWidthInterference;  ///< width of p_T bins for interference calculation [GeV/c]
+	double _protonEnergy;
+	starlightConstants::particle        _particleType;   //Testing the starlightconstants particle enumeration here...
+	starlightConstants::decaytype       _decayType;
+	starlightConstants::interactiontype _interactionType;
+
 };
 
+
+inline
+std::ostream&
+operator <<(std::ostream&          out,
+            const inputParameters& par)
+{
+	return par.print(out);
+}
+ 
 
 #endif  // INPUTPARAMETERS_H

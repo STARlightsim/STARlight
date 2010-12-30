@@ -46,22 +46,22 @@ using namespace std;
 //______________________________________________________________________________
 Gammaavectormeson::Gammaavectormeson(inputParameters& input,beamBeamSystem& bbsystem):eventChannel(input,bbsystem), _phaseSpaceGen(0)  //:readLuminosity(input),_bbs(bbsystem)
 {
-  _VMNPT=input.getNPT();
-  _VMWmax=input.getWmax();
-  _VMWmin=input.getWmin();
-  _VMYmax=input.getYmax();
+  _VMNPT=input.nmbPtBinsInterference();
+  _VMWmax=input.maxW();
+  _VMWmin=input.minW();
+  _VMYmax=input.maxRapidity();
   _VMYmin=-1.*_VMYmax;
-  _VMnumw=input.getnumw();
-  _VMnumy=input.getnumy();
-  _VMgamma_em=input.getgamma_em();
-  _VMinterferencemode=input.getInterferenceMode();
+  _VMnumw=input.numWBins();
+  _VMnumy=input.nmbRapidityBins();
+  _VMgamma_em=input.beamLorentzGamma();
+  _VMinterferencemode=input.interferenceEnabled();
   _VMbslope=0.;//Will define in wide/narrow constructor
   _VMpidtest=input.getPidTest();
-  _VMptmax=input.getMaximumInterPt();
-  _VMdpt=input.getdpt();
-  _randy.SetSeed(input.getSeed());
-  _VMCoherence=input.getIncoherentOrCoherent();
-  _VMCoherenceFactor=input.getIncoherentOrCoherent();//probably not needed
+  _VMptmax=input.maxPtInterference();
+  _VMdpt=input.ptBinWidthInterference();
+  _randy.SetSeed(input.randomSeed());
+  _VMCoherence=input.coherentProduction();
+  _VMCoherenceFactor=input.coherentProduction();//probably not needed
 
   switch(_VMpidtest){
   case starlightConstants::RHO:
@@ -72,7 +72,7 @@ Gammaavectormeson::Gammaavectormeson(inputParameters& input,beamBeamSystem& bbsy
   case starlightConstants::FOURPRONG:
 	  // create n-body phase-space generator instance
 	  _phaseSpaceGen = new nBodyPhaseSpaceGen();
-	  _phaseSpaceGen->setSeed(input.getSeed());
+	  _phaseSpaceGen->setSeed(input.randomSeed());
 	  _width = 0.360;
 	  _mass  = 1.350;
 	  break;

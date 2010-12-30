@@ -79,8 +79,8 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   
   double  bwnorm,Eth;
 
-  dW = (_inputgammaa.getWmax()-_inputgammaa.getWmin())/_inputgammaa.getnumw();
-  dY  = (_inputgammaa.getYmax()-(-1.0)*_inputgammaa.getYmax())/_inputgammaa.getnumy();
+  dW = (_inputgammaa.maxW()-_inputgammaa.minW())/_inputgammaa.numWBins();
+  dY  = (_inputgammaa.maxRapidity()-(-1.0)*_inputgammaa.maxRapidity())/_inputgammaa.nmbRapidityBins();
     
   // Write the values of W used in the calculation to slight.txt.  
   wylumfile.open("slight.txt");
@@ -88,51 +88,51 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   wylumfile << getbbs().getBeam1().getAin() <<endl;
   wylumfile << getbbs().getBeam2().getZin() <<endl;
   wylumfile << getbbs().getBeam2().getAin() <<endl;
-  wylumfile << _inputgammaa.getgamma_em() <<endl;
-  wylumfile << _inputgammaa.getWmax() <<endl;
-  wylumfile << _inputgammaa.getWmin() <<endl;
-  wylumfile << _inputgammaa.getnumw() <<endl;
-  wylumfile << _inputgammaa.getYmax() <<endl;
-  wylumfile << _inputgammaa.getnumy() <<endl;
-  wylumfile << _inputgammaa.getgg_or_gP() <<endl;
-  wylumfile << _inputgammaa.getBreakupMode() <<endl;
-  wylumfile << _inputgammaa.getInterferenceMode() <<endl;
-  wylumfile << _inputgammaa.getInterferencePercent() <<endl;
-  wylumfile << _inputgammaa.getIncoherentOrCoherent() <<endl;
-  wylumfile << _inputgammaa.getIncoherentFactor() <<endl;
+  wylumfile << _inputgammaa.beamLorentzGamma() <<endl;
+  wylumfile << _inputgammaa.maxW() <<endl;
+  wylumfile << _inputgammaa.minW() <<endl;
+  wylumfile << _inputgammaa.numWBins() <<endl;
+  wylumfile << _inputgammaa.maxRapidity() <<endl;
+  wylumfile << _inputgammaa.nmbRapidityBins() <<endl;
+  wylumfile << _inputgammaa.productionMode() <<endl;
+  wylumfile << _inputgammaa.beamBreakupMode() <<endl;
+  wylumfile << _inputgammaa.interferenceEnabled() <<endl;
+  wylumfile << _inputgammaa.interferenceStrength() <<endl;
+  wylumfile << _inputgammaa.coherentProduction() <<endl;
+  wylumfile << _inputgammaa.incoherentFactor() <<endl;
   wylumfile << _inputgammaa.getbford() <<endl;
-  wylumfile << _inputgammaa.getMaximumInterPt() <<endl;
-  wylumfile << _inputgammaa.getNPT() <<endl;
+  wylumfile << _inputgammaa.maxPtInterference() <<endl;
+  wylumfile << _inputgammaa.nmbPtBinsInterference() <<endl;
   
   //     Normalize the Breit-Wigner Distribution and write values of W to slight.txt
   testint=0.0;
   //Grabbing default value for C in the breit-wigner calculation
   C=getDefaultC();
-  for(int i=0;i<=_inputgammaa.getnumw()-1;i++){    
-    W = _inputgammaa.getWmin() + double(i)*dW + 0.5*dW;
+  for(unsigned int i = 0; i <= _inputgammaa.numWBins() - 1; ++i) {
+    W = _inputgammaa.minW() + double(i)*dW + 0.5*dW;
     testint = testint + breitWigner(W,C)*dW;
     wylumfile << W << endl;
   }
   bwnorm = 1./testint;
   
   //     Write the values of Y used in the calculation to slight.txt.
-  for(int i=0;i<=_inputgammaa.getnumy()-1;i++){
-    Y = -1.0*_inputgammaa.getYmax() + double(i)*dY + 0.5*dY;
+  for(unsigned int i = 0; i <= _inputgammaa.nmbRapidityBins() - 1; ++i) {
+    Y = -1.0*_inputgammaa.maxRapidity() + double(i)*dY + 0.5*dY;
     wylumfile << Y << endl;
   }
     
-  Eth=0.5*(((_inputgammaa.getWmin()+starlightConstants::mp)*(_inputgammaa.getWmin()
-							    +starlightConstants::mp)-starlightConstants::mp*starlightConstants::mp)/
+  Eth=0.5*(((_inputgammaa.minW()+starlightConstants::protonMass)*(_inputgammaa.minW()
+							    +starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/
 	   (_inputgammaa.getProtonEnergy()+sqrt(_inputgammaa.getProtonEnergy()*
-					       _inputgammaa.getProtonEnergy()-starlightConstants::mp*starlightConstants::mp)));
+					       _inputgammaa.getProtonEnergy()-starlightConstants::protonMass*starlightConstants::protonMass)));
   
-  for(int i=0;i<=_inputgammaa.getnumw()-1;i++){
+  for(unsigned int i = 0; i <= _inputgammaa.numWBins() - 1; ++i) {
 
-    W = _inputgammaa.getWmin() + double(i)*dW + 0.5*dW;
+    W = _inputgammaa.minW() + double(i)*dW + 0.5*dW;
     
-    for(int j=0;j<=_inputgammaa.getnumy()-1;j++){
+    for(unsigned int j = 0; j <= _inputgammaa.nmbRapidityBins() - 1; ++j) {
 
-      Y = -1.0*_inputgammaa.getYmax() + double(j)*dY + 0.5*dY;
+      Y = -1.0*_inputgammaa.maxRapidity() + double(j)*dY + 0.5*dY;
       Egamma = 0.5*W*exp(Y);
       
       dndWdY = 0.; 
@@ -150,7 +150,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
 
   wylumfile.close();
   
-  if(_inputgammaa.getInterferenceMode()==1) 
+  if(_inputgammaa.interferenceEnabled()==1) 
     pttablegen();
  
   wylumfile.open("slight.txt",ios::app);
@@ -215,12 +215,12 @@ void photonNucleusLuminosity::pttablegen()
   NGAUSS=16;
 
   //Setting input calls to variables/less calls this way.
-  double Ymax=_inputgammaa.getYmax();
-  int numy = _inputgammaa.getnumy();
+  double Ymax=_inputgammaa.maxRapidity();
+  int numy = _inputgammaa.nmbRapidityBins();
   double Ep = _inputgammaa.getProtonEnergy();
-  int ibreakup = _inputgammaa.getBreakupMode();
-  double NPT = _inputgammaa.getNPT();
-  double gamma_em=_inputgammaa.getgamma_em();
+  int ibreakup = _inputgammaa.beamBreakupMode();
+  double NPT = _inputgammaa.nmbPtBinsInterference();
+  double gamma_em=_inputgammaa.beamLorentzGamma();
   double mass= getChannelMass();
   
   //  loop over y from 0 (not -ymax) to yma
@@ -239,8 +239,8 @@ void photonNucleusLuminosity::pttablegen()
     //  Photonuclear Cross Section 1
     //  Gamma-proton CM energy
     
-    Wgp=sqrt(2.*Egamma1*(Ep+sqrt(Ep*Ep-starlightConstants::mp*
-				 starlightConstants::mp))+starlightConstants::mp*starlightConstants::mp);
+    Wgp=sqrt(2.*Egamma1*(Ep+sqrt(Ep*Ep-starlightConstants::protonMass*
+				 starlightConstants::protonMass))+starlightConstants::protonMass*starlightConstants::protonMass);
     
     // Calculate V.M.+proton cross section
     
@@ -276,8 +276,8 @@ void photonNucleusLuminosity::pttablegen()
 	   
     // Photonuclear Cross Section 2
     
-    Wgp=sqrt(2.*Egamma2*(Ep+sqrt(Ep*Ep-starlightConstants::mp*
-				 starlightConstants::mp))+starlightConstants::mp*starlightConstants::mp);
+    Wgp=sqrt(2.*Egamma2*(Ep+sqrt(Ep*Ep-starlightConstants::protonMass*
+				 starlightConstants::protonMass))+starlightConstants::protonMass*starlightConstants::protonMass);
     
     cs=sqrt(16.*starlightConstants::pi*getf2o4pi()*getbslope()*
 	    starlightConstants::hbarc*starlightConstants::hbarc*sigmagp(Wgp)/starlightConstants::alpha);
@@ -327,7 +327,7 @@ void photonNucleusLuminosity::pttablegen()
     // loop over pt
     for(int i=1;i<=NPT;i++){
       
-      pt = (float(i)-0.5)*_inputgammaa.getdpt();
+      pt = (float(i)-0.5)*_inputgammaa.ptBinWidthInterference();
       sum1=0.0;
       // loop over b
       for(int j=1;j<=NBIN;j++){
@@ -342,7 +342,7 @@ void photonNucleusLuminosity::pttablegen()
 	  
 	  theta=xg[k]*starlightConstants::pi;
 	  //  allow for a linear sum of interfering and non-interfering amplitudes
-	  amp_i_2 = A1 + A2 - 2.*_inputgammaa.getInterferencePercent()
+	  amp_i_2 = A1 + A2 - 2.*_inputgammaa.interferenceStrength()
 	    *sqrt(A1*A2)*cos(pt*b*cos(theta)/starlightConstants::hbarc);
 	  sumg  = sumg+ag[k]*amp_i_2;
 	}
@@ -356,7 +356,7 @@ void photonNucleusLuminosity::pttablegen()
       //  normalization is done in readDiffLum.f
       //  This is d^2sigma/dpt^2; convert to dsigma/dpt
       //CHECK THIS OUT---->      write(20,*)sum1*pt*dpt
-      wylumfile << sum1*pt*_inputgammaa.getdpt() <<endl;
+      wylumfile << sum1*pt*_inputgammaa.ptBinWidthInterference() <<endl;
       //  end of pt loop
     }
     //  end of y loop
@@ -409,9 +409,9 @@ double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGM
   
   //     >> Loop over total Pt to find distribution
       
-      for(int k=1;k<=_inputgammaa.getNPT();k++){
+      for(int k=1;k<=_inputgammaa.nmbPtBinsInterference();k++){
 	
-              pt=_inputgammaa.getdpt()*(double(k)-0.5);
+              pt=_inputgammaa.ptBinWidthInterference()*(double(k)-0.5);
               
               px0 = pt;
               py0 = 0.0;
@@ -431,8 +431,8 @@ double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGM
 		  pt1 = sqrt( px*px + py*py );
 		  //  pomeron pt
 		  pt2 = sqrt( (px-px0)*(px-px0) + (py-py0)*(py-py0) );
-		  q1  = sqrt( ((Egamma/_inputgammaa.getgamma_em())*(Egamma/_inputgammaa.getgamma_em())) + pt1*pt1 );        
-		  q2  = sqrt( ((Epom/_inputgammaa.getgamma_em())*(Epom/_inputgammaa.getgamma_em()))   + pt2*pt2 );
+		  q1  = sqrt( ((Egamma/_inputgammaa.beamLorentzGamma())*(Egamma/_inputgammaa.beamLorentzGamma())) + pt1*pt1 );        
+		  q2  = sqrt( ((Epom/_inputgammaa.beamLorentzGamma())*(Epom/_inputgammaa.beamLorentzGamma()))   + pt2*pt2 );
 		  
 		  //  photon form factor
 		  // add in phase space factor?
@@ -446,8 +446,8 @@ double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGM
 		  py = 0.5*pymax*(-xg[j])+0.5*pymax;
 		  pt1 = sqrt( px*px + py*py );
 		  pt2 = sqrt( (px-px0)*(px-px0) + (py-py0)*(py-py0) );
-		  q1  = sqrt( ((Egamma/_inputgammaa.getgamma_em())*Egamma/_inputgammaa.getgamma_em()) + pt1*pt1 );
-		  q2  = sqrt( ((Epom/_inputgammaa.getgamma_em())*(Epom/_inputgammaa.getgamma_em()))   + pt2*pt2 );
+		  q1  = sqrt( ((Egamma/_inputgammaa.beamLorentzGamma())*Egamma/_inputgammaa.beamLorentzGamma()) + pt1*pt1 );
+		  q2  = sqrt( ((Epom/_inputgammaa.beamLorentzGamma())*(Epom/_inputgammaa.beamLorentzGamma()))   + pt2*pt2 );
 		  //  add in phase space factor?
 		  f1  = (getbbs().getBeam1().formFactor(q1*q1)*getbbs().getBeam1().formFactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
 		  f2  = getbbs().getBeam1().formFactor(q2*q2)*getbbs().getBeam1().formFactor(q2*q2);
@@ -476,7 +476,7 @@ double photonNucleusLuminosity::nofe(double Egamma, double bimp)
   
   double X=0.,nofex=0.,factor1=0.,factor2=0.,factor3=0.;
   
-  X = (bimp*Egamma)/(_inputgammaa.getgamma_em()*starlightConstants::hbarc);
+  X = (bimp*Egamma)/(_inputgammaa.beamLorentzGamma()*starlightConstants::hbarc);
   
   if( X <= 0.0) 
     cout<<"In nofe, X= "<<X<<endl;

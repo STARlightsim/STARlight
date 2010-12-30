@@ -45,7 +45,7 @@ using namespace std;
 eventChannel::eventChannel(inputParameters& input, beamBeamSystem& bbsystem)
 : readLuminosity(input), _bbs(bbsystem)
 {
-  _randy.SetSeed(input.getSeed());
+  _randy.SetSeed(input.randomSeed());
 }
 
 
