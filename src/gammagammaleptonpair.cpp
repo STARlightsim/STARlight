@@ -628,8 +628,8 @@ void Gammagammaleptonpair::calculateTable()
     for(int i =1;i<=100;i++)
     {
 	//     calculate energy of tau decay
-	E = double(i)/100. * .5 * starlightConstants::mtau;
-	_dgammade[i] = _dgammade[i-1] + E*E * (1. - 4.*E/(3.*starlightConstants::mtau));
+	E = double(i)/100. * .5 * starlightConstants::tauMass;
+	_dgammade[i] = _dgammade[i-1] + E*E * (1. - 4.*E/(3.*starlightConstants::tauMass));
 
 	//     calculate angles for tau
 	theta = starlightConstants::pi * double(i) / 100.;
@@ -743,10 +743,10 @@ double Gammagammaleptonpair::getMass()
 	leptonmass=starlightConstants::mel;
 	break;
     case starlightConstants::MUON:
-	leptonmass=starlightConstants::mmu;
+	leptonmass=starlightConstants::muonMass;
 	break;
     case starlightConstants::TAUON:
-	leptonmass=starlightConstants::mtau;
+	leptonmass=starlightConstants::tauMass;
 	break;
     default:
 	cout<<"Not a recognized lepton, Gammagammaleptonpair::getmass(), mass = 0."<<endl;

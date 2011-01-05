@@ -174,7 +174,7 @@ include_directories(${INCLUDE_DIRECTORIES})
 set(SOURCES
   src/bessel.cpp
   src/beam.cpp
-  src/inputparameters.cpp
+  src/inputParameters.cpp
   src/beambeamsystem.cpp
   src/starlightparticle.cpp
   src/gammaaluminosity.cpp
@@ -195,7 +195,7 @@ set(SOURCES
   src/filewriter.cpp
   src/eventfilewriter.cpp
   src/starlightparticlecodes.cpp
-  src/starlightstandalone.cpp
+  src/starlightStandalone.cpp
   src/nBodyPhaseSpaceGen.cpp
   )
 if(ENABLE_PYTHIA) 

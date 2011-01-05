@@ -822,12 +822,12 @@ double photonNucleusCrossSection::breitWigner(double W, double C)
   
   // handle phi-->K+K- properly
   if (_sigmaPID  ==  starlightConstants::PHI){
-    if (W < 2.*starlightConstants::mK){
+    if (W < 2.*starlightConstants::kaonChargedMass){
       nrbw_r=0.;
       return nrbw_r;
     }
-    ppi=sqrt( ((W/2.)*(W/2.))- starlightConstants::mK*starlightConstants::mK);
-    ppi0=sqrt( ((_channelMass/2.)*(_channelMass/2.))-starlightConstants::mK*starlightConstants::mK);
+    ppi=sqrt( ((W/2.)*(W/2.))- starlightConstants::kaonChargedMass*starlightConstants::kaonChargedMass);
+    ppi0=sqrt( ((_channelMass/2.)*(_channelMass/2.))-starlightConstants::kaonChargedMass*starlightConstants::kaonChargedMass);
   }
 
   //handle J/Psi-->e+e- properly
@@ -848,12 +848,12 @@ double photonNucleusCrossSection::breitWigner(double W, double C)
     ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-starlightConstants::mel*starlightConstants::mel);   
   }
   if (_sigmaPID==starlightConstants::JPSI_mumu){
-    if(W<2.*starlightConstants::mmu){
+    if(W<2.*starlightConstants::muonMass){
       nrbw_r=0.;
       return nrbw_r;
     }
-    ppi=sqrt(((W/2.)*(W/2.))-starlightConstants::mmu*starlightConstants::mmu);
-    ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-starlightConstants::mmu*starlightConstants::mmu); 
+    ppi=sqrt(((W/2.)*(W/2.))-starlightConstants::muonMass*starlightConstants::muonMass);
+    ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-starlightConstants::muonMass*starlightConstants::muonMass);
   }
   if (_sigmaPID==starlightConstants::JPSI2S_ee){
     if(W<2.*starlightConstants::mel){
@@ -864,30 +864,30 @@ double photonNucleusCrossSection::breitWigner(double W, double C)
     ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-starlightConstants::mel*starlightConstants::mel);   
   }
   if (_sigmaPID==starlightConstants::JPSI2S_mumu){
-    if(W<2.*starlightConstants::mmu){
+    if(W<2.*starlightConstants::muonMass){
       nrbw_r=0.;
       return nrbw_r;
     }
-    ppi=sqrt(((W/2.)*(W/2.))-starlightConstants::mmu*starlightConstants::mmu);
-    ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-starlightConstants::mmu*starlightConstants::mmu); 
+    ppi=sqrt(((W/2.)*(W/2.))-starlightConstants::muonMass*starlightConstants::muonMass);
+    ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-starlightConstants::muonMass*starlightConstants::muonMass);
   }
 
   if(_sigmaPID==starlightConstants::UPSILON || _sigmaPID==starlightConstants::UPSILON2S ||_sigmaPID==starlightConstants::UPSILON3S ){ 
-    if (W<2.*starlightConstants::mmu){
+    if (W<2.*starlightConstants::muonMass){
       nrbw_r=0.;
       return nrbw_r;
     }
-    ppi=sqrt(((W/2.)*(W/2.))-starlightConstants::mmu*starlightConstants::mmu);
-    ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-starlightConstants::mmu*starlightConstants::mmu);
+    ppi=sqrt(((W/2.)*(W/2.))-starlightConstants::muonMass*starlightConstants::muonMass);
+    ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-starlightConstants::muonMass*starlightConstants::muonMass);
   }
   
   if(_sigmaPID==starlightConstants::UPSILON_mumu || _sigmaPID==starlightConstants::UPSILON2S_mumu ||_sigmaPID==starlightConstants::UPSILON3S_mumu ){ 
-    if (W<2.*starlightConstants::mmu){
+    if (W<2.*starlightConstants::muonMass){
       nrbw_r=0.;
       return nrbw_r;
     }
-    ppi=sqrt(((W/2.)*(W/2.))-starlightConstants::mmu*starlightConstants::mmu);
-    ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-starlightConstants::mmu*starlightConstants::mmu);
+    ppi=sqrt(((W/2.)*(W/2.))-starlightConstants::muonMass*starlightConstants::muonMass);
+    ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-starlightConstants::muonMass*starlightConstants::muonMass);
   }
   
   if(_sigmaPID==starlightConstants::UPSILON_ee || _sigmaPID==starlightConstants::UPSILON2S_ee ||_sigmaPID==starlightConstants::UPSILON3S_ee ){ 

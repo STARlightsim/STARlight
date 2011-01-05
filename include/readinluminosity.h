@@ -35,7 +35,7 @@
 #define READINLUMINOSITY_H
 
 
-#include "inputparameters.h"
+#include "inputParameters.h"
 #include "starlightlimits.h"
 
 

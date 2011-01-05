@@ -37,7 +37,7 @@
 
 #include "beambeamsystem.h"
 #include "beam.h"
-#include "inputparameters.h"
+#include "inputParameters.h"
 #include "starlightconstants.h"
 #include "nucleus.h"
 #include "bessel.h"

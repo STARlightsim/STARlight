@@ -141,7 +141,7 @@ void Gammaavectormeson::pickwy(double &W, double &Y)
   xw = _randy.Rndom();// random()/(RAND_MAX+1.0);
   W = _VMWmin + xw*(_VMWmax-_VMWmin);
 
-  if (W < 2*starlightConstants::mpi)
+  if (W < 2 * starlightConstants::pionChargedMass)
     goto L201pwy;
   
   IW = int((W-_VMWmin)/dW); //+ 1;
@@ -278,11 +278,11 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particle &ipid)
   case starlightConstants::RHOZEUS:
   case starlightConstants::FOURPRONG:
   case starlightConstants::OMEGA:
-    mdec = starlightConstants::mpi;
+    mdec = starlightConstants::pionChargedMass;
     ipid = starlightConstants::PION;
     break;
   case starlightConstants::PHI:
-    mdec = starlightConstants::mK;
+    mdec = starlightConstants::kaonChargedMass;
     ipid = starlightConstants::KAONCHARGE;
     break;
   case starlightConstants::JPSI:
@@ -294,7 +294,7 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particle &ipid)
     ipid = starlightConstants::ELECTRON;
     break; 
   case starlightConstants::JPSI_mumu:
-    mdec = starlightConstants::mmu;
+    mdec = starlightConstants::muonMass;
     ipid = starlightConstants::MUON;
     break; 
   case starlightConstants::JPSI2S_ee:
@@ -302,7 +302,7 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particle &ipid)
     ipid = starlightConstants::ELECTRON;
     break; 
   case starlightConstants::JPSI2S_mumu:
-    mdec = starlightConstants::mmu;
+    mdec = starlightConstants::muonMass;
     ipid = starlightConstants::MUON;
     break; 
 
@@ -313,7 +313,7 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particle &ipid)
     //  decays 50% to e+/e-, 50% to mu+/mu-
     ytest = _randy.Rndom();//random()/(RAND_MAX+1.0);
     
-    mdec = starlightConstants::mmu;
+    mdec = starlightConstants::muonMass;
     ipid = starlightConstants::MUON;
     break;
   case starlightConstants::UPSILON_ee:
@@ -325,7 +325,7 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particle &ipid)
   case starlightConstants::UPSILON_mumu:
   case starlightConstants::UPSILON2S_mumu:
   case starlightConstants::UPSILON3S_mumu:
-    mdec = starlightConstants::mmu;
+    mdec = starlightConstants::muonMass;
     ipid = starlightConstants::MUON;   
     break;
   default: cout<<"No daughtermass defined, gammaavectormeson::getdaughtermass"<<endl;

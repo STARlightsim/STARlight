@@ -37,7 +37,7 @@
 
 //This calls inclues a single beam of nucleons
 #include "nucleus.h"
-#include "inputparameters.h"
+#include "inputParameters.h"
 
 
 class beam : public nucleus

@@ -35,20 +35,20 @@
 
 #include "reportingUtils.h"
 #include "starlight.h"
-#include "inputparameters.h"
+#include "inputParameters.h"
 #include "eventfilewriter.h"
-#include "starlightstandalone.h"
+#include "starlightStandalone.h"
 
 
 using namespace std;
 
 
 starlightStandalone::starlightStandalone()
-	:	_configFileName       ("slight.in"),
-		_dataFileName         ("slight.out"),
-		_starlight            (0),
-		_inputParameters      (0),
-		_nmbEventsTot       (1),
+	:	_configFileName  ("slight.in"),
+		_dataFileName    ("slight.out"),
+		_starlight       (0),
+		_inputParameters (0),
+		_nmbEventsTot    (1),
 		_nmbEventsPerFile(_nmbEventsTot)
 { }
 

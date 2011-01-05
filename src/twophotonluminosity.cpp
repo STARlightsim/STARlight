@@ -35,7 +35,7 @@
 #include <fstream>
 #include <cmath>
 
-#include "inputparameters.h"
+#include "inputParameters.h"
 #include "beambeamsystem.h"
 #include "beam.h"
 #include "starlightconstants.h"

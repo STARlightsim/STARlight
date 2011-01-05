@@ -102,7 +102,7 @@ double psiFamily::getDaughterMass(starlightConstants::particle &ipid)
         }
         else
         {
-	        mdec = starlightConstants::mmu;
+	        mdec = starlightConstants::muonMass;
         	ipid = starlightConstants::MUON;
         }
 	return mdec;

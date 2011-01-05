@@ -36,7 +36,7 @@
 
 
 #include "beambeamsystem.h"
-#include "inputparameters.h"
+#include "inputParameters.h"
 #include "gammaacrosssection.h"                                                                                                                            
 
 

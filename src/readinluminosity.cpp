@@ -38,7 +38,7 @@
 
 #include "readinluminosity.h"
 #include "starlightconstants.h"
-#include "inputparameters.h"
+#include "inputParameters.h"
 
 
 using namespace std;

@@ -40,7 +40,7 @@
 #endif
 
 #include "starlight.h"
-#include "inputparameters.h"
+#include "inputParameters.h"
 #include "eventchannel.h"
 #include "gammagammaleptonpair.h"
 #include "gammagammasingle.h"
