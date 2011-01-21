@@ -1,8 +1,9 @@
 
 #include "analyse.cxx"
 
+
 void ana()
 {
-  Analyse a("pp-ppJpsi20000ev.root");
+  Analyse a("slight.out", 20);
   a.doAnalysis();
 }

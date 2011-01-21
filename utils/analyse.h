@@ -7,16 +7,19 @@
 #include "TClonesArray.h"
 #include "TParticle.h"
 #include "TH1F.h"
-
+#include <string>
 
 class Analyse 
 {
  public:
   Analyse(); //Constructor
-  Analyse(TString infile); //Special constructor
+  Analyse(char* infile, Int_t nEvents); //Special constructor
   ~Analyse(); //Destructor
-  
+  Int_t Init();
+  Int_t NextEvent();
+  TParticle* NextParticle();
   void doAnalysis(); //Function doing the analysis
+  
  private:
  
   TH1F *fPtEl;       //Histogram of pt of electrons
@@ -30,9 +33,15 @@ class Analyse
   TH1F *fPtPi;       //Histogram of pt of pions
   TH1F *fRapPi;      //Histogram of rapidity of pions
   TH1F *fInvMassPi;  //Histogram of ivariant mass of pions
-  
-  TString fInfile;
 
+  TH1F *fPt1;
+  TH1F *fPt2;
+  
+  FILE *filelist;
+  char *fInfile;
+  Int_t fNParticles;
+  Int_t fNEvents;
+  
 };
 
 #endif

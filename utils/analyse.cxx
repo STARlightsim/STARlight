@@ -1,7 +1,8 @@
 #include "analyse.h"
 
 Analyse::Analyse() :
-  fInfile("slight.root")
+  fInfile("slight.out"),
+  fNEvents(1)
 {
   //Constructor
   
@@ -17,10 +18,14 @@ Analyse::Analyse() :
   fInvMassEl = new TH1F("InvMassEl", "Invariant mass", 100, 0, 5);
   fInvMassMu = new TH1F("InvMassMu", "Invariant mass", 100, 0, 5);
   fInvMassPi = new TH1F("InvMassPi", "Invariant mass", 100, 0, 5);
+  
+  fPt1 = new TH1F("fPt1", "Transverse momentum track 1", 100, 0, 2.);
+  fPt2 = new TH1F("fPt2", "Transverse momentum track 2", 100, 0, 2.);
 }
 
-Analyse::Analyse(TString infile) :
-   fInfile(infile)
+Analyse::Analyse(char* infile, Int_t nEvents) :
+  fInfile(infile),
+  fNEvents(nEvents)
 {
   //Special constructor
 
@@ -37,6 +42,9 @@ Analyse::Analyse(TString infile) :
   fInvMassMu = new TH1F("InvMassMu", "Invariant mass", 100, 0, 5);
   fInvMassPi = new TH1F("InvMassPi", "Invariant mass", 100, 0, 5);
  
+
+  fPt1 = new TH1F("fPt1", "Transverse momentum track 1", 100, 0, 2.);
+  fPt2 = new TH1F("fPt2", "Transverse momentum track 2", 100, 0, 2.);
 }
 
 Analyse::~Analyse()
@@ -53,45 +61,105 @@ Analyse::~Analyse()
   delete fInvMassEl;
   delete fInvMassMu;
   delete fInvMassPi;
+  
+  delete fPt1;
+  delete fPt2;
+  
  
+}
+
+Int_t Analyse::Init()
+{
+  
+  
+  cout << "Opening textfile " << fInfile << endl;
+  if( !(filelist=fopen(fInfile,"r")) ){
+    cout<<"Couldn't open input file: "<<fInfile<<endl;
+    return -1;
+  }
+  cout << "Done opening textfile" << endl;
+  return 0;
+}
+
+Int_t Analyse::NextEvent()
+{
+  char linelabel[20];
+  int i1=0;
+  int i2=0;
+  int i3=0;
+  double x1=0.0;
+  double x2=0.0;
+  double x3=0.0;
+  double x4=0.0;
+  int ntrk=0;
+  int nvtx=0;
+  // Event line 
+  fscanf(filelist,"%s %d %d %d ",linelabel,&i1,&ntrk,&i2);
+  fNParticles = ntrk;
+  cout<<linelabel<<"  "<<i1<<"  "<<ntrk<<"  "<<i2<<"   "<<fNParticles<<endl;
+  // Vertex line 
+  fscanf(filelist,"%s %lf %lf %lf %lf %d %d %d %d",
+         linelabel,&x1,&x2,&x3,&x4,&i1,&i2,&i3,&nvtx);
+  cout<<linelabel<<"  "<<x1<<"  "<<x2<<"  "<<x3<<"  "<<x4<<"  "<<i1<<"  "<<i2<<"  "<<i3<<"  "<<nvtx<<endl;
+  if(ntrk != nvtx)cout<<"ERROR: ntrk = "<<ntrk<<"  nvtx = "<<nvtx<<endl;
+  //
+  return fNParticles;
+}
+
+TParticle* Analyse::NextParticle()
+{
+  char tracklabel[20];
+  int i1=0;
+  int i2=0;
+  int i3=0;
+  int i4=0;
+  Int_t idpart = 0;
+  Double_t px = 0.0;
+  Double_t py = 0.0;
+  Double_t pz = 0.0;
+  Double_t ep = 0.0;
+  
+  cout<<"In NextParticle: fNparticles = "<<fNParticles<<endl;
+
+  // for ( int itk=0; itk < fNParticles; itk++){
+
+
+    fscanf(filelist,"%s %d %le %le %le %d %d %d %d",
+         tracklabel,&i1,&px,&py,&pz,&i2,&i3,&i4,&idpart);
+    cout<<"   "<<tracklabel<<"  "<<i1<<"  "<<px<<"  "<<py<<"  "<<pz<<"  "<<i2<<"  "<<i3<<"  "<<i4<<"  "<<idpart<<endl;
+  
+    TParticle *particle = 
+      new TParticle(idpart, 0, -1, -1, -1, -1, px, py, pz, ep, 0., 0., 0., 0.);
+
+    //  }
+
+  return particle;
 }
 
 void Analyse::doAnalysis()
 {
 
+  Int_t check = Init();
+  if(check < 0) return;
   //Doing the analysis
-
-  //Opening the file with the tree
-  TFile *f = new TFile(fInfile);
- 
-  //Getting the tree from the file
-  TTree *T = (TTree*)f->Get("outdata");
-  
-  //Creating a TClonesArray of TParticles
-  TClonesArray *arr = new TClonesArray("TParticle");
-  //Getting the branch
-  T->GetBranch("branch")->SetAutoDelete(kFALSE);
-  //Setting the branch address
-  T->SetBranchAddress("branch", &arr);
-  Int_t nentries = (Int_t)(T->GetEntries());
-
-  //Looping over all events
-  for(Int_t ev = 0; ev < nentries; ev++){
-    	
-    arr->Clear();
-    T->GetEntry(ev);
-    Int_t ntracks = arr->GetEntriesFast();
+  for(Int_t ev = 0; ev < fNEvents; ev++){
+    	   
+    const Int_t ntracks = NextEvent();
     //Array of TLorentzVectors. One vector for each tracks
     TLorentzVector* vecArr[ntracks];
-    
+    TParticle* partArr[ntracks];
     //Looping over the tracks of the event
     for(Int_t tr = 0; tr < ntracks; tr++){
       //Getting a TParticle from the TClonesArray
-      TParticle *part = (TParticle*)arr->At(tr);
+      TParticle *part = NextParticle();
+      
       //Creating a new TLorentzVector and setting px, py, pz and E.
       vecArr[tr] = new TLorentzVector;
-      vecArr[tr]->SetPxPyPzE(part->Px(), part->Py(), part->Pz(), part->Energy());
+      vecArr[tr]->SetPxPyPzE(part->Px(), part->Py(), part->Pz(), part->Energy());     partArr[tr] = part;
     }
+ 
+    fPt1->Fill(vecArr[0]->Pt());
+    fPt2->Fill(vecArr[1]->Pt());
     
     //Creating a new TLorentzVector, which is the sum of the elements in vecArr
     TLorentzVector sum;
@@ -99,18 +167,18 @@ void Analyse::doAnalysis()
       sum += *vecArr[i];
     }
     //Filling the histograms depending on particle type
-    TParticle *p = (TParticle*)arr->At(0);
-    if(p->GetPdgCode() == 11 || p->GetPdgCode() == -11){
+    
+    if(partArr[0]->GetPdgCode() == 11 || partArr[0]->GetPdgCode() == -11){
       fPtEl->Fill(sum.Pt());
       fRapEl->Fill(sum.Rapidity());
       fInvMassEl->Fill(sum.M());
     }
-    else if(p->GetPdgCode() == 13 || p->GetPdgCode() == -13){
+    else if(partArr[0]->GetPdgCode() == 13 || partArr[0]->GetPdgCode() == -13){
       fPtMu->Fill(sum.Pt());
       fRapMu->Fill(sum.Rapidity());
       fInvMassMu->Fill(sum.M());
     }
-    else if(p->GetPdgCode() == 211 || p->GetPdgCode() == -211){
+    else if(partArr[0]->GetPdgCode() == 211 || partArr[0]->GetPdgCode() == -211){
       fPtPi->Fill(sum.Pt());
       fRapPi->Fill(sum.Rapidity());
       fInvMassPi->Fill(sum.M());
@@ -128,6 +196,8 @@ void Analyse::doAnalysis()
   fPtPi->Write();
   fRapPi->Write();
   fInvMassPi->Write();
+  fPt1->Write();
+  fPt2->Write();
   
   
 }
