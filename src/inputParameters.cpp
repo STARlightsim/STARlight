@@ -37,6 +37,7 @@
 #include "reportingUtils.h"
 #include "starlightconstants.h"
 #include "inputParameters.h"
+#include "inputParser.h"
 
 
 using namespace std;
@@ -85,39 +86,67 @@ inputParameters::init(const string& configFileName)
 {
 	// open config file
 	_configFileName = configFileName;
-	ifstream configFile(_configFileName.c_str());
-	if ((!configFile) || (!configFile.good())) {
-		printWarn << "cannot read parameters from file '" << _configFileName << "'" << endl;
-		return false;
-	}
 
-	// read config file
 	double minWConfigFile = 0;
 	double maxWConfigFile = 0;
-	if (configFile
-	    >> _beam1Z >> _beam1A
-	    >> _beam2Z >> _beam2A
-	    >> _beamLorentzGamma
-	    >> maxWConfigFile>> minWConfigFile >> _nmbWBins
-	    >> _maxRapidity >> _nmbRapidityBins
-	    >> _productionMode
-	    >> _nmbEventsTot
-	    >> _prodParticleId
-	    >> _randomSeed
-	    >> _outputFormat
-	    >> _beamBreakupMode
-	    >> _interferenceEnabled >> _interferenceStrength
-	    >> _coherentProduction >> _incoherentFactor
-	    >> _bford
-	    >> _maxPtInterference
-	    >> _nmbPtBinsInterference)
-		printInfo << "successfully read input parameters from '" << _configFileName << "'" << endl;
-	else {
-		printWarn << "problems reading input parameters from '" << _configFileName << "'" << endl
-		          << *this;
-		return false;
+	
+	inputParser ip;
+	
+	ip.addUintParameter(string("BEAM_1_Z"), &_beam1Z);
+	ip.addUintParameter(string("BEAM_2_Z"), &_beam2Z);
+	ip.addUintParameter(string("BEAM_1_A"), &_beam1A);
+	ip.addUintParameter(string("BEAM_2_A"), &_beam2A);
+
+	ip.addDoubleParameter(string("BEAM_GAMMA"), &_beamLorentzGamma);
+	
+	ip.addDoubleParameter(string("W_MAX"), &maxWConfigFile);
+	ip.addDoubleParameter(string("W_MAX"), &minWConfigFile);
+	ip.addUintParameter(string("W_N_BINS"), &_nmbWBins);;
+	
+	ip.addDoubleParameter(string("RAP_MAX"), &_maxRapidity);
+	ip.addUintParameter(string("RAP_N_BINS"), &_nmbRapidityBins);
+	
+	ip.addIntParameter(string("PROD_MODE"), &_productionMode);
+	
+	ip.addUintParameter(string("N_EVENTS"), &_nmbEventsTot);
+	
+	ip.addIntParameter(string("PROD_PID"), &_prodParticleId);
+	
+	ip.addIntParameter(string("RND_SEED"), &_randomSeed);
+	
+	ip.addIntParameter(string("OUTPUT_FORMAT"), &_outputFormat);
+	
+	ip.addIntParameter(string("BREAKUP_MODE"), &_beamBreakupMode);
+	
+	ip.addBoolParameter(string("INTERFERENCE"), &_interferenceEnabled);
+	ip.addDoubleParameter(string("IF_STRENGTH"), &_interferenceStrength);
+	
+	ip.addBoolParameter(string("COHERENT"), &_coherentProduction);
+	ip.addDoubleParameter(string("INCO_FACTOR"), &_incoherentFactor);
+	
+	ip.addDoubleParameter(string("BFORD"), &_bford);
+
+	ip.addDoubleParameter(string("INT_PT_MAX"), &_maxPtInterference);
+	ip.addIntParameter(string("INT_PT_N_BINS"), &_nmbPtBinsInterference);
+	
+	int nParameters = ip.parseFile(_configFileName);
+	if(nParameters == -1) 
+	{
+	  printErr << "Could not open file: " << _configFileName;
+	  return false;
 	}
-	configFile.close();
+	
+	//ip.printParameterInfo(printInfo);
+	
+	if(ip.validateParameters(printErr))
+	{
+	  printInfo << "successfully read input parameters from '" << _configFileName << "'" << endl;
+	}
+ 	else {
+ 		printWarn << "problems reading input parameters from '" << _configFileName << "'" << endl
+ 		          << *this;
+ 		return false;
+ 	}
 
 	_ptBinWidthInterference = _maxPtInterference / _nmbPtBinsInterference;
 	_protonEnergy           = _beamLorentzGamma * protonMass;

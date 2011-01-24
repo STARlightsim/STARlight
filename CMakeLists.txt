@@ -197,6 +197,7 @@ set(SOURCES
   src/starlightparticlecodes.cpp
   src/starlightStandalone.cpp
   src/nBodyPhaseSpaceGen.cpp
+  src/inputParser.cpp
   )
 if(ENABLE_PYTHIA) 
   set (SOURCES
