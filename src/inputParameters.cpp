@@ -57,6 +57,12 @@ inputParameters::inputParameters()
 	  _nmbWBins              (0),
 	  _maxRapidity           (0),
 	  _nmbRapidityBins       (0),
+	  _accCutPt              (0),
+	  _minPt                 (0),
+	  _maxPt                 (0),
+	  _accCutEta             (0),
+	  _minEta                (0),
+	  _maxEta                (0),
 	  _productionMode        (0),
 	  _nmbEventsTot          (0),
 	  _prodParticleId        (0),
@@ -105,6 +111,14 @@ inputParameters::init(const string& configFileName)
 	
 	ip.addDoubleParameter(string("RAP_MAX"), &_maxRapidity);
 	ip.addUintParameter(string("RAP_N_BINS"), &_nmbRapidityBins);
+	
+	ip.addBoolParameter(string("CUT_PT"), &_accCutPt);
+	ip.addDoubleParameter(string("PT_MIN"), &_minPt);
+	ip.addDoubleParameter(string("PT_MAX"), &_maxPt);
+	
+	ip.addBoolParameter(string("CUT_ETA"), &_accCutEta);
+	ip.addDoubleParameter(string("ETA_MIN"), &_minEta);
+	ip.addDoubleParameter(string("ETA_MAX"), &_maxEta);
 	
 	ip.addIntParameter(string("PROD_MODE"), &_productionMode);
 	
@@ -448,6 +462,12 @@ inputParameters::print(ostream& out) const
 	    << "    # of W bins ............................ " << _nmbWBins << endl
 	    << "    maximum absolute value for rapidity .... " << _maxRapidity << endl
 	    << "    # of rapidity bins ..................... " << _nmbRapidityBins << endl
+	    << "    Cut in pT............................... " << yesNo(_accCutPt) << endl
+	    << "    minumum pT.............................. " << _minPt << endl
+            << "    maximum pT.............................. " << _maxPt << endl
+	    << "    Cut in eta............................... " << yesNo(_accCutEta) << endl
+	    << "    minumum eta.............................. " << _minEta << endl
+            << "    maximum eta.............................. " << _maxEta << endl
 	    << "    meson production mode .................. " << _productionMode << endl
 	    << "    number of events to generate ........... " << _nmbEventsTot << endl
 	    << "    PDG ID of produced particle ............ " << _prodParticleId << endl

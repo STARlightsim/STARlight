@@ -1,22 +1,28 @@
-BEAM_1_Z = 79    #Z of projectile
-BEAM_1_A = 197   #A of projectile
-BEAM_2_Z = 79    #Z of target
-BEAM_2_A = 197   #A of target
-BEAM_GAMMA = 108.4 #Gamma of the colliding ions
-W_MAX = 1.5   #Max value of w
-W_MIN = -1    #Min value of w
+BEAM_1_Z = 82    #Z of projectile
+BEAM_1_A = 208   #A of projectile
+BEAM_2_Z = 82   #Z of target
+BEAM_2_A = 208   #A of target
+BEAM_GAMMA = 1470 #Gamma of the colliding ions
+W_MAX = 12.0   #Max value of w
+W_MIN = 2.0    #Min value of w
 W_N_BINS = 40    #Bins i w
-RAP_MAX = 4.    #max y
+RAP_MAX = 8.    #max y
 RAP_N_BINS = 80    #Bins i y
+CUT_PT = 0 #Cut in pT? 0 = (no, 1 = yes)
+PT_MIN = 1.0 #Minimum pT in GeV
+PT_MAX = 3.0 #Maximum pT in GeV
+CUT_ETA = 0 #Cut in pseudorapidity? (0 = no, 1 = yes)
+ETA_MIN = -10 #Minimum pseudorapidity
+ETA_MAX = 10 #Maximum pseudorapidity
 PROD_MODE = 2     #gg or gP switch (1 = 2-photon, 2 = vector meson (narrow), 3 = vector meson (wide) )
-N_EVENTS = 100   #Number of events
-PROD_PID = 443   #Channel of interest
+N_EVENTS = 10   #Number of events
+PROD_PID = 443013   #Channel of interest
 RND_SEED = 34533 #Random number seed
 OUTPUT_FORMAT = 2     #Form of the output
 BREAKUP_MODE = 5     #Controls the nuclear breakup
 INTERFERENCE = 0     #Interference (0 = off, 1 = on)
 IF_STRENGTH = 1.    #% of intefernce (0.0 - 0.1)
-COHERENT = 0     #Coherent=1,Incoherent=0
+COHERENT = 1     #Coherent=1,Incoherent=0
 INCO_FACTOR = 1.    #percentage of incoherence
 BFORD = 9.5
 INT_PT_MAX = 0.24  #Maximum pt considered, when interference is turned on
