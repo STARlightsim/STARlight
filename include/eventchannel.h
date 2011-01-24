@@ -58,6 +58,19 @@ class eventChannel : public readLuminosity
                               double &px,double &py,double &pz,int &iFbadevent);
 		randomGenerator _randy;
 		beamBeamSystem _bbs;
+		int getNTries() {return _nTries;}
+		int getNSuccess() {return _nSuccess;}
+		double pseudoRapidity(double px, double py, double pz);
+ protected:
+		int _nTries;
+		int _nSuccess;
+		bool _accCutPt;
+		bool _accCutEta;
+		double _ptMin;
+		double _ptMax;
+		double _etaMin;
+		double _etaMax;
+		
 };
 
 

@@ -43,7 +43,7 @@ using namespace std;
 
 //______________________________________________________________________________
 eventChannel::eventChannel(inputParameters& input, beamBeamSystem& bbsystem)
-: readLuminosity(input), _bbs(bbsystem)
+  : readLuminosity(input), _bbs(bbsystem), _nTries(0), _nSuccess(0), _accCutPt(false), _accCutEta(false), _ptMin(0.1), _ptMax(2.0), _etaMin(-0.9), _etaMax(0.9)
 {
   _randy.SetSeed(input.randomSeed());
 }
@@ -83,3 +83,12 @@ void eventChannel::transform(double betax,double betay,double betaz,double &E,
                                                                                                                                                           
   pz = -gamma*betaz*E0 +  gob*betaz*betax*px0 +  gob*betaz*betay*py0 + (1. + gob*betaz*betaz)*pz0;
 }
+
+double eventChannel::pseudoRapidity(double px, double py, double pz)
+{
+  double pT = sqrt(px*px + py*py);
+  double p = sqrt(pz*pz + pT*pT);
+  double eta = -99.9; if((p-pz) != 0){eta = 0.5*log((p+pz)/(p-pz));}
+  return eta;
+}
+

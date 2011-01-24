@@ -515,9 +515,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
     picky(rapidity);
 
     pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
-
     twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
-
     if (iFbadevent==0){
 	int q1=0,q2=0; 
 
@@ -575,8 +573,39 @@ upcEvent Gammagammaleptonpair::produceEvent()
    picky(rapidity);
    
    pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
-   
-   twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+   bool accepted = false;
+   do{
+     _nTries++;
+     twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+     double pt1chk = sqrt(px1*px1+py1*py1);
+     double pt2chk = sqrt(px2*px2+py2*py2);
+     cout << "pt1: " << pt1chk << " pt2: " << pt2chk << endl;
+     double eta1 = pseudoRapidity(px1, py1, pz1);
+     double eta2 = pseudoRapidity(px2, py2, pz2);
+     cout << "eta1: " << eta1 << " eta2: " << eta2 << endl;
+     if(_accCutPt && !_accCutEta){
+       if(pt1chk > _ptMin && pt1chk < _ptMax &&  pt2chk > _ptMin && pt2chk < _ptMax){
+	 accepted = true;
+	 _nSuccess++;
+       }
+     }
+     else if(!_accCutPt && _accCutEta){
+       if(eta1 > _etaMin && eta1 < _etaMax && eta2 > _etaMin && eta2 < _etaMax){
+	 accepted = true;
+	 _nSuccess++;
+       }
+     }
+     else if(_accCutPt && _accCutEta){
+       if(pt1chk > _ptMin && pt1chk < _ptMax &&  pt2chk > _ptMin && pt2chk < _ptMax){
+	 if(eta1 > _etaMin && eta1 < _etaMax && eta2 > _etaMin && eta2 < _etaMax){
+	   accepted = true;
+	    _nSuccess++;
+	 }
+       }
+     }
+     cout << "accepted: " << accepted << endl;
+   }while((_accCutPt || _accCutEta) && !accepted);
+   //twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
    
    if (iFbadevent==0){
      int q1=0,q2=0; 

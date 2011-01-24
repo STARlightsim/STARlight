@@ -67,6 +67,7 @@ class Gammaavectormeson : public eventChannel
   double getSpin();
   double _VMbslope;
   virtual double getDaughterMass(starlightConstants::particle &ipid);                
+  double pseudoRapidity(double px, double py, double pz);
   
  private:
   starlightConstants::particle _VMpidtest;
@@ -86,7 +87,7 @@ class Gammaavectormeson : public eventChannel
   double _VMptmax;
   double _VMdpt;
   nBodyPhaseSpaceGen* _phaseSpaceGen;
-	
+  
 };
 
 

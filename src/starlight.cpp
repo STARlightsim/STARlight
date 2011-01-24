@@ -280,3 +280,14 @@ int starlight::createEventChannel()
 		return -1;//Maybe return empty eventChannel object?
 	}
 }
+
+int starlight::getNTries()
+{
+  int ntries = _eventChannel->getNTries();
+  return ntries;
+}
+int starlight::getNSuccess()
+{
+  int nsucc = _eventChannel->getNSuccess();
+  return nsucc;
+}

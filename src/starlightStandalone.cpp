@@ -106,6 +106,8 @@ starlightStandalone::run()
 			fileWriter.writeEvent(event, iEvent);
 		}
 	}
+	cout << "N Tries: " << _starlight->getNTries() << endl;
+	cout << "N Success: " << _starlight->getNSuccess() << endl;
 	fileWriter.close();
 
 	return true;

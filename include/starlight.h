@@ -64,7 +64,8 @@ class starlight
       std::string getConfigFileName() const { return _configFileName; }
    
       void setInputParameters(inputParameters *inputParams) { _inputParameters = inputParams; }
-   
+      int getNTries(); 
+      int getNSuccess(); 
    private:
       
       bool checkForLuminosityTable();
