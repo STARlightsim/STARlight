@@ -64,12 +64,12 @@ class eventChannel : public readLuminosity
  protected:
 		int _nTries;
 		int _nSuccess;
-		bool _accCutPt;
-		bool _accCutEta;
-		double _ptMin;
-		double _ptMax;
-		double _etaMin;
-		double _etaMax;
+		bool _accCutPt; //Acceptance cut in pT
+		bool _accCutEta; //Acceptance cut in pseudorapidity
+		double _ptMin; //Min pT if cut
+		double _ptMax; //Max pT if cut
+		double _etaMin; //Min eta if cut
+		double _etaMax; //Max eta if cut
 		
 };
 

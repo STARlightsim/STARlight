@@ -683,14 +683,14 @@ upcEvent Gammaavectormeson::produceEvent()
 	    //  if(_accCut){
 	    do{
 	      _nTries++;
-	      cout << "n tries: " << _nTries << endl;
+	      
 	      twoBodyDecay(ipid,E,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
 	      double pt1chk = sqrt(px1*px1+py1*py1);
 	      double pt2chk = sqrt(px2*px2+py2*py2);
-	      cout << "pt1: " << pt1chk << " pt2: " << pt2chk << endl;
+	      
 	      double eta1 = pseudoRapidity(px1, py1, pz1);
 	      double eta2 = pseudoRapidity(px2, py2, pz2);
-	      cout << "eta1: " << eta1 << " eta2: " << eta2 << endl;
+	      
 	      if(_accCutPt && !_accCutEta){
 		if(pt1chk > _ptMin && pt1chk < _ptMax &&  pt2chk > _ptMin && pt2chk < _ptMax){
 		  accepted = true;
@@ -711,7 +711,7 @@ upcEvent Gammaavectormeson::produceEvent()
 		  }
 		}
 	      }
-	      cout << "accepted: " << accepted << endl;
+	      
 	    }while((_accCutPt || _accCutEta) && !accepted);
 	      /*  }else{
 	      twoBodyDecay(ipid,E,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
