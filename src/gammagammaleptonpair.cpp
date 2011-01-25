@@ -564,17 +564,17 @@ upcEvent Gammagammaleptonpair::produceEvent()
    starlightConstants::particle ipid = starlightConstants::UNKNOWN;
    
    double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
-   
-   
-   //this function decays particles and writes events to a file
-   //zero out the event structure
-   pickw(comenergy);
-
-   picky(rapidity);
-   
-   pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
    bool accepted = false;
-   do{
+   do{ 
+     //this function decays particles and writes events to a file
+     //zero out the event structure
+     pickw(comenergy);
+     
+     picky(rapidity);
+     
+     pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
+   
+  
      _nTries++;
      twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
      double pt1chk = sqrt(px1*px1+py1*py1);

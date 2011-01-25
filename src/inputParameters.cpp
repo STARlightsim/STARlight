@@ -462,12 +462,12 @@ inputParameters::print(ostream& out) const
 	    << "    # of W bins ............................ " << _nmbWBins << endl
 	    << "    maximum absolute value for rapidity .... " << _maxRapidity << endl
 	    << "    # of rapidity bins ..................... " << _nmbRapidityBins << endl
-	    << "    Cut in pT............................... " << yesNo(_accCutPt) << endl
+	    << "    cut in pT............................... " << yesNo(_accCutPt) << endl
 	    << "    minumum pT.............................. " << _minPt << endl
             << "    maximum pT.............................. " << _maxPt << endl
-	    << "    Cut in eta............................... " << yesNo(_accCutEta) << endl
-	    << "    minumum eta.............................. " << _minEta << endl
-            << "    maximum eta.............................. " << _maxEta << endl
+	    << "    cut in eta.............................. " << yesNo(_accCutEta) << endl
+	    << "    minumum eta............................. " << _minEta << endl
+            << "    maximum eta............................. " << _maxEta << endl
 	    << "    meson production mode .................. " << _productionMode << endl
 	    << "    number of events to generate ........... " << _nmbEventsTot << endl
 	    << "    PDG ID of produced particle ............ " << _prodParticleId << endl

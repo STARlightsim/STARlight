@@ -671,17 +671,17 @@ upcEvent Gammaavectormeson::produceEvent()
 	    double momx=0.,momy=0.,momz=0.;
 
 	    double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
-
-	    pickwy(comenergy,rapidity);
-
-	    if (_VMinterferencemode==0){
-		    momenta(comenergy,rapidity,E,momx,momy,momz,tcheck);
-	    } else if (_VMinterferencemode==1){
-		    vmpt(comenergy,rapidity,E,momx,momy,momz,tcheck);
-	    }
 	    bool accepted = false;
 	    //  if(_accCut){
 	    do{
+	      pickwy(comenergy,rapidity);
+
+	      if (_VMinterferencemode==0){
+		momenta(comenergy,rapidity,E,momx,momy,momz,tcheck);
+	      } else if (_VMinterferencemode==1){
+		vmpt(comenergy,rapidity,E,momx,momy,momz,tcheck);
+	      }
+	   
 	      // cout << "_ptMin: " << _ptMin << " _ptMax: " << _ptMax << " _etaMin: " << _etaMin << " _etaMax: " << _etaMax << endl;
 	      _nTries++;
 	      //cout << "n tries: " << _nTries<< endl;
