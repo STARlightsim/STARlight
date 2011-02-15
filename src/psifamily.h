@@ -47,8 +47,8 @@ class psiFamily : public Gammaanarrowvm
 	public:
 		psiFamily(inputParameters& input, beamBeamSystem& bbsystem);
 		~psiFamily();
-		double getTheta(starlightConstants::particle ipid);
-		double getDaughterMass(starlightConstants::particle &ipid);
+		double getTheta(starlightConstants::particleTypeEnum ipid);
+		double getDaughterMass(starlightConstants::particleTypeEnum &ipid);
 	private:
 		double _width;
 		double _mass;

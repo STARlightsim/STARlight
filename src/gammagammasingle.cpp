@@ -70,9 +70,9 @@ Gammagammasingle::Gammagammasingle(inputParameters& input, beamBeamSystem& bbsys
   _randy.SetSeed(input.randomSeed());
   cout<<"Randy in Single Meson construction: "<<_randy.Rndom()<<endl;
   //Storing inputparameters into protected members for use
-  _GGsingInputnumw=input.numWBins();
+  _GGsingInputnumw=input.nmbWBins();
   _GGsingInputnumy=input.nmbRapidityBins();
-  _GGsingInputpidtest=input.getPidTest();
+  _GGsingInputpidtest=input.prodParticleType();
   _GGsingInputGamma_em=input.beamLorentzGamma();
   cout<<"SINGLE MESON pid test: "<<_GGsingInputpidtest<<endl;
   //reading in luminosity tables
@@ -319,7 +319,7 @@ double Gammagammasingle::pp(double E)
         
   //pick a test value pp, and find the amplitude there
   x = _randy.Rndom();//random()/(RAND_MAX+1.0);
-  pp = x*5.*starlightConstants::hbarc/_bbs.getBeam1().RNuc(); //Will use nucleus #1, there should be two for symmetry//nextline
+  pp = x*5.*starlightConstants::hbarc/_bbs.getBeam1().nuclearRadius(); //Will use nucleus #1, there should be two for symmetry//nextline
   singleformfactorpp1=_bbs.getBeam1().formFactor(pp*pp+ereds);
   test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
 
@@ -330,7 +330,7 @@ double Gammagammasingle::pp(double E)
     }
     else{
       x =_randy.Rndom();//random()/(RAND_MAX+1.0);
-      pp = 5*starlightConstants::hbarc/_bbs.getBeam1().RNuc()*x;
+      pp = 5*starlightConstants::hbarc/_bbs.getBeam1().nuclearRadius()*x;
       singleformfactorpp2=_bbs.getBeam1().formFactor(pp*pp+ereds);//Symmetry
       test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
     }
@@ -340,7 +340,7 @@ double Gammagammasingle::pp(double E)
 
 
 //______________________________________________________________________________
-void Gammagammasingle::twoBodyDecay(starlightConstants::particle &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double &pz1,double &px2,double &py2,double &pz2,int &iFbadevent)
+void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double &pz1,double &px2,double &py2,double &pz2,int &iFbadevent)
 {
   //     This routine decays a particle into two particles of mass mdec,
   //     taking spin into account
@@ -460,7 +460,7 @@ starlightConstants::event Gammagammasingle::produceEvent(int &ievent)
 	double parentE = 0.;
 	double parentmomx=0.,parentmomy=0.,parentmomz=0.;
         int iFbadevent=0;
-	starlightConstants::particle ipid = starlightConstants::UNKNOWN;
+	starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
 	double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
 	double px3=0.,px4=0.,py3=0.,py4=0.,pz3=0.,pz4=0.;
 	double theta=0.,phi=0.;//angles from jetset
@@ -686,7 +686,7 @@ upcEvent Gammagammasingle::produceEvent()
   double parentE = 0.;
   double parentmomx=0.,parentmomy=0.,parentmomz=0.;
   int iFbadevent=0;
-  starlightConstants::particle ipid = starlightConstants::UNKNOWN;
+  starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
   double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
   double px3=0.,px4=0.,py3=0.,py4=0.,pz3=0.,pz4=0.;
   double theta=0.,phi=0.;//angles from jetset

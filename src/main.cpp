@@ -32,6 +32,7 @@
 
 
 #include <iostream>
+#include <cstdlib>
 
 #include "reportingUtils.h"
 #include "starlight.h"
@@ -49,7 +50,9 @@ main(int,
 	// creating a starlight standalone object
 	starlightStandalone sl;
 	// initialising starlight
-	sl.init();
+	if (!sl.init())
+		exit(1);
 	// running starlight
-	return sl.run();
+	if (!sl.run())
+		exit(1);
 }

@@ -46,7 +46,7 @@ psiFamily::psiFamily(inputParameters& input,beamBeamSystem& bbsystem):Gammaanarr
 //Defining _width and mass...
  
 
-	// switch(input.getPidTest()){
+	// switch(input.prodParticleType()){
 	// 	case starlightConstants::JPSI:
 	// 	  cout << "JPSI goddamnit!" << endl;
         //                 _width=0.000091;
@@ -66,7 +66,7 @@ psiFamily::~psiFamily()
 { }
 
 
-double psiFamily::getTheta(starlightConstants::particle)
+double psiFamily::getTheta(starlightConstants::particleTypeEnum)
 {
 //should probably merge the psi fmaily back to the vm stuff.
 
@@ -90,7 +90,7 @@ double dndtheta=0.;
 }
 
 
-double psiFamily::getDaughterMass(starlightConstants::particle &ipid)
+double psiFamily::getDaughterMass(starlightConstants::particleTypeEnum &ipid)
 {
 	double ytest=0.,mdec=0.;
 	//  decays 50% to e+/e-, 50% to mu+/mu-

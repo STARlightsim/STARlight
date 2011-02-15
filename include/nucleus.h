@@ -35,34 +35,50 @@
 #define NUCLEUS_H
 
 
+#include <cmath>
+
+
 //This class holds the information for a target nucleus
 class nucleus
 {
 
- public:
-  nucleus(int Zin, int Ain, double bdeuteron, int in_or_co);
-  ~nucleus();
+public:
+
+	nucleus(const int    Z,
+	        const int    A,
+	        const double deuteronSlopePar,
+	        const bool   dAuCoherentProduction);
+	~nucleus();
  
-  int getZin();
-  int getAin();
-  double getWoodSaxonRadius();
-  double getWoodSaxonSkinDepth();
-  double RNuc(); //was used as wood-saxon anyway?
-  double fritiofR0(); //Fritiof _r0 (rws)/formfactor
-  double rws(double r); //Woodsaxon nuclear density
-  double formFactor(double t);  //Formfactor function
-  double getQ0();
-  double getRho0();
-  double thickness(double b);
- 
- private:
-  double _r0;
-  double _rho0;
-  double _Q0;
-  int _Zint;
-  int _Aint;
-  double _bford;
-  int _NUCin_or_co;
+	int    Z              () const { return _Z;                     }  ///< returns atomic number of nucleus
+	int    A              () const { return _A;                     }  ///< returns nucleon number of nucleus
+	double woodSaxonRadius() const { return 1.2 * pow(_A, 1. / 3.); }  ///< returns Wood-Saxon nuclear radius [fm] (Fermi model)
+	double nuclearRadius  () const; ///< returns nuclear radius [fm]; except for some special nuclei this is the Wood-Saxon radius (Fermi model)
+
+	double formFactor(const double t) const;  ///< computes form factor for given squared 4-momentum transfer
+	double thickness (const double b) const;  ///< calculates nuclear thickness function for given distance b in impact parameter space (Eq. 4 in KN, PRC 60)
+
+	double getQ0();
+	double getRho0();
+
+	
+private:
+
+	double woodSaxonSkinDepth() const { return 0.53;                   }  ///< returns surface (0.53 fm for Au)
+	double fritiofR0         () const { return _r0 * pow(_A, (1./3.)); }  ///< Fritiof _r0 (rws)/formfactor
+
+	double rws(const double r) const
+	{ return 1.0 / (1. + exp((r - fritiofR0()) / woodSaxonSkinDepth())); } ///< Wood-Saxon nuclear density
+
+	int    _Z;                      ///< atomic number of nucleus
+	int    _A;                      ///< nucleon number of nucleus
+	double _deuteronSlopePar;       ///< slope parameter for deuteron form factor [(GeV/c)^{-2}]
+	bool   _dAuCoherentProduction;  ///< if true, production in d Au collisions is coherent, else incoherent
+
+	double _r0;
+	double _rho0;
+	double _Q0;
+
 };
 
 

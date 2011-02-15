@@ -56,8 +56,8 @@ beamBeamSystem::beamBeamSystem(beam& beam_1, beam& beam_2, double, inputParamete
 beamBeamSystem::beamBeamSystem(beam& beam_1, beam& beam_2, inputParameters& input)
 : _beam1(beam_1 ), _beam2(beam_2)
 {
-	//cout <<"bbsys, beam1 woodsaxon: "<<beam_1.getWoodSaxonRadius()<<endl;
-	//cout <<"bbsys, beam2 woodsaxon: "<<beam_2.getWoodSaxonRadius()<<endl;
+	//cout <<"bbsys, beam1 woodsaxon: "<<beam_1.woodSaxonRadius()<<endl;
+	//cout <<"bbsys, beam2 woodsaxon: "<<beam_2.woodSaxonRadius()<<endl;
 	//Storing input parameters to protected variables
 	_BBSInputGamma_em=input.beamLorentzGamma();
 	_BBSInputBreakupmode=input.beamBreakupMode();
@@ -68,8 +68,8 @@ beamBeamSystem::beamBeamSystem(beam& beam_1, beam& beam_2, inputParameters& inpu
 beamBeamSystem::beamBeamSystem(inputParameters &input) :
 	_BBSInputGamma_em(input.beamLorentzGamma())
 	,_BBSInputBreakupmode(input.beamBreakupMode())
-	,_beam1(input.beam1Z(), input.beam1A(), input.getbford(), input.coherentProduction(), input)
-	,_beam2(input.beam2Z(), input.beam2A(), input.getbford(), input.coherentProduction(), input)
+	,_beam1(input.beam1Z(), input.beam1A(), input.deuteronSlopePar(), input.coherentProduction(), input)
+	,_beam2(input.beam2Z(), input.beam2A(), input.deuteronSlopePar(), input.coherentProduction(), input)
 { }
 
 
@@ -105,7 +105,7 @@ double beamBeamSystem::probabilityOfBreakup(double D)
     static int NStep = 1426;// 1000;
     int Zz = 0, Az = 0;
    
-    Bmin = 1.75*(_beam1.RNuc());  
+    Bmin = 1.75*(_beam1.nuclearRadius());  
     //  Bmin = 12.2815005;
 
     //Using the 1st nucleus, not sure which to start with...symmetry
@@ -113,9 +113,9 @@ double beamBeamSystem::probabilityOfBreakup(double D)
         NStep = 1000;
         //kmax  = 1.E7;  //Done in _pPhotonBreakup now
         //if (gamma_em > 500) kmax = 1.E10;
-        Az =(_beam1.getAin()); ///Using first nucleus....symmetry
-        Zz = (_beam1.getZin());
-        //Bmin = 1.75*RNuc; //for hard sphere ions Bmin = 2*RNuc
+        Az =(_beam1.A()); ///Using first nucleus....symmetry
+        Zz = (_beam1.Z());
+        //Bmin = 1.75*nuclearRadius; //for hard sphere ions Bmin = 2*nuclearRadius
 	// Step = 1.007;//.01; //We will multiplicateively increase Biter by 1%
         Step =1.007;
 	
@@ -125,7 +125,7 @@ double beamBeamSystem::probabilityOfBreakup(double D)
 
 
         if(_BBSInputBreakupmode==1) //Replacing RGeo, should be Rnuc1+Rnuc2?
-        cout<<"Hard Sphere Break criteria. b > "<<2.*_beam1.RNuc()<<endl;
+        cout<<"Hard Sphere Break criteria. b > "<<2.*_beam1.nuclearRadius()<<endl;
         if(_BBSInputBreakupmode==2) 
         cout<<"Requiring XnXn [Coulomb] breakup. bmin= "<<Bmin<<endl;
         if(_BBSInputBreakupmode==3) 
@@ -138,7 +138,7 @@ double beamBeamSystem::probabilityOfBreakup(double D)
         cout<<"Requiring breakup of one or both nuclei. bmin= "<<Bmin<<endl;
         if(_BBSInputBreakupmode==7) 
         cout<<"Requiring breakup of one nucleus (Xn,0n). bmin= "<<Bmin<<endl;
-        if( (_beam1.getZin())!=1 && (_beam1.getAin())!=1){
+        if( (_beam1.Z())!=1 && (_beam1.A())!=1){
         //pp may cause segmentation fault in here and it does not use this...
             for ( int k = 1;k <= NStep; k++) {
                 _pHadronBreakup = 0.;
@@ -153,7 +153,7 @@ double beamBeamSystem::probabilityOfBreakup(double D)
         
 
         if (( _BBSInputBreakupmode) == 1) {
-                        if (BIter > 2.*( _beam1.RNuc())) {   //Symmetry
+                        if (BIter > 2.*( _beam1.nuclearRadius())) {   //Symmetry
                             _pHadronBreakup = 0.0;
                             }
                         else                 {
@@ -169,12 +169,12 @@ double beamBeamSystem::probabilityOfBreakup(double D)
           }
 	}
 // Do pp here
-        if( (_beam1.getZin())==1 && (_beam1.getAin())==1){  
+        if( (_beam1.Z())==1 && (_beam1.A())==1){  
             //Again, using first beam, should be split up to be more specific
                 //ppslope=19.8;
                 //GammaProfile = exp(-D*D/(2.*hbarc*hbarc*ppslope));
                 //PofB = (1.-GammaProfile)*(1.-GammaProfile);
-                if( D < 2.*(_beam1.RNuc())){   
+                if( D < 2.*(_beam1.nuclearRadius())){   
                     //Should be the total of RNuc1+Rnuc2,used only beam #1
                         PofB = 0.0;
                 }
@@ -223,7 +223,7 @@ double beamBeamSystem::probabilityOfHadronBreakup(double impactparameter)
     //input for gamma_em
     //this will need to be StarlightInputParameters::gamma or whatever
 	double b = impactparameter;
-	int ap = _beam1.getAin();  
+	int ap = _beam1.A();  
     //Notice this is  taking from nucleus 1.Still assuming symmetric system?
 
     static int IFIRSTH = 0;
@@ -244,9 +244,9 @@ double beamBeamSystem::probabilityOfHadronBreakup(double impactparameter)
     SIGNN = 5.2;
     if ( gamma > 500. ) SIGNN = 8.8;
     //use parameter from Constants
-    R1 = ( _beam1.RNuc());  //remember _beam2? better way to do this generically
+    R1 = ( _beam1.nuclearRadius());  //remember _beam2? better way to do this generically
     A1 = 0.535; //This is woodsaxonskindepth?
-    //write(6,12)r1,a1,signn  Here is where we could probably set this up asymmetrically R2=_beam2.RNuc() and RHO2=ap2=_beam2.getAin()
+    //write(6,12)r1,a1,signn  Here is where we could probably set this up asymmetrically R2=_beam2.nuclearRadius() and RHO2=ap2=_beam2.A()
     R2 = R1;
     RHO1 = ap;
     RHO2 = RHO1;
@@ -318,8 +318,8 @@ static double ee[10001], eee[162], se[10001];
    //double gamma_em=108.4;  //This will be an input value.
    _pPhotonBreakup =0.;   //Might default the probability with a different value?
    double b = impactparameter;
-   int zp = _beam1.getZin();  //What about _beam2? Generic approach?
-   int ap = _beam1.getAin();
+   int zp = _beam1.Z();  //What about _beam2? Generic approach?
+   int ap = _beam1.A();
 	
    //Was initialized at the start of the function originally, been moved inward.
    double pxn=0.;

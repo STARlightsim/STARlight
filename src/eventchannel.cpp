@@ -43,7 +43,7 @@ using namespace std;
 
 //______________________________________________________________________________
 eventChannel::eventChannel(inputParameters& input, beamBeamSystem& bbsystem)
-  : readLuminosity(input), _bbs(bbsystem), _nTries(0), _nSuccess(0)/*, _accCutPt(false), _accCutEta(false), _ptMin(0.1), _ptMax(2.0), _etaMin(-0.9), _etaMax(0.9)*/
+  : readLuminosity(input), _bbs(bbsystem), _nmbAttempts(0), _nmbAccepted(0)/*, _accCutPt(false), _accCutEta(false), _ptMin(0.1), _ptMax(2.0), _etaMin(-0.9), _etaMax(0.9)*/
 {
   _randy.SetSeed(input.randomSeed());
   _accCutPt    = input.getCutPt();

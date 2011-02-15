@@ -39,7 +39,7 @@
 #include "PythiaStarlight.h"
 #endif
 
-#include "starlight.h"
+#include "reportingUtils.h"
 #include "inputParameters.h"
 #include "eventchannel.h"
 #include "gammagammaleptonpair.h"
@@ -50,19 +50,25 @@
 #include "gammaaluminosity.h"
 #include "upcevent.h"
 #include "eventfilewriter.h"
+#include "starlight.h"
 
 
-starlight::starlight() :
-	_inputParameters(0)
-	,_beam0(0)
-	,_beam1(0)
-	,_beamSystem(0)
-	,_eventChannel(0)
-	,_configFileName("slight.in")
-	,_numberOfEventsPerFile(100)
-	,_numberOfEventsToGenerate(10)
-	,_standardFilename("slight.out")
-	,_isInitialised(false)
+using namespace std;
+using namespace starlightConstants;
+
+
+starlight::starlight()
+	:	_inputParameters       (0),
+		_beam0                 (0),
+		_beam1                 (0),
+		_beamSystem            (0),
+		_eventChannel          (0),
+		_nmbEventsPerFile      (100),
+		_nmbEventsToGenerate   (10),
+		_configFileName        ("slight.in"),
+		_eventDataFileName     ("slight.out"),
+		_lumLookUpTableFileName("slight.txt"),
+		_isInitialised         (false)
 { }
 
 
@@ -70,224 +76,234 @@ starlight::~starlight()
 { }
 
 
-int starlight::init()
+bool
+starlight::init()
 {
-	std::cout << "##################################" << std::endl;
-	std::cout << " Initialising Starlight v" << Starlight_VERSION_MAJOR << "." << Starlight_VERSION_MINOR << "..." << std::endl;
-	std::cout << "##################################" << std::endl;
+	cout << "##################################" << endl
+	     << " initialising Starlight v" << Starlight_VERSION_MAJOR << "."
+	     << Starlight_VERSION_MINOR << "..." << endl
+	     << "##################################" << endl;
 
-	_numberOfEventsToGenerate = _inputParameters->nmbEvents();
-	_numberOfEventsPerFile = _numberOfEventsToGenerate; // For now we write only one file...
+	_nmbEventsToGenerate = _inputParameters->nmbEvents();  // nmbEvents() gives only unsigned int
+	_nmbEventsPerFile    = _nmbEventsToGenerate;           // for now we write only one file...
 
 	_beamSystem = new beamBeamSystem(*_inputParameters);
 
-	// std::streamsize precision(15);
-	std::cout.setf(std::ios_base::fixed,std::ios_base::floatfield);
-	std::cout.precision(15);
-
-	bool flag = checkForLuminosityTable();
-
-	switch (_inputParameters->getInteractionTest())
-		{
-		case starlightConstants::PHOTONPHOTON:
-			if (flag==true) {
-				std::cout << "CREATING LUMINOSITY TABLE FOR PHOTONPHOTON" << std::endl;
-				twoPhotonLuminosity(_beamSystem->getBeam1(), _beamSystem->getBeam2(), _inputParameters->beamBreakupMode(), *_inputParameters);
-			}
-			break;
-		case starlightConstants::PHOTONPOMERONNARROW://Both narrow and wide use the same luminosity function.
-		case starlightConstants::PHOTONPOMERONWIDE:
-			if (flag==true) {
-				std::cout << "CREATING LUMINOSITY TABLE FOR GAMMA" << std::endl;
-				//Luminosity function
-				photonNucleusLuminosity(*_inputParameters, *_beamSystem);
-			}
-			break;
-		default :
-			std::cout << "Please go back and define an appropriate interaction type. Thank you."<<std::endl;
+	// streamsize precision(15);
+	cout.setf(ios_base::fixed,ios_base::floatfield);
+	cout.precision(15);
+	const bool lumTableIsValid = luminosityTableIsValid();
+	switch (_inputParameters->interactionType())	{
+	case PHOTONPHOTON:
+		if (!lumTableIsValid) {
+			printInfo << "creating luminosity table for photon-photon channel" << endl;
+			twoPhotonLuminosity(_beamSystem->getBeam1(), _beamSystem->getBeam2(),
+			                    _inputParameters->beamBreakupMode(), *_inputParameters);
 		}
-
-	int res = createEventChannel();
-
-	if (res)
-		{
-			return -1;
+		break;		
+	case PHOTONPOMERONNARROW:  // narrow and wide resonances use
+	case PHOTONPOMERONWIDE:    // the same luminosity function
+		if (!lumTableIsValid) {
+			printInfo << "creating luminosity table for photon-Pomeron channel" << endl;
+			photonNucleusLuminosity(*_inputParameters, *_beamSystem);
 		}
-    
+		break;
+	default:
+		{
+			printWarn << "unknown interaction type '" << _inputParameters->interactionType() << "'."
+			          << " cannot initialize starlight." << endl;
+			return false;
+		}
+	}
+	
+	if (!createEventChannel())
+		return false;
+
 	_isInitialised = true;
-    
-	return 0;
+	return true;
 }
 
 
-upcEvent starlight::produceEvent()
+upcEvent
+starlight::produceEvent()
 {
-	if(!_isInitialised)
-		{
-			std::cerr << "Trying to produce event but Starlight is not initialised, exiting..." << std::endl;
-			exit(-1);
-		}
+	if (!_isInitialised) {
+		printErr << "trying to generate event but Starlight is not initialised. aborting." << endl;
+		exit(-1);
+	}
 	return _eventChannel->produceEvent();
 }
 
-bool starlight::checkForLuminosityTable()
+
+bool
+starlight::luminosityTableIsValid() const
 {
-	std::cout<<"ISEED: "<<_inputParameters->randomSeed()<<std::endl;
-	std::ifstream wylumfile;
-	wylumfile.precision(15);
-	wylumfile.open("slight.txt");
-	unsigned int Z1test = 0, A1test = 0, Z2test = 0, A2test = 0, numwtest = 0, numytest = 0;
-	int gg_or_gPtest=0,ibreakuptest=0,iinterferetest=0,NPTtest=0,in_or_cotest=0;
-	double Gammatest=0.,Wmaxtest=0.,Wmintest=0.,Ymaxtest=0.,xinterferetest=0.,ptmaxtest=0.,bfordtest=0.,incoherentfactortest=0.;
-	bool flag = false;
-	// bool b;
-	wylumfile >> Z1test;
-	wylumfile >> A1test;
-	wylumfile >> Z2test;
-	wylumfile >> A2test;
-	wylumfile >> Gammatest;
-	wylumfile >> Wmaxtest;
-	wylumfile >> Wmintest;
-	wylumfile >> numwtest;
-	wylumfile >> Ymaxtest;
-	wylumfile >> numytest;
-	wylumfile >> gg_or_gPtest;
-	wylumfile >> ibreakuptest;
-	wylumfile >> iinterferetest;
-	wylumfile >> xinterferetest;
-	wylumfile >> in_or_cotest;
-	wylumfile >> incoherentfactortest;
-	wylumfile >> bfordtest;
-	wylumfile >> ptmaxtest;
-	wylumfile >> NPTtest;
-	wylumfile.close();
+	printInfo << "using random seed = " << _inputParameters->randomSeed() << endl;
 
-	if ( !(
-	       _inputParameters->beam1Z() == Z1test
-	       && _inputParameters->beam1A() == A1test
-	       && _inputParameters->beam2Z() == Z2test
-	       && _inputParameters->beam2A() == A2test
-	       && _inputParameters->beamLorentzGamma() == Gammatest
-	       && _inputParameters->numWBins() == numwtest
-	       && _inputParameters->minW() == Wmintest
-	       && _inputParameters->maxRapidity() == Ymaxtest
-	       && _inputParameters->nmbRapidityBins() == numytest
-	       && _inputParameters->productionMode() == gg_or_gPtest
-	       && _inputParameters->beamBreakupMode() == ibreakuptest
-	       && _inputParameters->interferenceEnabled() == iinterferetest
-	       && _inputParameters->interferenceStrength() == xinterferetest
-	       && _inputParameters->getbford() == bfordtest
-	       && _inputParameters->coherentProduction() == in_or_cotest
-	       && _inputParameters->incoherentFactor() == incoherentfactortest
-	       && _inputParameters->maxPtInterference() == ptmaxtest
-	       && _inputParameters->nmbPtBinsInterference() == NPTtest )
-	     )
-		{
-			//okay, if we are in this loop, it means the input parameters are different than the one's used to create the last set of luminosity tables
-			//Now lets create a new set
-			flag=true;
+	ifstream lumLookUpTableFile(_lumLookUpTableFileName.c_str());
+	lumLookUpTableFile.precision(15);
+	if ((!lumLookUpTableFile) || (!lumLookUpTableFile.good())) {
+		printWarn << "cannot open file '" << _lumLookUpTableFileName << "'" << endl;
+		return false;
+	}
 
-		}
+	unsigned int beam1Z, beam1A, beam2Z, beam2A;
+	double       beamLorentzGamma = 0;
+	double       maxW = 0, minW = 0;
+	unsigned int nmbWBins;
+	double       maxRapidity = 0;
+	unsigned int nmbRapidityBins;
+	int          productionMode, beamBreakupMode;
+	bool         interferenceEnabled = false;
+	double       interferenceStrength = 0;
+	bool         coherentProduction = false;
+	double       incoherentFactor = 0, deuteronSlopePar = 0, maxPtInterference = 0;
+	int          nmbPtBinsInterference;
+	if (!(lumLookUpTableFile
+	      >> beam1Z >> beam1A
+	      >> beam2Z >> beam2A
+	      >> beamLorentzGamma
+	      >> maxW >> minW >> nmbWBins
+	      >> maxRapidity >> nmbRapidityBins
+	      >> productionMode
+	      >> beamBreakupMode
+	      >> interferenceEnabled >> interferenceStrength
+	      >> coherentProduction >> incoherentFactor
+	      >> deuteronSlopePar
+	      >> maxPtInterference
+	      >> nmbPtBinsInterference))
+		// cannot read parameters from lookup table file
+		return false;
+	lumLookUpTableFile.close();
 
-	return flag;
+	if (!(   _inputParameters->beam1Z()                == beam1Z
+	      && _inputParameters->beam1A()                == beam1A
+	      && _inputParameters->beam2Z()                == beam2Z
+	      && _inputParameters->beam2A()                == beam2A
+	      && _inputParameters->beamLorentzGamma()      == beamLorentzGamma
+	      //&& _inputParameters->maxW()                  == maxW
+	      && _inputParameters->minW()                  == minW
+	      && _inputParameters->nmbWBins()              == nmbWBins
+	      && _inputParameters->maxRapidity()           == maxRapidity
+	      && _inputParameters->nmbRapidityBins()       == nmbRapidityBins
+	      && _inputParameters->productionMode()        == productionMode
+	      && _inputParameters->beamBreakupMode()       == beamBreakupMode
+	      && _inputParameters->interferenceEnabled()   == interferenceEnabled
+	      && _inputParameters->interferenceStrength()  == interferenceStrength
+	      && _inputParameters->deuteronSlopePar()      == deuteronSlopePar
+	      && _inputParameters->coherentProduction()    == coherentProduction
+	      && _inputParameters->incoherentFactor()      == incoherentFactor
+	      && _inputParameters->maxPtInterference()     == maxPtInterference
+	      && _inputParameters->nmbPtBinsInterference() == nmbPtBinsInterference))
+		// parameters used to create luminosity lookup table are different than current parameters
+		return false;
 
+	return true;
 }
 
 
-int starlight::createEventChannel()
+bool
+starlight::createEventChannel()
 {
-	switch (_inputParameters->getPidTest()) {
-	case starlightConstants::ELECTRON:
-	case starlightConstants::MUON:
-	case starlightConstants::TAUON:
+	switch (_inputParameters->prodParticleType()) {
+	case ELECTRON:
+	case MUON:
+	case TAUON:
 		{
 			_eventChannel = new Gammagammaleptonpair(*_inputParameters, *_beamSystem);
-			if (_eventChannel) return 0;
-			else return -1;
+			if (_eventChannel)
+				return true;
+			else {
+				printWarn << "cannot construct Gammagammaleptonpair event channel." << endl;
+				return false;
+			}
 		}
-	case starlightConstants::A2://jetset
-	case starlightConstants::ETA://jetset
-	case starlightConstants::ETAPRIME://jetset
-	case starlightConstants::ETAC://jetset
-	case starlightConstants::F0://jetset
+	case A2:        // jetset
+	case ETA:       // jetset
+	case ETAPRIME:  // jetset
+	case ETAC:      // jetset
+	case F0:        // jetset
 		{
 #ifdef ENABLE_PYTHIA
-			//	    PythiaOutput=true;
-			return 0;
+			// PythiaOutput = true;
+			return true;
 #endif
-			std::cout << "Starlight is not compiled against Pythia8, jetset cannot be used" << std::endl;
-			return -1;
-			//This way we can output mother and daughter listings.
+			printWarn << "Starlight is not compiled against Pythia8; "
+			          << "jetset event channel cannot be used." << endl;
+			return false;
 		}
-	case starlightConstants::F2:
-	case starlightConstants::F2PRIME:
-	case starlightConstants::ZOVERZ03:
+	case F2:
+	case F2PRIME:
+	case ZOVERZ03:
 		{
 #ifdef ENABLE_PYTHIA
 			_eventChannel= new Gammagammasingle(*_inputParameters, *_beamSystem);
-			if (_eventChannel) return 0;
-			else return -1;
+			if (_eventChannel)
+				return true;
+			else {
+				printWarn << "cannot construct Gammagammasingle event channel." << endl;
+				return false;
+			}
 #endif
-			std::cout << "Starlight is not compiled against Pythia8, gamma-gamma single cannot be used" << std::endl;
-			return -1;
-
+			printWarn << "Starlight is not compiled against Pythia8; "
+			          << "Gammagammasingle event channel cannot be used." << endl;
+			return false;
 		}
-	case starlightConstants::RHO:
-	case starlightConstants::RHOZEUS:
-	case starlightConstants::FOURPRONG:
-	case starlightConstants::OMEGA://Will probably be three body
-	case starlightConstants::PHI:
-	case starlightConstants::JPSI:
-	case starlightConstants::JPSI2S:
-	case starlightConstants::JPSI2S_ee:
-	case starlightConstants::JPSI2S_mumu:
-	case starlightConstants::JPSI_ee:
-	case starlightConstants::JPSI_mumu:
-	case starlightConstants::UPSILON:
-	case starlightConstants::UPSILON_ee:
-	case starlightConstants::UPSILON_mumu:
-	case starlightConstants::UPSILON2S:
-	case starlightConstants::UPSILON2S_ee:
-	case starlightConstants::UPSILON2S_mumu:
-	case starlightConstants::UPSILON3S:
-	case starlightConstants::UPSILON3S_ee:
-	case starlightConstants::UPSILON3S_mumu:
-		{
-			if (_inputParameters->getInteractionTest()==2) {
-				_eventChannel = new Gammaanarrowvm(*_inputParameters, *_beamSystem);
-				if (_eventChannel) return 0;
-				else return -1;
-			}
-
-			if (_inputParameters->getInteractionTest()==3) {
-				_eventChannel = new Gammaawidevm(*_inputParameters, *_beamSystem);
-				if (_eventChannel) return 0;
-				else return -1;
-			}
-			std::cout<<"Please go back and adjust gg_or_gp to 2 or 3 for a VM, main.cpp"<<std::endl;
-			return -1;
-		}
-		//    case starlightConstants::JPSI:
-		//    case starlightConstants::JPSI2S:
+	case RHO:
+	case RHOZEUS:
+	case FOURPRONG:
+	case OMEGA:  // will probably be three body
+	case PHI:
+	case JPSI:
+	case JPSI2S:
+	case JPSI2S_ee:
+	case JPSI2S_mumu:
+	case JPSI_ee:
+	case JPSI_mumu:
 		//    {
 		//        _eventChannel = new psiFamily(*_inputParameters, *_beamSystem);
-		//        if (_eventChannel) return 0;
-		//        else return -1;
+		//        if (_eventChannel) return true;
+		//        else return false;
 		//    }
-		//rhoprime
-	default:
-		std::cout<<"Hi and welcome to default event channel(null), main::CreateEventChannel"<<std::endl;
-		return -1;//Maybe return empty eventChannel object?
-	}
-}
+	case UPSILON:
+	case UPSILON_ee:
+	case UPSILON_mumu:
+	case UPSILON2S:
+	case UPSILON2S_ee:
+	case UPSILON2S_mumu:
+	case UPSILON3S:
+	case UPSILON3S_ee:
+	case UPSILON3S_mumu:
+		{
+			if (_inputParameters->interactionType() == PHOTONPOMERONNARROW) {
+				_eventChannel = new Gammaanarrowvm(*_inputParameters, *_beamSystem);
+				if (_eventChannel)
+					return true;
+				else {
+					printWarn << "cannot construct Gammaanarrowvm event channel." << endl;
+					return false;
+				}
+			}
 
-int starlight::getNTries()
-{
-  int ntries = _eventChannel->getNTries();
-  return ntries;
-}
-int starlight::getNSuccess()
-{
-  int nsucc = _eventChannel->getNSuccess();
-  return nsucc;
+			if (_inputParameters->interactionType() == PHOTONPOMERONWIDE) {
+				_eventChannel = new Gammaawidevm(*_inputParameters, *_beamSystem);
+				if (_eventChannel)
+					return true;
+				else {
+					printWarn << "cannot construct Gammaawidevm event channel." << endl;
+					return false;
+				}
+			}
+			printWarn << "interaction type '" << _inputParameters->interactionType() << "' "
+			          << "cannot be used with particle type '" << _inputParameters->prodParticleType() << "'. "
+			          << "cannot create event channel." << endl;
+			return false;
+		}
+	default:
+		{
+			printWarn << "unknown event channel '" << _inputParameters->prodParticleType() << "'."
+			          << " cannot create event channel." << endl;
+			return false;
+		}
+	}
 }

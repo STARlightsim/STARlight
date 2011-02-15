@@ -73,7 +73,7 @@ inputParameters::inputParameters()
 	  _interferenceStrength  (0),
 	  _coherentProduction    (0),
 	  _incoherentFactor      (0),
-	  _bford                 (0),
+	  _deuteronSlopePar      (0),
 	  _maxPtInterference     (0),
 	  _nmbPtBinsInterference (0),
 	  _ptBinWidthInterference(0),
@@ -106,7 +106,7 @@ inputParameters::init(const string& configFileName)
 	ip.addDoubleParameter(string("BEAM_GAMMA"), &_beamLorentzGamma);
 	
 	ip.addDoubleParameter(string("W_MAX"), &maxWConfigFile);
-	ip.addDoubleParameter(string("W_MAX"), &minWConfigFile);
+	ip.addDoubleParameter(string("W_MIN"), &minWConfigFile);
 	ip.addUintParameter(string("W_N_BINS"), &_nmbWBins);;
 	
 	ip.addDoubleParameter(string("RAP_MAX"), &_maxRapidity);
@@ -138,7 +138,7 @@ inputParameters::init(const string& configFileName)
 	ip.addBoolParameter(string("COHERENT"), &_coherentProduction);
 	ip.addDoubleParameter(string("INCO_FACTOR"), &_incoherentFactor);
 	
-	ip.addDoubleParameter(string("BFORD"), &_bford);
+	ip.addDoubleParameter(string("BFORD"), &_deuteronSlopePar);
 
 	ip.addDoubleParameter(string("INT_PT_MAX"), &_maxPtInterference);
 	ip.addIntParameter(string("INT_PT_N_BINS"), &_nmbPtBinsInterference);
@@ -146,7 +146,7 @@ inputParameters::init(const string& configFileName)
 	int nParameters = ip.parseFile(_configFileName);
 	if(nParameters == -1) 
 	{
-	  printErr << "Could not open file: " << _configFileName;
+		printWarn << "could not open file '" << _configFileName << "'" << endl;
 	  return false;
 	}
 	
@@ -177,7 +177,7 @@ inputParameters::init(const string& configFileName)
 		_interactionType = PHOTONPOMERONWIDE;
 		break;
 	default:
-		printWarn << "unknown production mode " << _productionMode << endl;
+		printWarn << "unknown production mode '" << _productionMode << "'" << endl;
 		return false;
 	}
   
@@ -420,34 +420,6 @@ inputParameters::init(const string& configFileName)
 
 
 //______________________________________________________________________________
-particle inputParameters::getPidTest()
-{
-	return _particleType;
-}
-
-
-//______________________________________________________________________________
-decaytype inputParameters::getDecayTest()
-{
-	return _decayType;
-}
-
-
-//______________________________________________________________________________
-interactiontype inputParameters::getInteractionTest()
-{
-	return _interactionType;
-}
-
-
-//______________________________________________________________________________
-double inputParameters::getProtonEnergy()
-{
-	return _protonEnergy;
-}
-
-
-//______________________________________________________________________________
 ostream&
 inputParameters::print(ostream& out) const
 {
@@ -478,7 +450,7 @@ inputParameters::print(ostream& out) const
 	    << "    interference strength .................. " << _interferenceStrength << endl
 	    << "    coherent scattering off nucleus ........ " << yesNo(_coherentProduction) << endl
 	    << "    scaling factor for incoh. VM prod. ..... " << _incoherentFactor << endl
-	    << "    bford .................................. " << _bford << endl
+	    << "    deuteron slope parameter ............... " << _deuteronSlopePar << " (GeV/c)^{-2}" << endl
 	    << "    maximum p_T for interference calc. ..... " << _maxPtInterference << " GeV/c" << endl
 	    << "    # of p_T bins for interference calc. ... " << _nmbPtBinsInterference << endl;
 	return out;
@@ -496,7 +468,7 @@ inputParameters::write(ostream& out) const
 	    << beamLorentzGamma     () <<endl
 	    << maxW                 () <<endl
 	    << minW                 () <<endl
-	    << numWBins             () <<endl
+	    << nmbWBins             () <<endl
 	    << maxRapidity          () <<endl
 	    << nmbRapidityBins      () <<endl
 	    << productionMode       () <<endl
@@ -509,7 +481,7 @@ inputParameters::write(ostream& out) const
 	    << interferenceStrength () <<endl
 	    << coherentProduction   () <<endl
 	    << incoherentFactor     () <<endl
-	    << getbford             () <<endl
+	    << deuteronSlopePar     () <<endl
 	    << maxPtInterference    () <<endl
 	    << nmbPtBinsInterference() <<endl;
 	return out;

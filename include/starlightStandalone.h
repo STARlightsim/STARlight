@@ -52,16 +52,16 @@ public:
 	bool init();  ///< reads configuration file and initializes startlight
 	bool run ();  ///< creates output file and runs starlight
 
-	const std::string& configFileName() const { return _configFileName; }  ///< returns path to config file
-	const std::string& dataFileName  () const { return _dataFileName;   }  ///< returns path to output file
+	const std::string& configFileName   () const { return _configFileName;      }  ///< returns path to config file
+	const std::string& eventDataFileName() const { return _eventDataFileName;   }  ///< returns path to output file
 
-	void setConfigFileName(const std::string& configFileName) { _configFileName = configFileName; }  ///< sets path to config file
-	void setDataFileName  (const std::string& dataFileName  ) { _dataFileName   = dataFileName;   }  ///< sets path to output file
+	void setConfigFileName   (const std::string& configFileName   ) { _configFileName    = configFileName;    }  ///< sets path to config file
+	void setEventDataFileName(const std::string& eventDataFileName) { _eventDataFileName = eventDataFileName; }  ///< sets path to output file
 
 private:
 
-	std::string      _configFileName;    ///< path to configuration file
-	std::string      _dataFileName;      ///< path to output file
+	std::string      _configFileName;     ///< path to configuration file
+	std::string      _eventDataFileName;  ///< path to output file
 
 	starlight*       _starlight;         ///< pointer to starlight instance
 	inputParameters* _inputParameters;   ///< pointer to parameter instance

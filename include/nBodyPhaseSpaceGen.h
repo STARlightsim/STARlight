@@ -73,6 +73,7 @@
 #include <iostream>
 #include <vector>
 
+#include "reportingUtils.h"
 #include "lorentzvector.h"
 #include "randomgenerator.h"
 #include "starlightconstants.h"
@@ -101,20 +102,6 @@ breakupMomentum(const double M,   // mass of mother particle
   if (M < m1 + m2)
     return 0;
   return sqrt((M - m1 - m2) * (M + m1 + m2) * (M - m1 + m2) * (M + m1 - m2)) / (2 * M);
-}
-
-
-template<typename T>
-inline
-std::ostream&
-operator << (std::ostream&         out,
-             const std::vector<T>& vec)
-{
-  out << "{";
-  for (unsigned int i = 0; i < (vec.size() - 1); ++i)
-    out << vec[i] << ", ";
-  out << vec[vec.size() - 1] << "}";
-  return out;
 }
 
 
@@ -232,7 +219,7 @@ nBodyPhaseSpaceGen::eventAccepted(const double maxWeight)  // if maxWeight > 0, 
 {
 	const double max = (maxWeight <= 0) ? _maxWeight : maxWeight;
 	if (max <= 0) {
-		std::cout << "error: maximum weight = " << max << " does not make sense. rejecting event." << std::endl;
+		printWarn << "maximum weight = " << max << " does not make sense. rejecting event." << std::endl;
 		return false;
 	}
 	if ((_weight / max) > random())

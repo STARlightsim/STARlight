@@ -44,12 +44,12 @@ using namespace std;
 
 
 starlightStandalone::starlightStandalone()
-	:	_configFileName  ("slight.in"),
-		_dataFileName    ("slight.out"),
-		_starlight       (0),
-		_inputParameters (0),
-		_nmbEventsTot    (1),
-		_nmbEventsPerFile(_nmbEventsTot)
+	:	_configFileName   ("slight.in"),
+		_eventDataFileName("slight.out"),
+		_starlight        (0),
+		_inputParameters  (0),
+		_nmbEventsTot     (1),
+		_nmbEventsPerFile (_nmbEventsTot)
 { }
 
 
@@ -63,7 +63,7 @@ starlightStandalone::init()
 	// read input parameters from config file
 	_inputParameters = new inputParameters();
 	if (!_inputParameters->init(_configFileName)) {
-		printWarn << "problems initializing input parameters. cannot initialize starlight.";
+		printWarn << "problems initializing input parameters. cannot initialize starlight." << endl;
 		return false;
 	}
 
@@ -77,9 +77,7 @@ starlightStandalone::init()
 	// give starlight the input parameters
 	_starlight->setInputParameters(_inputParameters);
 	// initialize starlight
-	_starlight->init();
-    
-	return true;
+	return _starlight->init();
 }
 
 
@@ -94,7 +92,7 @@ starlightStandalone::run()
 
 	// open output file
 	eventFileWriter fileWriter;
-	fileWriter.open(_dataFileName);
+	fileWriter.open(_eventDataFileName);
 
 	printInfo << "generating events:" << endl;
 	unsigned int nmbEvents = 0;
@@ -106,8 +104,8 @@ starlightStandalone::run()
 			fileWriter.writeEvent(event, iEvent);
 		}
 	}
-	cout << "N Tries: " << _starlight->getNTries() << endl;
-	cout << "N Success: " << _starlight->getNSuccess() << endl;
+	printInfo << "number of attempts = " << _starlight->nmbAttempts() << ", "
+	          << "number of accepted events = " << _starlight->nmbAccepted() << endl;
 	fileWriter.close();
 
 	return true;

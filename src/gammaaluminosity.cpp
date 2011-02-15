@@ -79,19 +79,19 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   
   double  bwnorm,Eth;
 
-  dW = (_inputgammaa.maxW()-_inputgammaa.minW())/_inputgammaa.numWBins();
+  dW = (_inputgammaa.maxW()-_inputgammaa.minW())/_inputgammaa.nmbWBins();
   dY  = (_inputgammaa.maxRapidity()-(-1.0)*_inputgammaa.maxRapidity())/_inputgammaa.nmbRapidityBins();
     
   // Write the values of W used in the calculation to slight.txt.  
   wylumfile.open("slight.txt");
-  wylumfile << getbbs().getBeam1().getZin() <<endl;
-  wylumfile << getbbs().getBeam1().getAin() <<endl;
-  wylumfile << getbbs().getBeam2().getZin() <<endl;
-  wylumfile << getbbs().getBeam2().getAin() <<endl;
+  wylumfile << getbbs().getBeam1().Z() <<endl;
+  wylumfile << getbbs().getBeam1().A() <<endl;
+  wylumfile << getbbs().getBeam2().Z() <<endl;
+  wylumfile << getbbs().getBeam2().A() <<endl;
   wylumfile << _inputgammaa.beamLorentzGamma() <<endl;
   wylumfile << _inputgammaa.maxW() <<endl;
   wylumfile << _inputgammaa.minW() <<endl;
-  wylumfile << _inputgammaa.numWBins() <<endl;
+  wylumfile << _inputgammaa.nmbWBins() <<endl;
   wylumfile << _inputgammaa.maxRapidity() <<endl;
   wylumfile << _inputgammaa.nmbRapidityBins() <<endl;
   wylumfile << _inputgammaa.productionMode() <<endl;
@@ -100,7 +100,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   wylumfile << _inputgammaa.interferenceStrength() <<endl;
   wylumfile << _inputgammaa.coherentProduction() <<endl;
   wylumfile << _inputgammaa.incoherentFactor() <<endl;
-  wylumfile << _inputgammaa.getbford() <<endl;
+  wylumfile << _inputgammaa.deuteronSlopePar() <<endl;
   wylumfile << _inputgammaa.maxPtInterference() <<endl;
   wylumfile << _inputgammaa.nmbPtBinsInterference() <<endl;
   
@@ -108,7 +108,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   testint=0.0;
   //Grabbing default value for C in the breit-wigner calculation
   C=getDefaultC();
-  for(unsigned int i = 0; i <= _inputgammaa.numWBins() - 1; ++i) {
+  for(unsigned int i = 0; i <= _inputgammaa.nmbWBins() - 1; ++i) {
     W = _inputgammaa.minW() + double(i)*dW + 0.5*dW;
     testint = testint + breitWigner(W,C)*dW;
     wylumfile << W << endl;
@@ -126,7 +126,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
 	   (_inputgammaa.getProtonEnergy()+sqrt(_inputgammaa.getProtonEnergy()*
 					       _inputgammaa.getProtonEnergy()-starlightConstants::protonMass*starlightConstants::protonMass)));
   
-  for(unsigned int i = 0; i <= _inputgammaa.numWBins() - 1; ++i) {
+  for(unsigned int i = 0; i <= _inputgammaa.nmbWBins() - 1; ++i) {
 
     W = _inputgammaa.minW() + double(i)*dW + 0.5*dW;
     
@@ -144,7 +144,6 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
       }
 
       wylumfile << dndWdY << endl;
-      
     }
   }
 
@@ -315,7 +314,7 @@ void photonNucleusLuminosity::pttablegen()
     //  set  bmax according to the smaller photon energy, following flux.f
     
     bmax=bmin+6.*starlightConstants::hbarc*gamma_em/Egamma2;
-    bmin = getbbs().getBeam1().RNuc()+getbbs().getBeam2().RNuc();
+    bmin = getbbs().getBeam1().nuclearRadius()+getbbs().getBeam2().nuclearRadius();
     //  if we allow for nuclear breakup, use a slightly smaller bmin
     
     if (ibreakup != 1) 
@@ -399,8 +398,8 @@ double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGM
   NGAUSS=16;
 
   //     >> Initialize
-  pxmax = 10.*(starlightConstants::hbarc/getbbs().getBeam1().RNuc());
-  pymax = 10.*(starlightConstants::hbarc/getbbs().getBeam1().RNuc());
+  pxmax = 10.*(starlightConstants::hbarc/getbbs().getBeam1().nuclearRadius());
+  pymax = 10.*(starlightConstants::hbarc/getbbs().getBeam1().nuclearRadius());
   
   Nxbin = 500;
   
@@ -481,7 +480,7 @@ double photonNucleusLuminosity::nofe(double Egamma, double bimp)
   if( X <= 0.0) 
     cout<<"In nofe, X= "<<X<<endl;
   
-  factor1 = (double(getbbs().getBeam1().getZin()*getbbs().getBeam1().getZin())
+  factor1 = (double(getbbs().getBeam1().Z()*getbbs().getBeam1().Z())
 	     *starlightConstants::alpha)/(starlightConstants::pi*starlightConstants::pi);
 
   factor2 = 1./(Egamma*bimp*bimp);

@@ -58,12 +58,12 @@ class eventChannel : public readLuminosity
                               double &px,double &py,double &pz,int &iFbadevent);
 		randomGenerator _randy;
 		beamBeamSystem _bbs;
-		int getNTries() {return _nTries;}
-		int getNSuccess() {return _nSuccess;}
+		unsigned long nmbAttempts() const {return _nmbAttempts;}
+		unsigned long nmbAccepted() const {return _nmbAccepted;}
 		double pseudoRapidity(double px, double py, double pz);
  protected:
-		int _nTries;
-		int _nSuccess;
+		unsigned long _nmbAttempts;
+		unsigned long _nmbAccepted;
 		bool _accCutPt; //Acceptance cut in pT
 		bool _accCutEta; //Acceptance cut in pseudorapidity
 		double _ptMin; //Min pT if cut

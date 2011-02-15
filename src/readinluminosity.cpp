@@ -50,7 +50,7 @@ readLuminosity::readLuminosity(inputParameters& input)//:inputread(input)
   //storing inputparameters into protected variables for the object to use them
   _ReadInputNPT=input.nmbPtBinsInterference();
   _ReadInputnumy=input.nmbRapidityBins();
-  _ReadInputnumw=input.numWBins();
+  _ReadInputnumw=input.nmbWBins();
   _ReadInputgg_or_gP=input.productionMode();
   _ReadInputinterferencemode=input.interferenceEnabled();
   

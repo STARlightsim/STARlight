@@ -59,7 +59,7 @@ nBodyPhaseSpaceGen::setDecay(const vector<double>& daughterMasses)  // array of 
 {
 	_n = daughterMasses.size();
 	if (_n < 2) {
-		cout << "error: number of daughters = " << _n << " does not make sense." << endl;
+		printWarn << "number of daughters = " << _n << " does not make sense." << endl;
 		return false;
 	}
 	// copy daughter masses
@@ -113,11 +113,12 @@ nBodyPhaseSpaceGen::generateDecay(const lorentzVector& nBody)  // Lorentz vector
 {
 	const double nBodyMass = nBody.M();
 	if (_n < 2) {
-		cout << "warning: number of daughter particles = " << _n << " is smaller than 2. weight is set to 0." << endl;
+		printWarn << "number of daughter particles = " << _n << " is smaller than 2. "
+		          << "weight is set to 0." << endl;
 		_weight = 0;
 	} else if (nBodyMass < _mSum[_n - 1]) {
-		cout << "warning: n-body mass = " << nBodyMass << " is smaller than sum of daughter masses = "
-		     << _mSum[_n - 1] << ". weight is set to 0." << endl;
+		printWarn << "n-body mass = " << nBodyMass << " is smaller than sum of daughter masses = "
+		          << _mSum[_n - 1] << ". weight is set to 0." << endl;
 		_weight = 0;
 	} else {
 		pickMasses(nBodyMass);
@@ -137,11 +138,12 @@ nBodyPhaseSpaceGen::generateDecayAccepted(const lorentzVector& nBody,      // Lo
 {
 	const double nBodyMass = nBody.M();
 	if (_n < 2) {
-		cout << "warning: number of daughter particles = " << _n << " is smaller than 2. no event generated." << endl;
+		printWarn << "number of daughter particles = " << _n << " is smaller than 2. "
+		          << "no event generated." << endl;
 		return false;
 	} else if (nBodyMass < _mSum[_n - 1]) {
-		cout << "warning: n-body mass = " << nBodyMass << " is smaller than sum of daughter masses = "
-		     << _mSum[_n - 1] << ". no event generated." << endl;
+		printWarn << "n-body mass = " << nBodyMass << " is smaller than sum of daughter masses = "
+		          << _mSum[_n - 1] << ". no event generated." << endl;
 		return false;
 	}
 	pickMasses(nBodyMass);
@@ -186,7 +188,7 @@ nBodyPhaseSpaceGen::calcWeight()
 	if (_weight > _maxWeightObserved)
 		_maxWeightObserved = _weight;
 	if (isnan(_weight))
-		cout << "warning: weight = " << _weight << endl;
+		printWarn << "weight = " << _weight << endl;
 	return _weight;
 }
 

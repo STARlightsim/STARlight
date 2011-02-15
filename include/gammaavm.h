@@ -59,18 +59,18 @@ class Gammaavectormeson : public eventChannel
   void pickwy(double &W, double &Y);
   void momenta(double W,double Y,double &E,double &px,double &py,double &pz,int &tcheck);
   void vmpt(double W,double Y,double &E,double &px,double &py, double &pz,int &tcheck);
-  void twoBodyDecay(starlightConstants::particle &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,double &pz2,int &iFbadevent);
-  bool fourBodyDecay(starlightConstants::particle& ipid, const double E, const double W, const double* p, lorentzVector* decayMoms, int& iFbadevent);
+  void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,double &pz2,int &iFbadevent);
+  bool fourBodyDecay(starlightConstants::particleTypeEnum& ipid, const double E, const double W, const double* p, lorentzVector* decayMoms, int& iFbadevent);
   double getMass();
   double getWidth();
-  virtual double getTheta(starlightConstants::particle ipid);
+  virtual double getTheta(starlightConstants::particleTypeEnum ipid);
   double getSpin();
   double _VMbslope;
-  virtual double getDaughterMass(starlightConstants::particle &ipid);                
+  virtual double getDaughterMass(starlightConstants::particleTypeEnum &ipid);                
   double pseudoRapidity(double px, double py, double pz);
   
  private:
-  starlightConstants::particle _VMpidtest;
+  starlightConstants::particleTypeEnum _VMpidtest;
   int _VMnumw;
   int _VMnumy;
   int _VMinterferencemode;

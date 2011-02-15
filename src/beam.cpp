@@ -45,11 +45,18 @@ using namespace std;
 
 
 //______________________________________________________________________________
-beam::beam(int Zin, int Ain, double bdeuteron, int in_or_co, inputParameters& input)
-	: nucleus(Zin, Ain, bdeuteron, in_or_co)
+beam::beam(const int              Z,
+           const int              A,
+           const double           bdeuteron,
+           const bool             dAuCoherentProduction,
+           const inputParameters& input)
+	: nucleus(Z,
+	          A,
+	          bdeuteron,
+	          dAuCoherentProduction)
 {
-  //Setting needed inputparameters to protected variables
-  _beamInputGamma_em=input.beamLorentzGamma();
+  // setting needed inputparameters to protected variables
+  _beamInputGamma_em = input.beamLorentzGamma();
 }
 
 
@@ -72,7 +79,7 @@ double beam::nofe(double impactparameter)
   if(X <= 0.0) 
     cout<<"In nofe, X= "<<X<<endl;
   
-  factor1 = (double(getZin()*getZin())*starlightConstants::alpha)/
+  factor1 = (double(Z()*Z())*starlightConstants::alpha)/
     (starlightConstants::pi*starlightConstants::pi);
   
   factor2 = 1./(_photonEnergy*impactparameter*impactparameter);

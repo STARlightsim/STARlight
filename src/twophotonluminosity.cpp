@@ -56,8 +56,8 @@ twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2,int,double lumi
 //______________________________________________________________________________
 twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2,int,inputParameters& input):beamBeamSystem(beam_1,beam_2,input),_input2photon(input)
 {
-  cout <<"Inside 2photonlumin, beam_1 woodsaxon: "<<beam_1.getWoodSaxonRadius()<<endl;
-  cout <<"Inside 2photonlumin, beam_2 woodsaxon: "<<beam_2.getWoodSaxonRadius()<<endl;
+  cout <<"Inside 2photonlumin, beam_1 woodsaxon: "<<beam_1.woodSaxonRadius()<<endl;
+  cout <<"Inside 2photonlumin, beam_2 woodsaxon: "<<beam_2.woodSaxonRadius()<<endl;
   //Lets check to see if we need to recalculate the luminosity tables
   twoPhotonDifferentialLuminosity();
 }
@@ -78,18 +78,18 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   double y[starlightLimits::MAXYBINS];
   double xlum = 0., wmev=0,Normalize = 0.,OldNorm;
  
-  Normalize = 1./sqrt(1*(double)_input2photon.numWBins()*_input2photon.nmbRapidityBins()); //if your grid is very fine, you'll want high accuracy-->small Normalize
+  Normalize = 1./sqrt(1*(double)_input2photon.nmbWBins()*_input2photon.nmbRapidityBins()); //if your grid is very fine, you'll want high accuracy-->small Normalize
   OldNorm   = Normalize;
   
   //Writing out our input parameters+(w,y)grid+diff._lum.
-  wylumfile << getBeam1().getZin() <<endl;
-  wylumfile << getBeam1().getAin() <<endl;
-  wylumfile << getBeam2().getZin() <<endl;
-  wylumfile << getBeam2().getAin() <<endl;
+  wylumfile << getBeam1().Z() <<endl;
+  wylumfile << getBeam1().A() <<endl;
+  wylumfile << getBeam2().Z() <<endl;
+  wylumfile << getBeam2().A() <<endl;
   wylumfile << _input2photon.beamLorentzGamma() <<endl;
   wylumfile << _input2photon.maxW() <<endl;
   wylumfile << _input2photon.minW() <<endl;
-  wylumfile << _input2photon.numWBins() <<endl;
+  wylumfile << _input2photon.nmbWBins() <<endl;
   wylumfile << _input2photon.maxRapidity() <<endl;
   wylumfile << _input2photon.nmbRapidityBins() <<endl;
   wylumfile << _input2photon.productionMode() <<endl;
@@ -98,11 +98,11 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   wylumfile << _input2photon.interferenceStrength() <<endl;
   wylumfile << _input2photon.coherentProduction() <<endl;
   wylumfile << _input2photon.incoherentFactor() <<endl;
-  wylumfile << _input2photon.getbford() <<endl;
+  wylumfile << _input2photon.deuteronSlopePar() <<endl;
   wylumfile << _input2photon.maxPtInterference() <<endl;
   wylumfile << _input2photon.nmbPtBinsInterference() <<endl;
-  for (unsigned int i = 1; i <= _input2photon.numWBins(); ++i) {
-    w[i] = _input2photon.minW() + (_input2photon.maxW()-_input2photon.minW())/_input2photon.numWBins()*i;
+  for (unsigned int i = 1; i <= _input2photon.nmbWBins(); ++i) {
+    w[i] = _input2photon.minW() + (_input2photon.maxW()-_input2photon.minW())/_input2photon.nmbWBins()*i;
     //Old code had it write to a table for looking up...
     wylumfile << w[i] <<endl;
   }
@@ -111,7 +111,7 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
     //Old code had it write to a table for looking up...
     wylumfile << y[i] <<endl;
   }
-  for (unsigned int i = 1; i <= _input2photon.numWBins(); ++i) {   //For each (w,y) pair, calculate the diff. _lum
+  for (unsigned int i = 1; i <= _input2photon.nmbWBins(); ++i) {   //For each (w,y) pair, calculate the diff. _lum
       //double SUM = 0.;not used
       for (unsigned int j = 1; j <= _input2photon.nmbRapidityBins(); ++j) {
 	wmev = w[i]*1000.;
@@ -136,10 +136,10 @@ double twoPhotonLuminosity::D2LDMDY(double M,double Y,double &Normalize)
   _W1    =  M/2.0*exp(Y);
   _W2    =  M/2.0*exp(-Y);
   _gamma = _input2photon.beamLorentzGamma();
-  int Zin=getBeam1().getZin();
+  int Zin=getBeam1().Z();
   D2LDMDYx = 2.0/M*Zin*Zin*Zin*Zin*(starlightConstants::alpha*starlightConstants::alpha)*integral(Normalize);  //treats it as a symmetric collision
-  Normalize = D2LDMDYx*M/(2.0*getBeam1().getZin()*getBeam1().getZin()*
-			  getBeam1().getZin()*getBeam1().getZin()*
+  Normalize = D2LDMDYx*M/(2.0*getBeam1().Z()*getBeam1().Z()*
+			  getBeam1().Z()*getBeam1().Z()*
 			  starlightConstants::alpha*starlightConstants::alpha); 
   //Normalization also treats it as symmetric
   return D2LDMDYx;
@@ -167,8 +167,8 @@ double twoPhotonLuminosity::integral(double Normalize)
 
   EPS = .01*Normalize;   //This is EPS for integration, 1% of previous integral value.
   // Change this to the Woods-Saxon radius to be consistent with the older calculations (JN 230710) 
-  //  RM  = getBeam1().RNuc()/starlightConstants::hbarcmev;  //Assumes symmetry?
-  RM  = getBeam1().getWoodSaxonRadius()/starlightConstants::hbarcmev;  
+  //  RM  = getBeam1().nuclearRadius()/starlightConstants::hbarcmev;  //Assumes symmetry?
+  RM  = getBeam1().woodSaxonRadius()/starlightConstants::hbarcmev;  
 
   NIter = 10000 + (int)1000000*(int)Normalize; //if integral value is very small, we don't do too many intertions to get precision down to 1%
   NIterMin = 600;

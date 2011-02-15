@@ -42,14 +42,24 @@
 
 class beam : public nucleus
 {
-	public:
-		beam(int Zin, int Ain, double bdeuteron, int in_or_co, inputParameters& input);
-		~beam();
-		double nofe(double impactparameter);  //photon density
-		double _photonEnergy;
-	protected:
-		//inputParameters inputbeam;
-		double _beamInputGamma_em;
+
+public:
+
+	beam(const int              Z,
+	     const int              A,
+	     const double           bdeuteron,
+	     const bool             dAuCoherentProduction,
+	     const inputParameters& input);
+	~beam();
+
+	double nofe(double impactparameter);  //photon density
+	double _photonEnergy;
+
+protected:
+
+	//inputParameters inputbeam;
+	double _beamInputGamma_em;
+
 };
 
 

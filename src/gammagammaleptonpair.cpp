@@ -56,9 +56,9 @@ Gammagammaleptonpair::Gammagammaleptonpair(inputParameters& input, beamBeamSyste
     _randy.SetSeed(input.randomSeed());
     cout<<"Randy in leptonpair construction: "<<_randy.Rndom()<<endl;
     //Storing inputparameters into protected members for use
-    _GGlepInputnumw=input.numWBins();
+    _GGlepInputnumw=input.nmbWBins();
     _GGlepInputnumy=input.nmbRapidityBins();
-    _GGlepInputpidtest=input.getPidTest();
+    _GGlepInputpidtest=input.prodParticleType();
     _GGlepInputGamma_em=input.beamLorentzGamma();
     //Let us read in the luminosity tables
     read();
@@ -321,7 +321,7 @@ double Gammagammaleptonpair::pp(double E)
         
     //pick a test value pp, and find the amplitude there
     x = _randy.Rndom();//random()/(RAND_MAX+1.0);
-    pp = x*5.*starlightConstants::hbarc/_bbs.getBeam1().RNuc(); //Will use nucleus #1, there should be two for symmetry//nextline
+    pp = x*5.*starlightConstants::hbarc/_bbs.getBeam1().nuclearRadius(); //Will use nucleus #1, there should be two for symmetry//nextline
     singleformfactorpp1=_bbs.getBeam1().formFactor(pp*pp+ereds);
     test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
 
@@ -333,7 +333,7 @@ double Gammagammaleptonpair::pp(double E)
 	}
 	else{
 	    x =_randy.Rndom();//random()/(RAND_MAX+1.0);
-	    pp = 5*starlightConstants::hbarc/_bbs.getBeam1().RNuc()*x;
+	    pp = 5*starlightConstants::hbarc/_bbs.getBeam1().nuclearRadius()*x;
 	    singleformfactorpp2=_bbs.getBeam1().formFactor(pp*pp+ereds);//Symmetry
 	    test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
 	}
@@ -344,7 +344,7 @@ double Gammagammaleptonpair::pp(double E)
 
 
 //______________________________________________________________________________
-void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particle &ipid,
+void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
                                     double  ,  // E (unused)
                                     double  W,
                                     double  px0, double  py0, double  pz0,
@@ -495,7 +495,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
     double pairE = 0.;
     double pairmomx=0.,pairmomy=0.,pairmomz=0.;
     int iFbadevent=0;
-    starlightConstants::particle ipid = starlightConstants::UNKNOWN;
+    starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
 	
     double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
 //this function decays particles and writes events to a file
@@ -561,7 +561,7 @@ upcEvent Gammagammaleptonpair::produceEvent()
    double pairE = 0.;
    double pairmomx=0.,pairmomy=0.,pairmomz=0.;
    int iFbadevent=0;
-   starlightConstants::particle ipid = starlightConstants::UNKNOWN;
+   starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
    
    double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
    bool accepted = false;
@@ -575,7 +575,7 @@ upcEvent Gammagammaleptonpair::produceEvent()
      pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
    
   
-     _nTries++;
+     _nmbAttempts++;
      twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
      double pt1chk = sqrt(px1*px1+py1*py1);
      double pt2chk = sqrt(px2*px2+py2*py2);
@@ -586,20 +586,20 @@ upcEvent Gammagammaleptonpair::produceEvent()
      if(_accCutPt && !_accCutEta){
        if(pt1chk > _ptMin && pt1chk < _ptMax &&  pt2chk > _ptMin && pt2chk < _ptMax){
 	 accepted = true;
-	 _nSuccess++;
+	 _nmbAccepted++;
        }
      }
      else if(!_accCutPt && _accCutEta){
        if(eta1 > _etaMin && eta1 < _etaMax && eta2 > _etaMin && eta2 < _etaMax){
 	 accepted = true;
-	 _nSuccess++;
+	 _nmbAccepted++;
        }
      }
      else if(_accCutPt && _accCutEta){
        if(pt1chk > _ptMin && pt1chk < _ptMax &&  pt2chk > _ptMin && pt2chk < _ptMax){
 	 if(eta1 > _etaMin && eta1 < _etaMax && eta2 > _etaMin && eta2 < _etaMax){
 	   accepted = true;
-	    _nSuccess++;
+	    _nmbAccepted++;
 	 }
        }
      }

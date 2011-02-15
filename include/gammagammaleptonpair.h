@@ -72,7 +72,7 @@ class Gammagammaleptonpair : public eventChannel
   
   void pairMomentum(double w,double y,double &E,double &px,double &py,double&pz);
   double pp(double E);
-  void twoBodyDecay(starlightConstants::particle &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,/*double &py2,*/double &pz2,int &iFbadevent);
+  void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,/*double &py2,*/double &pz2,int &iFbadevent);
   double thetalep(double W,double theta);
   void tauDecay(double &px1,double &py1,double &pz1,double &E1,double &px2,double &py2,double &pz2,double &E2);
   
@@ -80,7 +80,7 @@ class Gammagammaleptonpair : public eventChannel
   double getWidth();
   double getSpin();
   
-  starlightConstants::particle _GGlepInputpidtest;
+  starlightConstants::particleTypeEnum _GGlepInputpidtest;
   int _GGlepInputnumw;
   int _GGlepInputnumy;
   double _GGlepInputGamma_em;

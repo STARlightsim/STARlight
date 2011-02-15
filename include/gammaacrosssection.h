@@ -72,7 +72,7 @@ class photonNucleusCrossSection
   
   double nepoint(double Egamma, double bmin);
   
-  starlightConstants::particle _sigmaPID;
+  starlightConstants::particleTypeEnum _sigmaPID;
   double _sigmaProtonEnergy;
   double _sigmaGamma_em;
   int _sigmaBreakup;

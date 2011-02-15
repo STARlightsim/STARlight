@@ -57,7 +57,7 @@ namespace starlightConstants
 	static const double muonMass = 0.105658389;    // [GeV/c^2]
 	static const double tauMass  = 1.777;          // [GeV/c^2]
 
-	enum particle {
+	enum particleTypeEnum {
 		UNKNOWN        = 0,
 		ELECTRON       = 11,
 		MUON           = 13,
@@ -96,20 +96,20 @@ namespace starlightConstants
 		UPSILON3S_mumu = 555013
 	};
 
-	enum decaytype {
-		NOTKNOWN,
-		NARROWVMDEFAULT,
-		WIDEVMDEFAULT,
-		PSIFAMILY,
-		LEPTONPAIR,
-		SINGLEMESON
+	enum decayTypeEnum {
+		NOTKNOWN        = 0,
+		NARROWVMDEFAULT = 1,
+		WIDEVMDEFAULT   = 2,
+		PSIFAMILY       = 3,
+		LEPTONPAIR      = 4,
+		SINGLEMESON     = 5
 	};
 
-	enum interactiontype {
-		UNSPECIFIED,
-		PHOTONPHOTON,
-		PHOTONPOMERONNARROW,
-		PHOTONPOMERONWIDE
+	enum interactionTypeEnum {
+		UNSPECIFIED         = 0,
+		PHOTONPHOTON        = 1,
+		PHOTONPOMERONNARROW = 2,
+		PHOTONPOMERONWIDE   = 3
 	};
 
 	//Structure for each event's set of tracks.
@@ -121,7 +121,7 @@ namespace starlightConstants
 		//Right now this is set up for a maximum of 4 tracks,if we want more, just increase the arrays
 		//Moved it to 30, this way when pythia returns, it wont complain too much...hedging bets...not sure how many
 		double px[30],py[30],pz[30];
-		//starlightConstants::particle _fsParticle[30];
+		//starlightConstants::particleTypeEnum _fsParticle[30];
 		int _fsParticle[30];
 		int _charge[30];
 		//To help track mothers and daughters produced through pythia.

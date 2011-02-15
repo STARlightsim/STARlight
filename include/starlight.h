@@ -33,6 +33,7 @@
 
 #ifndef STARLIGHT_H
 #define STARLIGHT_H
+
 #define Starlight_VERSION_MAJOR 1
 #define Starlight_VERSION_MINOR 0
 
@@ -40,48 +41,49 @@
 #include <string>
 
 #include "upcevent.h"
+#include "eventchannel.h"
 
 
-class TDatabasePDG;
-class beamBeamSystem;
 class inputParameters;
 class beam;
-class eventChannel;
+class beamBeamSystem;
 
 
-class starlight
-{
-   public:
-      
-      starlight();
-      
-      ~starlight();
-      
-      int init();
+class starlight {
 
-      upcEvent produceEvent();
+public:
       
-      std::string getConfigFileName() const { return _configFileName; }
+	starlight();
+	~starlight();
+      
+	bool init();
+
+	upcEvent produceEvent();
+      
+	std::string   configFileName() const { return _configFileName;              }
+	unsigned long nmbAttempts   () const { return _eventChannel->nmbAttempts(); }
+	unsigned long nmbAccepted   () const { return _eventChannel->nmbAccepted(); } 
    
-      void setInputParameters(inputParameters *inputParams) { _inputParameters = inputParams; }
-      int getNTries(); 
-      int getNSuccess(); 
-   private:
-      
-      bool checkForLuminosityTable();
+	void setInputParameters(inputParameters* inputParams) { _inputParameters = inputParams; }
 
-      int createEventChannel();
+private:
       
-      inputParameters* _inputParameters;
-      beam* _beam0;
-      beam* _beam1;
-      beamBeamSystem* _beamSystem;
-      eventChannel* _eventChannel;
-      std::string _configFileName;
-      int _numberOfEventsPerFile;
-      unsigned long long _numberOfEventsToGenerate;
-      std::string _standardFilename;
-      bool _isInitialised;
+	bool luminosityTableIsValid() const;
+
+	bool createEventChannel();
+      
+	inputParameters*   _inputParameters;
+	beam*              _beam0;
+	beam*              _beam1;
+	beamBeamSystem*    _beamSystem;
+	eventChannel*      _eventChannel;
+	unsigned int       _nmbEventsPerFile;
+	unsigned long long _nmbEventsToGenerate;
+	std::string        _configFileName;
+	std::string        _eventDataFileName;
+	std::string        _lumLookUpTableFileName;
+	bool               _isInitialised;
+
 };
 
 
