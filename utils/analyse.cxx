@@ -1,5 +1,8 @@
 #include "analyse.h"
+#include <TMath.h>
+#include <iostream>
 
+using namespace std;
 Analyse::Analyse() :
   fInfile("slight.out"),
   fNEvents(1)
@@ -36,11 +39,11 @@ Analyse::Analyse(char* infile, Int_t nEvents) :
   
   fRapEl = new TH1F("RapEl", "Rapidity e+/e-", 200, -10, 10);
   fRapMu = new TH1F("RapMu", "Rapidity mu+/mu-", 200, -10, 10);
-  fRapPi = new TH1F("RapPi", "Rapidity pi+/pi-", 200, -10, 10);
+  fRapPi = new TH1F("RapPi", "Rapidity pi+/pi-", 200, -10., 10.);
 
   fInvMassEl = new TH1F("InvMassEl", "Invariant mass", 100, 0, 5);
   fInvMassMu = new TH1F("InvMassMu", "Invariant mass", 100, 0, 5);
-  fInvMassPi = new TH1F("InvMassPi", "Invariant mass", 100, 0, 5);
+  fInvMassPi = new TH1F("InvMassPi", "Invariant mass", 100, 0., 5.);
  
 
   fPt1 = new TH1F("fPt1", "Transverse momentum track 1", 100, 0, 2.);
@@ -152,10 +155,13 @@ void Analyse::doAnalysis()
     for(Int_t tr = 0; tr < ntracks; tr++){
       //Getting a TParticle from the TClonesArray
       TParticle *part = NextParticle();
-      
+      Double_t mpi = 0.13957018;
+      Double_t energy = TMath::Sqrt(mpi*mpi+part->Px()*part->Px()+part->Py()*part->Py()+part->Pz()*part->Pz());
       //Creating a new TLorentzVector and setting px, py, pz and E.
       vecArr[tr] = new TLorentzVector;
-      vecArr[tr]->SetPxPyPzE(part->Px(), part->Py(), part->Pz(), part->Energy());     partArr[tr] = part;
+      vecArr[tr]->SetPxPyPzE(part->Px(), part->Py(), part->Pz(), energy); 
+      cout << "particle " << tr << ": px: " << part->Px() << " py: " << part->Py() << " pz: " << part->Pz() << " Energy: " << energy << endl;
+      partArr[tr] = part;
     }
  
     fPt1->Fill(vecArr[0]->Pt());
@@ -180,6 +186,8 @@ void Analyse::doAnalysis()
     }
     else if(partArr[0]->GetPdgCode() == 211 || partArr[0]->GetPdgCode() == -211){
       fPtPi->Fill(sum.Pt());
+      cout << "sum.Rapidity: " << sum.Rapidity() << endl;
+      cout << "sum.M(): " << sum.M() << endl;
       fRapPi->Fill(sum.Rapidity());
       fInvMassPi->Fill(sum.M());
     }
