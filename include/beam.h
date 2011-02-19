@@ -52,13 +52,13 @@ public:
 	     const inputParameters& input);
 	~beam();
 
-	double nofe(double impactparameter);  //photon density
-	double _photonEnergy;
+	double photonFlux(const double impactparameter,
+	                  const double photonEnergy) const;  ///< calculates photon density (number of photons / (energy * area))
 
 protected:
 
 	//inputParameters inputbeam;
-	double _beamInputGamma_em;
+	double _beamLorentzGamma;  ///< Lorentz gamma factor of beams in collider frame (from inputParameters)
 
 };
 

@@ -46,30 +46,47 @@
 
 class eventChannel : public readLuminosity
 {
-	public:
-		eventChannel(inputParameters& input, beamBeamSystem& bbsystem);
-		virtual ~eventChannel();
 
-		virtual starlightConstants::event produceEvent(int &ievent)= 0;
+public:
 
-		virtual upcEvent produceEvent() = 0;
+	eventChannel(const inputParameters& input,
+	             beamBeamSystem&        bbsystem);
+	virtual ~eventChannel();
+
+	unsigned long nmbAttempts() const {return _nmbAttempts;}  ///< returns number of attempted events
+	unsigned long nmbAccepted() const {return _nmbAccepted;}  ///< returns number of accepted events
+
+	virtual starlightConstants::event produceEvent(int &ievent) = 0;
+
+	virtual upcEvent produceEvent() = 0;
  
-		void transform(double betax,double betay,double betaz,double &E,
-                              double &px,double &py,double &pz,int &iFbadevent);
-		randomGenerator _randy;
-		beamBeamSystem _bbs;
-		unsigned long nmbAttempts() const {return _nmbAttempts;}
-		unsigned long nmbAccepted() const {return _nmbAccepted;}
-		double pseudoRapidity(double px, double py, double pz);
- protected:
-		unsigned long _nmbAttempts;
-		unsigned long _nmbAccepted;
-		bool _accCutPt; //Acceptance cut in pT
-		bool _accCutEta; //Acceptance cut in pseudorapidity
-		double _ptMin; //Min pT if cut
-		double _ptMax; //Max pT if cut
-		double _etaMin; //Min eta if cut
-		double _etaMax; //Max eta if cut
+	static void transform(const double betax,
+	                      const double betay,
+	                      const double betaz,
+	                      double&      E,
+	                      double&      px,
+	                      double&      py,
+	                      double&      pz,
+	                      int&         iFbadevent); ///< Lorentz-transforms given 4-vector
+
+	randomGenerator _randy;
+	beamBeamSystem  _bbs;
+
+	static double pseudoRapidity(const double px,
+	                             const double py,
+	                             const double pz);  ///< calculates pseudorapidity for given 3-momentum
+
+protected:
+
+	unsigned long _nmbAttempts;  ///< number of attempted events
+	unsigned long _nmbAccepted;  ///< number of accepted events
+
+	bool   _ptCutEnabled;   ///< en/disables cut in pt
+	double _ptCutMin;       ///< minimum pt, if cut is enabled
+	double _ptCutMax;       ///< maximum pt, if cut is enabled
+	bool   _etaCutEnabled;  ///< en/disables cut in eta
+	double _etaCutMin;      ///< minimum eta, if cut is enabled
+	double _etaCutMax;      ///< maximum eta, if cut is enabled
 		
 };
 

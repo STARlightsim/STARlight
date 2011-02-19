@@ -35,13 +35,15 @@
 #include <fstream>
 #include <cmath>
 
-#include "beam.h"
 #include "starlightconstants.h"
 #include "inputParameters.h"
+#include "reportingUtils.h"
 #include "bessel.h"
+#include "beam.h"
 
 
 using namespace std;
+using namespace starlightConstants;
 
 
 //______________________________________________________________________________
@@ -56,7 +58,7 @@ beam::beam(const int              Z,
 	          dAuCoherentProduction)
 {
   // setting needed inputparameters to protected variables
-  _beamInputGamma_em = input.beamLorentzGamma();
+	_beamLorentzGamma = input.beamLorentzGamma();
 }
 
 
@@ -66,25 +68,22 @@ beam::~beam()
 
 
 //______________________________________________________________________________
-double beam::nofe(double impactparameter)
+double beam::photonFlux(const double impactparameter, 
+                        const double photonEnergy) const
 {
-  //Function for the calculation of the "photon density".
-  //nofe=numberofgammas/(energy*area)
-  //Assume beta=1.0 and gamma>>1, i.e. neglect the (1/gamma^2)*K0(x) term
+  // function for the calculation of the "photon density".
+  // photonFlux = number of photons / (energy * area)
+  // assume beta = 1 and gamma >> 1, i.e. neglect the (1 / gamma^2) * K_0(x) term
+  
+  const double X
+	  = (impactparameter * photonEnergy) / (_beamLorentzGamma * hbarc);
+  if (X <= 0) 
+	  printWarn << "X = " << X << endl;
+  
+  const double factor1 = (double(Z() * Z()) * alpha) / (pi * pi);  
+  const double factor2 = 1. / (photonEnergy * impactparameter * impactparameter);
+  const double bessel  = bessel::dbesk1(X);
+  const double factor3 = X * X * bessel * bessel;
 
-  double X=0.,nofex=0.,factor1=0.,factor2=0.,factor3=0.;
-  
-  X = (impactparameter*_photonEnergy)/(_beamInputGamma_em*starlightConstants::hbarc);
-  
-  if(X <= 0.0) 
-    cout<<"In nofe, X= "<<X<<endl;
-  
-  factor1 = (double(Z()*Z())*starlightConstants::alpha)/
-    (starlightConstants::pi*starlightConstants::pi);
-  
-  factor2 = 1./(_photonEnergy*impactparameter*impactparameter);
-  factor3 = X*X*(bessel::dbesk1(X))*(bessel::dbesk1(X));
-  nofex   = factor1*factor2*factor3;
-
-  return nofex;
+  return factor1 * factor2 * factor3;
 }

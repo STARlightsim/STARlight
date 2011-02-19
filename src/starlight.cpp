@@ -97,7 +97,7 @@ starlight::init()
 	case PHOTONPHOTON:
 		if (!lumTableIsValid) {
 			printInfo << "creating luminosity table for photon-photon channel" << endl;
-			twoPhotonLuminosity(_beamSystem->getBeam1(), _beamSystem->getBeam2(),
+			twoPhotonLuminosity(_beamSystem->beam1(), _beamSystem->beam2(),
 			                    _inputParameters->beamBreakupMode(), *_inputParameters);
 		}
 		break;		

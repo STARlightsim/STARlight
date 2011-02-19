@@ -82,10 +82,10 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   OldNorm   = Normalize;
   
   //Writing out our input parameters+(w,y)grid+diff._lum.
-  wylumfile << getBeam1().Z() <<endl;
-  wylumfile << getBeam1().A() <<endl;
-  wylumfile << getBeam2().Z() <<endl;
-  wylumfile << getBeam2().A() <<endl;
+  wylumfile << beam1().Z() <<endl;
+  wylumfile << beam1().A() <<endl;
+  wylumfile << beam2().Z() <<endl;
+  wylumfile << beam2().A() <<endl;
   wylumfile << _input2photon.beamLorentzGamma() <<endl;
   wylumfile << _input2photon.maxW() <<endl;
   wylumfile << _input2photon.minW() <<endl;
@@ -136,10 +136,10 @@ double twoPhotonLuminosity::D2LDMDY(double M,double Y,double &Normalize)
   _W1    =  M/2.0*exp(Y);
   _W2    =  M/2.0*exp(-Y);
   _gamma = _input2photon.beamLorentzGamma();
-  int Zin=getBeam1().Z();
+  int Zin=beam1().Z();
   D2LDMDYx = 2.0/M*Zin*Zin*Zin*Zin*(starlightConstants::alpha*starlightConstants::alpha)*integral(Normalize);  //treats it as a symmetric collision
-  Normalize = D2LDMDYx*M/(2.0*getBeam1().Z()*getBeam1().Z()*
-			  getBeam1().Z()*getBeam1().Z()*
+  Normalize = D2LDMDYx*M/(2.0*beam1().Z()*beam1().Z()*
+			  beam1().Z()*beam1().Z()*
 			  starlightConstants::alpha*starlightConstants::alpha); 
   //Normalization also treats it as symmetric
   return D2LDMDYx;
@@ -167,8 +167,8 @@ double twoPhotonLuminosity::integral(double Normalize)
 
   EPS = .01*Normalize;   //This is EPS for integration, 1% of previous integral value.
   // Change this to the Woods-Saxon radius to be consistent with the older calculations (JN 230710) 
-  //  RM  = getBeam1().nuclearRadius()/starlightConstants::hbarcmev;  //Assumes symmetry?
-  RM  = getBeam1().woodSaxonRadius()/starlightConstants::hbarcmev;  
+  //  RM  = beam1().nuclearRadius()/starlightConstants::hbarcmev;  //Assumes symmetry?
+  RM  = beam1().woodSaxonRadius()/starlightConstants::hbarcmev;  
 
   NIter = 10000 + (int)1000000*(int)Normalize; //if integral value is very small, we don't do too many intertions to get precision down to 1%
   NIterMin = 600;

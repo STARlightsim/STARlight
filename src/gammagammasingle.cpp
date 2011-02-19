@@ -313,14 +313,14 @@ double Gammagammasingle::pp(double E)
   ereds = (E/_GGsingInputGamma_em)*(E/_GGsingInputGamma_em);
   Cm = sqrt(3.)*E/_GGsingInputGamma_em;
   //the amplitude of the p_t spectrum at the maximum
-  singleformfactorCm=_bbs.getBeam1().formFactor(Cm*Cm+ereds);
+  singleformfactorCm=_bbs.beam1().formFactor(Cm*Cm+ereds);
   //Doing this once and then storing it as a double, which we square later...SYMMETRY?using beam1 for now.
   Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(starlightConstants::pi)*(ereds+Cm*Cm))*(2.*(starlightConstants::pi)*(ereds+Cm*Cm)));
         
   //pick a test value pp, and find the amplitude there
   x = _randy.Rndom();//random()/(RAND_MAX+1.0);
-  pp = x*5.*starlightConstants::hbarc/_bbs.getBeam1().nuclearRadius(); //Will use nucleus #1, there should be two for symmetry//nextline
-  singleformfactorpp1=_bbs.getBeam1().formFactor(pp*pp+ereds);
+  pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); //Will use nucleus #1, there should be two for symmetry//nextline
+  singleformfactorpp1=_bbs.beam1().formFactor(pp*pp+ereds);
   test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
 
   while(satisfy==0){
@@ -330,8 +330,8 @@ double Gammagammasingle::pp(double E)
     }
     else{
       x =_randy.Rndom();//random()/(RAND_MAX+1.0);
-      pp = 5*starlightConstants::hbarc/_bbs.getBeam1().nuclearRadius()*x;
-      singleformfactorpp2=_bbs.getBeam1().formFactor(pp*pp+ereds);//Symmetry
+      pp = 5*starlightConstants::hbarc/_bbs.beam1().nuclearRadius()*x;
+      singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);//Symmetry
       test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
     }
   }

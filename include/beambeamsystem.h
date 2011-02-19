@@ -25,6 +25,7 @@
 // $Date::                            $: date of last commit
 //
 // Description:
+//     this class covers a coliding beam system SK
 //
 //
 //
@@ -35,41 +36,54 @@
 #define BEAMBEAMSYSTEM_H
 
 
-// this class covers a coliding beam system SK
 #include "nucleus.h"
 #include "beam.h"
 
 
 class beamBeamSystem
 {
- public:
+
+public:
+
 	//Better way to do this? Memory issues creating all of theses Beams?
-	beamBeamSystem(beam& beam_1,beam& beam_2,double luminosity,inputParameters& input);
-	beamBeamSystem(beam& beam_1, beam& beam_2,inputParameters& input);
-	beamBeamSystem(inputParameters &input);
-    ~beamBeamSystem();
+	beamBeamSystem(const beam&            beam1,
+	               const beam&            beam2,
+	               const double           luminosity,
+	               const inputParameters& parameters);
+	beamBeamSystem(const beam&            beam1,
+	               const beam&            beam2,
+	               const inputParameters& parameters);
+	beamBeamSystem(const inputParameters& parameters);
+	~beamBeamSystem();
 
-    beam getBeam1();
-    beam getBeam2();
-//	double getluminosity();
-    double probabilityOfBreakup(double D);
-    /*double probabilityOfHadronBreakup(double impactparameter);
-    double probabilityOfPhotonBreakup(double impactparameter,int mode);
-    */ //mode is for which type of breakup desired, 1=hardsphere.
+	const beam& beam1() { return _beam1; }  ///< returns beam particle 1
+	const beam& beam2() { return _beam2; }  ///< returns beam particle 2
 
- private:
-//	int _ibreakup;//temporary solution until read in parameters are done
-    double probabilityOfHadronBreakup(double impactparameter);
-    double probabilityOfPhotonBreakup(double impactparameter,int mode);
+	//	double getluminosity();
+	double probabilityOfBreakup(double D);
 
-    double _pHadronBreakup;
-    double _pPhotonBreakup;
-    //inputParameters inputbbs;
-    double _BBSInputGamma_em;
-    int _BBSInputBreakupmode;
-    beam _beam1;
-    beam _beam2;
-//		double luminosity;
+private:
+
+	//	int _ibreakup;//temporary solution until read in parameters are done
+	double probabilityOfHadronBreakup(double impactparameter);
+	double probabilityOfPhotonBreakup(double impactparameter,int mode);
+
+	double _pHadronBreakup;
+	double _pPhotonBreakup;
+	//inputParameters inputbbs;
+	//		double luminosity;
+
+	double _beamLorentzGamma;  ///< Lorentz gamma factor of beams in collider frame
+	int    _beamBreakupMode;   ///< \brief breakup mode for beam particles
+	                           ///<
+	                           ///< 1 = hard sphere nuclei (b > 2R),
+	                           ///< 2 = both nuclei break up (XnXn),
+	                           ///< 3 = a single neutron from each nucleus (1n1n),
+	                           ///< 4 = neither nucleon breaks up (with b > 2R),
+	                           ///< 5 = no hadronic break up (similar to option 1, but with the actual hadronic interaction)
+	beam   _beam1;             ///< beam particle 1
+	beam   _beam2;             ///< beam particle 2
+
 };
 
 

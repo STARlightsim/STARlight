@@ -45,7 +45,7 @@ using namespace std;
 
 
 //______________________________________________________________________________
-readLuminosity::readLuminosity(inputParameters& input)//:inputread(input)
+readLuminosity::readLuminosity(const inputParameters& input)//:inputread(input)
 {
   //storing inputparameters into protected variables for the object to use them
   _ReadInputNPT=input.nmbPtBinsInterference();

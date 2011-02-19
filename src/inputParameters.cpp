@@ -57,21 +57,21 @@ inputParameters::inputParameters()
 	  _nmbWBins              (0),
 	  _maxRapidity           (0),
 	  _nmbRapidityBins       (0),
-	  _accCutPt              (0),
-	  _minPt                 (0),
-	  _maxPt                 (0),
-	  _accCutEta             (0),
-	  _minEta                (0),
-	  _maxEta                (0),
+	  _ptCutEnabled          (false),
+	  _ptCutMin              (0),
+	  _ptCutMax              (0),
+	  _etaCutEnabled         (false),
+	  _etaCutMin             (0),
+	  _etaCutMax             (0),
 	  _productionMode        (0),
 	  _nmbEventsTot          (0),
 	  _prodParticleId        (0),
 	  _randomSeed            (0),
 	  _outputFormat          (0),
 	  _beamBreakupMode       (0),
-	  _interferenceEnabled   (0),
+	  _interferenceEnabled   (false),
 	  _interferenceStrength  (0),
-	  _coherentProduction    (0),
+	  _coherentProduction    (false),
 	  _incoherentFactor      (0),
 	  _deuteronSlopePar      (0),
 	  _maxPtInterference     (0),
@@ -112,13 +112,13 @@ inputParameters::init(const string& configFileName)
 	ip.addDoubleParameter(string("RAP_MAX"), &_maxRapidity);
 	ip.addUintParameter(string("RAP_N_BINS"), &_nmbRapidityBins);
 	
-	ip.addBoolParameter(string("CUT_PT"), &_accCutPt);
-	ip.addDoubleParameter(string("PT_MIN"), &_minPt);
-	ip.addDoubleParameter(string("PT_MAX"), &_maxPt);
+	ip.addBoolParameter(string("CUT_PT"), &_ptCutEnabled);
+	ip.addDoubleParameter(string("PT_MIN"), &_ptCutMin);
+	ip.addDoubleParameter(string("PT_MAX"), &_ptCutMax);
 	
-	ip.addBoolParameter(string("CUT_ETA"), &_accCutEta);
-	ip.addDoubleParameter(string("ETA_MIN"), &_minEta);
-	ip.addDoubleParameter(string("ETA_MAX"), &_maxEta);
+	ip.addBoolParameter(string("CUT_ETA"), &_etaCutEnabled);
+	ip.addDoubleParameter(string("ETA_MIN"), &_etaCutMin);
+	ip.addDoubleParameter(string("ETA_MAX"), &_etaCutMax);
 	
 	ip.addIntParameter(string("PROD_MODE"), &_productionMode);
 	
@@ -150,13 +150,11 @@ inputParameters::init(const string& configFileName)
 	  return false;
 	}
 	
-	//ip.printParameterInfo(printInfo);
+	//ip.printParameterInfo(cout);
 	
-	if(ip.validateParameters(printErr))
-	{
-	  printInfo << "successfully read input parameters from '" << _configFileName << "'" << endl;
-	}
- 	else {
+	if(ip.validateParameters(cerr))
+		printInfo << "successfully read input parameters from '" << _configFileName << "'" << endl;
+	else {
  		printWarn << "problems reading input parameters from '" << _configFileName << "'" << endl
  		          << *this;
  		return false;
@@ -434,12 +432,12 @@ inputParameters::print(ostream& out) const
 	    << "    # of W bins ............................ " << _nmbWBins << endl
 	    << "    maximum absolute value for rapidity .... " << _maxRapidity << endl
 	    << "    # of rapidity bins ..................... " << _nmbRapidityBins << endl
-	    << "    cut in pT............................... " << yesNo(_accCutPt) << endl
-	    << "    minumum pT.............................. " << _minPt << endl
-            << "    maximum pT.............................. " << _maxPt << endl
-	    << "    cut in eta.............................. " << yesNo(_accCutEta) << endl
-	    << "    minumum eta............................. " << _minEta << endl
-            << "    maximum eta............................. " << _maxEta << endl
+	    << "    cut in pT............................... " << yesNo(_ptCutEnabled) << endl
+	    << "        minumum pT.......................... " << _ptCutMin << "GeV/c" << endl
+	    << "        maximum pT.......................... " << _ptCutMax << "GeV/c" << endl
+	    << "    cut in eta.............................. " << yesNo(_etaCutEnabled) << endl
+	    << "        minumum eta......................... " << _etaCutMin << endl
+	    << "        maximum eta......................... " << _etaCutMax << endl
 	    << "    meson production mode .................. " << _productionMode << endl
 	    << "    number of events to generate ........... " << _nmbEventsTot << endl
 	    << "    PDG ID of produced particle ............ " << _prodParticleId << endl
@@ -461,28 +459,35 @@ inputParameters::print(ostream& out) const
 ostream&
 inputParameters::write(ostream& out) const
 {
-	out << beam1Z               () <<endl
-	    << beam1A               () <<endl
-	    << beam2Z               () <<endl
-	    << beam2A               () <<endl
-	    << beamLorentzGamma     () <<endl
-	    << maxW                 () <<endl
-	    << minW                 () <<endl
-	    << nmbWBins             () <<endl
-	    << maxRapidity          () <<endl
-	    << nmbRapidityBins      () <<endl
-	    << productionMode       () <<endl
-	    << nmbEvents            () <<endl
-	    << prodParticleId       () <<endl
-	    << randomSeed           () <<endl
-	    << outputFormat         () <<endl
-	    << beamBreakupMode      () <<endl
-	    << interferenceEnabled  () <<endl
-	    << interferenceStrength () <<endl
-	    << coherentProduction   () <<endl
-	    << incoherentFactor     () <<endl
-	    << deuteronSlopePar     () <<endl
-	    << maxPtInterference    () <<endl
-	    << nmbPtBinsInterference() <<endl;
+	out << "BEAM_1_Z"      << beam1Z               () <<endl
+	    << "BEAM_2_Z"      << beam1A               () <<endl
+	    << "BEAM_1_A"      << beam2Z               () <<endl
+	    << "BEAM_2_A"      << beam2A               () <<endl
+	    << "BEAM_GAMMA"    << beamLorentzGamma     () <<endl
+	    << "W_MAX"         << maxW                 () <<endl
+	    << "W_MIN"         << minW                 () <<endl
+	    << "W_N_BINS"      << nmbWBins             () <<endl
+	    << "RAP_MAX"       << maxRapidity          () <<endl
+	    << "RAP_N_BINS"    << nmbRapidityBins      () <<endl
+	    << "CUT_PT"        << ptCutEnabled         () <<endl
+	    << "PT_MIN"        << ptCutMin             () <<endl
+	    << "PT_MAX"        << ptCutMax             () <<endl
+	    << "CUT_ETA"       << etaCutEnabled        () <<endl
+	    << "ETA_MIN"       << etaCutMin            () <<endl
+	    << "ETA_MAX"       << etaCutMax            () <<endl
+	    << "PROD_MODE"     << productionMode       () <<endl
+	    << "N_EVENTS"      << nmbEvents            () <<endl
+	    << "PROD_PID"      << prodParticleId       () <<endl
+	    << "RND_SEED"      << randomSeed           () <<endl
+	    << "OUTPUT_FORMAT" << outputFormat         () <<endl
+	    << "BREAKUP_MODE"  << beamBreakupMode      () <<endl
+	    << "INTERFERENCE"  << interferenceEnabled  () <<endl
+	    << "IF_STRENGTH"   << interferenceStrength () <<endl
+	    << "COHERENT"      << coherentProduction   () <<endl
+	    << "INCO_FACTOR"   << incoherentFactor     () <<endl
+	    << "BFORD"         << deuteronSlopePar     () <<endl
+	    << "INT_PT_MAX"    << maxPtInterference    () <<endl
+	    << "INT_PT_N_BINS" << nmbPtBinsInterference() <<endl;
+
 	return out;
 }

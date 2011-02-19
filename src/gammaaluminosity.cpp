@@ -84,10 +84,10 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
     
   // Write the values of W used in the calculation to slight.txt.  
   wylumfile.open("slight.txt");
-  wylumfile << getbbs().getBeam1().Z() <<endl;
-  wylumfile << getbbs().getBeam1().A() <<endl;
-  wylumfile << getbbs().getBeam2().Z() <<endl;
-  wylumfile << getbbs().getBeam2().A() <<endl;
+  wylumfile << getbbs().beam1().Z() <<endl;
+  wylumfile << getbbs().beam1().A() <<endl;
+  wylumfile << getbbs().beam2().Z() <<endl;
+  wylumfile << getbbs().beam2().A() <<endl;
   wylumfile << _inputgammaa.beamLorentzGamma() <<endl;
   wylumfile << _inputgammaa.maxW() <<endl;
   wylumfile << _inputgammaa.minW() <<endl;
@@ -264,9 +264,9 @@ void photonNucleusLuminosity::pttablegen()
     
     for(int k=0;k<NGAUSS;k++){
       t     = sqrt(ax*xg[k]+bx);
-      csgA  = csgA + ag[k]*getbbs().getBeam2().formFactor(t)*getbbs().getBeam2().formFactor(t);
+      csgA  = csgA + ag[k]*getbbs().beam2().formFactor(t)*getbbs().beam2().formFactor(t);
       t     = sqrt(ax*(-xg[k])+bx);
-      csgA  = csgA + ag[k]*getbbs().getBeam2().formFactor(t)*getbbs().getBeam2().formFactor(t);
+      csgA  = csgA + ag[k]*getbbs().beam2().formFactor(t)*getbbs().beam2().formFactor(t);
     }
     
     csgA = 0.5*(tmax-tmin)*csgA;
@@ -294,9 +294,9 @@ void photonNucleusLuminosity::pttablegen()
     
     for(int k=0;k<NGAUSS;k++){
       t     = sqrt(ax*xg[k]+bx);
-      csgA  = csgA + ag[k]*getbbs().getBeam2().formFactor(t)*getbbs().getBeam2().formFactor(t);
+      csgA  = csgA + ag[k]*getbbs().beam2().formFactor(t)*getbbs().beam2().formFactor(t);
       t     = sqrt(ax*(-xg[k])+bx);
-      csgA  = csgA + ag[k]*getbbs().getBeam2().formFactor(t)*getbbs().getBeam2().formFactor(t);
+      csgA  = csgA + ag[k]*getbbs().beam2().formFactor(t)*getbbs().beam2().formFactor(t);
     }
 	   
     csgA = 0.5*(tmax-tmin)*csgA;
@@ -314,7 +314,7 @@ void photonNucleusLuminosity::pttablegen()
     //  set  bmax according to the smaller photon energy, following flux.f
     
     bmax=bmin+6.*starlightConstants::hbarc*gamma_em/Egamma2;
-    bmin = getbbs().getBeam1().nuclearRadius()+getbbs().getBeam2().nuclearRadius();
+    bmin = getbbs().beam1().nuclearRadius()+getbbs().beam2().nuclearRadius();
     //  if we allow for nuclear breakup, use a slightly smaller bmin
     
     if (ibreakup != 1) 
@@ -398,8 +398,8 @@ double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGM
   NGAUSS=16;
 
   //     >> Initialize
-  pxmax = 10.*(starlightConstants::hbarc/getbbs().getBeam1().nuclearRadius());
-  pymax = 10.*(starlightConstants::hbarc/getbbs().getBeam1().nuclearRadius());
+  pxmax = 10.*(starlightConstants::hbarc/getbbs().beam1().nuclearRadius());
+  pymax = 10.*(starlightConstants::hbarc/getbbs().beam1().nuclearRadius());
   
   Nxbin = 500;
   
@@ -435,10 +435,10 @@ double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGM
 		  
 		  //  photon form factor
 		  // add in phase space factor?
-		  f1  = (getbbs().getBeam1().formFactor(q1*q1)*getbbs().getBeam1().formFactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
+		  f1  = (getbbs().beam1().formFactor(q1*q1)*getbbs().beam1().formFactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
 		  
 		  //  Pomeron form factor
-		  f2  = getbbs().getBeam1().formFactor(q2*q2)*getbbs().getBeam1().formFactor(q2*q2);
+		  f2  = getbbs().beam1().formFactor(q2*q2)*getbbs().beam1().formFactor(q2*q2);
 		  sumy= sumy + ag[j]*f1*f2;
 		  
 		  //  now consider other half of py phase space - why is this split?
@@ -448,8 +448,8 @@ double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGM
 		  q1  = sqrt( ((Egamma/_inputgammaa.beamLorentzGamma())*Egamma/_inputgammaa.beamLorentzGamma()) + pt1*pt1 );
 		  q2  = sqrt( ((Epom/_inputgammaa.beamLorentzGamma())*(Epom/_inputgammaa.beamLorentzGamma()))   + pt2*pt2 );
 		  //  add in phase space factor?
-		  f1  = (getbbs().getBeam1().formFactor(q1*q1)*getbbs().getBeam1().formFactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
-		  f2  = getbbs().getBeam1().formFactor(q2*q2)*getbbs().getBeam1().formFactor(q2*q2);
+		  f1  = (getbbs().beam1().formFactor(q1*q1)*getbbs().beam1().formFactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
+		  f2  = getbbs().beam1().formFactor(q2*q2)*getbbs().beam1().formFactor(q2*q2);
 		  sumy= sumy + ag[j]*f1*f2;
       
 		}
@@ -480,7 +480,7 @@ double photonNucleusLuminosity::nofe(double Egamma, double bimp)
   if( X <= 0.0) 
     cout<<"In nofe, X= "<<X<<endl;
   
-  factor1 = (double(getbbs().getBeam1().Z()*getbbs().getBeam1().Z())
+  factor1 = (double(getbbs().beam1().Z()*getbbs().beam1().Z())
 	     *starlightConstants::alpha)/(starlightConstants::pi*starlightConstants::pi);
 
   factor2 = 1./(Egamma*bimp*bimp);

@@ -316,13 +316,13 @@ double Gammagammaleptonpair::pp(double E)
     //sqrt(3)*E/gamma_em is p_t where the distribution is a maximum
     Cm = sqrt(3.)*E/_GGlepInputGamma_em;
     //the amplitude of the p_t spectrum at the maximum
-    singleformfactorCm=_bbs.getBeam1().formFactor(Cm*Cm+ereds);//Doing this once and then storing it as a double, which we square later...SYMMETRY?using beam1 for now.
+    singleformfactorCm=_bbs.beam1().formFactor(Cm*Cm+ereds);//Doing this once and then storing it as a double, which we square later...SYMMETRY?using beam1 for now.
     Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(starlightConstants::pi)*(ereds+Cm*Cm))*(2.*(starlightConstants::pi)*(ereds+Cm*Cm)));
         
     //pick a test value pp, and find the amplitude there
     x = _randy.Rndom();//random()/(RAND_MAX+1.0);
-    pp = x*5.*starlightConstants::hbarc/_bbs.getBeam1().nuclearRadius(); //Will use nucleus #1, there should be two for symmetry//nextline
-    singleformfactorpp1=_bbs.getBeam1().formFactor(pp*pp+ereds);
+    pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); //Will use nucleus #1, there should be two for symmetry//nextline
+    singleformfactorpp1=_bbs.beam1().formFactor(pp*pp+ereds);
     test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
 
     while(satisfy==0){
@@ -333,8 +333,8 @@ double Gammagammaleptonpair::pp(double E)
 	}
 	else{
 	    x =_randy.Rndom();//random()/(RAND_MAX+1.0);
-	    pp = 5*starlightConstants::hbarc/_bbs.getBeam1().nuclearRadius()*x;
-	    singleformfactorpp2=_bbs.getBeam1().formFactor(pp*pp+ereds);//Symmetry
+	    pp = 5*starlightConstants::hbarc/_bbs.beam1().nuclearRadius()*x;
+	    singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);//Symmetry
 	    test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
 	}
     }
@@ -583,28 +583,28 @@ upcEvent Gammagammaleptonpair::produceEvent()
      double eta1 = pseudoRapidity(px1, py1, pz1);
      double eta2 = pseudoRapidity(px2, py2, pz2);
     
-     if(_accCutPt && !_accCutEta){
-       if(pt1chk > _ptMin && pt1chk < _ptMax &&  pt2chk > _ptMin && pt2chk < _ptMax){
+     if(_ptCutEnabled && !_etaCutEnabled){
+       if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
 	 accepted = true;
 	 _nmbAccepted++;
        }
      }
-     else if(!_accCutPt && _accCutEta){
-       if(eta1 > _etaMin && eta1 < _etaMax && eta2 > _etaMin && eta2 < _etaMax){
+     else if(!_ptCutEnabled && _etaCutEnabled){
+       if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){
 	 accepted = true;
 	 _nmbAccepted++;
        }
      }
-     else if(_accCutPt && _accCutEta){
-       if(pt1chk > _ptMin && pt1chk < _ptMax &&  pt2chk > _ptMin && pt2chk < _ptMax){
-	 if(eta1 > _etaMin && eta1 < _etaMax && eta2 > _etaMin && eta2 < _etaMax){
+     else if(_ptCutEnabled && _etaCutEnabled){
+       if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
+	 if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){
 	   accepted = true;
 	    _nmbAccepted++;
 	 }
        }
      }
     
-   }while((_accCutPt || _accCutEta) && !accepted);
+   }while((_ptCutEnabled || _etaCutEnabled) && !accepted);
    //twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
    
    if (iFbadevent==0){

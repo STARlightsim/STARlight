@@ -58,12 +58,12 @@ public:
 	unsigned int nmbWBins              () const { return _nmbWBins;               }  ///< returns number of W bins in lookup table
 	double       maxRapidity           () const { return _maxRapidity;            }  ///< returns maximum absolute value of rapidity
 	unsigned int nmbRapidityBins       () const { return _nmbRapidityBins;        }  ///< returns number of rapidity bins in lookup table
-	bool         getCutPt              () const { return _accCutPt;               }  ///< returns cut in pt 
-	double       getMinPt              () const { return _minPt;                  }  ///< returns minimum pt
-	double       getMaxPt              () const { return _maxPt;                  }  ///< returns maximum pt
-	bool         getCutEta             () const { return _accCutEta;              }  ///< returns cut in eta
-	double       getMinEta             () const { return _minEta;                 }  ///< returns minimum eta
-	double       getMaxEta             () const { return _maxEta;                 }  ///< returns maximum eta
+	bool         ptCutEnabled          () const { return _ptCutEnabled;           }  ///< returns cut in pt
+	double       ptCutMin              () const { return _ptCutMin;               }  ///< returns minimum pt
+	double       ptCutMax              () const { return _ptCutMax;               }  ///< returns maximum pt
+	bool         etaCutEnabled         () const { return _etaCutEnabled;          }  ///< returns cut in eta
+	double       etaCutMin             () const { return _etaCutMin;              }  ///< returns minimum eta
+	double       etaCutMax             () const { return _etaCutMax;              }  ///< returns maximum eta
 	int          productionMode        () const { return _productionMode;         }  ///< returns production mode
 	unsigned int nmbEvents             () const { return _nmbEventsTot;           }  ///< returns total number of events to generate
 	int          prodParticleId        () const { return _prodParticleId;         }  ///< returns PDG particle ID of produced particle
@@ -105,12 +105,12 @@ private:
 	unsigned int _nmbWBins;                ///< number of W bins in lookup table
 	double       _maxRapidity;             ///< maximum absolute value of rapidity
 	unsigned int _nmbRapidityBins;         ///< number of rapidity bins in lookup table
-	bool         _accCutPt;                ///< activate cut in pt
-	double       _minPt;                   ///< minimum pt if cut is enabled
-	double       _maxPt;                   ///< maximum pt if cut is enabled
-	bool         _accCutEta;               ///< activate cut in eta
-	double       _minEta;                  ///< minimum eta if cut is enabled
-	double       _maxEta;                  ///< maximum eta if cut is enabled
+	bool         _ptCutEnabled;            ///< en/disables cut in pt
+	double       _ptCutMin;                ///< minimum pt, if cut is enabled
+	double       _ptCutMax;                ///< maximum pt, if cut is enabled
+	bool         _etaCutEnabled;           ///< en/disables cut in eta
+	double       _etaCutMin;               ///< minimum eta, if cut is enabled
+	double       _etaCutMax;               ///< maximum eta, if cut is enabled
 	int          _productionMode;          ///< \brief production mode
 	                                       ///<
 	                                       ///< 1 = photon-photon fusion,

@@ -59,9 +59,9 @@ photonNucleusCrossSection::photonNucleusCrossSection (inputParameters& input, be
   _sigmaBreakup=input.beamBreakupMode();
   _sigmaCoherence=input.coherentProduction();
   _sigmaCoherenceFactor=input.incoherentFactor();
-  _sigmaNucleus=_bbs.getBeam2().A();
+  _sigmaNucleus=_bbs.beam2().A();
 
-  switch(_bbs.getBeam1().Z())
+  switch(_bbs.beam1().Z())
     {
     case 79://Au
       _lum=2.0;
@@ -200,7 +200,7 @@ photonNucleusCrossSection::photonNucleusCrossSection (inputParameters& input, be
 	   <<" GammaAcrosssection"<<endl;
     }
 
-  _EgMax= 4.*_sigmaGamma_em*starlightConstants::hbarc/_bbs.getBeam1().nuclearRadius(); 
+  _EgMax= 4.*_sigmaGamma_em*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
   //Max photon energy( for VM only, in GeV, lab frame, use beam energy
   //, nuclear size cutoff)
 
@@ -283,11 +283,11 @@ double photonNucleusCrossSection::getcsgA(double Egamma, double W)
   //Used for d-A and A-A
   tmin   = (W*W/(4.*Egamma*_sigmaGamma_em) )*(W*W/(4.*Egamma*_sigmaGamma_em) );
   
-  if(_bbs.getBeam1().A()==1&&_bbs.getBeam2().A()==1)
+  if(_bbs.beam1().A()==1&&_bbs.beam2().A()==1)
     {  //Proton-proton, no scaling needed.
       csgA = sigmagp(Wgp);
     }
-  else if(_bbs.getBeam2().Z()==1&&_bbs.getBeam2().A()==2)
+  else if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2)
     {  
 
       // Deuteron-A interaction
@@ -303,14 +303,14 @@ double photonNucleusCrossSection::getcsgA(double Egamma, double W)
         //We use beam2 here since the input stores the deuteron as nucleus 2
         //and nucleus 2 is the pomeron field source
         //Also this is the way sergey formatted the formfactor.
-        csgA = csgA + ag[k]*_bbs.getBeam2().formFactor(t); 
+        csgA = csgA + ag[k]*_bbs.beam2().formFactor(t); 
         t    = ax*(-xg[k])+bx;
-        csgA = csgA + ag[k]*_bbs.getBeam2().formFactor(t);
+        csgA = csgA + ag[k]*_bbs.beam2().formFactor(t);
       }
       csgA = 0.5*(tmax-tmin)*csgA;
       csgA = Av*csgA;
     }
-  else if(_sigmaCoherence==0&&(!(_bbs.getBeam2().Z()==1&&_bbs.getBeam2().A()==2)))
+  else if(_sigmaCoherence==0&&(!(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2)))
     {
 
       // For incoherent AA interactions , since incoherent treating it as gamma-p
@@ -350,9 +350,9 @@ double photonNucleusCrossSection::getcsgA(double Egamma, double W)
       csgA   = 0.;
       for( int k=1;k<NGAUSS;k++){ 
         t    = ax*xg[k]+bx;
-        csgA = csgA + ag[k]*_bbs.getBeam2().formFactor(t)*_bbs.getBeam2().formFactor(t);
+        csgA = csgA + ag[k]*_bbs.beam2().formFactor(t)*_bbs.beam2().formFactor(t);
         t    = ax*(-xg[k])+bx;
-        csgA = csgA + ag[k]*_bbs.getBeam2().formFactor(t)*_bbs.getBeam2().formFactor(t);
+        csgA = csgA + ag[k]*_bbs.beam2().formFactor(t)*_bbs.beam2().formFactor(t);
       }
     
       csgA = 0.5*(tmax-tmin)*csgA;
@@ -389,13 +389,13 @@ double photonNucleusCrossSection::photonFlux(double Egamma)
   int Ilt;
   double RNuc=0.,RNuc2=0.;
 
-  RNuc=_bbs.getBeam1().nuclearRadius();
-  RNuc2=_bbs.getBeam2().nuclearRadius();
+  RNuc=_bbs.beam1().nuclearRadius();
+  RNuc2=_bbs.beam2().nuclearRadius();
   // static ->>> dide,lnEMax,lnEmin,dlnE
   static int  Icheck = 0;
   
   //Check first to see if pp (JN0705)
-  if( _bbs.getBeam1().A()==1 && _bbs.getBeam2().A()==1 ){
+  if( _bbs.beam1().A()==1 && _bbs.beam2().A()==1 ){
     int nbsteps = 200;
     double bmin = 0.5;
     double bmax = 5.0 + (5.0*_sigmaGamma_em*starlightConstants::hbarc/Egamma);
@@ -422,13 +422,13 @@ double photonNucleusCrossSection::photonFlux(double Egamma)
       double PofB1 = 1. - (1. - GammaProfile)*(1. - GammaProfile);   
 
       double Xarg = Egamma*bnn0/(starlightConstants::hbarc*_sigmaGamma_em);
-      double loc_nofe0 = (_bbs.getBeam1().Z()*_bbs.getBeam1().Z()*starlightConstants::alpha)/
+      double loc_nofe0 = (_bbs.beam1().Z()*_bbs.beam1().Z()*starlightConstants::alpha)/
 	(starlightConstants::pi*starlightConstants::pi); 
       loc_nofe0 *= (1./(Egamma*bnn0*bnn0)); 
       loc_nofe0 *= Xarg*Xarg*(bessel::dbesk1(Xarg))*(bessel::dbesk1(Xarg)); 
 
       Xarg = Egamma*bnn1/(starlightConstants::hbarc*_sigmaGamma_em);
-      double loc_nofe1 = (_bbs.getBeam1().Z()*_bbs.getBeam1().Z()*starlightConstants::alpha)/
+      double loc_nofe1 = (_bbs.beam1().Z()*_bbs.beam1().Z()*starlightConstants::alpha)/
 	(starlightConstants::pi*starlightConstants::pi); 
       loc_nofe1 *= (1./(Egamma*bnn1*bnn1)); 
       loc_nofe1 *= Xarg*Xarg*(bessel::dbesk1(Xarg))*(bessel::dbesk1(Xarg)); 
@@ -452,10 +452,10 @@ double photonNucleusCrossSection::photonFlux(double Egamma)
   Icheck=Icheck+1;
   if(Icheck > 1) goto L1000f;
   
-  rZ=double(_bbs.getBeam1().Z());
-  rA=double(_bbs.getBeam1().A());
-  rZ2=double(_bbs.getBeam2().Z());  //Sergey--dAu
-  rA2=double(_bbs.getBeam2().A());  //Sergey
+  rZ=double(_bbs.beam1().Z());
+  rA=double(_bbs.beam1().A());
+  rZ2=double(_bbs.beam2().Z());  //Sergey--dAu
+  rA2=double(_bbs.beam2().A());  //Sergey
   
   //  Nuclear breakup is done by PofB
   //  collect number of integration steps here, in one place
@@ -506,7 +506,7 @@ double photonNucleusCrossSection::photonFlux(double Egamma)
     biter=bmin;
     integratedflux=0.;
     
-    if (_bbs.getBeam2().Z()==1&&_bbs.getBeam1().A()==2){
+    if (_bbs.beam2().Z()==1&&_bbs.beam1().A()==2){
       //This is for deuteron-gold
       Xvar = (RNuc+RNuc2)*energy/(starlightConstants::hbarc*(_sigmaGamma_em));
       
@@ -640,7 +640,7 @@ double photonNucleusCrossSection::nepoint(double Egamma, double bmin)
 
   bracket = bracket+X*bessel::dbesk0(X)*bessel::dbesk1(X);
   
-  C1=(2.*double((_bbs.getBeam1().Z())*(_bbs.getBeam1().Z()))*
+  C1=(2.*double((_bbs.beam1().Z())*(_bbs.beam1().Z()))*
       starlightConstants::alpha)/starlightConstants::pi;
   
   //Looks like this is only used in photon flux for the case of pp collisions..
@@ -757,13 +757,13 @@ double photonNucleusCrossSection::sigma_A(double sig_N)
     
     b = 0.5*bmax*xg[IB]+0.5*bmax;
     
-    arg=-sig_N*_bbs.getBeam1().getRho0()*_bbs.getBeam1().thickness(b);
+    arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
     
     Pint=1.0-exp(arg);
     sum=sum+2.*starlightConstants::pi*b*Pint*ag[IB];
     
     b = 0.5*bmax*(-xg[IB])+0.5*bmax;
-    arg=-sig_N*_bbs.getBeam1().getRho0()*_bbs.getBeam1().thickness(b);
+    arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
     Pint=1.0-exp(arg);
     sum=sum+2.*starlightConstants::pi*b*Pint*ag[IB];
 
@@ -1046,7 +1046,7 @@ void wideResonanceCrossSection::crossSectionCalculation(double bwnormsave)
       //For identical beams, we double.  Either may emit photon/scatter
       //For large differences in Z, we approx, that only beam1 emits photon
       //and beam2 scatters, eg d-Au where beam1=au and beam2=d
-      if(getbbs().getBeam1().A()==getbbs().getBeam2().A()){
+      if(getbbs().beam1().A()==getbbs().beam2().A()){
 	dR  = 2.*dR;
       }
       int_r = int_r+dR;  
@@ -1144,7 +1144,7 @@ void narrowResonanceCrossSection::crossSectionCalculation(double)  // _bwnormsav
     //If the beams are different in Z by a large amount
     //eg dAu, then only beam1(Au) emits the photon and beam2(d) scatters it
     
-    if(getbbs().getBeam1().A()==getbbs().getBeam2().A()){
+    if(getbbs().beam1().A()==getbbs().beam2().A()){
       dR  = 2.*dR;
     }
     int_r = int_r+dR;

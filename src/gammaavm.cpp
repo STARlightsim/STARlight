@@ -433,7 +433,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
  
 	xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
 	t1 = tmin + pt1*pt1;
-	photon_spectrum = (_bbs.getBeam1().formFactor(t1)*_bbs.getBeam1().formFactor(t1)*pt1*pt1*pt1)/(t1*t1);
+	photon_spectrum = (_bbs.beam1().formFactor(t1)*_bbs.beam1().formFactor(t1)*pt1*pt1*pt1)/(t1*t1);
   
 	photon_spectrum = 16.*sqrt(tmin)*photon_spectrum/(3.*sqrt(3.));
                                                                                                                                   
@@ -445,7 +445,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 		goto L202vm;
 	phi1 = 2.*starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
 
-	if( _bbs.getBeam1().Z()==1 && _bbs.getBeam1().A()==1) {
+	if( _bbs.beam1().Z()==1 && _bbs.beam1().A()==1) {
 		//dsig/dt= exp(-_VMbslope*t)
 		xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
 		t2 = (-1./_VMbslope)*log(xtest);
@@ -455,7 +455,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	L203vm:
 		xt = _randy.Rndom(); //random()/(RAND_MAX+1.0);
 		//dAu--Sergey
-		if(_bbs.getBeam2().Z()==1&&_bbs.getBeam2().A()==2){
+		if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
 			pt2  = 0.8*xt; //it was 0.5,0.8, 1.0  (Sergey)
 		}
 		else{
@@ -474,19 +474,19 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 		xtest = _randy.Rndom();
 		t2 = tmin + pt2*pt2;
     
-		if(_bbs.getBeam2().Z()==1&&_bbs.getBeam2().A()==2){
-			if(1.0 < _bbs.getBeam2().formFactor(t2)*pt2)  cout <<"POMERON"<<endl;
-			if( xtest > _bbs.getBeam2().formFactor(t2)*pt2) goto L203vm;
+		if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
+			if(1.0 < _bbs.beam2().formFactor(t2)*pt2)  cout <<"POMERON"<<endl;
+			if( xtest > _bbs.beam2().formFactor(t2)*pt2) goto L203vm;
 		}
 		else{
 			if(_VMCoherence==1){
-				if(1.0 < _bbs.getBeam2().formFactor(t2)*_bbs.getBeam2().formFactor(t2)*pt2) cout <<"POMERON:Sergey"<<endl;
-				if( xtest > _bbs.getBeam2().formFactor(t2)*_bbs.getBeam2().formFactor(t2)*pt2 )
+				if(1.0 < _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2) cout <<"POMERON:Sergey"<<endl;
+				if( xtest > _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2 )
 					goto L203vm;
 			}
 		}//dAu else end
 
-		if(_VMCoherence==0 && (!(_bbs.getBeam2().Z()==1&&_bbs.getBeam2().A()==2))){
+		if(_VMCoherence==0 && (!(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2))){
 			//Incoherent pt2 selection
 			//dsig/dt= exp(-_VMbslope*t)
 			xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
@@ -511,7 +511,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	pz = sqrt(W*W+pt*pt)*sinh(Y);
 
 	// Randomly choose to make pz negative 50% of the time
-	if(_bbs.getBeam2().Z()==1&&_bbs.getBeam2().A()==2){
+	if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
 		pz = -pz;
 	}
 	else{
@@ -682,7 +682,7 @@ upcEvent Gammaavectormeson::produceEvent()
 				vmpt(comenergy,rapidity,E,momx,momy,momz,tcheck);
 			}
 	   
-			// cout << "_ptMin: " << _ptMin << " _ptMax: " << _ptMax << " _etaMin: " << _etaMin << " _etaMax: " << _etaMax << endl;
+			// cout << "_ptCutMin: " << _ptCutMin << " _ptCutMax: " << _ptCutMax << " _etaCutMin: " << _etaCutMin << " _etaCutMax: " << _etaCutMax << endl;
 			_nmbAttempts++;
 			//cout << "n tries: " << _nmbAttempts<< endl;
 			twoBodyDecay(ipid,E,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
@@ -693,30 +693,30 @@ upcEvent Gammaavectormeson::produceEvent()
 			double eta1 = pseudoRapidity(px1, py1, pz1);
 			double eta2 = pseudoRapidity(px2, py2, pz2);
 			//cout << "eta1: " << eta1 << " eta2: " << eta2 << endl;
-			if(_accCutPt && !_accCutEta){
-				if(pt1chk > _ptMin && pt1chk < _ptMax &&  pt2chk > _ptMin && pt2chk < _ptMax){
+			if(_ptCutEnabled && !_etaCutEnabled){
+				if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
 					accepted = true;
 					_nmbAccepted++;
 				}
 			}
-			else if(!_accCutPt && _accCutEta){
-				if(eta1 > _etaMin && eta1 < _etaMax && eta2 > _etaMin && eta2 < _etaMax){
+			else if(!_ptCutEnabled && _etaCutEnabled){
+				if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){
 					accepted = true;
 					_nmbAccepted++;
 				}
 			}
-			else if(_accCutPt && _accCutEta){
-				if(pt1chk > _ptMin && pt1chk < _ptMax &&  pt2chk > _ptMin && pt2chk < _ptMax){
-					if(eta1 > _etaMin && eta1 < _etaMax && eta2 > _etaMin && eta2 < _etaMax){
+			else if(_ptCutEnabled && _etaCutEnabled){
+				if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
+					if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){
 						accepted = true;
 						_nmbAccepted++;
 					}
 				}
 			}
-			else if(!_accCutPt && !_accCutEta)
+			else if(!_ptCutEnabled && !_etaCutEnabled)
 				_nmbAccepted++;
 	      
-		}while((_accCutPt || _accCutEta) && !accepted);
+		}while((_ptCutEnabled || _etaCutEnabled) && !accepted);
 		/*  }else{
 		    twoBodyDecay(ipid,E,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
 		    }*/

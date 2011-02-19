@@ -42,16 +42,20 @@ using namespace std;
 
 
 //______________________________________________________________________________
-eventChannel::eventChannel(inputParameters& input, beamBeamSystem& bbsystem)
-  : readLuminosity(input), _bbs(bbsystem), _nmbAttempts(0), _nmbAccepted(0)/*, _accCutPt(false), _accCutEta(false), _ptMin(0.1), _ptMax(2.0), _etaMin(-0.9), _etaMax(0.9)*/
+eventChannel::eventChannel(const inputParameters& input,
+                           beamBeamSystem&        bbsystem)
+	: readLuminosity(input),
+	  _bbs(bbsystem),
+	  _nmbAttempts(0),
+	  _nmbAccepted(0)
 {
   _randy.SetSeed(input.randomSeed());
-  _accCutPt    = input.getCutPt();
-  _accCutEta   = input.getCutEta();
-  _ptMin       = input.getMinPt();
-  _ptMax       = input.getMaxPt();
-  _etaMin      = input.getMinEta();
-  _etaMax      = input.getMaxEta();
+  _ptCutEnabled  = input.ptCutEnabled();
+  _ptCutMin      = input.ptCutMin();
+  _ptCutMax      = input.ptCutMax();
+  _etaCutEnabled = input.etaCutEnabled();
+  _etaCutMin     = input.etaCutMin();
+  _etaCutMax     = input.etaCutMax();
 }
 
 
@@ -61,40 +65,49 @@ eventChannel::~eventChannel()
 
 
 //______________________________________________________________________________
-void eventChannel::transform(double betax,double betay,double betaz,double &E,
-                             double &px,double &py,double &pz,int &iFbadevent)
+void
+eventChannel::transform(const double  betax,
+                        const double  betay,
+                        const double  betaz,
+                        double&       E,
+                        double&       px,
+                        double&       py,
+                        double&       pz,
+                        int&          iFbadevent)
 {
-  //     carries out a lorentz transform of the frame.  (Not a
-  //     boost!)
-  double beta,gamma,gob;
-  double E0,px0,py0,pz0;
-                                                                                                                                                          
-  E0 = E;
-  px0 = px;
-  py0 = py;
-  pz0 = pz;
+  // carries out a lorentz transform of the frame.  (Not a boost!)???
+  const double E0  = E;
+  const double px0 = px;
+  const double py0 = py;
+  const double pz0 = pz;
 
-  beta = sqrt(betax*betax + betay*betay + betaz*betaz);
+  const double beta = sqrt(betax * betax + betay * betay + betaz * betaz);
+  if (beta >= 1)
+	  iFbadevent = 1;
+  const double gamma = 1. / sqrt(1. - beta * beta);
+  const double gob   = (gamma - 1) / (beta * beta);
 
-  if(beta >= 1.0)  iFbadevent = 1;
-  gamma = 1./sqrt(1. - beta*beta);
-
-  gob = (gamma-1)/(beta*beta);
-                                                                                                                                                          
-  E = gamma*(E0 - betax*px0 - betay*py0 - betaz*pz0);
-                                                                                                                                                          
-  px = -gamma*betax*E0 + (1. + gob*betax*betax)*px0  +  gob*betax*betay*py0 + gob*betax*betaz*pz0;
-                                                                                                                                                          
-  py = -gamma*betay*E0 + gob*betay*betax*px0+  (1. + gob*betay*betay)*py0 + gob*betay*betaz*pz0;
-                                                                                                                                                          
-  pz = -gamma*betaz*E0 +  gob*betaz*betax*px0 +  gob*betaz*betay*py0 + (1. + gob*betaz*betaz)*pz0;
+  E   = gamma * (E0 - betax * px0 - betay * py0 - betaz*  pz0);
+  px  = -gamma * betax * E0 + (1. + gob * betax * betax) * px0
+	  + gob * betax * betay * py0 + gob * betax * betaz * pz0;
+  py  = -gamma * betay * E0 + gob * betay * betax * px0
+	  + (1. + gob * betay * betay) * py0 + gob * betay * betaz  *pz0;
+  pz  = -gamma * betaz * E0 + gob * betaz * betax * px0
+	  + gob * betaz * betay * py0 + (1. + gob * betaz * betaz) * pz0;
 }
 
-double eventChannel::pseudoRapidity(double px, double py, double pz)
+
+//______________________________________________________________________________
+double
+eventChannel::pseudoRapidity(const double px,
+                             const double py,
+                             const double pz)
 {
-  double pT = sqrt(px*px + py*py);
-  double p = sqrt(pz*pz + pT*pT);
-  double eta = -99.9; if((p-pz) != 0){eta = 0.5*log((p+pz)/(p-pz));}
+  const double pT= sqrt(px * px + py * py);
+  const double p = sqrt(pz * pz + pT * pT);
+  double eta = -99.9;  // instead of special value, std::numeric_limits<double>::quiet_NaN() should be used
+  if ((p - pz) != 0)
+	  eta = 0.5 * log((p + pz)/(p - pz));
   return eta;
 }
 
