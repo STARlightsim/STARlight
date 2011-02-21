@@ -433,8 +433,8 @@ inputParameters::print(ostream& out) const
 	    << "    maximum absolute value for rapidity .... " << _maxRapidity << endl
 	    << "    # of rapidity bins ..................... " << _nmbRapidityBins << endl
 	    << "    cut in pT............................... " << yesNo(_ptCutEnabled) << endl
-	    << "        minumum pT.......................... " << _ptCutMin << "GeV/c" << endl
-	    << "        maximum pT.......................... " << _ptCutMax << "GeV/c" << endl
+	    << "        minumum pT.......................... " << _ptCutMin << " GeV/c" << endl
+	    << "        maximum pT.......................... " << _ptCutMax << " GeV/c" << endl
 	    << "    cut in eta.............................. " << yesNo(_etaCutEnabled) << endl
 	    << "        minumum eta......................... " << _etaCutMin << endl
 	    << "        maximum eta......................... " << _etaCutMax << endl

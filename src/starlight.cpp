@@ -143,7 +143,7 @@ starlight::luminosityTableIsValid() const
 	ifstream lumLookUpTableFile(_lumLookUpTableFileName.c_str());
 	lumLookUpTableFile.precision(15);
 	if ((!lumLookUpTableFile) || (!lumLookUpTableFile.good())) {
-		printWarn << "cannot open file '" << _lumLookUpTableFileName << "'" << endl;
+		// printWarn << "cannot open file '" << _lumLookUpTableFileName << "'" << endl;
 		return false;
 	}
 
