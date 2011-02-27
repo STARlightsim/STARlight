@@ -31,28 +31,31 @@
 ///////////////////////////////////////////////////////////////////////////
 
 
-#ifndef GAMMAALUMINOSITY_H
-#define GAMMAALUMINOSITY_H
+#ifndef NARROWRESONANCECROSSSECTION_H
+#define NARROWRESONANCECROSSSECTION_H
 
 
-#include "beambeamsystem.h"
-#include "inputParameters.h"
 #include "photonNucleusCrossSection.h"
 
 
-class photonNucleusLuminosity : public photonNucleusCrossSection
-{
- public:
-  photonNucleusLuminosity(inputParameters& input, beamBeamSystem& bbsystem);
-  ~photonNucleusLuminosity();
-  
- private:
-  inputParameters _inputgammaa;
-  void photonNucleusDifferentialLuminosity();
-  double *vmsigmapt(double W,double Egamma,double *SIGMAPT);
-  double nofe(double Egamma,double bimp);
-  void pttablegen();
+class narrowResonanceCrossSection : public photonNucleusCrossSection {
+
+public:
+
+	narrowResonanceCrossSection(const inputParameters& input,
+	                            const beamBeamSystem&  bbsystem);
+	~narrowResonanceCrossSection();
+
+	void crossSectionCalculation(const double bwnormsave);
+
+private:
+	
+	double _Ep;
+	double _narrowYmax;
+	double _narrowYmin;
+	int    _narrowNumY;
+	
 };
 
-#endif //GAMMAALUMINOSITY_H
 
+#endif  // NARROWRESONANCECROSSSECTION_H

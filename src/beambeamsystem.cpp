@@ -90,7 +90,8 @@ beamBeamSystem::~beamBeamSystem()
 
 
 //______________________________________________________________________________
-double beamBeamSystem::probabilityOfBreakup(double D)
+double
+beamBeamSystem::probabilityOfBreakup(const double D)
 {
 	static int    NStep = 1426;// 1000;
 	static double ProbTot[1000];
@@ -192,7 +193,8 @@ double beamBeamSystem::probabilityOfBreakup(double D)
 
 
 //______________________________________________________________________________
-double beamBeamSystem::probabilityOfHadronBreakup(double impactparameter)
+double
+beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
 {
 	//	double pbreakup =0.; 
 	//probability of hadron breakup, 
@@ -290,7 +292,8 @@ double beamBeamSystem::probabilityOfHadronBreakup(double impactparameter)
 
 
 //______________________________________________________________________________
-double beamBeamSystem::probabilityOfPhotonBreakup(double impactparameter, int mode)
+double
+beamBeamSystem::probabilityOfPhotonBreakup(const double impactparameter, const int mode)
 {
 	static double ee[10001], eee[162], se[10001];
 

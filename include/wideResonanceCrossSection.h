@@ -31,28 +31,32 @@
 ///////////////////////////////////////////////////////////////////////////
 
 
-#ifndef GAMMAALUMINOSITY_H
-#define GAMMAALUMINOSITY_H
+#ifndef WIDERESONANCECROSSSECTION_H
+#define WIDERESONANCECROSSSECTION_H
 
 
-#include "beambeamsystem.h"
-#include "inputParameters.h"
 #include "photonNucleusCrossSection.h"
 
 
-class photonNucleusLuminosity : public photonNucleusCrossSection
-{
- public:
-  photonNucleusLuminosity(inputParameters& input, beamBeamSystem& bbsystem);
-  ~photonNucleusLuminosity();
-  
- private:
-  inputParameters _inputgammaa;
-  void photonNucleusDifferentialLuminosity();
-  double *vmsigmapt(double W,double Egamma,double *SIGMAPT);
-  double nofe(double Egamma,double bimp);
-  void pttablegen();
+class wideResonanceCrossSection : public photonNucleusCrossSection {
+
+public:
+
+	wideResonanceCrossSection(const inputParameters& input,
+	                          const beamBeamSystem&  bbsystem);
+	~wideResonanceCrossSection();
+
+	void crossSectionCalculation(const double bwnormsave);
+
+private:
+
+	double _Ep;  // Proton Energy
+	double _wideWmax;
+	double _wideWmin;
+	double _wideYmax;
+	double _wideYmin;		
+
 };
 
-#endif //GAMMAALUMINOSITY_H
 
+#endif  // WIDERESONANCECROSSSECTION_H

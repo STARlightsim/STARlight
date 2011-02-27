@@ -56,17 +56,17 @@ public:
 	beamBeamSystem(const inputParameters& parameters);
 	~beamBeamSystem();
 
-	const beam& beam1() { return _beam1; }  ///< returns beam particle 1
-	const beam& beam2() { return _beam2; }  ///< returns beam particle 2
+	const beam& beam1() const { return _beam1; }  ///< returns beam particle 1
+	const beam& beam2() const { return _beam2; }  ///< returns beam particle 2
 
 	//	double getluminosity();
-	double probabilityOfBreakup(double D);
+	double probabilityOfBreakup(const double D);
 
 private:
 
 	//	int _ibreakup;//temporary solution until read in parameters are done
-	double probabilityOfHadronBreakup(double impactparameter);
-	double probabilityOfPhotonBreakup(double impactparameter,int mode);
+	double probabilityOfHadronBreakup(const double impactparameter);
+	double probabilityOfPhotonBreakup(const double impactparameter, const int mode);
 
 	double _pHadronBreakup;
 	double _pPhotonBreakup;

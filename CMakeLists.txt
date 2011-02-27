@@ -184,7 +184,9 @@ set(SOURCES
   src/gammaavm.cpp
   src/psifamily.cpp
   src/gammagammasingle.cpp
-  src/gammaacrosssection.cpp
+  src/photonNucleusCrossSection.cpp
+  src/wideResonanceCrossSection.cpp
+  src/narrowResonanceCrossSection.cpp
   src/readinluminosity.cpp
   src/twophotonluminosity.cpp
   src/gammagammaleptonpair.cpp

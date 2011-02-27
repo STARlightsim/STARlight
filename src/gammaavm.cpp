@@ -37,7 +37,9 @@
 #include <cmath>
 
 #include "gammaavm.h"
-#include "gammaacrosssection.h"
+#include "photonNucleusCrossSection.h"
+#include "wideResonanceCrossSection.h"
+#include "narrowResonanceCrossSection.h"
 
 
 using namespace std;
