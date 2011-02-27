@@ -768,7 +768,7 @@ Gammaanarrowvm::Gammaanarrowvm(inputParameters& input,beamBeamSystem& bbsystem):
 	cout<<"Creating and calculating crosssection. Gammaanarrowvm()"<<endl;
 	narrowResonanceCrossSection sigma(input,bbsystem);
 	sigma.crossSectionCalculation(_bwnormsave);
-	_VMbslope=sigma.getbslope(); 
+	_VMbslope=sigma.slopeParameter(); 
 }
 
 
@@ -785,7 +785,7 @@ Gammaawidevm::Gammaawidevm(inputParameters& input,beamBeamSystem& bbsystem):Gamm
 	cout<<"Creating and calculating crosssection. Gammaawidevm()"<<endl;
 	wideResonanceCrossSection sigma(input,bbsystem);
 	sigma.crossSectionCalculation(_bwnormsave);
-	_VMbslope=sigma.getbslope();
+	_VMbslope=sigma.slopeParameter();
 }
 
 

@@ -104,7 +104,7 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
     
 		if(ega1 < Eth)   
 			continue;
-		if(ega2 > getMaxPhotonEnergy()) 
+		if(ega2 > maxPhotonEnergy()) 
 			continue;
 
 		csgA1=getcsgA(ega1,W);
@@ -133,7 +133,7 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
 		}
 		int_r = int_r+dR;
 	}
-	rate=getLum()*int_r;
+	rate=luminosity()*int_r;
 	cout<<" Cross section (mb): " <<10.*int_r<<endl;
 	cout<<" Production rate   : "<<rate<<" Hz"<<endl;
 }

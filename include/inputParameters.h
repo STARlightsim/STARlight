@@ -82,8 +82,8 @@ public:
 	starlightConstants::particleTypeEnum    prodParticleType     () const { return _particleType;    }  ///< returns type of produced particle
 	starlightConstants::decayTypeEnum       prodParticleDecayType() const { return _decayType;       }  ///< returns decay type of produced particle
 	starlightConstants::interactionTypeEnum interactionType      () const { return _interactionType; }  ///< returns interaction type
-	// double getf2o4pi();
-	// double getbslope();
+	// double vmPhotonCoupling();
+	// double slopeParameter();
 	double getProtonEnergy() const { return _protonEnergy; }
 
 	std::ostream& print(std::ostream& out) const;  ///< prints parameter summary

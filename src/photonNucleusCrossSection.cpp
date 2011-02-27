@@ -41,9 +41,10 @@
 #include <fstream>
 #include <cmath>
 
+#include "reportingUtils.h"
 #include "starlightconstants.h"
-#include "photonNucleusCrossSection.h"
 #include "bessel.h"
+#include "photonNucleusCrossSection.h"
 
 
 using namespace std;
@@ -53,52 +54,53 @@ using namespace starlightConstants;
 //______________________________________________________________________________
 photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& input,
                                                      const beamBeamSystem&  bbsystem)
-	: _bbs(bbsystem)
+	: _bbs               (bbsystem                  ),
+	  _protonEnergy      (input.getProtonEnergy()   ),
+	  _beamLorentzGamma  (input.beamLorentzGamma()  ),
+	  _particleType      (input.prodParticleType()  ),
+	  _beamBreakupMode   (input.beamBreakupMode()   ),
+	  _coherentProduction(input.coherentProduction()),
+	  _incoherentFactor  (input.incoherentFactor()  ),
+	  _sigmaNucleus      (_bbs.beam2().A()          )
 {
-	_sigmaProtonEnergy    = input.getProtonEnergy();
-	_sigmaGamma_em        = input.beamLorentzGamma();
-	_sigmaPID             = input.prodParticleType();
-	_sigmaBreakup         = input.beamBreakupMode();
-	_sigmaCoherence       = input.coherentProduction();
-	_sigmaCoherenceFactor = input.incoherentFactor();
-	_sigmaNucleus         = _bbs.beam2().A();
-
+	// define luminosity for various beam particles in units of 10^{26} cm^{-2} sec^{-1}
 	switch(_bbs.beam1().Z()) {
-	case 79://Au
-		_lum = 2.0;
+	case 1:   // proton
+		_luminosity = 1.E8;
 		break;
-	case 53://I
-		_lum = 27.;
+	case 8:   // O
+		_luminosity = 980.;
 		break;
-	case 49://Indium,uses same as Iodine
-		_lum = 27.;
+	case 14:  // Si
+		_luminosity = 440.;
 		break;
-	case 29://Cu
-		_lum = 95.;
+	case 20:  // Ca
+		_luminosity = 2000.;
 		break;
-	case 14://Si
-		_lum = 440.;
+	case 29:  // Cu
+		_luminosity = 95.;
 		break;
-	case 8://O
-		_lum = 980.;
+	case 49:  // Indium, uses same as Iodine
+		_luminosity = 27.;
 		break;
-	case 82://Pb
-		_lum = 1.;
+	case 53:  // I
+		_luminosity = 27.;
 		break;
-	case 20://Ca
-		_lum = 2000.;
+	case 79:  // Au
+		_luminosity = 2.0;
 		break;
-	case 1://proton
-		_lum = 1.E8;
+	case 82:  // Pb
+		_luminosity = 1.;
 		break;
 	default:
-		cout <<"Warning:Luminosity not defined.Gammaacrosssection::getlum"<<endl;
+		printWarn << "luminosity is not defined for beam with Z = " << _bbs.beam1().Z()
+		          << ". using " << _luminosity << " 10^{26} cm^{-2} sec^{-1}" << endl;
 	}
 
-	switch(_sigmaPID) {
+	switch(_particleType) {
 	case RHO:
-		_bSlope      = 11.0;
-		_f2o4pi      = 2.02;
+		_slopeParameter = 11.0;  // [(GeV/c)^{-2}]
+		_vmPhotonCoupling = 2.02;
 		_ANORM       = -2.75;
 		_BNORM       = 0.0;
 		_defaultC    = 1.0;
@@ -106,8 +108,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_width       = 0.1507;  // [GeV/c^2]
 		break;
 	case RHOZEUS:
-		_bSlope =11.0;
-		_f2o4pi=2.02;
+		_slopeParameter =11.0;
+		_vmPhotonCoupling=2.02;
 		_ANORM=-2.75;
 		_BNORM=1.84;
 		_defaultC=1.0;
@@ -115,8 +117,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_width=0.1507;
 		break;
 	case FOURPRONG:
-		_bSlope      = 11.0;
-		_f2o4pi      = 2.02;
+		_slopeParameter      = 11.0;
+		_vmPhotonCoupling      = 2.02;
 		_ANORM       = -2.75;
 		_BNORM       = 0;  // no coherent background component is implemented for four-prong
 		_defaultC    = 11.0;
@@ -124,8 +126,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_width       = 0.360;
 		break;
 	case OMEGA:
-		_bSlope=10.0;
-		_f2o4pi=23.13;
+		_slopeParameter=10.0;
+		_vmPhotonCoupling=23.13;
 		_ANORM=-2.75;
 		_BNORM=0.0;
 		_defaultC=1.0;
@@ -133,8 +135,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_width=0.00843;
 		break;
 	case PHI:
-		_bSlope=7.0;
-		_f2o4pi=13.71;
+		_slopeParameter=7.0;
+		_vmPhotonCoupling=13.71;
 		_ANORM=-2.75;
 		_BNORM=0.0;
 		_defaultC=1.0;
@@ -144,8 +146,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 	case JPSI:
 	case JPSI_ee:
 	case JPSI_mumu:
-		_bSlope=4.0;
-		_f2o4pi=10.45;
+		_slopeParameter=4.0;
+		_vmPhotonCoupling=10.45;
 		_ANORM=-2.75;//Artificial Breit-Wigner parameters--no direct pions
 		_BNORM=0.0;
 		_defaultC=1.0;
@@ -155,8 +157,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 	case JPSI2S:
 	case JPSI2S_ee:
 	case JPSI2S_mumu:
-		_bSlope=4.3;
-		_f2o4pi=26.39;
+		_slopeParameter=4.3;
+		_vmPhotonCoupling=26.39;
 		_ANORM=-2.75;//Artificial
 		_BNORM=0.0;
 		_defaultC=1.0;
@@ -166,8 +168,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 	case UPSILON:
 	case UPSILON_ee:
 	case UPSILON_mumu:
-		_bSlope=4.0;
-		_f2o4pi=125.37;
+		_slopeParameter=4.0;
+		_vmPhotonCoupling=125.37;
 		_ANORM=-2.75;//Artificial
 		_BNORM=0.0;
 		_defaultC=1.0;
@@ -177,8 +179,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 	case UPSILON2S:
 	case UPSILON2S_ee:
 	case UPSILON2S_mumu:
-		_bSlope=4.0;
-		_f2o4pi=290.84;
+		_slopeParameter=4.0;
+		_vmPhotonCoupling=290.84;
 		_ANORM=-2.75;
 		_BNORM=0.0;
 		_defaultC=1.0;
@@ -188,8 +190,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 	case UPSILON3S:
 	case UPSILON3S_ee:
 	case UPSILON3S_mumu:
-		_bSlope=4.0;
-		_f2o4pi=415.10;
+		_slopeParameter=4.0;
+		_vmPhotonCoupling=415.10;
 		_ANORM=-2.75;
 		_BNORM=0.0;
 		_defaultC=1.0;
@@ -197,11 +199,11 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_width=0.00002032;
 		break;
 	default:
-		cout <<"No sigma constants parameterized for pid: "<<_sigmaPID
+		cout <<"No sigma constants parameterized for pid: "<<_particleType
 		     <<" GammaAcrosssection"<<endl;
 	}
 
-	_EgMax= 4.*_sigmaGamma_em*hbarc/_bbs.beam1().nuclearRadius(); 
+	_maxPhotonEnergy = 4. * _beamLorentzGamma * hbarc/_bbs.beam1().nuclearRadius(); 
 	//Max photon energy( for VM only, in GeV, lab frame, use beam energy
 	//, nuclear size cutoff)
 }
@@ -234,93 +236,80 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
 	int NGAUSS;                                                                                                                                       
   
 	//     DATA FOR GAUSS INTEGRATION
-	double xg[6]={0,0.1488743390,0.4333953941,0.6794095683,0.8650633667,0.9739065285};
-	double ag[6]={0,0.2955242247,0.2692667193,0.2190863625,0.1494513492,0.0666713443};
+	double xg[6] = {0, 0.1488743390, 0.4333953941, 0.6794095683, 0.8650633667, 0.9739065285};
+	double ag[6] = {0, 0.2955242247, 0.2692667193, 0.2190863625, 0.1494513492, 0.0666713443};
 	NGAUSS = 6;
   
 	//       Find gamma-proton CM energy
-	Wgp=sqrt(2.*Egamma*(_sigmaProtonEnergy+sqrt(_sigmaProtonEnergy*_sigmaProtonEnergy-
-	                                            protonMass*protonMass))+protonMass*protonMass);
+	Wgp = sqrt(2. * Egamma * (_protonEnergy
+	                          + sqrt(_protonEnergy * _protonEnergy - protonMass * protonMass))
+	           + protonMass * protonMass);
 	
 	//Used for d-A and A-A
-	tmin   = (W*W/(4.*Egamma*_sigmaGamma_em) )*(W*W/(4.*Egamma*_sigmaGamma_em) );
+	tmin = (W * W / (4. * Egamma * _beamLorentzGamma)) * (W * W / (4. * Egamma * _beamLorentzGamma));
   
-	if(_bbs.beam1().A()==1&&_bbs.beam2().A()==1)
-		{  //Proton-proton, no scaling needed.
-			csgA = sigmagp(Wgp);
-		}
-	else if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2)
-		{  
-
-			// Deuteron-A interaction
-			Av = _bSlope*sigmagp(Wgp);
+	if ((_bbs.beam1().A() == 1) && (_bbs.beam2().A() == 1))  // proton-proton, no scaling needed
+		csgA = sigmagp(Wgp);
+	else if ((_bbs.beam2().Z() == 1) && (_bbs.beam2().A() == 2)) {  // deuteron-A interaction
+		Av = _slopeParameter * sigmagp(Wgp);
       
-			tmax   = tmin + 0.64;   //0.64
-			ax     = 0.5*(tmax-tmin);
-			bx     = 0.5*(tmax+tmin);
-			csgA   = 0.;
+		tmax   = tmin + 0.64;   //0.64
+		ax     = 0.5 * (tmax - tmin);
+		bx     = 0.5 * (tmax + tmin);
+		csgA   = 0.;
       
-			for( int k=1;k<NGAUSS;k++){ 
-				t    = ax*xg[k]+bx;
-				//We use beam2 here since the input stores the deuteron as nucleus 2
-				//and nucleus 2 is the pomeron field source
-				//Also this is the way sergey formatted the formfactor.
-				csgA = csgA + ag[k]*_bbs.beam2().formFactor(t); 
-				t    = ax*(-xg[k])+bx;
-				csgA = csgA + ag[k]*_bbs.beam2().formFactor(t);
-			}
-			csgA = 0.5*(tmax-tmin)*csgA;
-			csgA = Av*csgA;
+		for (int k = 1; k < NGAUSS; ++k) { 
+			t    = ax * xg[k] + bx;
+			// We use beam2 here since the input stores the deuteron as nucleus 2
+			// and nucleus 2 is the pomeron field source
+			// Also this is the way sergey formatted the formfactor.
+			csgA = csgA + ag[k] * _bbs.beam2().formFactor(t); 
+			t    = ax * (-xg[k]) + bx;
+			csgA = csgA + ag[k] * _bbs.beam2().formFactor(t);
 		}
-	else if(_sigmaCoherence==0&&(!(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2)))
-		{
+		csgA = 0.5 * (tmax - tmin) * csgA;
+		csgA = Av * csgA;
+	}	else if (!_coherentProduction &&
+		         (!((_bbs.beam2().Z() == 1) && (_bbs.beam2().A() == 2)))) {  // incoherent AA interactions
+		// For incoherent AA interactions, since incoherent treating it as gamma-p
+		// Calculate the differential V.M.+proton cross section
+		//artifical 1E-3 to scale down sigma
+		csgA = 1.E-4 * _incoherentFactor * _sigmaNucleus * _slopeParameter * sigmagp(Wgp);
 
-			// For incoherent AA interactions , since incoherent treating it as gamma-p
-			// Calculate the differential V.M.+proton cross section
-			csgA = 1.E-4*_sigmaCoherenceFactor*_sigmaNucleus*_bSlope*sigmagp(Wgp);//artifical 1E-3 to scale down sigma
-
-			//Calculating int |F(t)| dt
-			//Using proton formfactor for this case
-			//Note the coherence scaling factor being intergrated with the F(t)
-			//Should it just be F(t)^2?   
-			//Pay attention to the way the formfactor is implemented in nucleus class
-			//Also, notice the tmin value.  It starts higher for dAu, should we proceed
-			//in a similar fashion
-			//Why don't we use formfactors for pp? Is it because it is incorporated in 
-			//the gamma-p fits done for dsigma/dt? Yes?
-
-		}
-	else 
-		{	
-
-			// For typical AA interactions.
-			// Calculate V.M.+proton cross section
-			cs=sqrt(16.*pi*_f2o4pi*_bSlope
-			        *hbarc*hbarc*sigmagp(Wgp)
-			        /alpha);
+		// Calculating int |F(t)| dt
+		// Using proton formfactor for this case
+		// Note the coherence scaling factor being intergrated with the F(t)
+		// Should it just be F(t)^2?   
+		// Pay attention to the way the formfactor is implemented in nucleus class
+		// Also, notice the tmin value.  It starts higher for dAu, should we proceed
+		// in a similar fashion
+		// Why don't we use formfactors for pp? Is it because it is incorporated in 
+		// the gamma-p fits done for dsigma/dt? Yes?
+	}	else {	// coherent AA interactions
+		// For typical AA interactions.
+		// Calculate V.M.+proton cross section
+		cs = sqrt(16. * pi * _vmPhotonCoupling * _slopeParameter * hbarc * hbarc * sigmagp(Wgp) / alpha);
     
-			//  Calculate V.M.+nucleus cross section
-			cvma=sigma_A(cs); 
+		// Calculate V.M.+nucleus cross section
+		cvma = sigma_A(cs); 
  
-			// Calculate Av = dsigma/dt(t=0) Note Units: fm**s/Gev**2
-			Av=(alpha*cvma*cvma)/
-				(16.*pi*_f2o4pi*hbarc*hbarc);
+		// Calculate Av = dsigma/dt(t=0) Note Units: fm**s/Gev**2
+		Av = (alpha * cvma * cvma) / (16. * pi * _vmPhotonCoupling * hbarc * hbarc);
     
-			tmax   = tmin + 0.25;
-			ax     = 0.5*(tmax-tmin);
-			bx     = 0.5*(tmax+tmin);
-			csgA   = 0.;
-			for( int k=1;k<NGAUSS;k++){ 
-				t    = ax*xg[k]+bx;
-				csgA = csgA + ag[k]*_bbs.beam2().formFactor(t)*_bbs.beam2().formFactor(t);
-				t    = ax*(-xg[k])+bx;
-				csgA = csgA + ag[k]*_bbs.beam2().formFactor(t)*_bbs.beam2().formFactor(t);
-			}
-    
-			csgA = 0.5*(tmax-tmin)*csgA;
-			csgA = Av*csgA;
-
+		tmax   = tmin + 0.25;
+		ax     = 0.5 * (tmax - tmin);
+		bx     = 0.5 * (tmax + tmin);
+		csgA   = 0.;
+		for (int k = 1; k < NGAUSS; ++k) { 
+			t    = ax * xg[k] + bx;
+			csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
+			t    = ax * (-xg[k]) + bx;
+			csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
 		}
+		csgA = 0.5 * (tmax - tmin) * csgA;
+		csgA = Av * csgA;
+	}
+
 	return csgA;	
 }
 
@@ -361,7 +350,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 	if( _bbs.beam1().A()==1 && _bbs.beam2().A()==1 ){
 		int nbsteps = 200;
 		double bmin = 0.5;
-		double bmax = 5.0 + (5.0*_sigmaGamma_em*hbarc/Egamma);
+		double bmax = 5.0 + (5.0*_beamLorentzGamma*hbarc/Egamma);
 		double dlnb = (log(bmax)-log(bmin))/(1.*nbsteps);
 
 		double local_sum=0.0;
@@ -384,13 +373,13 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 			GammaProfile = exp(-bnn1*bnn1/(2.*hbarc*hbarc*ppslope));  
 			double PofB1 = 1. - (1. - GammaProfile)*(1. - GammaProfile);   
 
-			double Xarg = Egamma*bnn0/(hbarc*_sigmaGamma_em);
+			double Xarg = Egamma*bnn0/(hbarc*_beamLorentzGamma);
 			double loc_nofe0 = (_bbs.beam1().Z()*_bbs.beam1().Z()*alpha)/
 				(pi*pi); 
 			loc_nofe0 *= (1./(Egamma*bnn0*bnn0)); 
 			loc_nofe0 *= Xarg*Xarg*(bessel::dbesk1(Xarg))*(bessel::dbesk1(Xarg)); 
 
-			Xarg = Egamma*bnn1/(hbarc*_sigmaGamma_em);
+			Xarg = Egamma*bnn1/(hbarc*_beamLorentzGamma);
 			double loc_nofe1 = (_bbs.beam1().Z()*_bbs.beam1().Z()*alpha)/
 				(pi*pi); 
 			loc_nofe1 *= (1./(Egamma*bnn1*bnn1)); 
@@ -433,13 +422,13 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 	// following previous choices, take Emin=10 keV at LHC, Emin = 1 MeV at RHIC
   
 	Emin=1.E-5;
-	if (_sigmaGamma_em < 500) 
+	if (_beamLorentzGamma < 500) 
 		Emin=1.E-3;
   
 	//  maximum energy is 12 times the cutoff
 	//  25 GeV for gold at RHIC, 650 GeV for lead at LHC
   
-	Emax=12.*hbarc*_sigmaGamma_em/RNuc;
+	Emax=12.*hbarc*_beamLorentzGamma/RNuc;
 	//Will this be diff for dAu?
   
 	//     >> lnEmin <-> ln(Egamma) for the 0th bin
@@ -463,7 +452,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 		//  use exponential steps
     
 		bmin=RNuc+RNuc2; //2.*nuclearRadius; Sergey
-		bmax=bmin + 6.*hbarc*_sigmaGamma_em/energy;
+		bmax=bmin + 6.*hbarc*_beamLorentzGamma/energy;
     
 		bmult=exp(log(bmax/bmin)/double(nbstep));
 		biter=bmin;
@@ -471,7 +460,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
     
 		if (_bbs.beam2().Z()==1&&_bbs.beam1().A()==2){
 			//This is for deuteron-gold
-			Xvar = (RNuc+RNuc2)*energy/(hbarc*(_sigmaGamma_em));
+			Xvar = (RNuc+RNuc2)*energy/(hbarc*(_beamLorentzGamma));
       
 			fluxelement = (2.0/pi)*rZ*rZ*alpha/
 				energy*(Xvar*bessel::dbesk0(Xvar)*bessel::dbesk1(Xvar)-(1/2)*Xvar*Xvar*
@@ -491,7 +480,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 						// if there is no nuclear breakup or only hadronic breakup, which only
 						// occurs at smaller b, we can analytically integrate the flux from b~20R_A
 						// to infinity, following Jackson (2nd edition), Eq. 15.54
-						Xvar=energy*biter/(hbarc*_sigmaGamma_em);
+						Xvar=energy*biter/(hbarc*_beamLorentzGamma);
 						// Here, there is nuclear breakup.  So, we can't use the integrated flux
 						//  However, we can do a single flux calculation, at the center of the
 						//  nucleus
@@ -500,8 +489,8 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 						//  this is the flux per unit area
 						fluxelement  = (rZ*rZ*alpha*energy)*
 							(bessel::dbesk1(Xvar))*(bessel::dbesk1(Xvar))/
-							((pi*_sigmaGamma_em*hbarc)*
-							 (pi*_sigmaGamma_em*hbarc));
+							((pi*_beamLorentzGamma*hbarc)*
+							 (pi*_beamLorentzGamma*hbarc));
 	    
 					}//if biter>10
 				else{
@@ -523,12 +512,12 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 							dist=sqrt((biter+riter*cos(phiiter))*(biter+riter*
 							                                      cos(phiiter))+(riter*sin(phiiter))*(riter*sin(phiiter)));
 	      
-							Xvar=energy*dist/(hbarc*_sigmaGamma_em);				
+							Xvar=energy*dist/(hbarc*_beamLorentzGamma);				
 	      
 							flux_r = (rZ*rZ*alpha*energy)*
 								(bessel::dbesk1(Xvar)*bessel::dbesk1(Xvar))/
-								((pi*_sigmaGamma_em*hbarc)*
-								 (pi*_sigmaGamma_em*hbarc));
+								((pi*_beamLorentzGamma*hbarc)*
+								 (pi*_beamLorentzGamma*hbarc));
 	      
 							//  The surface  element is 2.* delta phi* r * delta r
 							//  The '2' is because the phi integral only goes from 0 to pi
@@ -542,7 +531,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 				//  multiply by volume element to get total flux in the volume element
 				fluxelement=fluxelement*2.*pi*biter*(biter-bold);
 				//  modulate by the probability of nuclear breakup as f(biter)
-				if (_sigmaBreakup > 1){
+				if (_beamBreakupMode > 1){
 					fluxelement=fluxelement*_bbs.probabilityOfBreakup(biter);
 				}
 				integratedflux=integratedflux+fluxelement;
@@ -597,8 +586,8 @@ photonNucleusCrossSection::nepoint(const double Egamma,
 	//     >> Declare Local Variables
 	double beta,X,C1,bracket,nepoint_r;
   
-	beta = sqrt(1.-(1./(_sigmaGamma_em*_sigmaGamma_em)));
-	X = (bmin*Egamma)/(beta*_sigmaGamma_em*hbarc);
+	beta = sqrt(1.-(1./(_beamLorentzGamma*_beamLorentzGamma)));
+	X = (bmin*Egamma)/(beta*_beamLorentzGamma*hbarc);
   
 	bracket = -0.5*beta*beta*X*X*(bessel::dbesk1(X)*bessel::dbesk1(X)
 	                              -bessel::dbesk0(X)*bessel::dbesk0(X));
@@ -627,7 +616,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
   
 	double sigmagp_r=0.;
   
-	switch(_sigmaPID)
+	switch(_particleType)
 		{ 
 		case RHO:
 		case RHOZEUS:
@@ -673,7 +662,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 		case UPSILON3S_mumu:
 			sigmagp_r=1.E-10*(0.0181)*exp(1.70*log(Wgp));
 			break;
-		default: cout<< "!!!  ERROR: Unidentified Vector Meson: "<< _sigmaPID <<endl;
+		default: cout<< "!!!  ERROR: Unidentified Vector Meson: "<< _particleType <<endl;
 		}                                                                  
 	return sigmagp_r;
 }
@@ -751,7 +740,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 {
 	// use simple fixed-width s-wave Breit-Wigner without coherent backgorund for rho'
 	// (PDG '08 eq. 38.56)
-	if(_sigmaPID==FOURPRONG) {
+	if(_particleType==FOURPRONG) {
 		if (W < 4.01 * pionChargedMass)
 			return 0;
 		const double termA  = _channelMass * _width;
@@ -773,7 +762,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 	// width depends on energy - Jackson Eq. A.2
 	// if below threshold, then return 0.  Added 5/3/2001 SRK
 	// 0.5% extra added for safety margin
-	if( _sigmaPID==RHO ||_sigmaPID==RHOZEUS){  
+	if( _particleType==RHO ||_particleType==RHOZEUS){  
 		if (W < 2.01*pionChargedMass){
 			nrbw_r=0.;
 			return nrbw_r;
@@ -783,7 +772,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 	}
   
 	// handle phi-->K+K- properly
-	if (_sigmaPID  ==  PHI){
+	if (_particleType  ==  PHI){
 		if (W < 2.*kaonChargedMass){
 			nrbw_r=0.;
 			return nrbw_r;
@@ -793,7 +782,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 	}
 
 	//handle J/Psi-->e+e- properly
-	if (_sigmaPID==JPSI || _sigmaPID==JPSI2S){
+	if (_particleType==JPSI || _particleType==JPSI2S){
 		if(W<2.*mel){
 			nrbw_r=0.;
 			return nrbw_r;
@@ -801,7 +790,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 		ppi=sqrt(((W/2.)*(W/2.))-mel*mel);
 		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-mel*mel);
 	}
-	if (_sigmaPID==JPSI_ee){
+	if (_particleType==JPSI_ee){
 		if(W<2.*mel){
 			nrbw_r=0.;
 			return nrbw_r;
@@ -809,7 +798,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 		ppi=sqrt(((W/2.)*(W/2.))-mel*mel);
 		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-mel*mel);   
 	}
-	if (_sigmaPID==JPSI_mumu){
+	if (_particleType==JPSI_mumu){
 		if(W<2.*muonMass){
 			nrbw_r=0.;
 			return nrbw_r;
@@ -817,7 +806,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 		ppi=sqrt(((W/2.)*(W/2.))-muonMass*muonMass);
 		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-muonMass*muonMass);
 	}
-	if (_sigmaPID==JPSI2S_ee){
+	if (_particleType==JPSI2S_ee){
 		if(W<2.*mel){
 			nrbw_r=0.;
 			return nrbw_r;
@@ -825,7 +814,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 		ppi=sqrt(((W/2.)*(W/2.))-mel*mel);
 		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-mel*mel);   
 	}
-	if (_sigmaPID==JPSI2S_mumu){
+	if (_particleType==JPSI2S_mumu){
 		if(W<2.*muonMass){
 			nrbw_r=0.;
 			return nrbw_r;
@@ -834,7 +823,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-muonMass*muonMass);
 	}
 
-	if(_sigmaPID==UPSILON || _sigmaPID==UPSILON2S ||_sigmaPID==UPSILON3S ){ 
+	if(_particleType==UPSILON || _particleType==UPSILON2S ||_particleType==UPSILON3S ){ 
 		if (W<2.*muonMass){
 			nrbw_r=0.;
 			return nrbw_r;
@@ -843,7 +832,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-muonMass*muonMass);
 	}
   
-	if(_sigmaPID==UPSILON_mumu || _sigmaPID==UPSILON2S_mumu ||_sigmaPID==UPSILON3S_mumu ){ 
+	if(_particleType==UPSILON_mumu || _particleType==UPSILON2S_mumu ||_particleType==UPSILON3S_mumu ){ 
 		if (W<2.*muonMass){
 			nrbw_r=0.;
 			return nrbw_r;
@@ -852,7 +841,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-muonMass*muonMass);
 	}
   
-	if(_sigmaPID==UPSILON_ee || _sigmaPID==UPSILON2S_ee ||_sigmaPID==UPSILON3S_ee ){ 
+	if(_particleType==UPSILON_ee || _particleType==UPSILON2S_ee ||_particleType==UPSILON3S_ee ){ 
 		if (W<2.*mel){
 			nrbw_r=0.;
 			return nrbw_r;

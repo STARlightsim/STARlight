@@ -138,7 +138,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
       dndWdY = 0.; 
 
       if(Egamma > Eth){
-        if(Egamma > getMaxPhotonEnergy())Egamma = getMaxPhotonEnergy();
+        if(Egamma > maxPhotonEnergy())Egamma = maxPhotonEnergy();
         csgA=getcsgA(Egamma,W);
         dndWdY = Egamma*photonFlux(Egamma)*csgA*breitWigner(W,bwnorm);
       }
@@ -243,7 +243,7 @@ void photonNucleusLuminosity::pttablegen()
     
     // Calculate V.M.+proton cross section
     
-    cs=sqrt(16.*starlightConstants::pi*getf2o4pi()*getbslope()*
+    cs=sqrt(16.*starlightConstants::pi*vmPhotonCoupling()*slopeParameter()*
 	    starlightConstants::hbarc*starlightConstants::hbarc*sigmagp(Wgp)
 	    /starlightConstants::alpha);
     
@@ -254,7 +254,7 @@ void photonNucleusLuminosity::pttablegen()
     // Calculate Av = dsigma/dt(t=0) Note Units: fm**2/Gev**2
     
     Av=(starlightConstants::alpha*cvma*cvma)/(16.*starlightConstants::pi
-					      *getf2o4pi()*starlightConstants::hbarc*starlightConstants::hbarc);
+					      *vmPhotonCoupling()*starlightConstants::hbarc*starlightConstants::hbarc);
     
     tmin  = ((mass*mass)/(4.*Egamma1*gamma_em)*(mass*mass)/(4.*Egamma1*gamma_em));
     tmax  = tmin + 0.25;
@@ -278,13 +278,13 @@ void photonNucleusLuminosity::pttablegen()
     Wgp=sqrt(2.*Egamma2*(Ep+sqrt(Ep*Ep-starlightConstants::protonMass*
 				 starlightConstants::protonMass))+starlightConstants::protonMass*starlightConstants::protonMass);
     
-    cs=sqrt(16.*starlightConstants::pi*getf2o4pi()*getbslope()*
+    cs=sqrt(16.*starlightConstants::pi*vmPhotonCoupling()*slopeParameter()*
 	    starlightConstants::hbarc*starlightConstants::hbarc*sigmagp(Wgp)/starlightConstants::alpha);
     
     cvma=sigma_A(cs);
     
     Av=(starlightConstants::alpha*cvma*cvma)/(16.*starlightConstants::pi
-					      *getf2o4pi()*starlightConstants::hbarc*starlightConstants::hbarc);
+					      *vmPhotonCoupling()*starlightConstants::hbarc*starlightConstants::hbarc);
     
     tmin  = (((mass*mass)/(4.*Egamma2*gamma_em))*((mass*mass)/(4.*Egamma2*gamma_em)));
     tmax  = tmin + 0.25;

@@ -47,14 +47,14 @@ public:
 	                          const beamBeamSystem&  bbsystem);
 	~photonNucleusCrossSection();
   
-	double                getbslope         () const { return _bSlope;      }
-	double                getChannelMass    () const { return _channelMass; }
-	double                getBNORM          () const { return _BNORM;       }
-	double                getLum            () const { return _lum;         }
-	beamBeamSystem        getbbs            () const { return _bbs;         }
-	double                getf2o4pi         () const { return _f2o4pi;      }
-	double                getDefaultC       () const { return _defaultC;    }
-	double                getMaxPhotonEnergy() const { return _EgMax;       }
+	double         slopeParameter  () const { return _slopeParameter;   }  ///< returns slope of t-distribution [(GeV/c)^{-2}]
+	double         getChannelMass  () const { return _channelMass;      }  ///< returns mass of the produced system [GeV/c^2]
+	double         getBNORM        () const { return _BNORM;            }
+	double         luminosity      () const { return _luminosity;       }  ///< returns luminosity [10^{26} cm^{-2} sec^{-1}]
+	beamBeamSystem getbbs          () const { return _bbs;              }  ///< returns beamBeamSystem
+	double         vmPhotonCoupling() const { return _vmPhotonCoupling; }  ///< vectormeson-photon coupling constant f_v / 4 pi (cf. Eq. 10 in KN PRC 60 (1999) 014903)
+	double         getDefaultC     () const { return _defaultC;         }
+	double         maxPhotonEnergy () const { return _maxPhotonEnergy;  }  ///< returns max photon energy in lab frame [GeV] (for vectormesons only)
 
 	void crossSectionCalculation(const double bwnormsave);
 	// Will think about it...For VMs we just calculate it
@@ -70,27 +70,30 @@ public:
 
 private:
 
-	beamBeamSystem _bbs;
-  
 	double nepoint(const double Egamma,
 	               const double bmin);
   
-	starlightConstants::particleTypeEnum _sigmaPID;
-	double                               _sigmaProtonEnergy;
-	double                               _sigmaGamma_em;
-	int                                  _sigmaBreakup;
-	double                               _bSlope;
-	double                               _f2o4pi;
-	double                               _ANORM;
-	double                               _BNORM;
-	double                               _defaultC;
-	double                               _channelMass;
-	double                               _lum;
-	double                               _EgMax;
-	double                               _width;
-	int                                  _sigmaCoherence;  // 1=coherent, 0=incoherent
-	double                               _sigmaCoherenceFactor;
+	beamBeamSystem _bbs;
+  
+	// copied from inputParameters
+	double                               _protonEnergy;
+	double                               _beamLorentzGamma;    ///< Lorentz gamma factor of beams in collider frame
+	starlightConstants::particleTypeEnum _particleType;
+	int                                  _beamBreakupMode;     ///< breakup mode for beam particles
+	bool                                 _coherentProduction;  ///< if true, production is coherent, else incoherent
+	double                               _incoherentFactor;    ///< allows to scale the incoherent contribution in vector meson production
 	int                                  _sigmaNucleus;
+
+	// locally defined parameters
+	double _slopeParameter;    ///< slope of t-distribution [(GeV/c)^{-2}]
+	double _vmPhotonCoupling;  ///< vectormeson-photon coupling constant f_v / 4 pi (cf. Eq. 10 in KN PRC 60 (1999) 014903)
+	double _ANORM;
+	double _BNORM;
+	double _defaultC;
+	double _luminosity;       ///< luminosity [10^{26} cm^{-2} sec^{-1}]
+	double _maxPhotonEnergy;  ///< max photon energy in lab frame [GeV] (for vectormesons only)
+	double _width;            ///< width of the produced system  [GeV/c^2]
+	double _channelMass;      ///< mass of the produced system  [GeV/c^2]
 };
 
 

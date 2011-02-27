@@ -130,7 +130,7 @@ wideResonanceCrossSection::crossSectionCalculation(const double bwnormsave)
 			ega12 = 0.5*W*exp(y12);
       
 			if(ega1 < Eth) continue;
-			if(ega2 > getMaxPhotonEnergy()) continue;
+			if(ega2 > maxPhotonEnergy()) continue;
 			// check it !!
           
 			if(J == 0){
@@ -165,7 +165,7 @@ wideResonanceCrossSection::crossSectionCalculation(const double bwnormsave)
 		}
 	}
                                                                                                                                                       
-	rate=getLum()*int_r;
+	rate=luminosity()*int_r;
   
 	cout<<" Cross section (mb): "<<10.*int_r<<endl;
 	cout<<" Production rate   : "<<rate<<" Hz"<<endl;
