@@ -40,5 +40,25 @@ upcEvent::upcEvent() :
         ,_vertices(0)
 { }
 
+upcEvent::upcEvent(starlightConstants::event &ev) :
+        _NTracks(0)
+        ,_particles(0)
+        ,_vertices(0)
+{
+  for(int i = 0; i < ev._numberOfTracks; i++)
+    {
+      starlightParticle p(
+			  ev.px[i], 
+			  ev.py[i], 
+			  ev.pz[i], 
+			  starlightConstants::UNKNOWN, 
+			  starlightConstants::UNKNOWN, 
+			  ev._fsParticle[i],
+			  ev._charge[i]
+			  );
+      addParticle(p);
+    }
+}
+
 upcEvent::~upcEvent()
 { }

@@ -46,6 +46,7 @@ class upcEvent
    public:
 
       upcEvent();
+      upcEvent(starlightConstants::event &ev);
       ~upcEvent();
 
 //      upcEvent & operator  = (const starlightConstants::event &);
