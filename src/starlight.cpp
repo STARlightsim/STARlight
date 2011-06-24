@@ -226,6 +226,7 @@ starlight::createEventChannel()
 		{
 #ifdef ENABLE_PYTHIA
 			// PythiaOutput = true;
+ 		        cout<<"Pythia is enabled!"<<endl;
 			return true;
 #endif
 			printWarn << "Starlight is not compiled against Pythia8; "
@@ -236,7 +237,8 @@ starlight::createEventChannel()
 	case F2PRIME:
 	case ZOVERZ03:
 		{
-#ifdef ENABLE_PYTHIA
+		  //  #ifdef ENABLE_PYTHIA
+	 	        cout<<" This is f2, f2prim, zoverz03 "<<endl; 
 			_eventChannel= new Gammagammasingle(*_inputParameters, *_beamSystem);
 			if (_eventChannel)
 				return true;
@@ -244,10 +246,10 @@ starlight::createEventChannel()
 				printWarn << "cannot construct Gammagammasingle event channel." << endl;
 				return false;
 			}
-#endif
-			printWarn << "Starlight is not compiled against Pythia8; "
-			          << "Gammagammasingle event channel cannot be used." << endl;
-			return false;
+			// #endif
+			//			printWarn << "Starlight is not compiled against Pythia8; "
+			//          << "Gammagammasingle event channel cannot be used." << endl;
+			// return false;
 		}
 	case RHO:
 	case RHOZEUS:

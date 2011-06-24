@@ -30,19 +30,17 @@
 //
 ///////////////////////////////////////////////////////////////////////////
 
-
-#ifdef ENABLE_PYTHIA
-
-
 #include <iostream>
 #include <fstream>
 #include <cmath>
 #include <vector>
 
+
 #include "starlightconstants.h"
 #include "gammagammasingle.h"
+#ifdef ENABLE_PYTHIA
 #include "PythiaStarlight.h"
-
+#endif
 
 using namespace std;
 
@@ -51,7 +49,9 @@ using namespace std;
 Gammagammasingle::Gammagammasingle(inputParameters& input, beamBeamSystem& bbsystem)
 : eventChannel(input, bbsystem)
 {
+#ifdef ENABLE_PYTHIA
   pythia = new pythiaStarlight();
+
   std::cout << "Initialising pythia" << std::endl;
   //TODO: remove the env var stupidity...	
   const char* pythiaPath = getenv("PYTHIADIR");
@@ -65,7 +65,7 @@ Gammagammasingle::Gammagammasingle(inputParameters& input, beamBeamSystem& bbsys
     {
       std::cerr << "ERROR: Trying to initialise pythia but cannot find the PYTHIADIR environment variable, please set it accordingly" << std::endl;
     }
-
+#endif
   //Initialize randomgenerator with our seed.
   _randy.SetSeed(input.randomSeed());
   cout<<"Randy in Single Meson construction: "<<_randy.Rndom()<<endl;
@@ -340,7 +340,7 @@ double Gammagammasingle::pp(double E)
 
 
 //______________________________________________________________________________
-void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double &pz1,double &px2,double &py2,double &pz2,int &iFbadevent)
+void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double /*E*/,double W,double px0,double py0,double pz0,double &px1,double &py1,double &pz1,double &px2,double &py2,double &pz2,int &iFbadevent)
 {
   //     This routine decays a particle into two particles of mass mdec,
   //     taking spin into account
@@ -354,13 +354,13 @@ void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,d
   switch(_GGsingInputpidtest){ 
   case starlightConstants::ZOVERZ03:
   case starlightConstants::F2:	
-    mdec = starlightConstants::mpi;
+    mdec = starlightConstants::pionChargedMass;
     break;
   case starlightConstants::F2PRIME:
     //  decays 50% to K+/K-, 50% to K_0's
     ytest = _randy.Rndom();
     if(ytest >= 0.5){
-      mdec = starlightConstants::mK;
+      mdec = starlightConstants::kaonChargedMass;
     }
     else{
       mdec = 0.493677;
@@ -451,220 +451,10 @@ void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,d
 
 
 //______________________________________________________________________________
-starlightConstants::event Gammagammasingle::produceEvent(int &ievent)
-{//returns the vector with the decay particles inside.
-//	onedecayparticle single;
-	starlightConstants::event single;
-	double comenergy = 0.;
-	double rapidity = 0.;
-	double parentE = 0.;
-	double parentmomx=0.,parentmomy=0.,parentmomz=0.;
-        int iFbadevent=0;
-	starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
-	double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
-	double px3=0.,px4=0.,py3=0.,py4=0.,pz3=0.,pz4=0.;
-	double theta=0.,phi=0.;//angles from jetset
-//this function decays particles and writes events to a file
-	//zeroing out the event structure
-                single._numberOfTracks=0;
-        for(int i=0;i<4;i++)
-        {
-                single.px[i]=0.;
-                single.py[i]=0.;
-                single.pz[i]=0.;
-                single._fsParticle[i]=starlightConstants::UNKNOWN;
-                single._charge[i]=0;
-        }
-
-
-		double xtest=0.,ztest=0.;
-
-
-		pickw(comenergy);
-
-                picky(rapidity);
-
-                parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
-
-	switch(_GGsingInputpidtest){
-        case starlightConstants::ZOVERZ03:
-		//Decays into two pairs.
-		parentmomx=parentmomx/2.;
-		parentmomy=parentmomy/2.;
-		parentmomz=parentmomz/2.;
-		//Pair #1	
-		twoBodyDecay(ipid,parentE,comenergy,parentmomx,parentmomy,parentmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
-		//Pair #2
-		twoBodyDecay(ipid,parentE,comenergy,parentmomx,parentmomy,parentmomz,px3,py3,pz3,px4,py4,pz4,iFbadevent);
-		//Now add them to vectors to be written out later.
-		
-		single._numberOfTracks=4;//number of tracks per event
-		if (iFbadevent==0){
-                                                                                                                                                        
-                        xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
-			ztest = _randy.Rndom();
-			//Assigning charges randomly.
-                        if (xtest<0.5)
-                        {
-                                single._charge[0]=1;//q1=1;
-                                single._charge[1]=-1;//q2=-1;
-                        }
-                        else{
-                                single._charge[0]=1;//q1=-1;
-                                single._charge[1]=-1;//q2=1;
-                        }
-			if (ztest<0.5)
-			{
-				single._charge[2]=1;//q3=1;
-				single._charge[3]=-1;//q4=-1;
-			}
-			else{
-				single._charge[2]=-1;//q3=-1;
-				single._charge[3]=1;//q4=1;
-			}
-                        //Track #1
-                        single.px[0]=px1;
-                        single.py[0]=py1;
-                        single.pz[0]=pz1;
-                        single._fsParticle[0]=ipid;
-                        //Track #2                                                                                                                      
-                        single.px[1]=px2;
-                        single.py[1]=py2;
-                        single.pz[1]=pz2;
-                        single._fsParticle[1]=ipid;
-			//Track #3
-			single.px[2]=px3;
-                        single.py[2]=py3;
-                        single.pz[2]=pz3;
-                        single._fsParticle[2]=ipid;
-			//Track #4
-			single.px[3]=px4;
-                        single.py[3]=py4;
-                        single.pz[3]=pz4;
-                        single._fsParticle[3]=ipid;
-
-                        ievent=ievent+1;
-		}	
-
-		break;
-	case starlightConstants::F2:
-	case starlightConstants::F2PRIME:
-	        twoBodyDecay(ipid,parentE,comenergy,parentmomx,parentmomy,parentmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
-		
-		single._numberOfTracks=2;
-		if (iFbadevent==0){
-
-			xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
-			if (xtest<0.5)
-			{
-				single._charge[0]=1;//q1=1;
-				single._charge[1]=-1;//q2=-1;
-			}
-			else{
-				single._charge[0]=-1;//q1=-1;
-				single._charge[1]=1;//q2=1;
-			}	
-			//Track #1
-			single.px[0]=px1;
-			single.py[0]=py1;
-			single.pz[0]=pz1;
-			single._fsParticle[0]=ipid; 
-			//Track #2
-                	single.px[1]=px2;
-	                single.py[1]=py2;
-        	        single.pz[1]=pz2;
-                	single._fsParticle[1]=ipid;
-			ievent=ievent+1;
-		}
-		break;
-	default://This will be jetset stuff...just need to add link to jetset program
-		
-		//cout << "Submitting "<<_GGsingInputpidtest<<" to jetset to decay."<<endl;
-		//calculate theta and phi of the particle being submitted to jetset.
-		//We do not need to do this anymore?  Pythia takes pid,px,py,pz,e, and m
-		//thephi(comenergy,parentmomx,parentmomy,parentmomz,parentE,theta,phi);
-		///lu1ent(0,pid,E,theta,phi);
-		//Lets begin to link Pythia8 into starlight.  Probably best to do this in main.cpp
-		//However, we only do pythia here for the time being.  Lets be self contained in case
-		//We want to remove it later or whatever other reason.
-		/*#include "Pythia.h"
-		using namespace Pythia8;
-		// Generator; shorthand for event.
-  		Pythia pythia;
-  		Event& event = pythia.event;
-		// Key requirement: switch off ProcessLevel, and thereby also PartonLevel.
-  		pythia.readString("ProcessLevel:all = off");
-  		//When limittau0 is on, only particles with tau0<tau0max are decayed.
-  		pythia.readString("ParticleDecays:limitTau0 = on");
-  		//Default tau0 max is 10mm/c, we are setting it to 1mm/c
-  		pythia.readString("ParticleDecays:tau0Max = 1");
-		// Provide printout of initial information.
- 		pythia.settings.listChanged();//Useful for earlier stages.
-  		// Initialize.
-  		pythia.init();*/
-		
-		//Reseting the event.
-		Pythia8::Event &event = pythia->getPythia()->event;
-		event.reset();
-		//Adding an event to pythia
-		//Adding Particles information (id,status,color,anticolor,px,py,pz,energy,restmass)
-		double restmass=0.;
-		restmass=getMass();
-		double tempx=0.,tempy=0.,tempz=0.;
-		event.append(_GGsingInputpidtest,1,0,0,parentmomx,parentmomy,parentmomz,parentE,restmass);
-
-		// Generate events. Quit if failure.
-    		if (!pythia->getPythia()->next()) {
-      		cout << " Event generation aborted prematurely, owing to error! Gammagammasingle::produceevent\n";
-      		break;
-    		}
-		single._vertx[0]=0.;
-		single._verty[0]=0.;
-		single._vertz[0]=0.;
-		single._numberOfVertices=1;
-	
-		//cout<<"Event statistics that I can output: "<<endl;
-        	//cout<<"Event size: "<<event.size()<<endl;
-		single._numberOfTracks=(event.size()-1);
-        	for(int j=1;j<event.size();j++){//skipping event[0], this just outputs the mother as if the beam/system
-			int b=j-1;//start counting at 0 for arrays in single
-			single._charge[b]=1;//Charge should be returned on the id
-			single.px[b]=event[j].px();
-			single.py[b]=event[j].py();
-			single.pz[b]=event[j].pz();
-			single._fsParticle[b]=event[j].id();
-			single._mother1[b]=event[j]._mother1();
-			single._mother2[b]=event[j]._mother2();
-			single._daughter1[b]=event[j]._daughter1();
-			single._daughter2[b]=event[j]._daughter2();
-		//might have to change the type for _fsParticle since pythia could return something we do not have defined.
-			if(!(event[j].xProd()==tempx&&event[j].yProd()==tempy&&event[j].zProd()==tempz)){
-				single._numberOfVertices++;
-				single._vertx[single._numberOfVertices-1]=event[j].xProd();
-				single._verty[single._numberOfVertices-1]=event[j].yProd();
-				single._vertz[single._numberOfVertices-1]=event[j].zProd();
-				tempx=event[j].xProd();
-                                tempy=event[j].yProd();
-                                tempz=event[j].zProd();
-			}
-/*	
-        	cout<<"Event["<<j<<"] pid: "<<event[j].id()<<" p: "<<event[j].px()<<" "<<event[j].py()<<" "<<event[j].pz()<<endl;
-        	cout<<" E: "<<event[j].e()<<" m: "<<event[j].m()<<endl;
-        	cout<<"Vertex(x,y,z) : "<<setprecision(10)<<event[j].xProd()<<" "<<event[j].yProd()<<" "<<event[j].zProd()<<endl;
-		cout<<"Mother1,2: "<<event[j]._mother1()<<" "<<event[j]._mother2()<<" Daughters1,2: "<<event[j]._daughter1()<<" "<<event[j]._daughter2()<<endl;
-		}//forloop
-		for(int c=0;c<single._numberOfVertices;c++){
-			cout<<"vertex: "<<single._vertx[c]<<" "<<single._verty[c]<<" "<<single._vertz[c]<<endl;*/
-
-
-		}
-		ievent=ievent+1;
-		
-
-
-
-	}
-	return single;
+starlightConstants::event Gammagammasingle::produceEvent(int &/*ievent*/)
+{
+  // Not in use anymore, default event struct returned
+  return starlightConstants::event();
 }
 
 
@@ -673,10 +463,10 @@ starlightConstants::event Gammagammasingle::produceEvent(int &ievent)
 //starlightConstants::event Gammagammasingle::produceEvent(int &ievent)
 upcEvent Gammagammasingle::produceEvent()
 {
-	 cout << "NOT IMPLEMENTED!" << endl;
+  //	 cout << "NOT IMPLEMENTED!" << endl;
 	 
-	 return upcEvent();
-	 int ievent;
+  //	 return upcEvent();
+	 int ievent = 0;
 
   //    returns the vector with the decay particles inside.
   //	onedecayparticle single;
@@ -689,7 +479,7 @@ upcEvent Gammagammasingle::produceEvent()
   starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
   double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
   double px3=0.,px4=0.,py3=0.,py4=0.,pz3=0.,pz4=0.;
-  double theta=0.,phi=0.;//angles from jetset
+  //  double theta=0.,phi=0.;//angles from jetset
   double xtest=0.,ztest=0.;
  
 
@@ -796,7 +586,7 @@ upcEvent Gammagammasingle::produceEvent()
     break;
   default:
     //This will be jetset stuff...just need to add link to jetset program
-    
+   #ifdef ENABLE_PYTHIA    
     //cout << "Submitting "<<_GGsingInputpidtest<<" to jetset to decay."<<endl;
     //calculate theta and phi of the particle being submitted to jetset.
     //We do not need to do this anymore?  Pythia takes pid,px,py,pz,e, and m
@@ -867,8 +657,12 @@ upcEvent Gammagammasingle::produceEvent()
       }
     }
     ievent=ievent+1;
+    #else
+    break;
+    #endif
   }
-  // return single;
+
+  return upcEvent(single);
 }
 
 
@@ -997,4 +791,4 @@ double Gammagammasingle::getSpin()
 }
 
 
-#endif
+
