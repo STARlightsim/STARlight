@@ -46,6 +46,7 @@ using namespace std;
 
 //______________________________________________________________________________
 readLuminosity::readLuminosity(const inputParameters& input)//:inputread(input)
+: _Warray(0), _Yarray(0), _Farray(0)
 {
   //storing inputparameters into protected variables for the object to use them
   _ReadInputNPT=input.nmbPtBinsInterference();
@@ -59,14 +60,30 @@ readLuminosity::readLuminosity(const inputParameters& input)//:inputread(input)
 
 //______________________________________________________________________________
 readLuminosity::~readLuminosity()
-{ }
+{ 
+  if(_Warray) delete [] _Warray;
+  if(_Yarray) delete [] _Yarray;
+  if(_Farray) delete [] _Farray;
+}
 
 
 //______________________________________________________________________________
 void readLuminosity::read()
 {
+  
+  if(!_Warray) _Warray = new double[_ReadInputnumw];
+  if(!_Yarray) _Yarray = new double[_ReadInputnumy];
+  if(!_Farray) 
+  {
+    _Farray = new double*[_ReadInputnumw];
+    for(int i = 0; i < _ReadInputnumw; i++)
+    {
+      _Farray[i] = new double[_ReadInputnumy];
+    }
+  }
   double dummy[19]; //14//18
-  double (*finterm)[starlightLimits::MAXWBINS]=new double[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];  
+//  double (*finterm)[starlightLimits::MAXWBINS]=new double[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];  
+  
   //decreased from 1000*1000; too big! causes fault!
   double fpart =0.;
   double fptsum=0.;
@@ -97,34 +114,34 @@ void readLuminosity::read()
     }
   }
 
-  if(_ReadInputgg_or_gP == 1) goto L1000;
-  if(_ReadInputinterferencemode == 0) goto L1000;
-  // only numy/2 y bins here, from 0 (not -ymax) to ymax
- 
-  for (int i=0;i<_ReadInputnumy/2;i++){
-    //fmax=0;
-    //we want to convert _fptarray to an integral array where fpt(i,j) is near 0, and fpt(j,NPT) ~1. This will facilitate a simple table loookup
-    fptsum=0.;
-    for(int j=0;j<_ReadInputNPT;j++){
-      wylumfile >> fpart;
-      finterm[i][j] = fpart;
-      _fptarray[i][j]=0.;
-      fptsum=fptsum+fpart;
-    }
-    //convert array to integral
-    _fptarray[i][0]=finterm[i][0]/fptsum;
-    for(int j=1;j<_ReadInputNPT;j++){
-      for(int k=0;k<=j;k++){
-	_fptarray[i][j]=_fptarray[i][j]+finterm[i][k];
-      }
-      _fptarray[i][j]=_fptarray[i][j]/fptsum;
-    }
-  }
+ if (_ReadInputgg_or_gP != 1 && _ReadInputinterferencemode != 0) {
+        // only numy/2 y bins here, from 0 (not -ymax) to ymax
+        double **finterm  = new double*[starlightLimits::MAXWBINS];
+        for (int i = 0; i < starlightLimits::MAXWBINS; i++) finterm[i] = new double[starlightLimits::MAXYBINS];
+        for (int i=0;i<_ReadInputnumy/2;i++) {
+            //fmax=0;
+            //we want to convert _fptarray to an integral array where fpt(i,j) is near 0, and fpt(j,NPT) ~1. This will facilitate a simple table loookup
+            fptsum=0.;
+            for (int j=0;j<_ReadInputNPT;j++) {
+                wylumfile >> fpart;
+                finterm[i][j] = fpart;
+                _fptarray[i][j]=0.;
+                fptsum=fptsum+fpart;
+            }
+            //convert array to integral
+            _fptarray[i][0]=finterm[i][0]/fptsum;
+            for (int j=1;j<_ReadInputNPT;j++) {
+                for (int k=0;k<=j;k++) {
+                    _fptarray[i][j]=_fptarray[i][j]+finterm[i][k];
+                }
+                _fptarray[i][j]=_fptarray[i][j]/fptsum;
+            }
+        }
+        delete [] finterm;
 
- L1000:
-
+    }
   wylumfile >> _bwnormsave;
   wylumfile.close();
-  delete[] finterm;	
+  //8delete[] finterm;	
   return;
 }
