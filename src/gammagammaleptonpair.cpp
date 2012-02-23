@@ -710,8 +710,8 @@ void Gammagammaleptonpair::tauDecay(double &px1,double &py1,double &pz1,double &
 	dir = -1.;
 
     //     get two random numbers to compare with
-    ran1 = _randy.Rndom()*_tautolangle[100];//(random()/(RAND_MAX+1.0))  * _tautolangle[100];
-    ran2 = _randy.Rndom()*_tautolangle[100];//(random()/(RAND_MAX+1.0))  * _tautolangle[100];
+    ran1 = _randy.Rndom()*_tautolangle[99];//(random()/(RAND_MAX+1.0))  * _tautolangle[100];
+    ran2 = _randy.Rndom()*_tautolangle[99];//(random()/(RAND_MAX+1.0))  * _tautolangle[100];
 
     //     find the angles corrsponding to those numbers
     theta1 = 0.;
