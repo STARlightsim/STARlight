@@ -109,22 +109,23 @@ beamBeamSystem::probabilityOfBreakup(const double D)
 		// a bunch of commenting ifs
 		double BIter = 1.0 * Bmin;
 
-		if (_beamBreakupMode == 1) //Replacing RGeo, should be Rnuc1+Rnuc2?
-			printInfo << "Hard Sphere Break criteria. b > " << 2. * _beam1.nuclearRadius() << endl;
-		if (_beamBreakupMode == 2) 
-			printInfo << "Requiring XnXn [Coulomb] breakup. bmin = " << Bmin << endl;
-		if (_beamBreakupMode == 3) 
-			printInfo << "Requiring 1n1n [Coulomb only] breakup. bmin = " << Bmin << endl;
-		if (_beamBreakupMode == 4) 
-			printInfo << "Requiring both nuclei to remain intact. bmin = " << Bmin << endl;
-		if (_beamBreakupMode == 5) 
-			printInfo << "Requiring no hadronic interactions. bmin = " << Bmin << endl;
-		if (_beamBreakupMode == 6) 
-			printInfo << "Requiring breakup of one or both nuclei. bmin = " << Bmin << endl;
-		if (_beamBreakupMode == 7) 
-			printInfo << "Requiring breakup of one nucleus (Xn,0n). bmin = " << Bmin << endl;
-
 		if ((_beam1.Z() != 1) && (_beam1.A() != 1)) {
+
+		        if (_beamBreakupMode == 1) 
+			    printInfo << "Hard Sphere Break criteria. b > " << 2. * _beam1.nuclearRadius() << endl;
+		        if (_beamBreakupMode == 2) 
+			    printInfo << "Requiring XnXn [Coulomb] breakup. " << endl;
+		        if (_beamBreakupMode == 3) 
+		 	    printInfo << "Requiring 1n1n [Coulomb only] breakup. " << endl;
+		        if (_beamBreakupMode == 4) 
+			    printInfo << "Requiring both nuclei to remain intact. " << endl;
+		        if (_beamBreakupMode == 5) 
+			    printInfo << "Requiring no hadronic interactions. " << endl;
+		        if (_beamBreakupMode == 6) 
+			    printInfo << "Requiring breakup of one or both nuclei. " << endl;
+		        if (_beamBreakupMode == 7) 
+			    printInfo << "Requiring breakup of one nucleus (Xn,0n). " << endl;
+
 			//pp may cause segmentation fault in here and it does not use this...
 			for (int k = 1; k <= NStep; ++k) {
 				_pHadronBreakup = 0;

@@ -56,8 +56,8 @@ twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2,int,double lumi
 //______________________________________________________________________________
 twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2,int,inputParameters& input):beamBeamSystem(beam_1,beam_2,input),_input2photon(input)
 {
-  cout <<"Inside 2photonlumin, beam_1 woodsaxon: "<<beam_1.woodSaxonRadius()<<endl;
-  cout <<"Inside 2photonlumin, beam_2 woodsaxon: "<<beam_2.woodSaxonRadius()<<endl;
+  cout <<"Inside 2photonlumin, beam_1 nuclear radius: "<<beam_1.nuclearRadius()<<endl;
+  cout <<"Inside 2photonlumin, beam_2 nuclear radius: "<<beam_2.nuclearRadius()<<endl;
   //Lets check to see if we need to recalculate the luminosity tables
   twoPhotonDifferentialLuminosity();
 }
@@ -167,8 +167,8 @@ double twoPhotonLuminosity::integral(double Normalize)
 
   EPS = .01*Normalize;   //This is EPS for integration, 1% of previous integral value.
   // Change this to the Woods-Saxon radius to be consistent with the older calculations (JN 230710) 
-  //  RM  = beam1().nuclearRadius()/starlightConstants::hbarcmev;  //Assumes symmetry?
-  RM  = beam1().woodSaxonRadius()/starlightConstants::hbarcmev;  
+  RM  = beam1().nuclearRadius()/starlightConstants::hbarcmev;  //Assumes symmetry?
+  // RM  = beam1().woodSaxonRadius()/starlightConstants::hbarcmev;  
 
   NIter = 10000 + (int)1000000*(int)Normalize; //if integral value is very small, we don't do too many intertions to get precision down to 1%
   NIterMin = 600;

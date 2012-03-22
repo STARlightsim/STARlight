@@ -130,7 +130,7 @@ nucleus::nuclearRadius() const
 		return 0.7;   // [fm]
 	if ((_Z == 1) && (_A == 2))  // deuteron
 		return 1.9;   // [fm]
-	return woodSaxonRadius();    // Wood-Saxon radius
+	return 1.2 * pow(_A, 1. / 3.); 
 }
 
 

@@ -52,7 +52,7 @@ public:
  
 	int    Z              () const { return _Z;                     }  ///< returns atomic number of nucleus
 	int    A              () const { return _A;                     }  ///< returns nucleon number of nucleus
-	double woodSaxonRadius() const { return 1.2 * pow(_A, 1. / 3.); }  ///< returns Wood-Saxon nuclear radius [fm] (Fermi model)
+	// double woodSaxonRadius() const { return 1.2 * pow(_A, 1. / 3.); }  ///< returns Wood-Saxon nuclear radius [fm] (Fermi model)
 	double nuclearRadius  () const; ///< returns nuclear radius [fm]; except for some special nuclei this is the Wood-Saxon radius (Fermi model)
 
 	double formFactor(const double t) const;  ///< computes form factor for given squared 4-momentum transfer
