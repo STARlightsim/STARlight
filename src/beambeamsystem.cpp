@@ -145,8 +145,9 @@ beamBeamSystem::probabilityOfBreakup(const double D)
 				BIter = BIter * Step;
 				ProbTot[k] = exp(-1 * _pHadronBreakup) * _pPhotonBreakup;
 			}
-			ifirst = 1;
+			//			ifirst = 1;
 		}
+		ifirst = 1;
 	}
 
 	double PofB = 0.; // PofB = 1 means that there will be a UPC event and PofB = 0 means no UPC
