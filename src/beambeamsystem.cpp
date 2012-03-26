@@ -156,14 +156,14 @@ beamBeamSystem::probabilityOfBreakup(const double D)
 	// Do pp here
 	if ((_beam1.Z() == 1) && (_beam1.A() == 1)) {  
 		// again, using first beam, should be split up to be more specific
-		// ppslope=19.8;
-		// GammaProfile = exp(-D * D / (2. * hbarc * hbarc * ppslope));
-		// PofB = (1. - GammaProfile) * (1. - GammaProfile);
-		if (D < 2. * _beam1.nuclearRadius())
-			//Should be the total of RNuc1+Rnuc2,used only beam #1
-			PofB = 0.0;
-		else
-			PofB = 1.0;
+		double ppslope=19.8;
+		double GammaProfile = exp(-D * D / (2. * hbarc * hbarc * ppslope));
+		PofB = (1. - GammaProfile) * (1. - GammaProfile);
+		// if (D < 2. * _beam1.nuclearRadius())
+		//	//Should be the total of RNuc1+Rnuc2,used only beam #1
+		//	PofB = 0.0;
+		// else
+		//	PofB = 1.0;
 		return PofB;
 	}
 
