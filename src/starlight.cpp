@@ -48,6 +48,7 @@
 #include "psifamily.h"
 #include "twophotonluminosity.h"
 #include "gammaaluminosity.h"
+#include "incoherentPhotonNucleusLuminosity.h"
 #include "upcevent.h"
 #include "eventfilewriter.h"
 #include "starlight.h"
@@ -104,10 +105,16 @@ starlight::init()
 	case PHOTONPOMERONNARROW:  // narrow and wide resonances use
 	case PHOTONPOMERONWIDE:    // the same luminosity function
 		if (!lumTableIsValid) {
-			printInfo << "creating luminosity table for photon-Pomeron channel" << endl;
+			printInfo << "creating luminosity table for coherent photon-Pomeron channel" << endl;
 			photonNucleusLuminosity(*_inputParameters, *_beamSystem);
 		}
 		break;
+        case PHOTONPOMERONINCOHERENT:  // narrow and wide resonances use
+                if (!lumTableIsValid) {
+                        printInfo << "creating luminosity table for incoherent photon-Pomeron channel" << endl;
+                        incoherentPhotonNucleusLuminosity(*_inputParameters, *_beamSystem);
+                }
+                break;
 	default:
 		{
 			printWarn << "unknown interaction type '" << _inputParameters->interactionType() << "'."
@@ -254,7 +261,7 @@ starlight::createEventChannel()
 	case RHO:
 	case RHOZEUS:
 	case FOURPRONG:
-	case OMEGA:  // will probably be three body
+	case OMEGA:  
 	case PHI:
 	case JPSI:
 	case JPSI2S:
@@ -262,11 +269,6 @@ starlight::createEventChannel()
 	case JPSI2S_mumu:
 	case JPSI_ee:
 	case JPSI_mumu:
-		//    {
-		//        _eventChannel = new psiFamily(*_inputParameters, *_beamSystem);
-		//        if (_eventChannel) return true;
-		//        else return false;
-		//    }
 	case UPSILON:
 	case UPSILON_ee:
 	case UPSILON_mumu:
@@ -296,6 +298,17 @@ starlight::createEventChannel()
 					return false;
 				}
 			}
+
+                        if (_inputParameters->interactionType() == PHOTONPOMERONINCOHERENT) {
+                                _eventChannel = new Gammaaincoherentvm(*_inputParameters, *_beamSystem);
+                                if (_eventChannel)
+                                        return true;
+                                else {
+                                        printWarn << "cannot construct Gammaanarrowvm event channel." << endl;
+                                        return false;
+                                }
+                        }
+
 			printWarn << "interaction type '" << _inputParameters->interactionType() << "' "
 			          << "cannot be used with particle type '" << _inputParameters->prodParticleType() << "'. "
 			          << "cannot create event channel." << endl;
