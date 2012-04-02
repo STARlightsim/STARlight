@@ -174,6 +174,9 @@ inputParameters::init(const string& configFileName)
 	case 3:
 		_interactionType = PHOTONPOMERONWIDE;
 		break;
+        case 4:
+                _interactionType = PHOTONPOMERONINCOHERENT;
+                break;
 	default:
 		printWarn << "unknown production mode '" << _productionMode << "'" << endl;
 		return false;
