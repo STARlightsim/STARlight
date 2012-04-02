@@ -109,7 +109,8 @@ namespace starlightConstants
 		UNSPECIFIED         = 0,
 		PHOTONPHOTON        = 1,
 		PHOTONPOMERONNARROW = 2,
-		PHOTONPOMERONWIDE   = 3
+		PHOTONPOMERONWIDE   = 3,
+                PHOTONPOMERONINCOHERENT = 4
 	};
 
 	//Structure for each event's set of tracks.
