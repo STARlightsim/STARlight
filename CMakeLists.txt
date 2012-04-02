@@ -200,6 +200,8 @@ set(SOURCES
   src/starlightStandalone.cpp
   src/nBodyPhaseSpaceGen.cpp
   src/inputParser.cpp
+  src/incoherentPhotonNucleusLuminosity.cpp
+  src/incoherentVMCrossSection.cpp
   )
 if(ENABLE_PYTHIA) 
   set (SOURCES
