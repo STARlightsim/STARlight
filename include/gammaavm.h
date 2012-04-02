@@ -75,6 +75,7 @@ class Gammaavectormeson : public eventChannel
   int _VMnumy;
   int _VMinterferencemode;
   int _VMCoherence;
+  int _ProductionMode;
   double _VMCoherenceFactor;
   double _VMgamma_em;
   double _VMNPT;
@@ -90,14 +91,12 @@ class Gammaavectormeson : public eventChannel
   
 };
 
-
 class Gammaanarrowvm : public Gammaavectormeson
 {
  public:
   Gammaanarrowvm(inputParameters& input, beamBeamSystem& bbsystem);
   virtual ~Gammaanarrowvm();
 };
-
 
 class Gammaawidevm : public Gammaavectormeson
 {  
@@ -106,5 +105,11 @@ class Gammaawidevm : public Gammaavectormeson
   virtual ~Gammaawidevm();
 };
 
+class Gammaaincoherentvm : public Gammaavectormeson
+{  
+ public:
+  Gammaaincoherentvm(inputParameters& input, beamBeamSystem& bbsystem);
+  virtual ~Gammaaincoherentvm();
+};
 
 #endif  // GAMMAAVM_H
