@@ -204,8 +204,6 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 	}
 
 	_maxPhotonEnergy = 4. * _beamLorentzGamma * hbarc/_bbs.beam1().nuclearRadius(); 
-	//Max photon energy( for VM only, in GeV, lab frame, use beam energy
-	//, nuclear size cutoff)
 }
 
 
@@ -276,15 +274,6 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
 		//artifical 1E-3 to scale down sigma
 		csgA = 1.E-4 * _incoherentFactor * _sigmaNucleus * _slopeParameter * sigmagp(Wgp);
 
-		// Calculating int |F(t)| dt
-		// Using proton formfactor for this case
-		// Note the coherence scaling factor being intergrated with the F(t)
-		// Should it just be F(t)^2?   
-		// Pay attention to the way the formfactor is implemented in nucleus class
-		// Also, notice the tmin value.  It starts higher for dAu, should we proceed
-		// in a similar fashion
-		// Why don't we use formfactors for pp? Is it because it is incorporated in 
-		// the gamma-p fits done for dsigma/dt? Yes?
 	}	else {	// coherent AA interactions
 		// For typical AA interactions.
 		// Calculate V.M.+proton cross section
@@ -335,8 +324,8 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 	double deltaphi,phiiter,dist;
 	static double dide[401];
 	double lnElt;
-	double rA2, rZ2; //Added sergey
-	double flux_r; //Returns the flux.
+	double rA2, rZ2; 
+	double flux_r; 
 	double Xvar;
 	int Ilt;
 	double RNuc=0.,RNuc2=0.;
@@ -346,7 +335,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 	// static ->>> dide,lnEMax,lnEmin,dlnE
 	static int  Icheck = 0;
   
-	//Check first to see if pp (JN0705)
+	//Check first to see if pp 
 	if( _bbs.beam1().A()==1 && _bbs.beam2().A()==1 ){
 		int nbsteps = 400;
 		double bmin = 0.5;
@@ -429,7 +418,6 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 	//  25 GeV for gold at RHIC, 650 GeV for lead at LHC
   
 	Emax=12.*hbarc*_beamLorentzGamma/RNuc;
-	//Will this be diff for dAu?
   
 	//     >> lnEmin <-> ln(Egamma) for the 0th bin
 	//     >> lnEmax <-> ln(Egamma) for the last bin
@@ -482,11 +470,9 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 						// to infinity, following Jackson (2nd edition), Eq. 15.54
 						Xvar=energy*biter/(hbarc*_beamLorentzGamma);
 						// Here, there is nuclear breakup.  So, we can't use the integrated flux
-						//  However, we can do a single flux calculation, at the center of the
-						//  nucleus
-	    
+						// However, we can do a single flux calculation, at the center of the nucleus
 						// Eq. 41 of Vidovic, Greiner and Soff, Phys.Rev.C47,2308(1993), among other places
-						//  this is the flux per unit area
+						// this is the flux per unit area
 						fluxelement  = (rZ*rZ*alpha*energy)*
 							(bessel::dbesk1(Xvar))*(bessel::dbesk1(Xvar))/
 							((pi*_beamLorentzGamma*hbarc)*
@@ -539,7 +525,6 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 			}//end of for
 		}  //end of else
 		// end energy integration
-		// nobody going here any more
     
 		//  In lookup table, store k*dN/dk because it changes less
 		//  so the interpolation should be better
@@ -730,6 +715,15 @@ photonNucleusCrossSection::sigma_A(const double sig_N)
 	sigma_A_r=sum;
  
 	return sigma_A_r;
+}
+
+//______________________________________________________________________________
+double
+photonNucleusCrossSection::sigma_N(const double Wgp)
+{                                                         
+        // Nucleon Cross Section in (fm**2) 
+        double cs = sqrt(16. * pi * _vmPhotonCoupling * _slopeParameter * hbarc * hbarc * sigmagp(Wgp) / alpha);
+        return cs;
 }
 
 
