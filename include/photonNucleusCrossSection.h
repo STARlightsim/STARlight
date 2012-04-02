@@ -65,6 +65,7 @@ public:
 	double photonFlux(const double Egamma);
 	double sigmagp(const double Wgp);
 	double sigma_A(const double sig_N);
+        double sigma_N(const double Wgp);
 	double breitWigner(const double W,
 	                   const double C);
 
