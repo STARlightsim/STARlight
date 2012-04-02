@@ -348,7 +348,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
   
 	//Check first to see if pp (JN0705)
 	if( _bbs.beam1().A()==1 && _bbs.beam2().A()==1 ){
-		int nbsteps = 200;
+		int nbsteps = 400;
 		double bmin = 0.5;
 		double bmax = 5.0 + (5.0*_beamLorentzGamma*hbarc/Egamma);
 		double dlnb = (log(bmax)-log(bmin))/(1.*nbsteps);
@@ -412,7 +412,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 	//  Nuclear breakup is done by PofB
 	//  collect number of integration steps here, in one place
   
-	nbstep=400;
+	nbstep=1200;
 	nrstep=60;
 	nphistep=40;
   
