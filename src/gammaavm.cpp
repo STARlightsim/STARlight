@@ -40,7 +40,7 @@
 #include "photonNucleusCrossSection.h"
 #include "wideResonanceCrossSection.h"
 #include "narrowResonanceCrossSection.h"
-
+#include "incoherentVMCrossSection.h"
 
 using namespace std;
 
@@ -63,7 +63,8 @@ Gammaavectormeson::Gammaavectormeson(inputParameters& input,beamBeamSystem& bbsy
 	_VMdpt=input.ptBinWidthInterference();
 	_randy.SetSeed(input.randomSeed());
 	_VMCoherence=input.coherentProduction();
-	_VMCoherenceFactor=input.coherentProduction();//probably not needed
+	_VMCoherenceFactor=input.coherentProduction();
+        _ProductionMode=input.productionMode();
 
 	switch(_VMpidtest){
 	case starlightConstants::RHO:
@@ -447,7 +448,8 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 		goto L202vm;
 	phi1 = 2.*starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
 
-	if( _bbs.beam1().Z()==1 && _bbs.beam1().A()==1) {
+	if( (_bbs.beam1().Z()==1 && _bbs.beam1().A()==1) || 
+            (_ProductionMode == 4) ) {
 		//dsig/dt= exp(-_VMbslope*t)
 		xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
 		t2 = (-1./_VMbslope)*log(xtest);
@@ -761,8 +763,6 @@ double Gammaavectormeson::pseudoRapidity(double px, double py, double pz)
 //______________________________________________________________________________
 Gammaanarrowvm::Gammaanarrowvm(inputParameters& input,beamBeamSystem& bbsystem):Gammaavectormeson(input,bbsystem)
 {
-	//Need to make sigma object/run it and read in luminosity tables.
-	//will just do that outside...of it?
 	cout<<"Reading in luminosity tables. Gammaanarrowvm()"<<endl;
 	read();
 	cout<<"Creating and calculating crosssection. Gammaanarrowvm()"<<endl;
@@ -774,6 +774,23 @@ Gammaanarrowvm::Gammaanarrowvm(inputParameters& input,beamBeamSystem& bbsystem):
 
 //______________________________________________________________________________
 Gammaanarrowvm::~Gammaanarrowvm()
+{ }
+
+
+//______________________________________________________________________________
+Gammaaincoherentvm::Gammaaincoherentvm(inputParameters& input,beamBeamSystem& bbsystem):Gammaavectormeson(input,bbsystem)
+{
+        cout<<"Reading in luminosity tables. Gammaainkoherentvm()"<<endl;
+        read();
+        cout<<"Creating and calculating crosssection. Gammaainkoherentvm()"<<endl;
+        incoherentVMCrossSection sigma(input,bbsystem);
+        sigma.crossSectionCalculation(_bwnormsave);
+        _VMbslope=sigma.slopeParameter(); 
+}
+
+
+//______________________________________________________________________________
+Gammaaincoherentvm::~Gammaaincoherentvm()
 { }
 
 
