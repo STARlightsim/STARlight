@@ -1,0 +1,92 @@
+
+======= Photonuclear Processes =======
+
+Simulation of photonuclear interactions with STARlight is possible through an interface with DPMJet or Pythia. 
+These interfaces can be enabled through options passed to cmake during the configuration process. However, due 
+to DPMJet depending on a different version of Pythia from what is used in the Pythia interface, both cannot be 
+enabled at the same time. 
+
+The gfortran compiler is required to use the photonuclear interfaces. 
+
+
+    ======= 1. Photonuclear interactions with DPMJet =======
+
+
+        ------- 1.1. Obtaining and installing DPMJet -------
+
+		
+		The DPMJet package can be obtained by contacting the authors as explained here: 
+		http://sroesler.web.cern.ch/sroesler/dpmjet3.html
+
+		Once you have the code proceed with these steps:
+
+		Changle the line containing the OPT variable in the DPMJet Makefile:
+
+		OPT = -c -C -std=legacy -O  -O3 -g -fexpensive-optimizations -funroll-loops -fno-automatic -fbounds-check -v -fPIC
+
+   		----- 64-bit -----
+
+    		You should make sure that all -m32 options are removed from the Makefile. 
+
+    		Unfortunately the DPMJet package depends on a floating point exception trap implementation, 
+		and only a 32-bit version of that is included in the package. An example implementation can be found here:
+
+    		http://www.arsc.edu/arsc/support/news/hpcnews/hpcnews376/
+
+    		Under "Fortran Floating Point Traps for Linux" there is a code example. A file based on this, fpe.c, 
+		can be found in the external directory in Starlight. Move that to your DPMJet directory and run:
+
+    		$ gcc -o fpe.o fpe.c
+
+    		----- End 64-bit -----
+
+    		Then in the DPMJet directory run:
+
+    		$ make
+
+    		------- 1.2. Compiling Starlight with DPMJet interface -------
+
+		To enable the compilation of the DPMJet interface please follow these steps:
+
+    		CMake uses an environment variable $DPMJETDIR to locate the DPMJet object files. 
+
+    		$ export DPMJETDIR=<path to dpmjet>
+
+    		Then create a build directory for Starlight
+
+    		$ mkdir <build-dir>
+
+    		and change into it
+
+    		$ cd <build-dir>
+
+    		Run CMake with the option to enable DPMJet 
+
+    		$ cmake <path-to-starlight-source> -DENABLE_DPMJET=ON
+
+    		Then build it
+
+    		$ make
+
+
+    	------- 1.3. Running Starlight with DPMJet interface -------
+
+
+    		To run Starlight with the DPMJet interface a couple of files are needed in the directory
+		where you want to run Starlight.
+
+    		The files needed are:
+    		slight.in (Starlight config file. An example suitable for DPMJet can be found in config/slight.in.dpmjet)
+   		my.input (DPMJet config file. An example can be found in config/my.input)
+    		dpmjet.dat (Can be found in the DPMJet source directory)
+
+    		In the slight.in file the relevant production modes (PROD_MODE) for DPMJET is:
+
+    		5: A+A single excitation
+    		6: A+A double excitation
+    		7: p+A single excitation
+
+    		In addition the minimum and maximum gamma energies must be set. It is important that 
+		these are within the interval set in the my.input file
+
+
