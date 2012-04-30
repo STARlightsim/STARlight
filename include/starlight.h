@@ -34,9 +34,6 @@
 #ifndef STARLIGHT_H
 #define STARLIGHT_H
 
-#define Starlight_VERSION_MAJOR 1
-#define Starlight_VERSION_MINOR 0
-
 
 #include <string>
 
