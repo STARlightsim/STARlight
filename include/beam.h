@@ -55,6 +55,7 @@ public:
 	double photonFlux(const double impactparameter,
 	                  const double photonEnergy) const;  ///< calculates photon density (number of photons / (energy * area))
 
+	double rapidity() const { return acosh(_beamLorentzGamma); }
 protected:
 
 	//inputParameters inputbeam;
