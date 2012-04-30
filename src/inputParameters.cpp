@@ -38,7 +38,7 @@
 #include "starlightconstants.h"
 #include "inputParameters.h"
 #include "inputParser.h"
-#include "StarlightConfig.h"
+#include "starlightconfig.h"
 
 
 using namespace std;

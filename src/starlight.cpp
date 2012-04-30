@@ -35,7 +35,7 @@
 #include <fstream>
 #include <cstdlib>
 
-#include "StarlightConfig.h"
+#include "starlightconfig.h"
 
 #ifdef ENABLE_PYTHIA
 #include "PythiaStarlight.h"
