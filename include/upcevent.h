@@ -53,15 +53,21 @@ class upcEvent
 
       void addParticle(starlightParticle &part) { _particles.push_back(part); }
       void addVertex(vector3 &vertex) { _vertices.push_back(vertex); }
-      
+      void addGamma(float egamma) { _gammaEnergies.push_back(egamma); }
+
       const std::vector<starlightParticle> * getParticles() const { return &_particles; }
       const std::vector<vector3> * getVertices() const { return &_vertices; }
-      
+      const std::vector<float> * getGammaEnergies() const { return &_gammaEnergies; }
+
+      upcEvent & operator=(const upcEvent&);
+      upcEvent & operator+(const upcEvent&);
+ 
    private:
       
       int _NTracks;
       std::vector<starlightParticle> _particles;
       std::vector<vector3> _vertices;
+      std::vector<float> _gammaEnergies;
 };
 
 

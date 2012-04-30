@@ -62,3 +62,33 @@ upcEvent::upcEvent(starlightConstants::event &ev) :
 
 upcEvent::~upcEvent()
 { }
+
+
+upcEvent& upcEvent::operator=(const upcEvent& rhs)
+{
+
+  if(this != &rhs)
+  {
+    this->_particles = rhs._particles;
+    this->_vertices = rhs._vertices;
+    this->_gammaEnergies = rhs._gammaEnergies;
+  }
+  return *this;
+}
+
+upcEvent& upcEvent::operator+(const upcEvent& ev)
+{
+  for(unsigned int n = 0; n < ev._particles.size(); n++)
+  {
+    this->_particles.push_back(ev._particles.at(n));
+  }
+  for(unsigned int n = 0; n < ev._vertices.size(); n++)
+  {
+    this->_vertices.push_back(ev._vertices.at(n));
+  }
+ for(unsigned int n = 0; n < ev._gammaEnergies.size(); n++)
+  {
+    this->_gammaEnergies.push_back(ev._gammaEnergies.at(n));
+  }
+  return *this;
+}
