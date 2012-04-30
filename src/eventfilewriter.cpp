@@ -60,8 +60,14 @@ int eventFileWriter::writeEvent(upcEvent &event, int eventnumber)
       eventnumber++;
       
       _fileStream << "EVENT: " << eventnumber << " " << numberoftracks << " " << 1 << std::endl;
+      _fileStream << "GAMMAENERGIES:";
+      for(unsigned int n = 0; n < event.getGammaEnergies()->size(); n++)
+      {
+	_fileStream << " " << event.getGammaEnergies()->at(n);
+      }
+      if(event.getGammaEnergies()->size()) _fileStream<< std::endl;
       _fileStream <<"VERTEX: "<<0.<<" "<<0.<<" "<<0.<<" "<<0.<<" "<<1<<" "<<0<<" "<<0<<" "<<numberoftracks<<std::endl;
-      
+
       int ipart = 0;
       std::vector<starlightParticle>::const_iterator part = (event.getParticles())->begin();
       
