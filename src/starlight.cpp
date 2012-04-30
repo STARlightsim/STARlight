@@ -35,8 +35,18 @@
 #include <fstream>
 #include <cstdlib>
 
+#include "StarlightConfig.h"
+
 #ifdef ENABLE_PYTHIA
 #include "PythiaStarlight.h"
+#endif
+
+#ifdef ENABLE_DPMJET
+#include "starlightdpmjet.h"
+#endif
+
+#ifdef ENABLE_PYTHIA6
+#include "starlightpythia.h"
 #endif
 
 #include "reportingUtils.h"
@@ -94,6 +104,7 @@ starlight::init()
 	cout.setf(ios_base::fixed,ios_base::floatfield);
 	cout.precision(15);
 	const bool lumTableIsValid = luminosityTableIsValid();
+	bool createChannel = true;
 	switch (_inputParameters->interactionType())	{
 	case PHOTONPHOTON:
 		if (!lumTableIsValid) {
@@ -115,6 +126,47 @@ starlight::init()
                         incoherentPhotonNucleusLuminosity(*_inputParameters, *_beamSystem);
                 }
                 break;
+#ifdef ENABLE_DPMJET
+	case PHOTONUCLEARSINGLE:
+		createChannel = false;
+		_eventChannel = new starlightDpmJet(*_inputParameters, *_beamSystem);
+		std::cout << "CREATING PHOTONUCLEAR/DPMJET SINGLE" << std::endl;
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->setSingleMode();
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->setMinGammaEnergy(_inputParameters->minGammaEnergy());
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->setMaxGammaEnergy(_inputParameters->maxGammaEnergy());
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->init();
+		break;
+	case PHOTONUCLEARDOUBLE:
+		createChannel = false;
+		_eventChannel = new starlightDpmJet(*_inputParameters, *_beamSystem);
+		std::cout << "CREATING PHOTONUCLEAR/DPMJET DOUBLE" << std::endl;
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->setDoubleMode();
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->setMinGammaEnergy(_inputParameters->minGammaEnergy());
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->setMaxGammaEnergy(_inputParameters->maxGammaEnergy());
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->init();
+		break;
+	case PHOTONUCLEARSINGLEPA:
+		createChannel = false;
+		_eventChannel = new starlightDpmJet(*_inputParameters, *_beamSystem);
+		std::cout << "CREATING PHOTONUCLEAR/DPMJET SINGLE" << std::endl;
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->setSingleMode();
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->setProtonMode();
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->setMinGammaEnergy(_inputParameters->minGammaEnergy());
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->setMaxGammaEnergy(_inputParameters->maxGammaEnergy());
+		dynamic_cast<starlightDpmJet*>(_eventChannel)->init();
+		break;
+#endif
+#ifdef ENABLE_PYTHIA6
+	case PHOTONUCLEARSINGLEPAPY:
+		createChannel = false;
+		_eventChannel = new starlightPythia(*_inputParameters, *_beamSystem);
+		std::cout << "CREATING PHOTONUCLEAR/PYTHIA SINGLE" << std::endl;
+		dynamic_cast<starlightPythia*>(_eventChannel)->setSingleMode();
+		dynamic_cast<starlightPythia*>(_eventChannel)->setMinGammaEnergy(_inputParameters->minGammaEnergy());
+		dynamic_cast<starlightPythia*>(_eventChannel)->setMaxGammaEnergy(_inputParameters->maxGammaEnergy());
+		dynamic_cast<starlightPythia*>(_eventChannel)->init();
+		break;
+#endif
 	default:
 		{
 			printWarn << "unknown interaction type '" << _inputParameters->interactionType() << "'."
@@ -123,8 +175,11 @@ starlight::init()
 		}
 	}
 	
-	if (!createEventChannel())
-		return false;
+	if(createChannel)
+	{
+	  if (!createEventChannel())
+		  return false;
+	}
 
 	_isInitialised = true;
 	return true;
