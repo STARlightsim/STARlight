@@ -40,6 +40,10 @@ set(CMAKE_VERBOSE_MAKEFILE 0)  # if set to 1 compile and link commands are displ
 # the same effect can be achieved by calling 'make VERBOSE=1'
 
 
+# The version number.
+set (Starlight_VERSION_MAJOR 1)
+set (Starlight_VERSION_MINOR 0)
+
 # define project
 project(starlight)
 
@@ -71,7 +75,7 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 # common compiler flags
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-error=unused-but-set-variable -Wno-error=unused-but-set-parameter")
 # flags for specific build types
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
@@ -154,19 +158,45 @@ option (ENABLE_PYTHIA  "Enable compilation against pythia (necessary for certain
 if(ENABLE_PYTHIA)
   find_package(Pythia8)
   if(PYTHIA8_FOUND)
-    find_package(LHAPDF REQUIRED) # implemented for dummy version in Pythia8 
+    set(optionalLibs ${optionalLibs} ${PYTHIA8_LIBRARY})
+    find_package(LHAPDF REQUIRED) # implemented for dummy version in Pythia8
+    set(optionalLibs ${optionalLibs} ${LHAPDF_LIBRARIES})
     option(ENABLE_PYTHIA  "Should we use the Pythia8 library" ON) 
   else() 
     option(ENABLE_PYTHIA  "Should we use the Pythia8 library" OFF) 
   endif()
 endif()
 
+# setup Pythia 6
+option (ENABLE_PYTHIA6  "Enable compilation against pythia 6 (necessary for certain processes)" OFF) 
+if(ENABLE_PYTHIA6)
+   find_package(Pythia6 REQUIRED)
+   if(PYTHIA6_FOUND)
+      set(optionalLibs ${optionalLibs} ${PYTHIA6_LIBRARY})
+      option (ENABLE_PYTHIA6  "Enable compilation against pythia 6 (necessary for certain processes)" ON) 
+      include_directories(pythia6)
+   else(PYTHIA6_FOUND) 
+      option (ENABLE_PYTHIA6  "Enable compilation against pythia 6 (necessary for certain processes)" OFF) 
+   endif(PYTHIA6_FOUND)
+endif()
+
+# setup DPMJET
+option (ENABLE_DPMJET  "Enable compilation against DPMJet" OFF)
+if(ENABLE_DPMJET)
+   find_package(DPMJet REQUIRED)
+   if(DPMJET_FOUND)
+      option (ENABLE_DPMJET  "Enable compilation against DPMJet" ON)       
+   else(DPMJET_FOUND)
+      option (ENABLE_DPMJET  "Enable compilation against DPMJet" OFF)
+   endif(DPMJET_FOUND)
+ endif(ENABLE_DPMJET)
+
 
 # set include directories
 set(INCLUDE_DIRECTORIES
 	${CMAKE_SOURCE_DIR}/include
-	#	${PROJECT_BINARY_DIR}
-	${PYTHIA8_INCLUDE_DIR}
+	${PROJECT_BINARY_DIR}
+#	${PYTHIA8_INCLUDE_DIR}
 	)
 include_directories(${INCLUDE_DIRECTORIES})
 
@@ -209,7 +239,22 @@ if(ENABLE_PYTHIA)
 		src/PythiaStarlight.cpp
 		)
 endif()
-
+if(ENABLE_PYTHIA6)
+  set (SOURCES 
+		${SOURCES}
+		src/starlightpythia.cpp
+		src/spectrum.cpp
+		src/spectrumprotonnucleus.cpp
+		)
+endif()
+if(ENABLE_DPMJET)
+  set (SOURCES 
+		${SOURCES}
+		src/starlightdpmjet.cpp
+		src/spectrum.cpp
+		src/spectrumprotonnucleus.cpp
+		)
+endif()
 
 # add Starlight library to the build system
 set(THIS_LIB "Starlib")
@@ -219,11 +264,30 @@ add_library(${THIS_LIB} STATIC ${SOURCES})
 #	"${LHAPDF_LIBRARIES}"
 #)
 
+if(ENABLE_DPMJET)
+  enable_language(Fortran)
+  set(DPMJET_LIB "DpmJetLib")
+  message(STATUS "DPMJet objects: ${DPMJET_OBJECTS}")
+  add_library(${DPMJET_LIB} STATIC dpmjet/dpmjetint.f ${DPMJET_OBJECTS})
+  set(optionalLibs ${optionalLibs} ${DPMJET_LIB})
+
+endif()
+
+if(ENABLE_PYTHIA6)
+  enable_language(Fortran)
+endif()
 
 # add starlight executable to the build system
 add_executable(starlight src/main.cpp)
-target_link_libraries(starlight Starlib ${PYTHIA8_LIBRARY} ${LHAPDF_LIBRARIES})
+#target_link_libraries(starlight Starlib ${PYTHIA8_LIBRARY} ${LHAPDF_LIBRARIES} ${PYTHIA6_LIBRARY} ${DPMJET_LIB} )
+target_link_libraries(starlight Starlib ${optionalLibs} )
+
 #make_executable(starlight src/main.cpp ${THIS_LIB})
+
+configure_file (
+  "${PROJECT_SOURCE_DIR}/starlightconfig.h.in"
+  "${PROJECT_BINARY_DIR}/starlightconfig.h"
+  )
 
 
 message(STATUS "Cmake did not find any errors. run 'make' to build the project.")
