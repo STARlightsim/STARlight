@@ -110,9 +110,13 @@ namespace starlightConstants
 		PHOTONPHOTON        = 1,
 		PHOTONPOMERONNARROW = 2,
 		PHOTONPOMERONWIDE   = 3,
-                PHOTONPOMERONINCOHERENT = 4
+                PHOTONPOMERONINCOHERENT = 4,
+                PHOTONUCLEARSINGLE  = 5,
+		PHOTONUCLEARDOUBLE  = 6,
+		PHOTONUCLEARSINGLEPA = 7,
+		PHOTONUCLEARSINGLEPAPY = 8
+		
 	};
-
 	//Structure for each event's set of tracks.
 	struct event{
  
