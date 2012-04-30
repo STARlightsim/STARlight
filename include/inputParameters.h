@@ -36,6 +36,7 @@
 
 
 #include "starlightconstants.h"
+#include <string>
 //This is where we read in our input values.
 
 
@@ -78,7 +79,9 @@ public:
 	double       maxPtInterference     () const { return _maxPtInterference;      }  ///< returns maximum p_T for interference calculation [GeV/c]
 	int          nmbPtBinsInterference () const { return _nmbPtBinsInterference;  }  ///< returns number of p_T bins for interference calculation
 	double       ptBinWidthInterference() const { return _ptBinWidthInterference; }  ///< returns width of p_T bins for interference calculation [GeV/c]
-
+	double 	     minGammaEnergy        () const { return _minGammaEnergy;         }  ///< returns minimum gamma energy in case of photo nuclear processes [GeV]
+	double       maxGammaEnergy        () const { return _maxGammaEnergy;         }  ///< returns maximum gamma energy in case of photo nuclear processes [GeV]
+	
 	starlightConstants::particleTypeEnum    prodParticleType     () const { return _particleType;    }  ///< returns type of produced particle
 	starlightConstants::decayTypeEnum       prodParticleDecayType() const { return _decayType;       }  ///< returns decay type of produced particle
 	starlightConstants::interactionTypeEnum interactionType      () const { return _interactionType; }  ///< returns interaction type
@@ -140,7 +143,9 @@ private:
 	int          _nmbPtBinsInterference;   ///< number of p_T bins for interference calculation
 	double       _ptBinWidthInterference;  ///< width of p_T bins for interference calculation [GeV/c]
 	double       _protonEnergy;
-
+	double       _minGammaEnergy;          ///< minimum gamma energy in case of photo nuclear processes [GeV]
+	double       _maxGammaEnergy;          ///< maximum gamma energy in case of photo nuclear processes [GeV]
+	
 	starlightConstants::particleTypeEnum    _particleType;
 	starlightConstants::decayTypeEnum       _decayType;
 	starlightConstants::interactionTypeEnum _interactionType;

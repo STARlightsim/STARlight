@@ -38,6 +38,7 @@
 #include "starlightconstants.h"
 #include "inputParameters.h"
 #include "inputParser.h"
+#include "StarlightConfig.h"
 
 
 using namespace std;
@@ -77,7 +78,9 @@ inputParameters::inputParameters()
 	  _maxPtInterference     (0),
 	  _nmbPtBinsInterference (0),
 	  _ptBinWidthInterference(0),
-	  _protonEnergy          (0)
+	  _protonEnergy          (0),
+	  _minGammaEnergy	 (0),
+	  _maxGammaEnergy	 (0)
 { }
 
 
@@ -143,6 +146,9 @@ inputParameters::init(const string& configFileName)
 	ip.addDoubleParameter(string("INT_PT_MAX"), &_maxPtInterference);
 	ip.addIntParameter(string("INT_PT_N_BINS"), &_nmbPtBinsInterference);
 	
+	ip.addDoubleParameter(string("MIN_GAMMA_ENERGY"), &_minGammaEnergy, false);
+	ip.addDoubleParameter(string("MAX_GAMMA_ENERGY"), &_maxGammaEnergy, false);
+
 	int nParameters = ip.parseFile(_configFileName);
 	if(nParameters == -1) 
 	{
@@ -177,6 +183,18 @@ inputParameters::init(const string& configFileName)
         case 4:
                 _interactionType = PHOTONPOMERONINCOHERENT;
                 break;
+	case 5:
+		_interactionType = PHOTONUCLEARSINGLE;
+		break;
+	case 6:
+		_interactionType = PHOTONUCLEARDOUBLE;
+		break;
+	case 7:
+		_interactionType = PHOTONUCLEARSINGLEPA;
+		break;
+	case 8:
+		_interactionType = PHOTONUCLEARSINGLEPAPY;
+		break;
 	default:
 		printWarn << "unknown production mode '" << _productionMode << "'" << endl;
 		return false;
