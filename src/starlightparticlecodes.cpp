@@ -42,8 +42,8 @@ int starlightParticleCodes::jetsetToGeant(int particleid)
     if(particleid==-11) jtogx = 2;
     if(particleid==11) jtogx = 3;
     if(particleid==12||particleid==-12||particleid==14||particleid==-14||particleid==16||particleid==-16) jtogx = 4;
-    if(particleid==13) jtogx = 5;
-    if(particleid==-13) jtogx = 6;
+    if(particleid==-13) jtogx = 5;
+    if(particleid==13) jtogx = 6;
     if(particleid==111) jtogx = 7;
     if(particleid==211) jtogx = 8;
     if(particleid==-211) jtogx = 9;
