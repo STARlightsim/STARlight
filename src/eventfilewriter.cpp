@@ -60,7 +60,7 @@ int eventFileWriter::writeEvent(upcEvent &event, int eventnumber)
       eventnumber++;
       
       _fileStream << "EVENT: " << eventnumber << " " << numberoftracks << " " << 1 << std::endl;
-      _fileStream << "GAMMAENERGIES:";
+      if(event.getGammaEnergies()->size()) _fileStream << "GAMMAENERGIES:";
       for(unsigned int n = 0; n < event.getGammaEnergies()->size(); n++)
       {
 	_fileStream << " " << event.getGammaEnergies()->at(n);
@@ -73,10 +73,9 @@ int eventFileWriter::writeEvent(upcEvent &event, int eventnumber)
       
       for (part = event.getParticles()->begin(); part != event.getParticles()->end(); part++, ipart++)
 	{
-	  // TODO:  convert the pdg codes to geant  codes
-	  _fileStream << "TRACK: " << " " << starlightParticleCodes::jetsetToGeant((*part).getCharge() * (*part).getPdgCode()) <<" "<< (*part).GetPx() << " " << (*part).GetPy()
+	  _fileStream << "TRACK: " << " " << starlightParticleCodes::jetsetToGeant((*part).getPdgCode()) <<" "<< (*part).GetPx() << " " << (*part).GetPy()
 		      << " "<< (*part).GetPz() << " " <<eventnumber << " " << ipart << " " << 0 << " "
-		      << (*part).getCharge() * (*part).getPdgCode() <<std::endl;
+		      << (*part).getPdgCode() <<std::endl;
 	}
     }
 
