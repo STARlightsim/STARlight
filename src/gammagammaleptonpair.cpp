@@ -621,10 +621,10 @@ upcEvent Gammagammaleptonpair::produceEvent()
        q2=1;
      }
      // The new stuff
-     starlightParticle particle1(px1, py1, pz1, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, ipid, q1);
+     starlightParticle particle1(px1, py1, pz1, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, -q1*ipid, q1);
      event.addParticle(particle1);
      
-     starlightParticle particle2(px2, py2, pz2, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, ipid, q2);
+     starlightParticle particle2(px2, py2, pz2, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, -q2*ipid, q2);
      event.addParticle(particle2);
      
     }
