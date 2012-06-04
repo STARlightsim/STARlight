@@ -726,6 +726,7 @@ upcEvent Gammaavectormeson::produceEvent()
 		    }*/
 		if (iFbadevent==0&&tcheck==0) {
 			int q1=0,q2=0;
+                        int ipid1,ipid2=0;
 
 			double xtest = _randy.Rndom(); 
 			if (xtest<0.5)
@@ -738,11 +739,18 @@ upcEvent Gammaavectormeson::produceEvent()
 				q2=1;
 			}
 
+                        if ( ipid == 11 || ipid == 13 ){
+                          ipid1 = -q1*ipid;
+                          ipid2 = -q2*ipid;
+                        } else {
+                          ipid1 = q1*ipid;
+                          ipid2 = q2*ipid;
+                        }
 			//     The new stuff
-			starlightParticle particle1(px1, py1, pz1, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, ipid, q1);
+			starlightParticle particle1(px1, py1, pz1, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, ipid1, q1);
 			event.addParticle(particle1);
 
-			starlightParticle particle2(px2, py2, pz2, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, ipid, q2);
+			starlightParticle particle2(px2, py2, pz2, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, ipid2, q2);
 			event.addParticle(particle2);
 			//     End of the new stuff
 
