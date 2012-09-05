@@ -27,8 +27,8 @@
 starlightPythia::starlightPythia(inputParameters &input, beamBeamSystem &bbs) : eventChannel(input, bbs)
         ,_spectrum(0)
         ,_doDoubleEvent(false)
-        ,_minGammaEnergy(6.0)
-        ,_maxGammaEnergy(600000)
+        ,_minGammaEnergy(60.0)
+        ,_maxGammaEnergy(input.maxGammaEnergy())
 {
 }
 
@@ -61,7 +61,7 @@ int starlightPythia::init()
     
     //pythiaInterface::pygive("parp(2)=1.0"); // Cut off c.m. energy (GeV)
   
-    pythiaInterface::pyinit("FIXT", "gamma", "p", 600000.0); // Fixed target, beam, target, beam momentum (GeV/c)
+    pythiaInterface::pyinit("FIXT", "gamma", "p", _maxGammaEnergy); // Fixed target, beam, target, beam momentum (GeV/c)
 
     return 0;
 }
