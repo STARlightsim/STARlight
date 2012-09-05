@@ -27,7 +27,7 @@
 starlightPythia::starlightPythia(inputParameters &input, beamBeamSystem &bbs) : eventChannel(input, bbs)
         ,_spectrum(0)
         ,_doDoubleEvent(false)
-        ,_minGammaEnergy(60.0)
+        ,_minGammaEnergy(input.minGammaEnergy())
         ,_maxGammaEnergy(input.maxGammaEnergy())
 {
 }
@@ -83,7 +83,7 @@ upcEvent starlightPythia::produceEvent()
       event.addGamma(gammaE);
 
       char opt[32];
-      std::sprintf(opt, "parp(171)=%f", gammaE/600000.0);
+      std::sprintf(opt, "parp(171)=%f", gammaE/_minGammaEnergy);
       pythiaInterface::pygive(opt); // Set the energy of the photon beam (gammaE/1000 * 1000.0);
       pythiaInterface::pyevnt(); // Generate event
 //      pythiaInterface::pyfram(2); // go to CMS 
