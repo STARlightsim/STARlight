@@ -476,7 +476,7 @@ double spectrum::getFnDouble(double egamma1, double egamma2) const
 double spectrum::getTransformedNofe(double egamma, double b)
 {
    double factor = 1.0/(2.0*_beamBeamSystem->beamLorentzGamma());
-   double res = factor * _beamBeamSystem->beam1()->photonFlux(b, egamma*factor);
+   double res = factor * _beamBeamSystem->beam1().photonFlux(b, egamma*factor);
    
    return res;
 }

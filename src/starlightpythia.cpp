@@ -103,7 +103,7 @@ upcEvent starlightPythia::produceEvent()
       pythiaInterface::pyevnt(); // Generate event
 //      pythiaInterface::pyfram(2); // go to CMS 
       
-      int zdirection = (_bbs.beam1()->Z()==1 ? 1 : -1);
+      int zdirection = (_bbs.beam1().Z()==1 ? 1 : -1);
       double boost = acosh(_bbs.beamLorentzGamma())*zdirection;
       
       vector3 boostVector(0, 0, tanh(boost));
