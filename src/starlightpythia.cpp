@@ -102,7 +102,8 @@ upcEvent starlightPythia::produceEvent()
       pythiaInterface::pygive(opt); // Set the energy of the photon beam (gammaE/1000 * 1000.0);
       pythiaInterface::pyevnt(); // Generate event
 //      pythiaInterface::pyfram(2); // go to CMS 
-      double rapidity = _bbs.beam1().rapidity();
+      double boost = _bbs.cmsBoost();
+      vector3 boostVector(0, 0, tanh(boost));
       for(int idx = 0; idx < pyjets_.n; idx++)
       {
 //	if(std::abs(pyjets_.k[1][idx]) <= 6) std::cout << "Quark: " << pyjets_.k[1][idx] << ", status: " <<  pyjets_.k[0][idx] << std::endl;
@@ -126,7 +127,6 @@ upcEvent starlightPythia::produceEvent()
 	  particle.setLastDaughter(pyjets_.k[4][idx]);
 	  particle.setStatus(pyjets_.k[0][idx]);
 	}
-	vector3 boostVector(0, 0, tanh(-rapidity));
 	particle.Boost(boostVector);
         event.addParticle(particle);
       }
