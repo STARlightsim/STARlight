@@ -176,9 +176,9 @@ inputParameters::init(const string& configFileName)
  	// Calculate beam gamma in CMS frame
  	double rap1 = acosh(_beam1LorentzGamma);
 	double rap2 = -acosh(_beam2LorentzGamma);
+	_beamLorentzGamma = cosh((rap1-rap2)/2);
 	
-	_beamLorentzGamma = cosh(rap1 - (rap1+rap2)/2.);
-
+	std::cout << "Rapidity beam 1: " << rap1 << ", rapidity beam 2: " << rap2 << ", rapidity CMS system: " << (rap1+rap2)/2 << ", beam gamma in CMS: " << _beamLorentzGamma<< std::endl;
 	_ptBinWidthInterference = _maxPtInterference / _nmbPtBinsInterference;
 	_protonEnergy           = _beamLorentzGamma * protonMass;
 
@@ -447,6 +447,7 @@ inputParameters::init(const string& configFileName)
 		_minW = minWConfigFile;
 
 	printInfo << "using the following " << *this;
+	
 	return true;
 }
 

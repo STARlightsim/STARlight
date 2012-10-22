@@ -37,6 +37,7 @@
 
 #include <string>
 
+class upcEvent;
 
 class starlight;
 class inputParameters;
@@ -57,6 +58,8 @@ public:
 
 	void setConfigFileName   (const std::string& configFileName   ) { _configFileName    = configFileName;    }  ///< sets path to config file
 	void setEventDataFileName(const std::string& eventDataFileName) { _eventDataFileName = eventDataFileName; }  ///< sets path to output file
+	
+	void boostEvent(upcEvent &e); ///< Boost event from beam CMS to lab system
 
 private:
 

@@ -102,8 +102,12 @@ upcEvent starlightPythia::produceEvent()
       pythiaInterface::pygive(opt); // Set the energy of the photon beam (gammaE/1000 * 1000.0);
       pythiaInterface::pyevnt(); // Generate event
 //      pythiaInterface::pyfram(2); // go to CMS 
-      double boost = _bbs.cmsBoost();
+      
+      int zdirection = (_bbs.beam1()->Z()==1 ? 1 : -1);
+      double boost = acosh(_bbs.beamLorentzGamma())*zdirection;
+      
       vector3 boostVector(0, 0, tanh(boost));
+      
       for(int idx = 0; idx < pyjets_.n; idx++)
       {
 //	if(std::abs(pyjets_.k[1][idx]) <= 6) std::cout << "Quark: " << pyjets_.k[1][idx] << ", status: " <<  pyjets_.k[0][idx] << std::endl;
@@ -119,7 +123,7 @@ upcEvent starlightPythia::produceEvent()
 	  charge = (pdgCode > 0) - (pdgCode < 0);
 	}
 	
-	starlightParticle particle(pyjets_.p[0][idx], pyjets_.p[1][idx], pyjets_.p[2][idx], pyjets_.p[3][idx], pyjets_.p[4][idx], pyjets_.k[1][idx], charge);
+	starlightParticle particle(pyjets_.p[0][idx], pyjets_.p[1][idx], -zdirection*pyjets_.p[2][idx], pyjets_.p[3][idx], pyjets_.p[4][idx], pyjets_.k[1][idx], charge);
 	if(_fullEventRecord)
 	{
 	  particle.setParent(pyjets_.k[2][idx]);

@@ -72,7 +72,6 @@ int spectrum::generateKsingle()
     {
         _hadBreakProbCalculated = generateBreakupProbabilities();
     }
-
     double binc = exp((log(_bMax/_bMin))/(double)_nBbins);
 
     for (int i = 0; i < _nK; i++)
@@ -241,7 +240,6 @@ double spectrum::drawKsingle()
     double egamma = 0.0;
 
     xtest = _randomGenerator->Rndom();
-
     while (xtest > _fnSingleCumulative[itest])
     {
         itest++;
@@ -255,13 +253,11 @@ double spectrum::drawKsingle()
     }
 
     double delta_f = xtest - _fnSingleCumulative[itest];
-
     if (delta_f <= 0.0)
     {
         std::cout << "WARNING: delta_f: " << delta_f << std::endl;
         return -1;
     }
-
     double dE = _eGamma[itest+1] - _eGamma[itest];
     double dF = _fnSingleCumulative[itest+1] - _fnSingleCumulative[itest];
 
@@ -479,12 +475,8 @@ double spectrum::getFnDouble(double egamma1, double egamma2) const
 
 double spectrum::getTransformedNofe(double egamma, double b)
 {
-   // Lorentz gamma of the beam, egamma is energy of gamma...
-   double beamGamma = cosh((fabs(_beamBeamSystem->beam1().rapidity())+fabs(_beamBeamSystem->beam2().rapidity()))/2);
-   
-   double factor = 1.0/(2.0*beamGamma);
-   
-   double res = factor * _beamBeamSystem->beam1().photonFlux(b, egamma*factor);
+   double factor = 1.0/(2.0*_beamBeamSystem->beamLorentzGamma());
+   double res = factor * _beamBeamSystem->beam1()->photonFlux(b, egamma*factor);
    
    return res;
 }

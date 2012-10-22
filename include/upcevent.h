@@ -61,7 +61,8 @@ class upcEvent
 
       upcEvent & operator=(const upcEvent&);
       upcEvent & operator+(const upcEvent&);
- 
+      
+      void boost(double rapidity);
    private:
       
       int _NTracks;

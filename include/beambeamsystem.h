@@ -63,6 +63,10 @@ public:
 	double probabilityOfBreakup(const double D);
 	
 	double cmsBoost() const { return _cmsBoost; }
+	
+	double beamLorentzGamma() const { return _beamLorentzGamma; }
+	
+	void init(const inputParameters &p);
 
 private:
 
