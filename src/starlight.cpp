@@ -164,7 +164,7 @@ starlight::init()
 		dynamic_cast<starlightPythia*>(_eventChannel)->setSingleMode();
 		dynamic_cast<starlightPythia*>(_eventChannel)->setMinGammaEnergy(_inputParameters->minGammaEnergy());
 		dynamic_cast<starlightPythia*>(_eventChannel)->setMaxGammaEnergy(_inputParameters->maxGammaEnergy());
-		dynamic_cast<starlightPythia*>(_eventChannel)->init();
+		dynamic_cast<starlightPythia*>(_eventChannel)->init(_inputParameters->pythiaParams(), _inputParameters->pythiaFullEventRecord());
 		break;
 #endif
 	default:

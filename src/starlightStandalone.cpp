@@ -92,6 +92,7 @@ starlightStandalone::run()
 
 	// open output file
 	eventFileWriter fileWriter;
+	fileWriter.writeFullPythiaInfo(_inputParameters->pythiaFullEventRecord());
 	fileWriter.open(_eventDataFileName);
 
 	printInfo << "generating events:" << endl;

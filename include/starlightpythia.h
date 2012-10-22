@@ -36,7 +36,7 @@ public:
     starlightPythia(inputParameters& input, beamBeamSystem& bbsystem);
     virtual ~starlightPythia();
 
-    int init();
+    int init(std::string pythiaParams, bool fullEventRecord = false);
 
     virtual upcEvent produceEvent();
 
@@ -62,6 +62,8 @@ public:
         _maxGammaEnergy = energy;
     }
 
+    void setFullEventRecord(bool fer = true) { _fullEventRecord = fer; }
+    
 private:
 
     /** Contains the photon spectrum */
@@ -76,6 +78,9 @@ private:
     /** Max gamma energy */
     double _maxGammaEnergy;
 
+    /** Full event record or not */
+    bool _fullEventRecord;
+    
     /** Prohibited */
     starlightPythia();
     starlightPythia(const starlightPythia& other);

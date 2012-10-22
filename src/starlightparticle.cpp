@@ -39,6 +39,10 @@ starlightParticle::starlightParticle() :
    ,_pdgCode(0)
    ,_charge(-999)
    ,_mass(-1)
+   ,_parent(0)
+   ,_firstDaughter(0)
+   ,_lastDaughter(0)
+   ,_status(-1)
 { }
 
 

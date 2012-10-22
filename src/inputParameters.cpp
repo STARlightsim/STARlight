@@ -80,7 +80,9 @@ inputParameters::inputParameters()
 	  _ptBinWidthInterference(0),
 	  _protonEnergy          (0),
 	  _minGammaEnergy	 (0),
-	  _maxGammaEnergy	 (0)
+	  _maxGammaEnergy	 (0),
+	  _pythiaParams          (),
+	  _pythiaFullEventRecord (false)
 { }
 
 
@@ -106,7 +108,8 @@ inputParameters::init(const string& configFileName)
 	ip.addUintParameter(string("BEAM_1_A"), &_beam1A);
 	ip.addUintParameter(string("BEAM_2_A"), &_beam2A);
 
-	ip.addDoubleParameter(string("BEAM_GAMMA"), &_beamLorentzGamma);
+	ip.addDoubleParameter(string("BEAM_1_GAMMA"), &_beam1LorentzGamma);
+	ip.addDoubleParameter(string("BEAM_2_GAMMA"), &_beam2LorentzGamma);
 	
 	ip.addDoubleParameter(string("W_MAX"), &maxWConfigFile);
 	ip.addDoubleParameter(string("W_MIN"), &minWConfigFile);
@@ -148,6 +151,9 @@ inputParameters::init(const string& configFileName)
 	
 	ip.addDoubleParameter(string("MIN_GAMMA_ENERGY"), &_minGammaEnergy, false);
 	ip.addDoubleParameter(string("MAX_GAMMA_ENERGY"), &_maxGammaEnergy, false);
+	
+	ip.addStringParameter(string("PYTHIA_PARAMS"), &_pythiaParams, false);
+	ip.addBoolParameter(string("PYTHIA_FULL_EVENTRECORD"), &_pythiaFullEventRecord, false);
 
 	int nParameters = ip.parseFile(_configFileName);
 	if(nParameters == -1) 

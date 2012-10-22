@@ -23,12 +23,14 @@
 #include "pythiaInterface.h"
 #include "spectrumprotonnucleus.h"
 #include <cmath>
+#include <sstream>
 
 starlightPythia::starlightPythia(inputParameters &input, beamBeamSystem &bbs) : eventChannel(input, bbs)
         ,_spectrum(0)
         ,_doDoubleEvent(false)
         ,_minGammaEnergy(input.minGammaEnergy())
         ,_maxGammaEnergy(input.maxGammaEnergy())
+	,_fullEventRecord(false)
 {
 }
 
@@ -37,8 +39,9 @@ starlightPythia::~starlightPythia()
 
 }
 
-int starlightPythia::init()
+int starlightPythia::init(std::string pythiaParams, bool fullEventRecord)
 {
+   _fullEventRecord = fullEventRecord;
    _spectrum = new spectrumProtonNucleus(&_bbs);
    //_spectrum = new Spectrum(&bbs);
    _spectrum->setRandomGenerator(&_randy);
@@ -58,6 +61,18 @@ int starlightPythia::init()
     // Set to run with varying energies
     pythiaInterface::pygive("mstp(171)=1"); // Varying energies
     pythiaInterface::pygive("mstp(172)=1"); // Set the energy before generation
+
+    std::stringstream ss(pythiaParams);
+    std::string p;
+    while(std::getline(ss, p, ';')) 
+    {
+      if(p.size()>1)
+      {
+        pythiaInterface::pygive(p.c_str());
+      }
+    }
+    //pythiaInterface::pygive("mstp(12)=0");
+    //pythiaInterface::pygive("mstj(21)=0"); // Disable decays of particles 
     
     //pythiaInterface::pygive("parp(2)=1.0"); // Cut off c.m. energy (GeV)
   
@@ -90,7 +105,8 @@ upcEvent starlightPythia::produceEvent()
       double rapidity = _bbs.beam1().rapidity();
       for(int idx = 0; idx < pyjets_.n; idx++)
       {
-	if(pyjets_.k[0][idx] > 10) continue;
+//	if(std::abs(pyjets_.k[1][idx]) <= 6) std::cout << "Quark: " << pyjets_.k[1][idx] << ", status: " <<  pyjets_.k[0][idx] << std::endl;
+	if(pyjets_.k[0][idx] > 10 && _fullEventRecord==false) continue;
 	int pdgCode = pyjets_.k[1][idx];
 	int charge = 0;
 	if( pdgCode == 12 || pdgCode == 14 || pdgCode == 16 ||  pdgCode == 22 || pdgCode == 111 || pdgCode == 130 || pdgCode == 321 || pdgCode == 2112)
@@ -103,6 +119,13 @@ upcEvent starlightPythia::produceEvent()
 	}
 	
 	starlightParticle particle(pyjets_.p[0][idx], pyjets_.p[1][idx], pyjets_.p[2][idx], pyjets_.p[3][idx], pyjets_.p[4][idx], pyjets_.k[1][idx], charge);
+	if(_fullEventRecord)
+	{
+	  particle.setParent(pyjets_.k[2][idx]);
+	  particle.setFirstDaughter(pyjets_.k[3][idx]);
+	  particle.setLastDaughter(pyjets_.k[4][idx]);
+	  particle.setStatus(pyjets_.k[0][idx]);
+	}
 	vector3 boostVector(0, 0, tanh(-rapidity));
 	particle.Boost(boostVector);
         event.addParticle(particle);

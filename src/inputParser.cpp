@@ -60,6 +60,7 @@ int inputParser::parseFile(std::string filename)
     std::map<std::string, _parameter<float> >::iterator floatIt;
     std::map<std::string, _parameter<double> >::iterator doubleIt;
     std::map<std::string, _parameter<bool> >::iterator boolIt;
+    std::map<std::string, _parameter<std::string> >::iterator stringIt;
 
     int lineSize = 256;
     char tmp[lineSize];
@@ -127,6 +128,13 @@ int inputParser::parseFile(std::string filename)
                 *(boolIt->second._val) = atoi(val.c_str());
 		nParameters++;
             }
+            stringIt = _stringParameters.find(name);
+            if (stringIt != _stringParameters.end())
+            {
+                stringIt->second._found = true;
+                *(stringIt->second._val) = val;
+		nParameters++;
+            }
 
         }
       
@@ -164,6 +172,12 @@ void inputParser::addBoolParameter(std::string name, bool *var, bool required)
 {
     _parameter<bool> par(name, var, required);
     _boolParameters.insert(std::pair<std::string, _parameter<bool> >(name, par));
+}
+
+void inputParser::addStringParameter(std::string name, std::string *var, bool required)
+{
+    _parameter<std::string> par(name, var, required);
+    _stringParameters.insert(std::pair<std::string, _parameter<std::string> >(name, par));
 }
 
 void inputParser::printParameterInfo(std::ostream &out)

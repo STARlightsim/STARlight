@@ -81,6 +81,8 @@ public:
 	double       ptBinWidthInterference() const { return _ptBinWidthInterference; }  ///< returns width of p_T bins for interference calculation [GeV/c]
 	double 	     minGammaEnergy        () const { return _minGammaEnergy;         }  ///< returns minimum gamma energy in case of photo nuclear processes [GeV]
 	double       maxGammaEnergy        () const { return _maxGammaEnergy;         }  ///< returns maximum gamma energy in case of photo nuclear processes [GeV]
+	std::string  pythiaParams          () const { return _pythiaParams;           }  ///< returns parameters to be passed to pythia
+	bool         pythiaFullEventRecord () const { return _pythiaFullEventRecord;  }  ///< returns if the full pythia event record should be printed
 	
 	starlightConstants::particleTypeEnum    prodParticleType     () const { return _particleType;    }  ///< returns type of produced particle
 	starlightConstants::decayTypeEnum       prodParticleDecayType() const { return _decayType;       }  ///< returns decay type of produced particle
@@ -145,6 +147,8 @@ private:
 	double       _protonEnergy;
 	double       _minGammaEnergy;          ///< minimum gamma energy in case of photo nuclear processes [GeV]
 	double       _maxGammaEnergy;          ///< maximum gamma energy in case of photo nuclear processes [GeV]
+	std::string  _pythiaParams;            ///< semi-colon separated parameters to pass to pythia, e.g. "mstj(1)=0;paru(13)=0.1" 
+	bool 	     _pythiaFullEventRecord;   ///< if the full pythia event record should be in the output
 	
 	starlightConstants::particleTypeEnum    _particleType;
 	starlightConstants::decayTypeEnum       _decayType;

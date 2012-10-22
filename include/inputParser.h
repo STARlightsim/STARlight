@@ -66,6 +66,9 @@ public:
 
   /** Add parameter to pass */
   void addBoolParameter(std::string name, bool *var, bool required = true);
+ 
+  /** Add parameter to pass */
+  void addStringParameter(std::string name, std::string *var, bool required = true);
   
   /** Print info */
   void printParameterInfo(std::ostream &out = std::cout);
@@ -111,6 +114,7 @@ private:
   std::map<std::string, _parameter<float> > _floatParameters;
   std::map<std::string, _parameter<double> > _doubleParameters;
   std::map<std::string, _parameter<bool> > _boolParameters;
+  std::map<std::string, _parameter<std::string> > _stringParameters;
   
 };
 
