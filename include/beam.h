@@ -56,6 +56,8 @@ public:
 	                  const double photonEnergy) const;  ///< calculates photon density (number of photons / (energy * area))
 
 	double rapidity() const { return acosh(_beamLorentzGamma); }
+	
+	void setBeamLorentzGamma(double gamma) {_beamLorentzGamma = gamma;}
 protected:
 
 	//inputParameters inputbeam;
