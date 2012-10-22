@@ -39,7 +39,7 @@
 #include "inputParameters.h"
 #include "inputParser.h"
 #include "starlightconfig.h"
-
+#include <cmath>
 
 using namespace std;
 using namespace starlightConstants;
@@ -172,6 +172,12 @@ inputParameters::init(const string& configFileName)
  		          << *this;
  		return false;
  	}
+ 	
+ 	// Calculate beam gamma in CMS frame
+ 	double rap1 = acosh(_beam1LorentzGamma);
+	double rap2 = -acosh(_beam2LorentzGamma);
+	
+	_beamLorentzGamma = cosh(rap1 - (rap1+rap2)/2.);
 
 	_ptBinWidthInterference = _maxPtInterference / _nmbPtBinsInterference;
 	_protonEnergy           = _beamLorentzGamma * protonMass;

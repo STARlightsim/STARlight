@@ -50,10 +50,21 @@ using namespace starlightConstants;
 beamBeamSystem::beamBeamSystem(const beam& beam1,
                                const beam& beam2,
                                const double,
-                               const inputParameters&)
+                               const inputParameters& input)
   : _beam1(beam1),
     _beam2(beam2)
-{ }
+{
+   // Calculate beam gamma in CMS frame
+   double rap1 = acosh(input.beam1LorentzGamma());
+   double rap2 = -acosh(input.beam2LorentzGamma());
+   
+   _cmsBoost = (rap1+rap2)/2.;
+
+   _beamLorentzGamma = cosh(rap1 - _cmsBoost);
+  
+   _beam1.setBeamLorentzGamma(_beamLorentzGamma);
+   _beam2.setBeamLorentzGamma(_beamLorentzGamma);
+}
 
 
 //______________________________________________________________________________
@@ -64,7 +75,20 @@ beamBeamSystem::beamBeamSystem(const beam&            beam1,
 	  _beamBreakupMode (input.beamBreakupMode()),
     _beam1           (beam1),
     _beam2           (beam2)
-{ }
+{ 
+   // Calculate beam gamma in CMS frame
+   double rap1 = acosh(input.beam1LorentzGamma());
+   double rap2 = -acosh(input.beam2LorentzGamma());
+   
+   _cmsBoost = (rap1+rap2)/2.;
+
+   _beamLorentzGamma = cosh(rap1 - _cmsBoost);
+  
+   _beam1.setBeamLorentzGamma(_beamLorentzGamma);
+   _beam2.setBeamLorentzGamma(_beamLorentzGamma);
+}
+  
+
 
 
 //______________________________________________________________________________
@@ -81,7 +105,19 @@ beamBeamSystem::beamBeamSystem(const inputParameters &input)
 	                    input.deuteronSlopePar(),
 	                    input.coherentProduction(),
 	                    input)
-{ }
+{
+   // Calculate beam gamma in CMS frame
+   double rap1 = acosh(input.beam1LorentzGamma());
+   double rap2 = -acosh(input.beam2LorentzGamma());
+   
+   _cmsBoost = (rap1+rap2)/2.;
+
+   _beamLorentzGamma = cosh(rap1 - _cmsBoost);
+  
+   _beam1.setBeamLorentzGamma(_beamLorentzGamma);
+   _beam2.setBeamLorentzGamma(_beamLorentzGamma);
+}
+
 
 
 //______________________________________________________________________________

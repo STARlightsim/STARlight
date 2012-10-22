@@ -53,6 +53,7 @@ public:
 	unsigned int beam1A                () const { return _beam1A;                 }  ///< returns atomic mass number of beam particle 1
 	unsigned int beam2Z                () const { return _beam2Z;                 }  ///< returns atomic number of beam particle 2
 	unsigned int beam2A                () const { return _beam2A;                 }  ///< returns atomic mass number of beam particle 2
+	double       beamLorentzGamma      () const { return _beamLorentzGamma;       }  ///< returns Lorentz gamma factor of both beams in beam CMS frame
 	double       beam1LorentzGamma     () const { return _beam1LorentzGamma;      }  ///< returns Lorentz gamma factor of beam 1 in collider frame
 	double       beam2LorentzGamma     () const { return _beam2LorentzGamma;      }  ///< returns Lorentz gamma factor of beam 2 in collider frame
 	double       maxW                  () const { return _maxW;                   }  ///< returns maximum mass W of produced hadronic system [GeV/c^2]
@@ -105,6 +106,7 @@ private:
 	unsigned int _beam1A;                  ///< atomic mass number of beam particle 1
 	unsigned int _beam2Z;                  ///< atomic number of beam particle 2
 	unsigned int _beam2A;                  ///< atomic mass number of beam particle 2
+	double       _beamLorentzGamma;        ///< Lorentz gamma factor of the beams in CMS frame
 	double       _beam1LorentzGamma;       ///< Lorentz gamma factor of beam 1 in collider frame
 	double       _beam2LorentzGamma;       ///< Lorentz gamma factor of beam 2 in collider frame
 	double       _maxW;                    ///< maximum mass W of produced hadronic system [GeV/c^2]

@@ -61,6 +61,8 @@ public:
 
 	//	double getluminosity();
 	double probabilityOfBreakup(const double D);
+	
+	double cmsBoost() const { return _cmsBoost; }
 
 private:
 
@@ -81,9 +83,11 @@ private:
 	                           ///< 3 = a single neutron from each nucleus (1n1n),
 	                           ///< 4 = neither nucleon breaks up (with b > 2R),
 	                           ///< 5 = no hadronic break up (similar to option 1, but with the actual hadronic interaction)
+	               
 	beam   _beam1;             ///< beam particle 1
 	beam   _beam2;             ///< beam particle 2
 
+	double _cmsBoost;	   ///< Rapidity boost of the CMS wrt the lab system
 };
 
 
