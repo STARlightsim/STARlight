@@ -56,6 +56,7 @@ public:
 	double nuclearRadius  () const; ///< returns nuclear radius [fm]; except for some special nuclei this is the Wood-Saxon radius (Fermi model)
 
 	double formFactor(const double t) const;  ///< computes form factor for given squared 4-momentum transfer
+	double dipoleFormFactor(const double t, const double t0) const;  // Dipole form factor with t0 as parameter 
 	double thickness (const double b) const;  ///< calculates nuclear thickness function for given distance b in impact parameter space (Eq. 4 in KN, PRC 60)
 
 	double Q0  () const { return _Q0;   }

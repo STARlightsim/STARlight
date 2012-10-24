@@ -170,6 +170,14 @@ nucleus::formFactor(const double t) const
 	return sph / (1. + (a0 * a0 * t) / (hbarc * hbarc));
 }
 
+//______________________________________________________________________________
+
+double
+nucleus::dipoleFormFactor(const double t, const double t0) const
+{
+     const double rec = 1. / (1. + t / t0);
+     return rec * rec;
+}
 
 //______________________________________________________________________________
 double
