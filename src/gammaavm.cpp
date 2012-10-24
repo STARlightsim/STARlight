@@ -410,7 +410,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	double dW,dY;
 	double Egam,Epom,tmin,pt1,pt2,phi1,phi2;
 	double px1,py1,px2,py2;
-	double pt,xt,xtest;
+	double pt,xt,xtest,ytest;
 	double photon_spectrum;
 	double t1,t2;
 
@@ -450,10 +450,23 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 
 	if( (_bbs.beam1().Z()==1 && _bbs.beam1().A()==1) || 
             (_ProductionMode == 4) ) {
-		//dsig/dt= exp(-_VMbslope*t)
+	  if( (_VMpidtest == starlightConstants::RHO) || (_VMpidtest == starlightConstants::RHOZEUS) || (_VMpidtest == starlightConstants::OMEGA)){
+	      // Use dipole form factor for light VM
+	      L555vm:
+	      xtest = 2.0*_randy.Rndom();
+              double ttest = xtest*xtest; 
+              ytest = _randy.Rndom();
+              double t0 = 1./2.23; 
+              double yprob = xtest*_bbs.beam1().dipoleFormFactor(ttest,t0)*_bbs.beam1().dipoleFormFactor(ttest,t0); 
+              if( ytest > yprob ) goto L555vm; 
+              t2 = ttest; 
+              pt2 = xtest;              
+	    }else{
+		//Use dsig/dt= exp(-_VMbslope*t) for heavy VM
 		xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
 		t2 = (-1./_VMbslope)*log(xtest);
 		pt2 = sqrt(1.*t2);
+	    }
 	}
 	else{
 	L203vm:
@@ -491,11 +504,10 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 		}//dAu else end
 
 		if(_VMCoherence==0 && (!(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2))){
-			//Incoherent pt2 selection
-			//dsig/dt= exp(-_VMbslope*t)
-			xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
-			t2 = (-1./_VMbslope)*log(xtest);//-1./(_VMbslope*VMNucleus)?
-			pt2 = sqrt(1.*t2);
+   		     //dsig/dt= exp(-_VMbslope*t)
+		     xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+		     t2 = (-1./_VMbslope)*log(xtest);
+		     pt2 = sqrt(1.*t2);
 		}
 
 	}//else end from pp
