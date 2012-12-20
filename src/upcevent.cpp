@@ -95,11 +95,11 @@ upcEvent& upcEvent::operator+(const upcEvent& ev)
 
 void upcEvent::boost(double rapidity)
 {
-   vector3 boostVector(0, 0, tanh(rapidity));
-      std::vector<starlightParticle>::iterator part = _particles.begin();
+    vector3 boostVector(0, 0, tanh(rapidity));
+    std::vector<starlightParticle>::iterator part = _particles.begin();
       
-      for (part = _particles.begin(); part != _particles.end(); part++)
-      {
-	(*part).Boost(boostVector);
-      }
+    for (part = _particles.begin(); part != _particles.end(); part++)
+    {
+      (*part).Boost(boostVector);
+    }
 }
