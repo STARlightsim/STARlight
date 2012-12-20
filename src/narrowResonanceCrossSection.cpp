@@ -122,6 +122,7 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
 		tmp = tmp+2.*dR*(dY/6.);
 		dR  = dR*(dY/6.);
 
+                cout<<" y: "<<y12<<" flux: "<<photonFlux(ega12)<<" sigma_gA: "<<csgA12<<" dR: "<<dR<<endl;
 		// The 2 accounts for the 2 beams
 		//Not dAu
 		//Double for identical beams.  
