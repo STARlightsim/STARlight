@@ -529,7 +529,9 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	// Randomly choose to make pz negative 50% of the time
 	if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
 		pz = -pz;
-	}
+	}else if(_bbs.beam1().A()==1 || _bbs.beam2().A()==1 ){
+	  // Don't switch      
+        }
 	else{
 		if (_randy.Rndom() >= 0.5) pz = -pz;
 	}
@@ -655,6 +657,7 @@ upcEvent Gammaavectormeson::produceEvent()
 	int iFbadevent=0;
 	int tcheck=0;
 	starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
+        starlightConstants::particleTypeEnum vmpid = starlightConstants::UNKNOWN; 
 
 	if (_VMpidtest == starlightConstants::FOURPRONG) {
 		double        comenergy = 0;
@@ -701,6 +704,7 @@ upcEvent Gammaavectormeson::produceEvent()
 			// cout << "_ptCutMin: " << _ptCutMin << " _ptCutMax: " << _ptCutMax << " _etaCutMin: " << _etaCutMin << " _etaCutMax: " << _etaCutMax << endl;
 			_nmbAttempts++;
 			//cout << "n tries: " << _nmbAttempts<< endl;
+                        vmpid = ipid; 
 			twoBodyDecay(ipid,E,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
 			double pt1chk = sqrt(px1*px1+py1*py1);
 			double pt2chk = sqrt(px2*px2+py2*py2);
@@ -759,10 +763,13 @@ upcEvent Gammaavectormeson::produceEvent()
                           ipid2 = q2*ipid;
                         }
 			//     The new stuff
-			starlightParticle particle1(px1, py1, pz1, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, ipid1, q1);
+			double md = getDaughterMass(vmpid); 
+                        double Ed1 = sqrt(md*md+px1*px1+py1*py1+pz1*pz1); 
+			starlightParticle particle1(px1, py1, pz1, Ed1, starlightConstants::UNKNOWN, ipid1, q1);
 			event.addParticle(particle1);
 
-			starlightParticle particle2(px2, py2, pz2, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, ipid2, q2);
+                        double Ed2 = sqrt(md*md+px2*px2+py2*py2+pz2*pz2); 
+			starlightParticle particle2(px2, py2, pz2, Ed2, starlightConstants::UNKNOWN, ipid2, q2);
 			event.addParticle(particle2);
 			//     End of the new stuff
 

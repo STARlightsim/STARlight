@@ -114,6 +114,9 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
                 csVN = sigma_N(Wgp);            
                 csVA = sigma_A(csVN); 
                 csgA1 = (csVA/csVN)*sigmagp(Wgp); 
+                if( getbbs().beam1().A() == 1 || getbbs().beam2().A()==1 ){
+                  csgA1 = sigmagp(Wgp);
+                }
 
 		// Middle point 
                 Wgp = sqrt(2.*ega12*(_Ep+sqrt(_Ep*_Ep-starlightConstants::protonMass*starlightConstants::protonMass))
@@ -121,6 +124,9 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
                 csVN = sigma_N(Wgp);            
                 csVA = sigma_A(csVN); 
                 csgA12 = (csVA/csVN)*sigmagp(Wgp); 
+                if( getbbs().beam1().A() == 1 || getbbs().beam2().A()==1 ){
+                  csgA12 = sigmagp(Wgp);
+                }
 
 		// Last point 
                 Wgp = sqrt(2.*ega2*(_Ep+sqrt(_Ep*_Ep-starlightConstants::protonMass*starlightConstants::protonMass))
@@ -128,21 +134,45 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
                 csVN = sigma_N(Wgp);            
                 csVA = sigma_A(csVN); 
                 csgA2 = (csVA/csVN)*sigmagp(Wgp); 
+                if( getbbs().beam1().A() == 1 || getbbs().beam2().A()==1 ){
+                  csgA2 = sigmagp(Wgp);
+                }
 
-		// Sum the contribution for this W,Y.
-		dR  = ega1*photonFlux(ega1)*csgA1;
-		dR  = dR + 4.*ega12*photonFlux(ega12)*csgA12;
-		dR  = dR + ega2*photonFlux(ega2)*csgA2;
-		tmp = tmp+2.*dR*(dY/6.);
-		dR  = dR*(dY/6.);
+                // Do proton-nucleus here
+                if( getbbs().beam1().A() == 1 || getbbs().beam2().A()==1 ){
+                  int localz = 0; 
+                  double localbmin = 0.; 
+                  if( getbbs().beam1().A() == 1 ){
+                    localz = getbbs().beam2().Z();
+                    localbmin = getbbs().beam2().nuclearRadius() + 0.7; 
+                  }
+                  if( getbbs().beam2().A() == 1 ){
+                    localz=getbbs().beam1().Z();
+                    localbmin = getbbs().beam1().nuclearRadius() + 0.7;
+                  } 
+                  dR = ega1*localz*localz*nepoint(ega1,localbmin)*csgA1;  
+                  dR = dR + 4*ega12*localz*localz*nepoint(ega12,localbmin)*csgA12;
+                  dR = dR + ega2*localz*localz*nepoint(ega2,localbmin)*csgA2; 
+                  dR = dR*(dY/6.); 
+                  // cout<<" y: "<<y12<<" flux: "<<nepoint(ega12,localbmin)<<" sigma_gA: "<<csgA12<<" dR: "<<dR<<endl;
+                }else{
+  		  // Sum the contribution for this W,Y.
+		  dR  = ega1*photonFlux(ega1)*csgA1;
+		  dR  = dR + 4.*ega12*photonFlux(ega12)*csgA12;
+		  dR  = dR + ega2*photonFlux(ega2)*csgA2;
+		  tmp = tmp+2.*dR*(dY/6.);
+		  dR  = dR*(dY/6.);
 
-                // cout<<" y: "<<y12<<" dsig/dy: "<<(10.*dR/dY)<<endl; 
+                  // cout<<" y: "<<y12<<" dsig/dy: "<<(10.*dR/dY)<<endl; 
 
-		// The 2 accounts for the 2 beams    
-		if(getbbs().beam1().A()==getbbs().beam2().A()){
-			dR  = 2.*dR;
-		}
+		  // The 2 accounts for the 2 beams    
+		  if(getbbs().beam1().A()==getbbs().beam2().A()){
+		  	dR  = 2.*dR;
+		  }
+                }
+
 		int_r = int_r+dR;
+
 	}
 	rate=luminosity()*int_r;
 	cout<<" Cross section (mb): " <<10.*int_r<<endl;

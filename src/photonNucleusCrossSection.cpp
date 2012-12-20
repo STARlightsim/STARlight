@@ -579,11 +579,12 @@ photonNucleusCrossSection::nepoint(const double Egamma,
 
 	bracket = bracket+X*bessel::dbesk0(X)*bessel::dbesk1(X);
   
-	C1=(2.*double((_bbs.beam1().Z())*(_bbs.beam1().Z()))*
-	    alpha)/pi;
+	//	C1=(2.*double((_bbs.beam1().Z())*(_bbs.beam1().Z()))*
+	//    alpha)/pi;
+
+	// Note: NO  Z*Z!!
+	C1=(2.*alpha)/pi;
   
-	//Looks like this is only used in photon flux for the case of pp collisions..
-	//might be able to remove the Zs.
 	nepoint_r = C1*(1./beta)*(1./beta)*(1./Egamma)*bracket;
   
 	return nepoint_r;
