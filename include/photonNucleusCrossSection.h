@@ -68,12 +68,11 @@ public:
         double sigma_N(const double Wgp);
 	double breitWigner(const double W,
 	                   const double C);
+	double nepoint(const double Egamma,
+	               const double bmin);
 
 private:
 
-	double nepoint(const double Egamma,
-	               const double bmin);
-  
 	beamBeamSystem _bbs;
   
 	// copied from inputParameters
