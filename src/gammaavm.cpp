@@ -529,7 +529,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	// Randomly choose to make pz negative 50% of the time
 	if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
 		pz = -pz;
-	}else if(_bbs.beam1().A()==1 || _bbs.beam2().A()==1 ){
+	}else if( (_bbs.beam1().A()==1 && _bbs.beam2().A() > 1) || (_bbs.beam2().A()==1 && _bbs.beam1().A()>1) ){
 	  // Don't switch      
         }
 	else{
