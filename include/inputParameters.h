@@ -85,6 +85,8 @@ public:
 	double       maxGammaEnergy        () const { return _maxGammaEnergy;         }  ///< returns maximum gamma energy in case of photo nuclear processes [GeV]
 	std::string  pythiaParams          () const { return _pythiaParams;           }  ///< returns parameters to be passed to pythia
 	bool         pythiaFullEventRecord () const { return _pythiaFullEventRecord;  }  ///< returns if the full pythia event record should be printed
+	int	     xsecCalcMethod        () const { return _xsecCalcMethod;         }  ///< returns the method used for the x-sec calculation
+	int          nThreads              () const { return _nThreads;               }  ///< returns the number of threads in case method 1 is used for the x-sec calc
 	
 	starlightConstants::particleTypeEnum    prodParticleType     () const { return _particleType;    }  ///< returns type of produced particle
 	starlightConstants::decayTypeEnum       prodParticleDecayType() const { return _decayType;       }  ///< returns decay type of produced particle
@@ -152,7 +154,10 @@ private:
 	double       _minGammaEnergy;          ///< minimum gamma energy in case of photo nuclear processes [GeV]
 	double       _maxGammaEnergy;          ///< maximum gamma energy in case of photo nuclear processes [GeV]
 	std::string  _pythiaParams;            ///< semi-colon separated parameters to pass to pythia, e.g. "mstj(1)=0;paru(13)=0.1" 
-	bool 	     _pythiaFullEventRecord;   ///< if the full pythia event record should be in the output
+	bool 	     _pythiaFullEventRecord;   ///< if the full pythia event record should be in the outputu
+	int 	     _xsecCalcMethod;	       ///< Select x-sec calc method. (0 is standard starlight method, 1 must be used for assym. collisions (e.g. p-A), but is slow)
+	int  	     _nThreads;		       ///< Number of threads used in the case of using method 1 for calculating the x-sections
+
 	
 	starlightConstants::particleTypeEnum    _particleType;
 	starlightConstants::decayTypeEnum       _decayType;

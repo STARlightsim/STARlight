@@ -83,7 +83,10 @@ inputParameters::inputParameters()
 	  _minGammaEnergy	 (0),
 	  _maxGammaEnergy	 (0),
 	  _pythiaParams          (),
-	  _pythiaFullEventRecord (false)
+	  _pythiaFullEventRecord (false),
+	  _xsecCalcMethod	 (0),
+	  _nThreads		 (1)
+	  
 { }
 
 
@@ -102,8 +105,7 @@ inputParameters::init(const string& configFileName)
 	double minWConfigFile = 0;
 	double maxWConfigFile = 0;
 	
-	inputParser ip;
-	
+	inputParser  ip;
 	ip.addUintParameter(string("BEAM_1_Z"), &_beam1Z);
 	ip.addUintParameter(string("BEAM_2_Z"), &_beam2Z);
 	ip.addUintParameter(string("BEAM_1_A"), &_beam1A);
@@ -155,6 +157,9 @@ inputParameters::init(const string& configFileName)
 	
 	ip.addStringParameter(string("PYTHIA_PARAMS"), &_pythiaParams, false);
 	ip.addBoolParameter(string("PYTHIA_FULL_EVENTRECORD"), &_pythiaFullEventRecord, false);
+	
+	ip.addIntParameter(string("XSEC_METHOD"), &_xsecCalcMethod, false);
+	ip.addIntParameter(string("N_THREADS"), &_nThreads, false);
 
 	int nParameters = ip.parseFile(_configFileName);
 	if(nParameters == -1) 
@@ -494,6 +499,7 @@ inputParameters::print(ostream& out) const
 ostream&
 inputParameters::write(ostream& out) const
 {
+  
 	out << "BEAM_1_Z"      << beam1Z               () <<endl
 	    << "BEAM_2_Z"      << beam1A               () <<endl
 	    << "BEAM_1_A"      << beam2Z               () <<endl
