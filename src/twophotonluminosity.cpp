@@ -42,10 +42,10 @@
 #include "nucleus.h"
 #include "bessel.h"
 #include "twophotonluminosity.h"
-
+#include <pthread.h>
 
 using namespace std;
-
+using namespace starlightConstants;
 
 //______________________________________________________________________________
 twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2,int,double luminosity,inputParameters& input)
@@ -76,7 +76,9 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   wylumfile.open("slight.txt");
   double w[starlightLimits::MAXWBINS];
   double y[starlightLimits::MAXYBINS];
-  double xlum = 0., wmev=0,Normalize = 0.,OldNorm;
+  double xlum = 0.; 
+  double Normalize = 0.,OldNorm;
+  double wmev = 0;
  
   Normalize = 1./sqrt(1*(double)_input2photon.nmbWBins()*_input2photon.nmbRapidityBins()); //if your grid is very fine, you'll want high accuracy-->small Normalize
   OldNorm   = Normalize;
@@ -111,20 +113,73 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
     //Old code had it write to a table for looking up...
     wylumfile << y[i] <<endl;
   }
-  for (unsigned int i = 1; i <= _input2photon.nmbWBins(); ++i) {   //For each (w,y) pair, calculate the diff. _lum
+
+  if(_input2photon.xsecCalcMethod() == 0) {
+    
+    for (unsigned int i = 1; i <= _input2photon.nmbWBins(); ++i) {   //For each (w,y) pair, calculate the diff. _lum
       //double SUM = 0.;not used
       for (unsigned int j = 1; j <= _input2photon.nmbRapidityBins(); ++j) {
-	wmev = w[i]*1000.;
-	xlum = wmev * D2LDMDY(wmev,y[j],Normalize);   //Convert photon flux dN/dW to Lorentz invariant photon number WdN/dW
-	if (j==1) OldNorm = Normalize;       //Save value of integral for each new W(i) and Y(i)
-	wylumfile << xlum <<endl;
+        wmev = w[i]*1000.;
+        xlum = wmev * D2LDMDY(wmev,y[j],Normalize);   //Convert photon flux dN/dW to Lorentz invariant photon number WdN/dW
+        if (j==1) OldNorm = Normalize;       //Save value of integral for each new W(i) and Y(i)
+        wylumfile << xlum <<endl;
       }
       Normalize = OldNorm;
   }
-  wylumfile.close();
-  return;
-}
 
+  }
+  else if(_input2photon.xsecCalcMethod() == 1) {
+    
+        const int nthreads = 20;//_input2photon.nThreads();
+        pthread_t threads[nthreads];
+        difflumiargs args[nthreads];
+
+        for(int t = 0; t < nthreads; t++)
+        {
+            args[t].self = this;
+        }
+        for (unsigned int i = 1; i <= _input2photon.nmbWBins(); ++i) {   //For each (w,y) pair, calculate the diff. _lum
+            printf("Calculating cross section: %2.0f %% \r", float(i)/float(_input2photon.nmbWBins())*100);
+	    fflush(stdout);
+            unsigned int r = 1;
+            for(unsigned int j = 0; j < _input2photon.nmbRapidityBins()/nthreads; ++j)
+            {
+
+                for(int t = 0; t < nthreads; t++)
+                {
+                    args[t].m = w[i];
+                    args[t].y = y[r];
+
+                    pthread_create(&threads[t], NULL, &twoPhotonLuminosity::D2LDMDY_Threaded, &args[t]);
+                    r++;
+                }
+                for(int t = 0; t < nthreads; t++)
+                {
+                    pthread_join(threads[t], NULL);
+                    xlum = w[i] * args[t].res;
+                    wylumfile << xlum <<endl;
+                }
+            }
+            for(unsigned int t = 0; t < _input2photon.nmbRapidityBins()%nthreads; t++)
+            {
+                args[t].m = w[i];
+                args[t].y = y[r];
+
+                pthread_create(&threads[t], NULL, &twoPhotonLuminosity::D2LDMDY_Threaded, &args[t]);
+                r++;
+            }
+            for(unsigned int t = 0; t < _input2photon.nmbRapidityBins()%nthreads; t++)
+            {
+                pthread_join(threads[t], NULL);
+                xlum = w[i] * args[t].res;
+                wylumfile << xlum <<endl;
+            }
+	}
+    }
+    
+    wylumfile.close();
+    return;
+}
 
 //______________________________________________________________________________
 double twoPhotonLuminosity::D2LDMDY(double M,double Y,double &Normalize)
@@ -132,18 +187,122 @@ double twoPhotonLuminosity::D2LDMDY(double M,double Y,double &Normalize)
   // double differential luminosity 
 
   double D2LDMDYx = 0.;
-  
+
   _W1    =  M/2.0*exp(Y);
   _W2    =  M/2.0*exp(-Y);
   _gamma = _input2photon.beamLorentzGamma();
   int Zin=beam1().Z();
   D2LDMDYx = 2.0/M*Zin*Zin*Zin*Zin*(starlightConstants::alpha*starlightConstants::alpha)*integral(Normalize);  //treats it as a symmetric collision
   Normalize = D2LDMDYx*M/(2.0*beam1().Z()*beam1().Z()*
+                          beam1().Z()*beam1().Z()*
+                          starlightConstants::alpha*starlightConstants::alpha);
+  //Normalization also treats it as symmetric
+  return D2LDMDYx;
+}
+
+
+
+//______________________________________________________________________________
+double twoPhotonLuminosity::D2LDMDY(double M, double Y) const 
+{
+  // double differential luminosity 
+
+  double D2LDMDYx = 0.;
+  double w1    =  M/2.0*exp(Y);
+  double w2    =  M/2.0*exp(-Y);
+  double gamma = _input2photon.beamLorentzGamma();
+  
+  //int Z1=beam1().Z();
+  //int Z2=beam2().Z();
+  
+  double r_nuc1 = beam1().nuclearRadius();
+  double r_nuc2 = beam2().nuclearRadius();
+  
+  double b1min = r_nuc1;
+  double b2min = r_nuc2;
+  
+  double b1max = max(5.*gamma*hbarc/w1,5*r_nuc1);
+  double b2max = max(5.*gamma*hbarc/w2,5*r_nuc2);
+  
+  const int nbins_b1 = 120;
+  const int nbins_b2 = 120;
+  
+  double log_delta_b1 = (log(b1max)-log(b1min))/nbins_b1;
+  double log_delta_b2 = (log(b2max)-log(b2min))/nbins_b2;
+  double sum = 0;
+  for(int i = 0; i < nbins_b1; ++i)
+  {
+      // Sum from nested integral
+      double sum_b2 = 0;
+      double b1_low = b1min*exp(i*log_delta_b1);
+      double b1_high = b1min*exp((i+1)*log_delta_b1);
+      double b1_cent = (b1_high+b1_low)/2.;
+      for(int j = 0; j < nbins_b2; ++j)
+      {
+	// Sum from nested  
+	double sum_phi = 0;
+	double b2_low = b2min*exp(j*log_delta_b2);
+	double b2_high = b2min*exp((j+1)*log_delta_b2);
+	double b2_cent = (b2_high+b2_low)/2.;
+	
+	// Gaussian integration n = 10
+	// Since cos is symmetric around 0 we only need 5 of the 
+	// points in the gaussian integration.
+	const int ngi = 5;
+	double weights[ngi] = 
+	{
+	  0.2955242247147529,
+	  0.2692667193099963,
+	  0.2190863625159820,
+	  0.1494513491505806,
+	  0.0666713443086881,
+	};
+	
+	double abscissas[ngi] =
+	{
+	  -0.1488743389816312,
+	  -0.4333953941292472,
+	  -0.6794095682990244,
+	  -0.8650633666889845,
+	  -0.9739065285171717,
+	};
+	
+	for(int k = 0; k < ngi; ++k)
+	{
+	    double b_rel = sqrt(b1_cent*b1_cent+b2_cent*b2_cent + 2.*b1_cent*b2_cent*cos(pi*(abscissas[k]+1)));
+	    
+	    sum_phi += weights[k] * probabilityOfBreakup(b_rel)*2;
+	}
+	sum_b2 += beam2().photonFlux(b2_cent,w2)*pi*sum_phi*b2_cent*(b2_high-b2_low);
+      }
+      
+      sum += beam1().photonFlux(b1_cent, w1)*sum_b2*b1_cent*(b1_high-b1_low);
+      
+  }
+  D2LDMDYx = 2.*pi*M/2.*sum;
+  return D2LDMDYx; 
+}
+
+
+void * twoPhotonLuminosity::D2LDMDY_Threaded(void * a)
+{
+  difflumiargs *args = (difflumiargs*)a;
+  double M = args->m;
+  double Y = args->y;
+  args->res = args->self->D2LDMDY(M, Y);
+  
+  return NULL;
+}
+
+  /*
+  D2LDMDYx = 2.0/M*Zin*Zin*Zin*Zin*(starlightConstants::alpha*starlightConstants::alpha)*integral(Normalize);  //treats it as a symmetric collision
+  Normalize = D2LDMDYx*M/(2.0*beam1().Z()*beam1().Z()*
 			  beam1().Z()*beam1().Z()*
 			  starlightConstants::alpha*starlightConstants::alpha); 
   //Normalization also treats it as symmetric
   return D2LDMDYx;
-}
+  
+  */
 
 
 //______________________________________________________________________________ 
@@ -298,7 +457,6 @@ double twoPhotonLuminosity::integral(double Normalize)
   Integrala = 2*starlightConstants::pi*Integrala;
   return Integrala;
 }
-
 
 //______________________________________________________________________________ 
 double twoPhotonLuminosity::radmul(int N,double *A,double *B,int MINPTS,int MAXPTS,double EPS,double *WK,int IWK,double &RESULT,double &RELERR,double &NFNEVL,double &IFAIL)

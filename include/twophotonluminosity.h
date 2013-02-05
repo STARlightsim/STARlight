@@ -42,23 +42,37 @@
 
 class twoPhotonLuminosity : public beamBeamSystem
 {
- public:
-  twoPhotonLuminosity(beam beam_1,beam beam_2,int mode,double luminosity,inputParameters& input);
-  twoPhotonLuminosity(beam beam_1, beam beam_2,int mode,inputParameters& input);
-  ~twoPhotonLuminosity();
-  
- private:
-  void twoPhotonDifferentialLuminosity();
-  double D2LDMDY(double M,double Y,double &Normalize);
-  double integral(double Normalize);
-  double radmul(int N,double *Lower,double *Upper,int NIterMin,int NIterMax,double EPS,double *WK,int NIter,double &Result,double &ResErr,double &NFNEVL,double &Summary);
-  double integrand(double N,double X[15]);
-  double Nphoton(double W,double gamma,double Rho);
-  
-  double _W1; //Energy of photon #1
-  double _W2; //Energy of photon #2
-  double _gamma; //Gamma of the system
-  inputParameters _input2photon;
+public:
+    twoPhotonLuminosity(beam beam_1,beam beam_2,int mode,double luminosity,inputParameters& input);
+    twoPhotonLuminosity(beam beam_1, beam beam_2,int mode,inputParameters& input);
+    ~twoPhotonLuminosity();
+
+protected:
+
+   
+
+private:
+    struct difflumiargs
+    {
+	twoPhotonLuminosity *self;
+        double m;
+        double y;
+        double res;
+    };
+    void twoPhotonDifferentialLuminosity();
+    double D2LDMDY(double M,double Y,double &Normalize);
+    double D2LDMDY(double M,double Y) const;
+    static void * D2LDMDY_Threaded(void *a);
+
+    double integral(double Normalize);
+    double radmul(int N,double *Lower,double *Upper,int NIterMin,int NIterMax,double EPS,double *WK,int NIter,double &Result,double &ResErr,double &NFNEVL,double &Summary);
+    double integrand(double N,double X[15]);
+    double Nphoton(double W,double gamma,double Rho);
+
+    double _W1; //Energy of photon #1
+    double _W2; //Energy of photon #2
+    double _gamma; //Gamma of the system
+    inputParameters _input2photon;
 };
 
 
