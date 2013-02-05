@@ -52,7 +52,12 @@ beamBeamSystem::beamBeamSystem(const beam& beam1,
                                const double,
                                const inputParameters& input)
   : _beam1(beam1),
-    _beam2(beam2)
+    _beam2(beam2),
+    _breakupProbabilities(0),
+    _breakupImpactParameterStep(1.007),
+    _breakupCutOff(10e-6)
+    
+    
 {
   init(input);
 }
@@ -65,7 +70,10 @@ beamBeamSystem::beamBeamSystem(const beam&            beam1,
   : _beamLorentzGamma(input.beamLorentzGamma()),
 	  _beamBreakupMode (input.beamBreakupMode()),
     _beam1           (beam1),
-    _beam2           (beam2)
+    _beam2           (beam2),
+    _breakupProbabilities(0),
+    _breakupImpactParameterStep(1.007),
+    _breakupCutOff(10e-6)
 { 
   init(input);
 }
@@ -86,7 +94,10 @@ beamBeamSystem::beamBeamSystem(const inputParameters &input)
 	                    input.beam2A(),
 	                    input.deuteronSlopePar(),
 	                    input.coherentProduction(),
-	                    input)
+	                    input),
+	  _breakupProbabilities(0),
+	  _breakupImpactParameterStep(1.007),
+	  _breakupCutOff(10e-10)
 {
   init(input);
 }
@@ -108,111 +119,141 @@ void beamBeamSystem::init(const inputParameters &p)
    _beamLorentzGamma = cosh((rap1-rap2)/2);
    _beam1.setBeamLorentzGamma(_beamLorentzGamma);
    _beam2.setBeamLorentzGamma(_beamLorentzGamma);
+   
+   generateBreakupProbabilities();
 }
 //______________________________________________________________________________
 double
-beamBeamSystem::probabilityOfBreakup(const double D)
+beamBeamSystem::probabilityOfBreakup(const double D) const
 {
-	static int    NStep = 1426;// 1000;
-	static double ProbTot[1000];
-   
-	const double Bmin = 1.75 * (_beam1.nuclearRadius());  
-	// const double Bmin = 12.2815005;
-
-	// Using the 1st nucleus, not sure which to start with...symmetry
-	static int ifirst = 0;
-	if (ifirst == 0) {
-		NStep = 1000;
-		// Step = 1.007;//.01; //We will multiplicateively increase Biter by 1%
-		const double Step =1.007;
 	
-		// a bunch of commenting ifs
-		double BIter = 1.0 * Bmin;
-
-		if ((_beam1.Z() != 1) && (_beam1.A() != 1)) {
-
-		        if (_beamBreakupMode == 1) 
-			    printInfo << "Hard Sphere Break criteria. b > " << 2. * _beam1.nuclearRadius() << endl;
-		        if (_beamBreakupMode == 2) 
-			    printInfo << "Requiring XnXn [Coulomb] breakup. " << endl;
-		        if (_beamBreakupMode == 3) 
-		 	    printInfo << "Requiring 1n1n [Coulomb only] breakup. " << endl;
-		        if (_beamBreakupMode == 4) 
-			    printInfo << "Requiring both nuclei to remain intact. " << endl;
-		        if (_beamBreakupMode == 5) 
-			    printInfo << "Requiring no hadronic interactions. " << endl;
-		        if (_beamBreakupMode == 6) 
-			    printInfo << "Requiring breakup of one or both nuclei. " << endl;
-		        if (_beamBreakupMode == 7) 
-			    printInfo << "Requiring breakup of one nucleus (Xn,0n). " << endl;
-
-			//pp may cause segmentation fault in here and it does not use this...
-			for (int k = 1; k <= NStep; ++k) {
-				_pHadronBreakup = 0;
-				_pPhotonBreakup = 0;
-
-				probabilityOfHadronBreakup(BIter); 
-				//moved gammatarg into photonbreakup
-				probabilityOfPhotonBreakup(BIter, _beamBreakupMode);
-
-				//What was probability of photonbreakup depending upon mode selection,
-				// is now done in the photonbreakupfunction
-				if (_beamBreakupMode == 1) {
-					if (BIter > 2. * _beam1.nuclearRadius())  // symmetry
-						_pHadronBreakup = 0;
-					else
-						_pHadronBreakup = 999.;
-				}
-				BIter = BIter * Step;
-				ProbTot[k] = exp(-1 * _pHadronBreakup) * _pPhotonBreakup;
-			}
-			//			ifirst = 1;
-		}
-		ifirst = 1;
-	}
-
-	double PofB = 0.; // PofB = 1 means that there will be a UPC event and PofB = 0 means no UPC
+	double bMin = (_beam1.nuclearRadius()+_beam2.nuclearRadius())/2.;
+	double pOfB = 0.; // PofB = 1 means that there will be a UPC event and PofB = 0 means no UPC
 
 	// Do pp here
-	if ((_beam1.Z() == 1) && (_beam1.A() == 1)) {  
+	if ((_beam1.Z() == 1) && (_beam1.A() == 1) && (_beam2.Z() == 1) && (_beam2.A() == 1)) {  
 		// again, using first beam, should be split up to be more specific
 		double ppslope=19.8;
 		double GammaProfile = exp(-D * D / (2. * hbarc * hbarc * ppslope));
-		PofB = (1. - GammaProfile) * (1. - GammaProfile);
+		pOfB = (1. - GammaProfile) * (1. - GammaProfile);
 		// if (D < 2. * _beam1.nuclearRadius())
 		//	//Should be the total of RNuc1+Rnuc2,used only beam #1
 		//	PofB = 0.0;
 		// else
 		//	PofB = 1.0;
-		return PofB;
+		return pOfB;
+	}
+	else if (((_beam1.Z() == 1) && (_beam1.A() == 1)) || ((_beam2.Z() == 1) && (_beam2.A() == 1))) {  
+		// again, using first beam, should be split up to be more specific
+// 		double ppslope=19.8;
+// 		double GammaProfile = exp(-D * D / (2. * hbarc * hbarc * ppslope));
+// 		PofB = (1. - GammaProfile) * (1. - GammaProfile);
+		/*if (D < (_beam1.nuclearRadius() + _beam2.nuclearRadius() ))
+		{
+			pOfB = 0.0;
+		}
+		else
+		{
+			pOfB = 1.0;
+		}
+*/
 	}
 
 	//use the lookup table and return...
-	PofB = 1.;
+	pOfB = 1.;
 	if (D > 0.0) {             
 		//Now we must determine which step number in d corresponds to this D,
 		// and use appropiate Ptot(D_i)
 		//int i = (int)(log(D / Bmin) / log(1.01));
-		int i = (int)(log(D / Bmin) / log(1.007));
+		int i = (int)(log(D / bMin) / log(_breakupImpactParameterStep));
 		if (i <= 0)
-			PofB = ProbTot[1];
+			pOfB = _breakupProbabilities[0];
 		else{
-			if (i >= NStep)
-				PofB = ProbTot[NStep];
+			if (i >= int(_breakupProbabilities.size()-1))
+				pOfB = _breakupProbabilities[_breakupProbabilities.size()-1];
 			else {
 				// const double DLow = Bmin * pow((1.01), i);
-				const double DLow = Bmin * pow((1.007), i);
+				const double DLow = bMin * pow((_breakupImpactParameterStep), i);
 				// const double DeltaD = 0.01 * DLow;
-				const double DeltaD = 0.007 * DLow;
-				const double DeltaP = ProbTot[i + 1] - ProbTot[i];
-				PofB   = ProbTot[i] + DeltaP * (D - DLow) / DeltaD;
+				const double DeltaD = (_breakupImpactParameterStep-1) * DLow;
+				const double DeltaP = _breakupProbabilities[i + 1] - _breakupProbabilities[i];
+				pOfB   = _breakupProbabilities[i] + DeltaP * (D - DLow) / DeltaD;
 			}
 		}
 	}
 
-	return PofB;
+	return pOfB;
 }
 
+void
+beamBeamSystem::generateBreakupProbabilities()
+{
+    // Step = 1.007;//.01; //We will multiplicateively increase Biter by 1%
+    
+    
+    double bMin = (_beam1.nuclearRadius()+_beam2.nuclearRadius())/2.;
+    
+    
+    if ((_beam1.Z() != 1) && (_beam1.A() != 1) && (_beam2.Z() != 1) && _beam2.A() != 1) {
+
+        if (_beamBreakupMode == 1)
+            printInfo << "Hard Sphere Break criteria. b > " << 2. * _beam1.nuclearRadius() << endl;
+        if (_beamBreakupMode == 2)
+            printInfo << "Requiring XnXn [Coulomb] breakup. " << endl;
+        if (_beamBreakupMode == 3)
+            printInfo << "Requiring 1n1n [Coulomb only] breakup. " << endl;
+        if (_beamBreakupMode == 4)
+            printInfo << "Requiring both nuclei to remain intact. " << endl;
+        if (_beamBreakupMode == 5)
+            printInfo << "Requiring no hadronic interactions. " << endl;
+        if (_beamBreakupMode == 6)
+            printInfo << "Requiring breakup of one or both nuclei. " << endl;
+        if (_beamBreakupMode == 7)
+            printInfo << "Requiring breakup of one nucleus (Xn,0n). " << endl;
+
+        //pp may cause segmentation fault in here and it does not use this...
+	double pOfBreakup = 0;
+	double b = bMin;
+	while(1-pOfBreakup > _breakupCutOff)
+	{
+            _pHadronBreakup = 0;
+            _pPhotonBreakup = 0;
+
+            double pHadronBreakup = probabilityOfHadronBreakup(b);
+            //moved gammatarg into photonbreakup
+            double pPhotonBreakup = probabilityOfPhotonBreakup(b, _beamBreakupMode);
+
+            //What was probability of photonbreakup depending upon mode selection,
+            // is now done in the photonbreakupfunction
+            if (_beamBreakupMode == 1) {
+                if (b >_beam1.nuclearRadius()+_beam2.nuclearRadius())  // symmetry
+                    _pHadronBreakup = 0;
+                else
+                    _pHadronBreakup = 999.;
+            }
+            
+            b *= _breakupImpactParameterStep;
+	    pOfBreakup = exp(-1 * pHadronBreakup) * pPhotonBreakup;
+            _breakupProbabilities.push_back(pOfBreakup);
+        }
+    }
+    else if (((_beam1.Z() == 1) && (_beam1.A() == 1)) || ((_beam2.Z() == 1) && (_beam2.A() == 1))) {  
+      
+      double pOfBreakup = 0;
+      double b = bMin;
+      
+      while(1-pOfBreakup > _breakupCutOff)
+	{
+
+	  _beam1.Z() > 1 ? pOfBreakup = exp(-7.35*_beam1.thickness(b)) :
+	                   pOfBreakup = exp(-7.35*_beam2.thickness(b));
+	  _breakupProbabilities.push_back(pOfBreakup);
+            b *= _breakupImpactParameterStep;
+        }
+    }
+
+    
+}
 
 //______________________________________________________________________________
 double

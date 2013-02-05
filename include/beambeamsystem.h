@@ -38,7 +38,7 @@
 
 #include "nucleus.h"
 #include "beam.h"
-
+#include <vector>
 
 class beamBeamSystem
 {
@@ -60,7 +60,7 @@ public:
 	const beam& beam2() const { return _beam2; }  ///< returns beam particle 2
 
 	//	double getluminosity();
-	double probabilityOfBreakup(const double D);
+	double probabilityOfBreakup(const double D) const;
 	
 	double cmsBoost() const { return _cmsBoost; }
 	
@@ -69,7 +69,7 @@ public:
 	void init(const inputParameters &p);
 
 private:
-
+	void generateBreakupProbabilities();
 	//	int _ibreakup;//temporary solution until read in parameters are done
 	double probabilityOfHadronBreakup(const double impactparameter);
 	double probabilityOfPhotonBreakup(const double impactparameter, const int mode);
@@ -92,6 +92,10 @@ private:
 	beam   _beam2;             ///< beam particle 2
 
 	double _cmsBoost;	   ///< Rapidity boost of the CMS wrt the lab system
+	
+	std::vector<double> _breakupProbabilities; ///< Vector containing breakup probabilities for impact parameters
+	double _breakupImpactParameterStep; ///< Step size in the calculation of the breakup probs
+	double _breakupCutOff;  ///< Cut off for minimum impact parameter probability
 };
 
 
