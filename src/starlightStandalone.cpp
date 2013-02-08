@@ -20,9 +20,9 @@
 ///////////////////////////////////////////////////////////////////////////
 //
 // File and Version Information:
-// $Rev::                             $: revision of last commit
-// $Author::                          $: author of last commit
-// $Date::                            $: date of last commit
+// $Rev:: 102                         $: revision of last commit
+// $Author:: odjuvsla                 $: author of last commit
+// $Date:: 2012-10-22 16:25:54 -0500 #$: date of last commit
 //
 // Description:
 //
@@ -124,3 +124,4 @@ void starlightStandalone::boostEvent(upcEvent &event)
 
    event.boost(boost);
 }
+
