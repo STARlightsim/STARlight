@@ -20,9 +20,9 @@
 ###########################################################################
 #
 # File and Version Information:
-# $Rev::                             $: revision of last commit
-# $Author::                          $: author of last commit
-# $Date::                            $: date of last commit
+# $Rev:: 111                         $: revision of last commit
+# $Author:: odjuvsla                 $: author of last commit
+# $Date:: 2013-02-05 15:11:52 -0600 #$: date of last commit
 #
 # Description:
 #      Starlight build file
@@ -75,7 +75,21 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 # common compiler flags
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-error=unused-but-set-variable -Wno-error=unused-but-set-parameter")
+if (CMAKE_COMPILER_IS_GNUCC)
+  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
+  message(STATUS "GCC_VERSTION")
+  message(STATUS  ${GCC_VERSION})
+  if (GCC_VERSION VERSION_GREATER 4.6 OR GCC_VERSION VERSION_EQUAL 4.6)
+    message(STATUS "GCC_VERSION>=4.6")
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-error=unused-but-set-variable -Wno-error=unused-but-set-parameter")
+  else()
+    message(STATUS "GCC_VERSION<4.6")
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+  endif()
+else()
+  message(STATUS "Not GCC")
+  set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
+endif()
 # flags for specific build types
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
