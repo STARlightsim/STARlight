@@ -130,7 +130,7 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   }
   else if(_input2photon.xsecCalcMethod() == 1) {
     
-        const int nthreads = 20;//_input2photon.nThreads();
+        const int nthreads = _input2photon.nThreads();
         pthread_t threads[nthreads];
         difflumiargs args[nthreads];
 
