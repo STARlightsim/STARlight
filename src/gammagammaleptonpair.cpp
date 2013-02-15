@@ -563,7 +563,7 @@ upcEvent Gammagammaleptonpair::produceEvent()
    int iFbadevent=0;
    starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
    
-   double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
+   double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.,E2=0.,E1=0.;
    bool accepted = false;
    do{ 
      //this function decays particles and writes events to a file
@@ -620,11 +620,16 @@ upcEvent Gammagammaleptonpair::produceEvent()
        q1=-1;
        q2=1;
      }
+
      // The new stuff
-     starlightParticle particle1(px1, py1, pz1, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, -q1*ipid, q1);
+     double mlepton = getMass(); 
+     E1 = sqrt( mlepton*mlepton + px1*px1 + py1*py1 + pz1*pz1 ); 
+     E2 = sqrt( mlepton*mlepton + px2*px2 + py2*py2 + pz2*pz2 ); 
+
+     starlightParticle particle1(px1, py1, pz1, E1, starlightConstants::UNKNOWN, -q1*ipid, q1);
      event.addParticle(particle1);
      
-     starlightParticle particle2(px2, py2, pz2, starlightConstants::UNKNOWN, starlightConstants::UNKNOWN, -q2*ipid, q2);
+     starlightParticle particle2(px2, py2, pz2, E2, starlightConstants::UNKNOWN, -q2*ipid, q2);
      event.addParticle(particle2);
      
     }
