@@ -88,7 +88,7 @@ void Gammagammaleptonpair::twoLeptonCrossSection()
 	for(int j=0;j<_GGlepInputnumy;j++)
 	{
 	    // _sigmax[i][j]=2.*Gammagammaleptonpair::twoMuonCrossSection(_Warray[i])*_f_max*_Farray[i][j]/100.;
-            _sigmax[i][j]=2.*twoMuonCrossSection(_Warray[i])*_f_max*_Farray[i][j]/(100.*_Warray[i]);
+            _sigmax[i][j]=twoMuonCrossSection(_Warray[i])*_f_max*_Farray[i][j]/(100.*_Warray[i]);
 	}
     }
     //calculate the total two-lepton cross section
@@ -139,7 +139,8 @@ void Gammagammaleptonpair::twoLeptonCrossSection()
 //______________________________________________________________________________
 double Gammagammaleptonpair::twoMuonCrossSection(double w)
 {
-    //This function gives the two muon cross section as a function of Y&W. Using the formula given in G.Soff et. al Nuclear Equation of State, part B, 579
+    //This function gives the two muon cross section as a function of Y&W. 
+    //Using the formula given in G.Soff et. al Nuclear Equation of State, part B, 579
     double s=0.,Etest=0.,deltat=0.,xL=0.,sigmuix=0.,alphasquared=0.,hbarcsquared=0.;
     s = w*w;
     Etest = 4.*getMass()*getMass()/s;  
@@ -284,8 +285,8 @@ void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,d
     anglepp1 = _randy.Rndom();//random()/(RAND_MAX+1.0);
     anglepp2 = _randy.Rndom();//random()/(RAND_MAX+1.0);
 
-    pp1 = pp(E1);
-    pp2 = pp(E2);
+    pp1 = pp_1(E1);
+    pp2 = pp_2(E2);
     px = pp1*cos(2.*starlightConstants::pi*anglepp1)+pp2*cos(2.*starlightConstants::pi*anglepp2);
     py = pp1*sin(2.*starlightConstants::pi*anglepp1)+pp2*sin(2.*starlightConstants::pi*anglepp2);
 
@@ -298,16 +299,16 @@ void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,d
     signpx = _randy.Rndom();//random()/(RAND_MAX+1.0);
 
     //pick the z direction
-    if(signpx > 0.5) pz = -pz;
+    //Don't do this anymore since y goes from -ymax to +ymax (JN 15-02-2013)
+    //if(signpx > 0.5) pz = -pz;
 }
 
 
 //______________________________________________________________________________
-double Gammagammaleptonpair::pp(double E)
+double Gammagammaleptonpair::pp_1(double E)
 {
-//will probably have to pass in beambeamsys? that way we can do beam1.formFactor(t) or beam2..., careful with the way sergey did it for asymmetry
-
-//returns on random draw from pp(E) distribution
+    // This is for beam 1 
+    // returns on random draw from pp(E) distribution
     double ereds =0.,Cm=0.,Coef=0.,x=0.,pp=0.,test=0.,u=0.;
     double singleformfactorCm=0.,singleformfactorpp1=0.,singleformfactorpp2=0.;
     int satisfy =0;
@@ -316,31 +317,72 @@ double Gammagammaleptonpair::pp(double E)
     //sqrt(3)*E/gamma_em is p_t where the distribution is a maximum
     Cm = sqrt(3.)*E/_GGlepInputGamma_em;
     //the amplitude of the p_t spectrum at the maximum
-    singleformfactorCm=_bbs.beam1().formFactor(Cm*Cm+ereds);//Doing this once and then storing it as a double, which we square later...SYMMETRY?using beam1 for now.
+    singleformfactorCm=_bbs.beam1().formFactor(Cm*Cm+ereds);
     Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(starlightConstants::pi)*(ereds+Cm*Cm))*(2.*(starlightConstants::pi)*(ereds+Cm*Cm)));
         
     //pick a test value pp, and find the amplitude there
-    x = _randy.Rndom();//random()/(RAND_MAX+1.0);
-    pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); //Will use nucleus #1, there should be two for symmetry//nextline
+    x = _randy.Rndom();
+    pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
     singleformfactorpp1=_bbs.beam1().formFactor(pp*pp+ereds);
     test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
 
     while(satisfy==0){
-	u = _randy.Rndom();//random()/(RAND_MAX+1.0);
+	u = _randy.Rndom();
 	if(u*Coef <= test)
 	{
 	    satisfy =1;
 	}
 	else{
-	    x =_randy.Rndom();//random()/(RAND_MAX+1.0);
+	    x =_randy.Rndom();
 	    pp = 5*starlightConstants::hbarc/_bbs.beam1().nuclearRadius()*x;
-	    singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);//Symmetry
+	    singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);
 	    test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
 	}
     }
 
     return pp;
 }
+
+//______________________________________________________________________________
+double Gammagammaleptonpair::pp_2(double E)
+{
+
+    // This is for beam 2 
+    //returns on random draw from pp(E) distribution
+    double ereds =0.,Cm=0.,Coef=0.,x=0.,pp=0.,test=0.,u=0.;
+    double singleformfactorCm=0.,singleformfactorpp1=0.,singleformfactorpp2=0.;
+    int satisfy =0;
+        
+    ereds = (E/_GGlepInputGamma_em)*(E/_GGlepInputGamma_em);
+    //sqrt(3)*E/gamma_em is p_t where the distribution is a maximum
+    Cm = sqrt(3.)*E/_GGlepInputGamma_em;
+    //the amplitude of the p_t spectrum at the maximum
+    singleformfactorCm=_bbs.beam2().formFactor(Cm*Cm+ereds);
+    Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(starlightConstants::pi)*(ereds+Cm*Cm))*(2.*(starlightConstants::pi)*(ereds+Cm*Cm)));
+        
+    //pick a test value pp, and find the amplitude there
+    x = _randy.Rndom(); 
+    pp = x*5.*starlightConstants::hbarc/_bbs.beam2().nuclearRadius(); //Will use nucleus #1 
+    singleformfactorpp1=_bbs.beam2().formFactor(pp*pp+ereds);
+    test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
+
+    while(satisfy==0){
+	u = _randy.Rndom(); 
+	if(u*Coef <= test)
+	{
+	    satisfy =1;
+	}
+	else{
+	    x =_randy.Rndom(); 
+	    pp = 5*starlightConstants::hbarc/_bbs.beam2().nuclearRadius()*x;
+	    singleformfactorpp2=_bbs.beam2().formFactor(pp*pp+ereds); 
+	    test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
+	}
+    }
+
+    return pp;
+}
+
 
 
 //______________________________________________________________________________

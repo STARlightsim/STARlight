@@ -109,7 +109,7 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
     wylumfile << w[i] <<endl;
   }
   for (unsigned int i = 1; i <= _input2photon.nmbRapidityBins(); ++i) {
-    y[i] = _input2photon.maxRapidity()*(i-1.)/_input2photon.nmbRapidityBins();
+    y[i] = -_input2photon.maxRapidity() + 2.*_input2photon.maxRapidity()*(i-1.)/(_input2photon.nmbRapidityBins()-1);
     //Old code had it write to a table for looking up...
     wylumfile << y[i] <<endl;
   }
