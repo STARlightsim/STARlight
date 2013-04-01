@@ -82,7 +82,8 @@ private:
 	int                                  _beamBreakupMode;     ///< breakup mode for beam particles
 	bool                                 _coherentProduction;  ///< if true, production is coherent, else incoherent
 	double                               _incoherentFactor;    ///< allows to scale the incoherent contribution in vector meson production
-	int                                  _sigmaNucleus;
+        int                                  _productionMode; 
+	int                                  _sigmaNucleus; 
 
 	// locally defined parameters
 	double _slopeParameter;    ///< slope of t-distribution [(GeV/c)^{-2}]

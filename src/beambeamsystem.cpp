@@ -132,7 +132,6 @@ beamBeamSystem::probabilityOfBreakup(const double D) const
 
 	// Do pp here
 	if ((_beam1.Z() == 1) && (_beam1.A() == 1) && (_beam2.Z() == 1) && (_beam2.A() == 1)) {  
-		// again, using first beam, should be split up to be more specific
 		double ppslope=19.8;
 		double GammaProfile = exp(-D * D / (2. * hbarc * hbarc * ppslope));
 		pOfB = (1. - GammaProfile) * (1. - GammaProfile);
@@ -143,20 +142,17 @@ beamBeamSystem::probabilityOfBreakup(const double D) const
 		//	PofB = 1.0;
 		return pOfB;
 	}
-	else if (((_beam1.Z() == 1) && (_beam1.A() == 1)) || ((_beam2.Z() == 1) && (_beam2.A() == 1))) {  
-		// again, using first beam, should be split up to be more specific
-// 		double ppslope=19.8;
-// 		double GammaProfile = exp(-D * D / (2. * hbarc * hbarc * ppslope));
-// 		PofB = (1. - GammaProfile) * (1. - GammaProfile);
-		/*if (D < (_beam1.nuclearRadius() + _beam2.nuclearRadius() ))
-		{
-			pOfB = 0.0;
-		}
-		else
-		{
-			pOfB = 1.0;
-		}
-*/
+	else if ( ( (_beam1.A() == 1) && (_beam2.A() != 1) ) || ((_beam1.A() != 1) && (_beam2.A() == 1)) ) {  
+	  // This is pA
+          if( _beam1.A() == 1 ){ 
+            bMin = _beam2.nuclearRadius() + 0.7; 
+          }else if( _beam2.A() == 1 ){ 
+            bMin = _beam1.nuclearRadius() + 0.7; 
+          }else{
+            cout<<"Some logical problem here!"<<endl;
+          }
+          if( D > bMin )pOfB=1.0; 
+          return pOfB;
 	}
 
 	//use the lookup table and return...

@@ -411,46 +411,43 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	double Egam,Epom,tmin,pt1,pt2,phi1,phi2;
 	double px1,py1,px2,py2;
 	double pt,xt,xtest,ytest;
-	double photon_spectrum;
-	double t1,t2;
+	//	double photon_spectrum;
+	double t2;
 
 	dW = (_VMWmax-_VMWmin)/double(_VMnumw);
 	dY  = (_VMYmax-_VMYmin)/double(_VMnumy);
   
 	//Find Egam,Epom in CM frame
-	Egam = 0.5*W*exp(Y);
-	Epom = 0.5*W*exp(-Y);
-  
- L202vm:
-	xt = _randy.Rndom();//random()/(RAND_MAX+1.0);
-	pt1  = 0.5*xt;
+        if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
+          if( _ProductionMode == 2 ){
+    	    Egam = 0.5*W*exp(Y);
+  	    Epom = 0.5*W*exp(-Y);
+          }else{
+    	    Egam = 0.5*W*exp(-Y);
+  	    Epom = 0.5*W*exp(Y);
+          }  
+        } else if( _bbs.beam2().A()==1 && _bbs.beam1().A() != 1 ){
+          if( _ProductionMode == 2 ){
+  	    Egam = 0.5*W*exp(-Y);
+  	    Epom = 0.5*W*exp(Y);
+          }else{
+    	    Egam = 0.5*W*exp(Y);
+  	    Epom = 0.5*W*exp(-Y);
+          }  
+        } else {
+	  Egam = 0.5*W*exp(Y);
+	  Epom = 0.5*W*exp(-Y);
+        }
 
-	tmin = ((Egam/_VMgamma_em)*(Egam/_VMgamma_em));
-	if(tmin > 0.5)
-		{
-			cout<< " WARNING: tmin= "<<tmin<<endl;
-			cout<< " Will pick a new W,Y "<<endl;
-			tcheck = 1;
-			return;
-		}
- 
-	xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
-	t1 = tmin + pt1*pt1;
-	photon_spectrum = (_bbs.beam1().formFactor(t1)*_bbs.beam1().formFactor(t1)*pt1*pt1*pt1)/(t1*t1);
-  
-	photon_spectrum = 16.*sqrt(tmin)*photon_spectrum/(3.*sqrt(3.));
-                                                                                                                                  
-	if( photon_spectrum >  1.0 )
-		{
-			cout<< "WARNING: photon pt spectrum error "<<"  photon_spectrum="<<photon_spectrum<<endl;
-		}
-	if( xtest > photon_spectrum )
-		goto L202vm;
-	phi1 = 2.*starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
+        // cout<<" Y: "<<Y<<" W: "<<W<<" Egam: "<<Egam<<" Epom: "<<Epom<<endl; 
+        pt1 = pTgamma(Egam);  
+	phi1 = 2.*starlightConstants::pi*_randy.Rndom();
 
-	if( (_bbs.beam1().Z()==1 && _bbs.beam1().A()==1) || 
+	//      cout<<" pt1: "<<pt1<<endl; 
+
+	if( (_bbs.beam1().A()==1 && _bbs.beam2().A()==1) || 
             (_ProductionMode == 4) ) {
-	  if( (_VMpidtest == starlightConstants::RHO) || (_VMpidtest == starlightConstants::RHOZEUS) || (_VMpidtest == starlightConstants::OMEGA)){
+	    if( (_VMpidtest == starlightConstants::RHO) || (_VMpidtest == starlightConstants::RHOZEUS) || (_VMpidtest == starlightConstants::OMEGA)){
 	      // Use dipole form factor for light VM
 	      L555vm:
 	      xtest = 2.0*_randy.Rndom();
@@ -463,31 +460,39 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
               pt2 = xtest;              
 	    }else{
 		//Use dsig/dt= exp(-_VMbslope*t) for heavy VM
-		xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+		xtest = _randy.Rndom(); 
 		t2 = (-1./_VMbslope)*log(xtest);
 		pt2 = sqrt(1.*t2);
 	    }
-	}
-	else{
-	L203vm:
-		xt = _randy.Rndom(); //random()/(RAND_MAX+1.0);
-		//dAu--Sergey
-		if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
-			pt2  = 0.8*xt; //it was 0.5,0.8, 1.0  (Sergey)
-		}
-		else{
-			if(_VMCoherence==1) pt2  = 0.5*xt;
-		}
+	} else {
 		//       >> Check tmin
 		tmin = ((Epom/_VMgamma_em)*(Epom/_VMgamma_em));
 	
 		if(tmin > 0.5){
 			cout<<" WARNING: tmin= "<<tmin<<endl;
+                        cout<< " Y = "<<Y<<" W = "<<W<<" Epom = "<<Epom<<" gamma = "<<_VMgamma_em<<endl; 
 			cout<<" Will pick a new W,Y "<<endl;
 			tcheck = 1;
 			return;
 		}
-    
+ L203vm:
+		xt = _randy.Rndom(); 
+                if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
+                  if( _ProductionMode == 2 ){
+                    pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
+                  }else{
+                    pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
+                  }   
+                } else if( _bbs.beam2().A()==1 && _bbs.beam1().A() != 1 ){
+                  if( _ProductionMode == 2 ){
+                    pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
+                  }else{
+                    pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
+                  }  
+                } else {
+                    pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
+                }
+
 		xtest = _randy.Rndom();
 		t2 = tmin + pt2*pt2;
     
@@ -496,23 +501,41 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 			if( xtest > _bbs.beam2().formFactor(t2)*pt2) goto L203vm;
 		}
 		else{
-			if(_VMCoherence==1){
-				if(1.0 < _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2) cout <<"POMERON:Sergey"<<endl;
-				if( xtest > _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2 )
-					goto L203vm;
-			}
-		}//dAu else end
 
+		  double comp=0.0; 
+                  if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
+                    if( _ProductionMode == 2 ){
+                      comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2;
+                    }else{
+                      comp = _bbs.beam1().formFactor(t2)*_bbs.beam1().formFactor(t2)*pt2;
+                    }   
+                  } else if( _bbs.beam2().A()==1 && _bbs.beam1().A() != 1 ){
+                    if( _ProductionMode == 2 ){
+                      comp = _bbs.beam1().formFactor(t2)*_bbs.beam1().formFactor(t2)*pt2;
+                    }else{
+                      comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2;
+                    }  
+                  } else {
+                    comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2;
+                  }
+	      
+                  if( xtest > comp ) goto L203vm;
+       		}
+
+		/*
 		if(_VMCoherence==0 && (!(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2))){
    		     //dsig/dt= exp(-_VMbslope*t)
 		     xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
 		     t2 = (-1./_VMbslope)*log(xtest);
 		     pt2 = sqrt(1.*t2);
 		}
+		*/
 
 	}//else end from pp
 	phi2 = 2.*starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
-  
+
+	//        cout<<" pt2: "<<pt2<<endl;  
+
 	px1 = pt1*cos(phi1);
 	py1 = pt1*sin(phi1);
 	px2 = pt2*cos(phi2);
@@ -525,17 +548,112 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
        
 	E  = sqrt(W*W+pt*pt)*cosh(Y);
 	pz = sqrt(W*W+pt*pt)*sinh(Y);
+ 
+        // cout<< " Y = "<<Y<<" W = "<<W<<" Egam = "<<Egam<<" gamma = "<<_VMgamma_em<<endl; 
 
 	// Randomly choose to make pz negative 50% of the time
 	if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
 		pz = -pz;
-	}else if( (_bbs.beam1().A()==1 && _bbs.beam2().A() > 1) || (_bbs.beam2().A()==1 && _bbs.beam1().A()>1) ){
+	}else if( (_bbs.beam1().A()==1 && _bbs.beam2().A() != 1) || (_bbs.beam2().A()==1 && _bbs.beam1().A() != 1) ){
 	  // Don't switch      
         }
 	else{
 		if (_randy.Rndom() >= 0.5) pz = -pz;
 	}
 
+}
+
+//______________________________________________________________________________
+double Gammaavectormeson::pTgamma(double E)
+{
+    // returns on random draw from pp(E) distribution
+    double ereds =0.,Cm=0.,Coef=0.,x=0.,pp=0.,test=0.,u=0.;
+    double singleformfactorCm=0.,singleformfactorpp1=0.,singleformfactorpp2=0.;
+    int satisfy =0;
+        
+    ereds = (E/_VMgamma_em)*(E/_VMgamma_em);
+    //sqrt(3)*E/gamma_em is p_t where the distribution is a maximum
+    Cm = sqrt(3.)*E/_VMgamma_em;
+
+    //the amplitude of the p_t spectrum at the maximum
+
+    if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
+      if( _ProductionMode == 2 ){
+         singleformfactorCm=_bbs.beam1().formFactor(Cm*Cm+ereds);
+      }else{
+         singleformfactorCm=_bbs.beam2().formFactor(Cm*Cm+ereds);
+      }  
+    } else if( _bbs.beam2().A()==1 && _bbs.beam1().A() != 1 ){
+      if( _ProductionMode == 2 ){
+         singleformfactorCm=_bbs.beam2().formFactor(Cm*Cm+ereds);
+      }else{
+         singleformfactorCm=_bbs.beam1().formFactor(Cm*Cm+ereds);
+      }  
+    } else {
+      singleformfactorCm=_bbs.beam1().formFactor(Cm*Cm+ereds);
+    }
+
+    Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(starlightConstants::pi)*(ereds+Cm*Cm))*(2.*(starlightConstants::pi)*(ereds+Cm*Cm)));
+        
+    //pick a test value pp, and find the amplitude there
+    x = _randy.Rndom();
+
+    if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
+      if( _ProductionMode == 2 ){
+        pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
+        singleformfactorpp1=_bbs.beam1().formFactor(pp*pp+ereds);
+      }else{
+        pp = x*5.*starlightConstants::hbarc/_bbs.beam2().nuclearRadius(); 
+        singleformfactorpp1=_bbs.beam2().formFactor(pp*pp+ereds);
+      }  
+    } else if( _bbs.beam2().A()==1 && _bbs.beam1().A() != 1 ){
+      if( _ProductionMode == 2 ){
+        pp = x*5.*starlightConstants::hbarc/_bbs.beam2().nuclearRadius(); 
+        singleformfactorpp1=_bbs.beam2().formFactor(pp*pp+ereds);
+      }else{
+        pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
+        singleformfactorpp1=_bbs.beam1().formFactor(pp*pp+ereds);
+      }  
+    } else {
+        pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
+        singleformfactorpp1=_bbs.beam1().formFactor(pp*pp+ereds);
+    }
+
+    test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
+
+    while(satisfy==0){
+	u = _randy.Rndom();
+	if(u*Coef <= test)
+	{
+	    satisfy =1;
+	}
+	else{
+	    x =_randy.Rndom();
+            if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
+              if( _ProductionMode == 2 ){
+                pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
+                singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);
+              }else{
+                pp = x*5.*starlightConstants::hbarc/_bbs.beam2().nuclearRadius(); 
+                singleformfactorpp2=_bbs.beam2().formFactor(pp*pp+ereds);
+              }  
+            } else if( _bbs.beam2().A()==1 && _bbs.beam1().A() != 1 ){
+              if( _ProductionMode == 2 ){
+                pp = x*5.*starlightConstants::hbarc/_bbs.beam2().nuclearRadius(); 
+                singleformfactorpp2=_bbs.beam2().formFactor(pp*pp+ereds);
+              }else{
+                pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
+                singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);
+              }  
+            } else {
+              pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
+              singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);
+            }
+	    test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
+	}
+    }
+
+    return pp;
 }
 
 

@@ -25,13 +25,6 @@
 // $Date::                            $: date of last commit
 //
 // Description:
-//    Converted all nuclear formfactors to come from the scattering nucleus(nucleus2)
-//    Added incoherent condition to the cross-section that follows a similar approach as pp
-//    Could not figure out the scaling exactly for incoherent(possibly units) so divided by
-//    1E-4 and there is a incoherence factor that can be selected in the input file,
-//    starlight.in--JWB
-//    Also, it has not been implemented for interference.
-//
 //
 //
 ///////////////////////////////////////////////////////////////////////////
@@ -61,6 +54,7 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 	  _beamBreakupMode   (input.beamBreakupMode()   ),
 	  _coherentProduction(input.coherentProduction()),
 	  _incoherentFactor  (input.incoherentFactor()  ),
+          _productionMode    (input.productionMode()    ),
 	  _sigmaNucleus      (_bbs.beam2().A()          )
 {
 	// define luminosity for various beam particles in units of 10^{26} cm^{-2} sec^{-1}
@@ -203,7 +197,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		     <<" GammaAcrosssection"<<endl;
 	}
 
-	_maxPhotonEnergy = 4. * _beamLorentzGamma * hbarc/_bbs.beam1().nuclearRadius(); 
+        double maxradius = (_bbs.beam1().nuclearRadius()<_bbs.beam2().nuclearRadius())?_bbs.beam2().nuclearRadius():_bbs.beam1().nuclearRadius();
+	_maxPhotonEnergy = 5. * _beamLorentzGamma * hbarc/maxradius; 
 }
 
 
@@ -271,7 +266,6 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
 		         (!((_bbs.beam2().Z() == 1) && (_bbs.beam2().A() == 2)))) {  // incoherent AA interactions
 		// For incoherent AA interactions, since incoherent treating it as gamma-p
 		// Calculate the differential V.M.+proton cross section
-		//artifical 1E-3 to scale down sigma
 		csgA = 1.E-4 * _incoherentFactor * _sigmaNucleus * _slopeParameter * sigmagp(Wgp);
 
 	}	else {	// coherent AA interactions
@@ -280,20 +274,39 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
 		cs = sqrt(16. * pi * _vmPhotonCoupling * _slopeParameter * hbarc * hbarc * sigmagp(Wgp) / alpha);
     
 		// Calculate V.M.+nucleus cross section
+		// cvma = _bbs.beam1().A()*cs; 
 		cvma = sigma_A(cs); 
- 
+
 		// Calculate Av = dsigma/dt(t=0) Note Units: fm**s/Gev**2
 		Av = (alpha * cvma * cvma) / (16. * pi * _vmPhotonCoupling * hbarc * hbarc);
-    
+
+                // Check if one or both beams are nuclei 
+                int A_1 = _bbs.beam1().A(); 
+                int A_2 = _bbs.beam2().A(); 
+   
 		tmax   = tmin + 0.25;
 		ax     = 0.5 * (tmax - tmin);
 		bx     = 0.5 * (tmax + tmin);
 		csgA   = 0.;
 		for (int k = 1; k < NGAUSS; ++k) { 
+
 			t    = ax * xg[k] + bx;
-			csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
+                        if( A_1 == 1 && A_2 != 1){ 
+			  csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
+                        }else if(A_2 ==1 && A_1 != 1){
+			  csgA = csgA + ag[k] * _bbs.beam1().formFactor(t) * _bbs.beam1().formFactor(t);
+                        }else{     
+			  csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
+                        }
+
 			t    = ax * (-xg[k]) + bx;
-			csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
+                        if( A_1 == 1 && A_2 != 1){ 
+			  csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
+                        }else if(A_2 ==1 && A_1 != 1){
+			  csgA = csgA + ag[k] * _bbs.beam1().formFactor(t) * _bbs.beam1().formFactor(t);
+                        }else{     
+			  csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
+                        }
 		}
 		csgA = 0.5 * (tmax - tmin) * csgA;
 		csgA = Av * csgA;
@@ -328,10 +341,11 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 	double flux_r; 
 	double Xvar;
 	int Ilt;
-	double RNuc=0.,RNuc2=0.;
+	double RNuc=0.,RNuc2=0.,maxradius=0.;
 
 	RNuc=_bbs.beam1().nuclearRadius();
 	RNuc2=_bbs.beam2().nuclearRadius();
+        maxradius =  (RNuc<RNuc2)?RNuc2:RNuc;
 	// static ->>> dide,lnEMax,lnEmin,dlnE
 	static int  Icheck = 0;
   
@@ -407,17 +421,15 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
   
 	//  this last one is the number of energy steps
 	nstep=100;
-  
+ 
 	// following previous choices, take Emin=10 keV at LHC, Emin = 1 MeV at RHIC
-  
-	Emin=1.E-5;
+  	Emin=1.E-5;
 	if (_beamLorentzGamma < 500) 
 		Emin=1.E-3;
   
-	//  maximum energy is 12 times the cutoff
-	//  25 GeV for gold at RHIC, 650 GeV for lead at LHC
-  
-	Emax=12.*hbarc*_beamLorentzGamma/RNuc;
+	//  maximum energy is 6 times the cutoff
+	//	Emax=12.*hbarc*_beamLorentzGamma/RNuc;
+	Emax=6.*hbarc*_beamLorentzGamma/maxradius;
   
 	//     >> lnEmin <-> ln(Egamma) for the 0th bin
 	//     >> lnEmax <-> ln(Egamma) for the last bin
@@ -427,7 +439,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 	dlnE=(lnEmax-lnEmin)/nstep;                                                                                                                  
 
 	cout<<" Calculating flux for photon energies from E= "<<Emin 
-	    <<" to  "<<Emax<<"  GeV (lab frame) "<<endl;
+	    <<" to  "<<Emax<<"  GeV (CM frame) "<<endl;
 
 
 	stepmult= exp(log(Emax/Emin)/double(nstep));
@@ -447,17 +459,42 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 		integratedflux=0.;
     
 		if (_bbs.beam2().Z()==1&&_bbs.beam1().A()==2){
-			//This is for deuteron-gold
-			Xvar = (RNuc+RNuc2)*energy/(hbarc*(_beamLorentzGamma));
+		     //This is for deuteron-gold
+		     Xvar = (RNuc+RNuc2)*energy/(hbarc*(_beamLorentzGamma));
       
-			fluxelement = (2.0/pi)*rZ*rZ*alpha/
-				energy*(Xvar*bessel::dbesk0(Xvar)*bessel::dbesk1(Xvar)-(1/2)*Xvar*Xvar*
-				        (bessel::dbesk1(Xvar)*bessel::dbesk1(Xvar)-bessel::dbesk0(Xvar)*bessel::dbesk0(Xvar)));
+		     fluxelement = (2.0/pi)*rZ*rZ*alpha/
+		      	 energy*(Xvar*bessel::dbesk0(Xvar)*bessel::dbesk1(Xvar)-(1/2)*Xvar*Xvar*
+		       	        (bessel::dbesk1(Xvar)*bessel::dbesk1(Xvar)-bessel::dbesk0(Xvar)*bessel::dbesk0(Xvar)));
       
-			integratedflux=integratedflux+fluxelement;
-                
-		}//if dAu
-		else{ 
+		     integratedflux=integratedflux+fluxelement; 
+		}else if( (_bbs.beam1().A() == 1 && _bbs.beam2().A() != 1) || (_bbs.beam2().A() == 1 && _bbs.beam1().A() != 1) ){
+		    // This is pA 
+                    if( _productionMode == PHOTONPOMERONINCOHERENT ){
+                      // This is pA incoherent 
+                      // cout<<" This is incoherent! "<<" j = "<<j<<endl;
+                      double zproj = 0.0;
+                      double localbmin = 0.0;   
+                      if( _bbs.beam1().A() == 1 ){
+                        zproj = (_bbs.beam2().Z());
+			localbmin = _bbs.beam2().nuclearRadius() + 0.7; 
+                      }		      
+                      if( _bbs.beam2().A() == 1 ){ 
+                        zproj = (_bbs.beam1().Z());
+			localbmin = _bbs.beam1().nuclearRadius() + 0.7; 
+                      }
+                      integratedflux = zproj*zproj*nepoint(energy,localbmin); 
+                    } else if ( _productionMode == PHOTONPOMERONNARROW ||  _productionMode == PHOTONPOMERONWIDE ){
+                      // cout<<" This is pA coherent "<<" j= "<<j<<endl; 
+                      double localbmin = 0.0;   
+                      if( _bbs.beam1().A() == 1 ){
+			localbmin = _bbs.beam2().nuclearRadius() + 0.7; 
+		      }
+                      if( _bbs.beam2().A() == 1 ){ 
+			localbmin = _bbs.beam1().nuclearRadius() + 0.7; 
+                      }
+                      integratedflux = nepoint(energy,localbmin); 
+		    }
+		}else{ 
 			for (int jb = 1; jb<=nbstep;jb++){
 				bold=biter;
 				biter=biter*bmult;
@@ -496,10 +533,8 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 							phiiter=(double(jphi)-0.5)*deltaphi;
 							//  dist is the distance from the center of the emitting nucleus to the point in question
 							dist=sqrt((biter+riter*cos(phiiter))*(biter+riter*
-							                                      cos(phiiter))+(riter*sin(phiiter))*(riter*sin(phiiter)));
-	      
-							Xvar=energy*dist/(hbarc*_beamLorentzGamma);				
-	      
+							           cos(phiiter))+(riter*sin(phiiter))*(riter*sin(phiiter)));
+							Xvar=energy*dist/(hbarc*_beamLorentzGamma);  
 							flux_r = (rZ*rZ*alpha*energy)*
 								(bessel::dbesk1(Xvar)*bessel::dbesk1(Xvar))/
 								((pi*_beamLorentzGamma*hbarc)*
@@ -522,16 +557,14 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 				}
 				integratedflux=integratedflux+fluxelement;
 	
-			}//end of for
-		}  //end of else
-		// end energy integration
+			} //end loop over impact parameter 
+		}  //end of else (pp, pA, AA) 
     
 		//  In lookup table, store k*dN/dk because it changes less
-		//  so the interpolation should be better
-    
+		//  so the interpolation should be better    
 		dide[j]=integratedflux*energy;
                                      
-	}//end of for.
+	}//end loop over photon energy 
        
 	//  for 2nd and subsequent calls, use lookup table immediately
   
@@ -562,13 +595,13 @@ double
 photonNucleusCrossSection::nepoint(const double Egamma,
                                    const double bmin)
 {
-	//     >> Function for the spectrum of virtual photons,
-	//     >> dn/dEgamma, for a point charge q=Ze sweeping
-	//     >> past the origin with velocity gamma
-	//     >> (=1/SQRT(1-(V/c)**2)) integrated over impact
-	//     >> parameter from bmin to infinity
-	//     >> See Jackson eq15.54 Classical Electrodynamics
-	//     >> Declare Local Variables
+	// Function for the spectrum of virtual photons,
+	// dn/dEgamma, for a point charge q=Ze sweeping
+	// past the origin with velocity gamma
+	// (=1/SQRT(1-(V/c)**2)) integrated over impact
+	// parameter from bmin to infinity
+	// See Jackson eq15.54 Classical Electrodynamics
+	// Declare Local Variables
 	double beta,X,C1,bracket,nepoint_r;
   
 	beta = sqrt(1.-(1./(_beamLorentzGamma*_beamLorentzGamma)));
@@ -691,21 +724,41 @@ photonNucleusCrossSection::sigma_A(const double sig_N)
 		};
   
 	NGAUSS=16;
-  
+ 
+	// Check if one or both beams are nuclei 
+        int A_1 = _bbs.beam1().A(); 
+        int A_2 = _bbs.beam2().A(); 
+        if( A_1 == 1 && A_2 == 1)cout<<" This is pp, you should not be here..."<<endl;  
+
 	// CALCULATE P(int) FOR b=0.0 - bmax (fm)
 	bmax = 25.0;
 	sum  = 0.;
 	for(int IB=1;IB<=NGAUSS;IB++){
     
 		b = 0.5*bmax*xg[IB]+0.5*bmax;
-    
-		arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
+
+                if( A_1 == 1 && A_2 != 1){  
+                  arg=-sig_N*_bbs.beam2().rho0()*_bbs.beam2().thickness(b);
+                }else if(A_2 == 1 && A_1 != 1){
+                  arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
+                }else{ 
+                  arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
+                }
     
 		Pint=1.0-exp(arg);
 		sum=sum+2.*pi*b*Pint*ag[IB];
+
     
 		b = 0.5*bmax*(-xg[IB])+0.5*bmax;
-		arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
+
+                if( A_1 == 1 && A_2 != 1){  
+                  arg=-sig_N*_bbs.beam2().rho0()*_bbs.beam2().thickness(b);
+                }else if(A_2 == 1 && A_1 != 1){
+                  arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
+                }else{ 
+                  arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
+                }
+
 		Pint=1.0-exp(arg);
 		sum=sum+2.*pi*b*Pint*ag[IB];
 

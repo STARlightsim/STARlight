@@ -122,13 +122,9 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
 		tmp = tmp+2.*dR*(dY/6.);
 		dR  = dR*(dY/6.);
 
-                // cout<<" y: "<<y12<<" flux: "<<photonFlux(ega12)<<" sigma_gA: "<<csgA12<<" dR: "<<dR<<endl;
+		// cout<<" y: "<<y12<<" egamma: "<<ega12<<" flux: "<<photonFlux(ega12)<<" sigma_gA: "<<10000000.*csgA12<<" dsig/dy (microb): "<<10000.*dR/dY<<endl;
+
 		// The 2 accounts for the 2 beams
-		//Not dAu
-		//Double for identical beams.  
-		//If the beams are different in Z by a large amount
-		//eg dAu, then only beam1(Au) emits the photon and beam2(d) scatters it
-    
 		if(getbbs().beam1().A()==getbbs().beam2().A()){
 			dR  = 2.*dR;
 		}

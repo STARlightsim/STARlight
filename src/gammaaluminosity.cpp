@@ -133,17 +133,30 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
     for(unsigned int j = 0; j <= _inputgammaa.nmbRapidityBins() - 1; ++j) {
 
       Y = -1.0*_inputgammaa.maxRapidity() + double(j)*dY + 0.5*dY;
-      Egamma = 0.5*W*exp(Y);
-      
+
+      int A_1 = getbbs().beam1().A(); 
+      int A_2 = getbbs().beam2().A();
+      if( A_2 == 1 && A_1 != 1 ){
+        // pA, first beam is the nucleus 
+        Egamma = 0.5*W*exp(-Y);
+      } else if( A_1 ==1 && A_2 != 1){
+        // pA, second beam is the nucleus 
+        Egamma = 0.5*W*exp(Y); 
+      } else {
+        Egamma = 0.5*W*exp(Y);        
+      }
+
       dndWdY = 0.; 
 
-      if(Egamma > Eth){
-        if(Egamma > maxPhotonEnergy())Egamma = maxPhotonEnergy();
-        csgA=getcsgA(Egamma,W);
-        dndWdY = Egamma*photonFlux(Egamma)*csgA*breitWigner(W,bwnorm);
+      if( Egamma > Eth && Egamma < maxPhotonEnergy() ){
+
+       csgA=getcsgA(Egamma,W);
+       dndWdY = Egamma*photonFlux(Egamma)*csgA*breitWigner(W,bwnorm);
+
       }
 
       wylumfile << dndWdY << endl;
+
     }
   }
 
