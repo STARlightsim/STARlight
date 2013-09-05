@@ -38,7 +38,7 @@
 //______________________________________________________________________________
 eventFileWriter::eventFileWriter()
 : fileWriter()
-,_writeFullPythia(false)
+,_writeFullPythia(true)
 { }
 
 
@@ -51,7 +51,6 @@ eventFileWriter::eventFileWriter(std::string filename)
 //______________________________________________________________________________
 int eventFileWriter::writeEvent(upcEvent &event, int eventnumber)
 {
-   //TODO: Write code also for the pythia part!
    
     int numberoftracks = event.getParticles()->size();
     // int _numberOfVertices = event.getVertices()->size();
@@ -74,13 +73,20 @@ int eventFileWriter::writeEvent(upcEvent &event, int eventnumber)
       
       for (part = event.getParticles()->begin(); part != event.getParticles()->end(); part++, ipart++)
 	{
+          if(!_writeFullPythia) 
+          {
+              if((*part).getStatus() < 0) continue;
+          }
 	  _fileStream << "TRACK: " << " " << starlightParticleCodes::jetsetToGeant((*part).getPdgCode()) <<" "<< (*part).GetPx() << " " << (*part).GetPy()
-		      << " "<< (*part).GetPz() << " " <<eventnumber << " " << ipart << " " << 0 << " "
+		      << " "<< (*part).GetPz() << " " << (*part).GetE() << " " << eventnumber << " " << ipart << " " << 0 << " "
 		      << (*part).getPdgCode();
 		      
 	  if(_writeFullPythia)
 	  {
-	    _fileStream << " " << (*part).getParent() << " " << (*part).getFirstDaughter() << " " << (*part).getLastDaughter() << " " << (*part).getStatus();
+// 	    std::cout << (*part).getFirstDaughter() << std::endl;
+	    lorentzVector vtx = (*part).getVertex();
+	    _fileStream << " " << vtx.GetPx() << " " << vtx.GetPy() << " " << vtx.GetPz() << " " << vtx.GetE();
+	    _fileStream << " " << (*part).getFirstParent() << " " << (*part).getLastParent() << " " << (*part).getFirstDaughter() << " " << (*part).getLastDaughter() << " " << (*part).getStatus();
 	  }
 		      
 	  _fileStream <<std::endl;
