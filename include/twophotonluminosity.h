@@ -43,8 +43,7 @@
 class twoPhotonLuminosity : public beamBeamSystem
 {
 public:
-    twoPhotonLuminosity(beam beam_1,beam beam_2,int mode,double luminosity,inputParameters& input);
-    twoPhotonLuminosity(beam beam_1, beam beam_2,int mode,inputParameters& input);
+    twoPhotonLuminosity(beam beam_1, beam beam_2,inputParameters& input);
     ~twoPhotonLuminosity();
 
 protected:
