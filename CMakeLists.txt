@@ -250,8 +250,10 @@ set(SOURCES
 if(ENABLE_PYTHIA) 
   set (SOURCES
 		${SOURCES}
-		src/PythiaStarlight.cpp
+		#src/PythiaStarlight.cpp
+                src/pythiadecayer.cpp
 		)
+  include_directories(${PYTHIA8_INCLUDE_DIR})
 endif()
 if(ENABLE_PYTHIA6)
   set (SOURCES 
