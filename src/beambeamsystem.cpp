@@ -191,16 +191,43 @@ beamBeamSystem::generateBreakupProbabilities()
             printInfo << "Requiring breakup of one nucleus (Xn,0n). " << endl;
 
         //pp may cause segmentation fault in here and it does not use this...
-	double pOfBreakup = 0;
+	double pOfB = 0;
 	double b = bMin;
-	while(1-pOfBreakup > _breakupCutOff)
+        double totRad = _beam1.nuclearRadius()+_beam2.nuclearRadius();
+        
+	while(1)
 	{
-            _pHadronBreakup = 0;
-            _pPhotonBreakup = 0;
+            
+            if(_beamBreakupMode != 5)
+            {
+                if(b > (totRad*1.5))
+                {
+                    if(pOfB<_breakupCutOff)
+                    {
+//                         std::cout << "Break off b: " << b << std::endl;
+//                         std::cout << "Number of PofB bins: " << _breakupProbabilities.size() << std::endl;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if((1-pOfB)<_breakupCutOff)
+                {
+ //                         std::cout << "Break off b: " << b << std::endl;
+//                         std::cout << "Number of PofB bins: " << _breakupProbabilities.size() << std::endl;
+                        break;
+                }
+            }
+//             std::cout << 1-pOfBreakup << std::endl;
+//             _pHadronBreakup = 0;
+//             _pPhotonBreakup = 0;
 
-            double pHadronBreakup = probabilityOfHadronBreakup(b);
+//             double pHadronBreakup = probabilityOfHadronBreakup(b);
+            probabilityOfHadronBreakup(b);
             //moved gammatarg into photonbreakup
-            double pPhotonBreakup = probabilityOfPhotonBreakup(b, _beamBreakupMode);
+//             double pPhotonBreakup = probabilityOfPhotonBreakup(b, _beamBreakupMode);
+            probabilityOfPhotonBreakup(b, _beamBreakupMode);
 
             //What was probability of photonbreakup depending upon mode selection,
             // is now done in the photonbreakupfunction
@@ -212,21 +239,40 @@ beamBeamSystem::generateBreakupProbabilities()
             }
             
             b *= _breakupImpactParameterStep;
-	    pOfBreakup = exp(-1 * pHadronBreakup) * pPhotonBreakup;
-            _breakupProbabilities.push_back(pOfBreakup);
+	    pOfB = exp(-1 * _pHadronBreakup) * _pPhotonBreakup;
+            _breakupProbabilities.push_back(pOfB);
         }
     }
     else if (((_beam1.Z() == 1) && (_beam1.A() == 1)) || ((_beam2.Z() == 1) && (_beam2.A() == 1))) {  
       
-      double pOfBreakup = 0;
+      double pOfB = 0;
       double b = bMin;
+      double totRad = _beam1.nuclearRadius()+_beam2.nuclearRadius();
       
-      while(1-pOfBreakup > _breakupCutOff)
+      while(1)
 	{
-
-	  _beam1.Z() > 1 ? pOfBreakup = exp(-7.35*_beam1.thickness(b)) :
-	                   pOfBreakup = exp(-7.35*_beam2.thickness(b));
-	  _breakupProbabilities.push_back(pOfBreakup);
+            if(_beamBreakupMode != 5)
+            {
+                if(b > (totRad*1.5))
+                {
+                    if(pOfB<_breakupCutOff)
+                    {
+//                         std::cout << "Break off b: " << b << std::endl;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if((1-pOfB)<_breakupCutOff)
+                {
+//                         std::cout << "Break off b: " << b << std::endl;
+                        break;
+                }
+            }
+	  _beam1.Z() > 1 ? pOfB = exp(-7.35*_beam1.thickness(b)) :
+	                   pOfB = exp(-7.35*_beam2.thickness(b));
+	  _breakupProbabilities.push_back(pOfB);
             b *= _breakupImpactParameterStep;
         }
     }
