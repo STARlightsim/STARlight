@@ -45,11 +45,6 @@ class beamBeamSystem
 
 public:
 
-	//Better way to do this? Memory issues creating all of theses Beams?
-	beamBeamSystem(const beam&            beam1,
-	               const beam&            beam2,
-	               const double           luminosity,
-	               const inputParameters& parameters);
 	beamBeamSystem(const beam&            beam1,
 	               const beam&            beam2,
 	               const inputParameters& parameters);

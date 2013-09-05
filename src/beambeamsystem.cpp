@@ -47,23 +47,6 @@ using namespace starlightConstants;
 
 
 //______________________________________________________________________________
-beamBeamSystem::beamBeamSystem(const beam& beam1,
-                               const beam& beam2,
-                               const double,
-                               const inputParameters& input)
-  : _beam1(beam1),
-    _beam2(beam2),
-    _breakupProbabilities(0),
-    _breakupImpactParameterStep(1.007),
-    _breakupCutOff(10e-6)
-    
-    
-{
-  init(input);
-}
-
-
-//______________________________________________________________________________
 beamBeamSystem::beamBeamSystem(const beam&            beam1,
                                const beam&            beam2,
                                const inputParameters& input)
