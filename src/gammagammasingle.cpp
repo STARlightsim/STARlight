@@ -478,7 +478,7 @@ upcEvent Gammagammasingle::produceEvent()
   parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
   
   
-  if(_GGsingInputpidtest != starlightConstants::F2 || _GGsingInputpidtest != starlightConstants::F2PRIME)
+  if(_GGsingInputpidtest != starlightConstants::F2 && _GGsingInputpidtest != starlightConstants::F2PRIME)
   {
 #ifdef ENABLE_PYTHIA
     starlightParticle particle(parentmomx,parentmomy,parentmomz, parentE, getMass(),_GGsingInputpidtest , 0);
@@ -588,7 +588,6 @@ upcEvent Gammagammasingle::produceEvent()
   }
   
   return upcEvent(single);
-#endif
 }
 
 
