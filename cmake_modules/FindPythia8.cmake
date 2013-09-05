@@ -1,6 +1,6 @@
-FIND_PATH(PYTHIA8_INCLUDE_DIR Pythia.h /usr/include/ /usr/local/include/ $ENV{PYTHIADIR}/include)
+FIND_PATH(PYTHIA8_INCLUDE_DIR Pythia.h /usr/include/ /usr/include/pythia /usr/local/include/ $ENV{PYTHIADIR}/include)
 
-FIND_LIBRARY(PYTHIA8_LIBRARY NAMES pythia8 PATHS /usr/lib /usr/local/lib $ENV{PYTHIADIR}/lib/archive/)
+FIND_LIBRARY(PYTHIA8_LIBRARY NAMES pythia8 PATHS /usr/lib /usr/lib/pythia /usr/local/lib $ENV{PYTHIADIR}/lib/archive/)
 
 IF (PYTHIA8_INCLUDE_DIR AND PYTHIA8_LIBRARY)
    SET(PYTHIA8_FOUND TRUE)
@@ -10,6 +10,7 @@ ENDIF (PYTHIA8_INCLUDE_DIR AND PYTHIA8_LIBRARY)
 IF (PYTHIA8_FOUND)
    IF (NOT Pythia8_FIND_QUIETLY)
       MESSAGE(STATUS "Found Pythia8: ${PYTHIA8_LIBRARY}")
+      MESSAGE(STATUS "Found Pythia8 include: ${PYTHIA8_INCLUDE_DIR}")
    ENDIF (NOT Pythia8_FIND_QUIETLY)
 ELSE (PYTHIA8_FOUND)
    IF (Pythia8_FIND_REQUIRED)
