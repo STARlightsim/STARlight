@@ -51,12 +51,21 @@ namespace starlightConstants
 
 	// particle masses
 	static const double protonMass      = 0.93827231;   // [GeV/c^2]
-	static const double pionChargedMass = 0.13956995;     // [GeV/c^2]
-	static const double kaonChargedMass = 0.493677;       // [GeV/c^2]
-	static const double mel      = 0.00051099907;  // [GeV/c^2]
-	static const double muonMass = 0.105658389;    // [GeV/c^2]
-	static const double tauMass  = 1.777;          // [GeV/c^2]
-
+	static const double pionChargedMass = 0.13956995;   // [GeV/c^2]
+        static const double pionNeutralMass = 0.1349766;    // [GeV/c^2]
+	static const double kaonChargedMass = 0.493677;     // [GeV/c^2]
+	static const double mel      = 0.00051099907;       // [GeV/c^2]
+	static const double muonMass = 0.105658389;         // [GeV/c^2]
+	static const double tauMass  = 1.777;               // [GeV/c^2]
+	
+	static const double f0Mass = 0.980;                 // [GeV/c^2]
+        static const double etaMass = 0.54730;              // [GeV/c^2]
+        static const double etaPrimeMass = 0.95766;         // [GeV/c^2]
+        static const double etaCMass = 2.9803;              // [GeV/c^2]
+        static const double f2Mass = 1.2751;                // [GeV/c^2]
+        static const double a2Mass = 1.3183;                // [GeV/c^2]
+        static const double f2PrimeMass = 1.525;            // [GeV/c^2]
+        
 	enum particleTypeEnum {
 		UNKNOWN        = 0,
 		ELECTRON       = 11,
