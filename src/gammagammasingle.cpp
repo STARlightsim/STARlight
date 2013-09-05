@@ -38,9 +38,7 @@
 
 #include "starlightconstants.h"
 #include "gammagammasingle.h"
-#ifdef ENABLE_PYTHIA
-#include "PythiaStarlight.h"
-#endif
+#include "starlightconfig.h"
 
 using namespace std;
 
@@ -48,24 +46,15 @@ using namespace std;
 //______________________________________________________________________________
 Gammagammasingle::Gammagammasingle(inputParameters& input, beamBeamSystem& bbsystem)
 : eventChannel(input, bbsystem)
-{
 #ifdef ENABLE_PYTHIA
-  pythia = new pythiaStarlight();
-
-  std::cout << "Initialising pythia" << std::endl;
-  //TODO: remove the env var stupidity...	
-  const char* pythiaPath = getenv("PYTHIADIR");
-  if(pythiaPath != 0)
-    {
-      char path[128];
-      sprintf(path, "%s/xmldoc\0", pythiaPath);
-      pythia->init(std::string(path));
-    }
-  else
-    {
-      std::cerr << "ERROR: Trying to initialise pythia but cannot find the PYTHIADIR environment variable, please set it accordingly" << std::endl;
-    }
+,_pyDecayer()
 #endif
+{
+
+#ifdef ENABLE_PYTHIA
+    _pyDecayer.init();
+#endif
+  
   //Initialize randomgenerator with our seed.
   _randy.SetSeed(input.randomSeed());
   cout<<"Randy in Single Meson construction: "<<_randy.Rndom()<<endl;
@@ -98,11 +87,10 @@ void Gammagammasingle::singleCrossSection()
   _wdelta=getMass();
   for(int i=0;i<_GGsingInputnumw;i++){
     for(int j=0;j<_GGsingInputnumy;j++){
-      //Change 8 to 4 in the following equation, to fix integration of a delta function.
-      //Now, it matches the standard literature(cf. Eq. 67 of G.Baur et al., Phys. Rep. 364, 359(2002).
-      //STAR Note 243 gives the incorrect 4.
+      // Eq. 1 of starnote 347
       _sigmax[i][j]=(getSpin()*2.+1.)*4*starlightConstants::pi*starlightConstants::pi*getWidth()/
 	(getMass()*getMass()*getMass())*_f_max*_Farray[i][j]*starlightConstants::hbarc*starlightConstants::hbarc/100.;
+        std::cout << _sigmax[i][j] << " ---- " << _Farray[i][j] << std::endl;
     }
   }
   //find the index, i,for the value of w just less than the mass because we want to use the value from the sigma table that has w=mass
@@ -119,7 +107,7 @@ void Gammagammasingle::singleCrossSection()
   case starlightConstants::ZOVERZ03:
     _sigmaSum =0.;
     for(int j=0;j<_GGsingInputnumy-1;j++){
-                        _sigmaSum = _sigmaSum +2.0*(_Yarray[j+1]-_Yarray[j])*
+                        _sigmaSum = _sigmaSum +(_Yarray[j+1]-_Yarray[j])*
 			  100.0E-9*(.1/getMass())*((1.-remainw)*_f_max*
 						   (_Farray[ivalw][j]+_Farray[ivalw][j])/2.+remainw*_f_max*
 						   (_Farray[ivalw+1][j]+_Farray[ivalw+1][j+1])/2.);
@@ -127,10 +115,9 @@ void Gammagammasingle::singleCrossSection()
     break;
   default:
     //Sum to find the total cross-section
-    //The two iss to account for the fact that we integrate over just 1/2 of the rapidity range
     _sigmaSum =0.;
     for(int j =0;j<_GGsingInputnumy-1;j++){
-                        _sigmaSum = _sigmaSum+2.*
+                        _sigmaSum = _sigmaSum+
 			  (_Yarray[j+1]-_Yarray[j])*((1.-remainw)*
 						   (_sigmax[ivalw][j]+_sigmax[ivalw][j+1])/2.+remainw*
 						   (_sigmax[ivalw+1][j]+_sigmax[ivalw+1][j+1])/2.);
@@ -466,7 +453,6 @@ upcEvent Gammagammasingle::produceEvent()
   //	 cout << "NOT IMPLEMENTED!" << endl;
 	 
   //	 return upcEvent();
-	 int ievent = 0;
 
   //    returns the vector with the decay particles inside.
   //	onedecayparticle single;
@@ -475,13 +461,6 @@ upcEvent Gammagammasingle::produceEvent()
   double rapidity = 0.;
   double parentE = 0.;
   double parentmomx=0.,parentmomy=0.,parentmomz=0.;
-  int iFbadevent=0;
-  starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
-  double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
-  double px3=0.,px4=0.,py3=0.,py4=0.,pz3=0.,pz4=0.;
-  //  double theta=0.,phi=0.;//angles from jetset
-  double xtest=0.,ztest=0.;
- 
 
   //this function decays particles and writes events to a file
   //zeroing out the event structure
@@ -498,6 +477,26 @@ upcEvent Gammagammasingle::produceEvent()
   picky(rapidity);
   parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
   
+  
+  if(_GGsingInputpidtest != starlightConstants::F2 || _GGsingInputpidtest != starlightConstants::F2PRIME)
+  {
+#ifdef ENABLE_PYTHIA
+    starlightParticle particle(parentmomx,parentmomy,parentmomz, parentE, getMass(),_GGsingInputpidtest , 0);
+  
+    _pyDecayer.addParticle(particle);
+  
+    return _pyDecayer.execute();
+#endif
+  }
+
+
+  int ievent = 0;
+  int iFbadevent=0;
+  starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
+  double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
+  double px3=0.,px4=0.,py3=0.,py4=0.,pz3=0.,pz4=0.;
+  //  double theta=0.,phi=0.;//angles from jetset
+  double xtest=0.,ztest=0.;
   switch(_GGsingInputpidtest){
   case starlightConstants::ZOVERZ03:
     //Decays into two pairs.
@@ -575,94 +574,21 @@ upcEvent Gammagammasingle::produceEvent()
       single.px[0]=px1;
       single.py[0]=py1;
       single.pz[0]=pz1;
-      single._fsParticle[0]=ipid; 
+      single._fsParticle[0]=ipid*single._charge[0]; 
       //Track #2
       single.px[1]=px2;
       single.py[1]=py2;
       single.pz[1]=pz2;
-      single._fsParticle[1]=ipid;
+      single._fsParticle[1]=ipid*single._charge[1];
       ievent=ievent+1;
     }
     break;
   default:
-    //This will be jetset stuff...just need to add link to jetset program
-   #ifdef ENABLE_PYTHIA    
-    //cout << "Submitting "<<_GGsingInputpidtest<<" to jetset to decay."<<endl;
-    //calculate theta and phi of the particle being submitted to jetset.
-    //We do not need to do this anymore?  Pythia takes pid,px,py,pz,e, and m
-    //thephi(comenergy,parentmomx,parentmomy,parentmomz,parentE,theta,phi);
-    ///lu1ent(0,pid,E,theta,phi);
-    //Lets begin to link Pythia8 into starlight.  Probably best to do this in main.cpp
-    //However, we only do pythia here for the time being.  Lets be self contained in case
-    //We want to remove it later or whatever other reason.
-    /*#include "Pythia.h"
-      using namespace Pythia8;
-      // Generator; shorthand for event.
-      Pythia pythia;
-      Event& event = pythia.event;
-      // Key requirement: switch off ProcessLevel, and thereby also PartonLevel.
-      pythia.readString("ProcessLevel:all = off");
-      //When limittau0 is on, only particles with tau0<tau0max are decayed.
-      pythia.readString("ParticleDecays:limitTau0 = on");
-      //Default tau0 max is 10mm/c, we are setting it to 1mm/c
-      pythia.readString("ParticleDecays:tau0Max = 1");
-      // Provide printout of initial information.
-      pythia.settings.listChanged();//Useful for earlier stages.
-      // Initialize.
-      pythia.init();*/
-    
-    //Reseting the event.
-    
-    Pythia8::Event &event = pythia->getPythia()->event;
-    event.reset();
-    //Adding an event to pythia
-    //Adding Particles information (id,status,color,anticolor,px,py,pz,energy,restmass)
-    double restmass=0.;
-    restmass=getMass();
-    double tempx=0.,tempy=0.,tempz=0.;
-    event.append(_GGsingInputpidtest,1,0,0,parentmomx,parentmomy,parentmomz,parentE,restmass);
-    
-    // Generate events. Quit if failure.
-    
-    if (!pythia->getPythia()->next()) {
-      cout << " Event generation aborted prematurely, owing to error! Gammagammasingle::produceevent\n";
-      break;
-    }
-    single._vertx[0]=0.;
-    single._verty[0]=0.;
-    single._vertz[0]=0.;
-    single._numberOfVertices=1;
-    
-    single._numberOfTracks=(event.size()-1);
-    for(int j=1;j<event.size();j++){//skipping event[0], this just outputs the mother as if the beam/system
-      int b=j-1;//start counting at 0 for arrays in single
-      single._charge[b]=1;//Charge should be returned on the id
-      single.px[b]=event[j].px();
-      single.py[b]=event[j].py();
-      single.pz[b]=event[j].pz();
-      single._fsParticle[b]=event[j].id();
-      single._mother1[b]=event[j]._mother1();
-      single._mother2[b]=event[j]._mother2();
-      single._daughter1[b]=event[j]._daughter1();
-      single._daughter2[b]=event[j]._daughter2();
-      //might have to change the type for _fsParticle since pythia could return something we do not have defined.
-      if(!(event[j].xProd()==tempx&&event[j].yProd()==tempy&&event[j].zProd()==tempz)){
-	single._numberOfVertices++;
-	single._vertx[single._numberOfVertices-1]=event[j].xProd();
-	single._verty[single._numberOfVertices-1]=event[j].yProd();
-	single._vertz[single._numberOfVertices-1]=event[j].zProd();
-	tempx=event[j].xProd();
-	tempy=event[j].yProd();
-	tempz=event[j].zProd();
-      }
-    }
-    ievent=ievent+1;
-    #else
     break;
-    #endif
   }
-
+  
   return upcEvent(single);
+#endif
 }
 
 
@@ -686,28 +612,29 @@ void Gammagammasingle::thephi(double W,double px,double py,double pz,double E,do
 //______________________________________________________________________________
 double Gammagammasingle::getMass()
 {
+  using namespace starlightConstants;
   double singlemass=0.;
   switch(_GGsingInputpidtest){
   case starlightConstants::ETA:
-    singlemass=0.54730;
+    singlemass= etaMass;
     break;
   case starlightConstants::ETAPRIME:
-    singlemass=0.95777;
+    singlemass=etaPrimeMass;
     break;
   case starlightConstants::ETAC:
-    singlemass=2.980;
+    singlemass=etaCMass;
     break;
   case starlightConstants::F0:
-    singlemass=0.980;
+    singlemass=f0Mass;
     break;
   case starlightConstants::F2:
-    singlemass=1.2754;
+    singlemass=f2Mass;
     break;
   case starlightConstants::A2:
-    singlemass=1.318;
+    singlemass=a2Mass;
     break;
   case starlightConstants::F2PRIME:
-    singlemass=1.525;
+    singlemass=f2PrimeMass;
     break;
   case starlightConstants::ZOVERZ03:
     singlemass=1.540;
@@ -731,7 +658,7 @@ double Gammagammasingle::getWidth()
     singlewidth=5.E-6;
     break;
   case starlightConstants::ETAC:
-    singlewidth=6.3E-6;
+    singlewidth=6.4E-6;
     break;
   case starlightConstants::F0:
     singlewidth=0.56E-6;

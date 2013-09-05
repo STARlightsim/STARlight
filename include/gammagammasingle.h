@@ -42,10 +42,10 @@
 #include "beambeamsystem.h"
 #include "randomgenerator.h"
 #include "eventchannel.h"
-
-
-class pythiaStarlight;
-
+#include "starlightconfig.h"
+#ifdef ENABLE_PYTHIA
+#include "pythiadecayer.h"
+#endif
 
 class Gammagammasingle : public eventChannel
 {
@@ -82,8 +82,10 @@ class Gammagammasingle : public eventChannel
   int _GGsingInputnumw;
   int _GGsingInputnumy;
   double _GGsingInputGamma_em;
+#ifdef ENABLE_PYTHIA 
+  pythiaDecayer _pyDecayer;
+#endif
   
-  pythiaStarlight *_pythia;
 };
 
 
