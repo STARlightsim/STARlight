@@ -47,17 +47,12 @@
 using namespace std;
 using namespace starlightConstants;
 
-//______________________________________________________________________________
-twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2,int,double luminosity,inputParameters& input)
- :beamBeamSystem(beam_1,beam_2,luminosity,input),_input2photon(input)
-{ }
 
 
 //______________________________________________________________________________
-twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2,int,inputParameters& input):beamBeamSystem(beam_1,beam_2,input),_input2photon(input)
+twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2,inputParameters& input):
+beamBeamSystem(beam_1,beam_2,input),_input2photon(input)
 {
-  cout <<"Inside 2photonlumin, beam_1 nuclear radius: "<<beam_1.nuclearRadius()<<endl;
-  cout <<"Inside 2photonlumin, beam_2 nuclear radius: "<<beam_2.nuclearRadius()<<endl;
   //Lets check to see if we need to recalculate the luminosity tables
   twoPhotonDifferentialLuminosity();
 }
@@ -74,8 +69,8 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   ofstream wylumfile;
   wylumfile.precision(15);
   wylumfile.open("slight.txt");
-  double w[starlightLimits::MAXWBINS];
-  double y[starlightLimits::MAXYBINS];
+  std::vector<double> w(_input2photon.nmbWBins());
+  std::vector<double> y(_input2photon.nmbRapidityBins());
   double xlum = 0.; 
   double Normalize = 0.,OldNorm;
   double wmev = 0;
@@ -103,25 +98,22 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   wylumfile << _input2photon.deuteronSlopePar() <<endl;
   wylumfile << _input2photon.maxPtInterference() <<endl;
   wylumfile << _input2photon.nmbPtBinsInterference() <<endl;
-  for (unsigned int i = 1; i <= _input2photon.nmbWBins(); ++i) {
+  for (unsigned int i = 0; i < _input2photon.nmbWBins(); ++i) {
     w[i] = _input2photon.minW() + (_input2photon.maxW()-_input2photon.minW())/_input2photon.nmbWBins()*i;
-    //Old code had it write to a table for looking up...
     wylumfile << w[i] <<endl;
   }
-  for (unsigned int i = 1; i <= _input2photon.nmbRapidityBins(); ++i) {
-    y[i] = -_input2photon.maxRapidity() + 2.*_input2photon.maxRapidity()*(i-1.)/(_input2photon.nmbRapidityBins()-1);
-    //Old code had it write to a table for looking up...
+  for (unsigned int i = 0; i < _input2photon.nmbRapidityBins(); ++i) {
+    y[i] = -_input2photon.maxRapidity() + 2.*_input2photon.maxRapidity()*i/(_input2photon.nmbRapidityBins());
     wylumfile << y[i] <<endl;
   }
 
   if(_input2photon.xsecCalcMethod() == 0) {
     
-    for (unsigned int i = 1; i <= _input2photon.nmbWBins(); ++i) {   //For each (w,y) pair, calculate the diff. _lum
-      //double SUM = 0.;not used
-      for (unsigned int j = 1; j <= _input2photon.nmbRapidityBins(); ++j) {
+    for (unsigned int i = 0; i < _input2photon.nmbWBins(); ++i) {   //For each (w,y) pair, calculate the diff. _lum
+      for (unsigned int j = 0; j < _input2photon.nmbRapidityBins(); ++j) {
         wmev = w[i]*1000.;
         xlum = wmev * D2LDMDY(wmev,y[j],Normalize);   //Convert photon flux dN/dW to Lorentz invariant photon number WdN/dW
-        if (j==1) OldNorm = Normalize;       //Save value of integral for each new W(i) and Y(i)
+        if (j==0) OldNorm = Normalize;       //Save value of integral for each new W(i) and Y(i)
         wylumfile << xlum <<endl;
       }
       Normalize = OldNorm;
