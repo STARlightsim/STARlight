@@ -109,8 +109,7 @@ starlight::init()
 	case PHOTONPHOTON:
 		if (!lumTableIsValid) {
 			printInfo << "creating luminosity table for photon-photon channel" << endl;
-			twoPhotonLuminosity(_beamSystem->beam1(), _beamSystem->beam2(),
-			                    _inputParameters->beamBreakupMode(), *_inputParameters);
+			twoPhotonLuminosity(_beamSystem->beam1(), _beamSystem->beam2(), *_inputParameters);
 		}
 		break;		
 	case PHOTONPOMERONNARROW:  // narrow and wide resonances use
@@ -289,11 +288,12 @@ starlight::createEventChannel()
 #ifdef ENABLE_PYTHIA
 			// PythiaOutput = true;
  		        cout<<"Pythia is enabled!"<<endl;
-			return true;
-#endif
+// 			return true;
+#else
 			printWarn << "Starlight is not compiled against Pythia8; "
 			          << "jetset event channel cannot be used." << endl;
-			return false;
+ 			return false;
+#endif
 		}
 	case F2:
 	case F2PRIME:
