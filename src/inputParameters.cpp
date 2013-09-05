@@ -253,6 +253,7 @@ inputParameters::init(const string& configFileName)
 		break;
 	case 225:  // f_2(1270)
 		_particleType = F2;
+                defaultMinW   = 2*pionChargedMass;
 		_decayType    = SINGLEMESON;
 		_maxW         = maxWConfigFile;
 		break;
@@ -270,11 +271,13 @@ inputParameters::init(const string& configFileName)
 		_particleType = ETAC;
 		_decayType    = SINGLEMESON;
 		_maxW         = maxWConfigFile;
+                defaultMinW   = etaCMass - 5 * 0.0267;
 		break;
 	case 9010221:  // f_0(980), was orginally called 10221? updated to standard number
 		_particleType = F0;
 		_decayType    = SINGLEMESON;
 		_maxW         = maxWConfigFile;
+                defaultMinW   = 2*pionNeutralMass;
 		break;
 	case 33:  // Z"/Z03
 		_particleType = ZOVERZ03;
