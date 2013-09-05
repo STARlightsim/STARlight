@@ -36,21 +36,31 @@
 
 starlightParticle::starlightParticle() :
    lorentzVector()
+   ,_vertex(0,0,0,0)
    ,_pdgCode(0)
    ,_charge(-999)
    ,_mass(-1)
-   ,_parent(0)
+   ,_firstParent(0)
+   ,_lastParent(0)
    ,_firstDaughter(0)
    ,_lastDaughter(0)
-   ,_status(-1)
+   ,_status(0)
 { }
 
 
-starlightParticle::starlightParticle(double px, double py, double pz, double e, double mass, int pdgCode, short charge) :
+starlightParticle::starlightParticle(double px, double py, double pz, double e, double mass, int pdgCode, short charge,
+				     double vx, double vy, double vz, double vt,
+				     int firstParent, int lastParent, int firstDaughter, int lastDaughter, int status) :
 lorentzVector(px, py, pz, e)
+,_vertex(vx,vy,vz,vt)
 ,_pdgCode(pdgCode)
 ,_charge(charge)
 ,_mass(mass)
+,_firstParent(firstParent)
+,_lastParent(lastParent)
+,_firstDaughter(firstDaughter)
+,_lastDaughter(lastDaughter)
+,_status(status)
 { }
 
 

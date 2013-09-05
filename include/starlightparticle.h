@@ -43,7 +43,9 @@ class starlightParticle : public lorentzVector
    public:
       
       starlightParticle();
-      starlightParticle ( double px, double py, double pz, double e, double mass, int pdgCode, short charge);
+      starlightParticle ( double px, double py, double pz, double e, double mass, int pdgCode, short charge, 
+			  double vx = 0., double vy = 0, double vz = 0, double vt = 0,
+			  int firstParent = 0, int lastParent = 0, int firstDaughter = 0, int lastDaughter = 0, int status = 0);
       virtual ~starlightParticle();
    
       void setPdgCode(int pdgCode) { _pdgCode = pdgCode; }
@@ -52,8 +54,10 @@ class starlightParticle : public lorentzVector
       void setCharge(short charge) { _charge = charge; }
       short getCharge() const { return _charge; }
       
-      void setParent(int parent) { _parent = parent; }
-      int getParent() const { return _parent; }
+      void setFirstParent(int parent) { _firstParent = parent; }
+      void setLastParent(int parent) { _lastParent = parent; }
+      int getFirstParent() const { return _firstParent; }
+      int getLastParent() const { return _lastParent; }
       
       void setFirstDaughter(int first) { _firstDaughter = first; }
       int getFirstDaughter() const { return _firstDaughter; }
@@ -64,13 +68,19 @@ class starlightParticle : public lorentzVector
       void setStatus(int status) { _status = status; }
       int getStatus() const { return _status; }
       
+      void setVertex(lorentzVector v) { _vertex = v; }
+      lorentzVector getVertex() const { return _vertex; }
+      
    private:
+     
+    lorentzVector _vertex;
     
     int _pdgCode;
     short _charge;
     double _mass;
     
-    int _parent;
+    int _firstParent;
+    int _lastParent;
     int _firstDaughter;
     int _lastDaughter;
 
