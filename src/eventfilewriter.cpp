@@ -38,7 +38,7 @@
 //______________________________________________________________________________
 eventFileWriter::eventFileWriter()
 : fileWriter()
-,_writeFullPythia(true)
+,_writeFullPythia(false)
 { }
 
 
@@ -78,7 +78,7 @@ int eventFileWriter::writeEvent(upcEvent &event, int eventnumber)
               if((*part).getStatus() < 0) continue;
           }
 	  _fileStream << "TRACK: " << " " << starlightParticleCodes::jetsetToGeant((*part).getPdgCode()) <<" "<< (*part).GetPx() << " " << (*part).GetPy()
-		      << " "<< (*part).GetPz() << " " << (*part).GetE() << " " << eventnumber << " " << ipart << " " << 0 << " "
+		      << " "<< (*part).GetPz() << " " << eventnumber << " " << ipart << " " << 0 << " "
 		      << (*part).getPdgCode();
 		      
 	  if(_writeFullPythia)
