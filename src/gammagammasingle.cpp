@@ -90,7 +90,6 @@ void Gammagammasingle::singleCrossSection()
       // Eq. 1 of starnote 347
       _sigmax[i][j]=(getSpin()*2.+1.)*4*starlightConstants::pi*starlightConstants::pi*getWidth()/
 	(getMass()*getMass()*getMass())*_f_max*_Farray[i][j]*starlightConstants::hbarc*starlightConstants::hbarc/100.;
-        std::cout << _sigmax[i][j] << " ---- " << _Farray[i][j] << std::endl;
     }
   }
   //find the index, i,for the value of w just less than the mass because we want to use the value from the sigma table that has w=mass
