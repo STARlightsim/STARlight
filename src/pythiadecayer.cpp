@@ -1,9 +1,12 @@
 #include "pythiadecayer.h"
 #include "reportingUtils.h"
+#include "starlightconfig.h"
 using namespace Pythia8;
 
+
+
 pythiaDecayer::pythiaDecayer() :
-    _pythia()
+    _pythia(PYTHIA8_SETTINGS_DIR)
 {}
 /*
 pythiaDecayer::pythiaDecayer(const pythiaDecayer &obj) :
