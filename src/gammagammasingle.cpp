@@ -122,7 +122,11 @@ void Gammagammasingle::singleCrossSection()
 						   (_sigmax[ivalw+1][j]+_sigmax[ivalw+1][j+1])/2.);
     }
   }
-  cout <<"The total cross-section is: "<<_sigmaSum<<" barns."<<endl;
+  if(_sigmaSum > 0.1) cout <<"The total cross-section is: "<<_sigmaSum<<" barns."<<endl;
+  else if(_sigmaSum > 0.0001)cout <<"The total cross-section is: "<<_sigmaSum*1000<<" mb."<<endl;
+  else cout <<"The total cross-section is: "<<_sigmaSum*1000000<<" ub."<<endl;
+  
+     
   return;
 }
 
