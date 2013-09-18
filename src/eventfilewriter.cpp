@@ -52,7 +52,19 @@ eventFileWriter::eventFileWriter(std::string filename)
 int eventFileWriter::writeEvent(upcEvent &event, int eventnumber)
 {
    
-    int numberoftracks = event.getParticles()->size();
+    int numberoftracks = 0;
+    if(_writeFullPythia)
+    {
+        numberoftracks = event.getParticles()->size();
+    }
+    else
+    {
+        for(unsigned int i = 0; i<event.getParticles()->size(); ++i)
+        {
+            if(event.getParticles()->at(i).getStatus() >= 0) numberoftracks++;
+        }
+    }
+    
     // int _numberOfVertices = event.getVertices()->size();
 
     // sometimes we don't have tracks due to wrongly picked W , check it
