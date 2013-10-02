@@ -90,10 +90,19 @@ starlight::~starlight()
 bool
 starlight::init()
 {
-	cout << "##################################" << endl
-	     << " initialising Starlight v" << Starlight_VERSION_MAJOR << "."
-	     << Starlight_VERSION_MINOR << "..." << endl
-	     << "##################################" << endl;
+	if(Starlight_VERSION_MAJOR == 9999)
+	{
+		cout << "##################################" << endl
+	     	<< " Initialising Starlight version: trunk..." << endl
+	     	<< "##################################" << endl;
+	}
+	else
+	{
+		cout << "##################################" << endl
+	     	<< " Initialising Starlight version: " << Starlight_VERSION_MAJOR << "."
+	     	<< Starlight_VERSION_MINOR << "." << Starlight_VERSION_MINOR_MINOR << "..." << endl
+	     	<< "##################################" << endl;
+	}
 
 	_nmbEventsToGenerate = _inputParameters->nmbEvents();  // nmbEvents() gives only unsigned int
 	_nmbEventsPerFile    = _nmbEventsToGenerate;           // for now we write only one file...

@@ -1,6 +1,7 @@
 // the configured options and settings for Tutorial
 #define Starlight_VERSION_MAJOR @Starlight_VERSION_MAJOR@
 #define Starlight_VERSION_MINOR @Starlight_VERSION_MINOR@
+#define Starlight_VERSION_MINOR_MINOR @Starlight_VERSION_MINOR_MINOR@
 #define PYTHIA8_SETTINGS_DIR "@PYTHIA8_SETTINGS_DIR@"
 
 #cmakedefine ENABLE_PYTHIA
