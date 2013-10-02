@@ -41,7 +41,7 @@ set(CMAKE_VERBOSE_MAKEFILE 0)  # if set to 1 compile and link commands are displ
 
 
 # The version number. 9999 indicates trunk
-set (Starlight_VERSION_MAJOR 1) 
+set (Starlight_VERSION_MAJOR 9999) 
 set (Starlight_VERSION_MINOR 1)
 set (Starlight_VERSION_MINOR_MINOR 0)
 
