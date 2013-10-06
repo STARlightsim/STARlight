@@ -123,8 +123,8 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
     
   Eth=0.5*(((_inputgammaa.minW()+starlightConstants::protonMass)*(_inputgammaa.minW()
 							    +starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/
-	   (_inputgammaa.getProtonEnergy()+sqrt(_inputgammaa.getProtonEnergy()*
-					       _inputgammaa.getProtonEnergy()-starlightConstants::protonMass*starlightConstants::protonMass)));
+	   (_inputgammaa.protonEnergy()+sqrt(_inputgammaa.protonEnergy()*
+					       _inputgammaa.protonEnergy()-starlightConstants::protonMass*starlightConstants::protonMass)));
   
   for(unsigned int i = 0; i <= _inputgammaa.nmbWBins() - 1; ++i) {
 
@@ -229,7 +229,7 @@ void photonNucleusLuminosity::pttablegen()
   //Setting input calls to variables/less calls this way.
   double Ymax=_inputgammaa.maxRapidity();
   int numy = _inputgammaa.nmbRapidityBins();
-  double Ep = _inputgammaa.getProtonEnergy();
+  double Ep = _inputgammaa.protonEnergy();
   int ibreakup = _inputgammaa.beamBreakupMode();
   double NPT = _inputgammaa.nmbPtBinsInterference();
   double gamma_em=_inputgammaa.beamLorentzGamma();

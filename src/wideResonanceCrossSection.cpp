@@ -52,7 +52,7 @@ wideResonanceCrossSection::wideResonanceCrossSection(const inputParameters& inpu
 	_wideWmin = input.minW();
 	_wideYmax = input.maxRapidity();
 	_wideYmin = -1.0 * _wideYmax;
-	_Ep       = input.getProtonEnergy();
+	_Ep       = input.protonEnergy();
 }
 
 

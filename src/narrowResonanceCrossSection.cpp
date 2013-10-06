@@ -51,7 +51,7 @@ narrowResonanceCrossSection::narrowResonanceCrossSection(const inputParameters& 
 	_narrowYmax = input.maxRapidity();
 	_narrowYmin = -1.0*_narrowYmax;
 	_narrowNumY = input.nmbRapidityBins();
-	_Ep         = input.getProtonEnergy();	
+	_Ep         = input.protonEnergy();	
 }
 
 

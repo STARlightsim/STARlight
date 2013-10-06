@@ -48,7 +48,7 @@ using namespace starlightConstants;
 photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& input,
                                                      const beamBeamSystem&  bbsystem)
 	: _bbs               (bbsystem                  ),
-	  _protonEnergy      (input.getProtonEnergy()   ),
+	  _protonEnergy      (input.protonEnergy()   ),
 	  _beamLorentzGamma  (input.beamLorentzGamma()  ),
 	  _particleType      (input.prodParticleType()  ),
 	  _beamBreakupMode   (input.beamBreakupMode()   ),

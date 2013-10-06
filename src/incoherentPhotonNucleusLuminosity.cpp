@@ -128,7 +128,7 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
 
     W = _inputgammaa.minW() + double(i)*dW + 0.5*dW;
 
-    double Ep = _inputgammaa.getProtonEnergy();
+    double Ep = _inputgammaa.protonEnergy();
 
     Eth=0.5*(((W+starlightConstants::protonMass)*(W+starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/
 	   (Ep + sqrt(Ep*Ep-starlightConstants::protonMass*starlightConstants::protonMass)));
