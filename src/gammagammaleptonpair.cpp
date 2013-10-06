@@ -53,8 +53,7 @@ Gammagammaleptonpair::Gammagammaleptonpair(inputParameters& input, beamBeamSyste
 : eventChannel(input, bbsystem)
 {
     //Initialize randomgenerator with our seed.
-    _randy.SetSeed(input.randomSeed());
-    cout<<"Randy in leptonpair construction: "<<_randy.Rndom()<<endl;
+    cout<<"Randy in leptonpair construction: "<<randyInstance.Rndom()<<endl;
     //Storing inputparameters into protected members for use
     _GGlepInputnumw=input.nmbWBins();
     _GGlepInputnumy=input.nmbRapidityBins();
@@ -175,7 +174,7 @@ void Gammagammaleptonpair::pickw(double &w)
 	//sigint is the integral of sgfint, normalized
 
 	//pick a random number
-	x = _randy.Rndom();//random()/(RAND_MAX+1.0);
+	x = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
 	//compare x and sgfint to find the ivalue which is just less than the random number x
 	for(int i=0;i<_GGlepInputnumw;i++)
 	{
@@ -242,7 +241,7 @@ void Gammagammaleptonpair::picky(double &y)
     }
 
     //pick a random number
-    x = _randy.Rndom();//random()/(RAND_MAX+1.0);
+    x = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
     //compare x and sgfint to find the ivalue which is just less then the random number x
     for(int i=0;i<_GGlepInputnumy;i++)
     {
@@ -282,8 +281,8 @@ void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,d
 
     //calculate px and py
     //to get x and y components-- phi is random between 0 and 2*pi
-    anglepp1 = _randy.Rndom();//random()/(RAND_MAX+1.0);
-    anglepp2 = _randy.Rndom();//random()/(RAND_MAX+1.0);
+    anglepp1 = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
+    anglepp2 = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
 
     pp1 = pp_1(E1);
     pp2 = pp_2(E2);
@@ -296,7 +295,7 @@ void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,d
     //W is the mass of the produced particle (not necessarily on-mass-shell).Now compute its energy and pz
     E = sqrt(w*w+pt*pt)*cosh(y);
     pz= sqrt(w*w+pt*pt)*sinh(y);
-    signpx = _randy.Rndom();//random()/(RAND_MAX+1.0);
+    signpx = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
 
     //pick the z direction
     //Don't do this anymore since y goes from -ymax to +ymax (JN 15-02-2013)
@@ -321,19 +320,19 @@ double Gammagammaleptonpair::pp_1(double E)
     Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(starlightConstants::pi)*(ereds+Cm*Cm))*(2.*(starlightConstants::pi)*(ereds+Cm*Cm)));
         
     //pick a test value pp, and find the amplitude there
-    x = _randy.Rndom();
+    x = randyInstance.Rndom();
     pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
     singleformfactorpp1=_bbs.beam1().formFactor(pp*pp+ereds);
     test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
 
     while(satisfy==0){
-	u = _randy.Rndom();
+	u = randyInstance.Rndom();
 	if(u*Coef <= test)
 	{
 	    satisfy =1;
 	}
 	else{
-	    x =_randy.Rndom();
+	    x =randyInstance.Rndom();
 	    pp = 5*starlightConstants::hbarc/_bbs.beam1().nuclearRadius()*x;
 	    singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);
 	    test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
@@ -361,19 +360,19 @@ double Gammagammaleptonpair::pp_2(double E)
     Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(starlightConstants::pi)*(ereds+Cm*Cm))*(2.*(starlightConstants::pi)*(ereds+Cm*Cm)));
         
     //pick a test value pp, and find the amplitude there
-    x = _randy.Rndom(); 
+    x = randyInstance.Rndom(); 
     pp = x*5.*starlightConstants::hbarc/_bbs.beam2().nuclearRadius(); //Will use nucleus #1 
     singleformfactorpp1=_bbs.beam2().formFactor(pp*pp+ereds);
     test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
 
     while(satisfy==0){
-	u = _randy.Rndom(); 
+	u = randyInstance.Rndom(); 
 	if(u*Coef <= test)
 	{
 	    satisfy =1;
 	}
 	else{
-	    x =_randy.Rndom(); 
+	    x =randyInstance.Rndom(); 
 	    pp = 5*starlightConstants::hbarc/_bbs.beam2().nuclearRadius()*x;
 	    singleformfactorpp2=_bbs.beam2().formFactor(pp*pp+ereds); 
 	    test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
@@ -417,7 +416,7 @@ void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ip
 
     //     pick an orientation, based on the spin
     //      phi has a flat distribution in 2*pi
-    phi = _randy.Rndom()*2.*starlightConstants::pi; //(random()/(RAND_MAX+1.0))* 2.*starlightConstants::pi;
+    phi = randyInstance.Rndom()*2.*starlightConstants::pi; //(random()/(RAND_MAX+1.0))* 2.*starlightConstants::pi;
 
     //     find theta, the angle between one of the outgoing particles and
     //    the beamline, in the frame of the two photons
@@ -442,7 +441,7 @@ void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ip
 	}
 
 	hirestheta = 0.;
-	xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+	xtest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
 	hirestest = xtest;
 	for(int i =1;i<=20000;i++)
 	{
@@ -561,7 +560,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
     if (iFbadevent==0){
 	int q1=0,q2=0; 
 
-	double xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+	double xtest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
 	if (xtest<0.5)
 	{
 	    q1=1;
@@ -652,7 +651,7 @@ upcEvent Gammagammaleptonpair::produceEvent()
    if (iFbadevent==0){
      int q1=0,q2=0; 
      
-     double xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+     double xtest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
      if (xtest<0.5)
        {
 	 q1=1;
@@ -734,8 +733,8 @@ void Gammagammaleptonpair::tauDecay(double &px1,double &py1,double &pz1,double &
     //     get two random numbers to compare with
 
 
-    ran1 = _randy.Rndom()*_dgammade[100];//(random()/(RAND_MAX+1.0)) * _dgammade[100];
-    ran2 = _randy.Rndom()*_dgammade[100];//(random()/(RAND_MAX+1.0)) * _dgammade[100];
+    ran1 = randyInstance.Rndom()*_dgammade[100];//(random()/(RAND_MAX+1.0)) * _dgammade[100];
+    ran2 = randyInstance.Rndom()*_dgammade[100];//(random()/(RAND_MAX+1.0)) * _dgammade[100];
 
     //     compute the energies that correspond to those numbers
     Ee1 = 0.;
@@ -753,12 +752,12 @@ void Gammagammaleptonpair::tauDecay(double &px1,double &py1,double &pz1,double &
     //     we determine if the tauons have spin of +1 or -1 along the
     //     direction of the beam line
     dir = 1.;
-    if ( _randy.Rndom() < 0.5 )//(random()/(RAND_MAX+1.0)) < 0.5)
+    if ( randyInstance.Rndom() < 0.5 )//(random()/(RAND_MAX+1.0)) < 0.5)
 	dir = -1.;
 
     //     get two random numbers to compare with
-    ran1 = _randy.Rndom()*_tautolangle[99];//(random()/(RAND_MAX+1.0))  * _tautolangle[100];
-    ran2 = _randy.Rndom()*_tautolangle[99];//(random()/(RAND_MAX+1.0))  * _tautolangle[100];
+    ran1 = randyInstance.Rndom()*_tautolangle[99];//(random()/(RAND_MAX+1.0))  * _tautolangle[100];
+    ran2 = randyInstance.Rndom()*_tautolangle[99];//(random()/(RAND_MAX+1.0))  * _tautolangle[100];
 
     //     find the angles corrsponding to those numbers
     theta1 = 0.;
@@ -770,8 +769,8 @@ void Gammagammaleptonpair::tauDecay(double &px1,double &py1,double &pz1,double &
     }
 
     //     grab another two random numbers to determine phi's
-    phi1 = _randy.Rndom()*2.*starlightConstants::pi;// (random()/(RAND_MAX+1.0))* 2. * starlightConstants::pi;
-    phi2 = _randy.Rndom()*2.*starlightConstants::pi;// (random()/(RAND_MAX+1.0))* 2. * starlightConstants::pi;
+    phi1 = randyInstance.Rndom()*2.*starlightConstants::pi;// (random()/(RAND_MAX+1.0))* 2. * starlightConstants::pi;
+    phi2 = randyInstance.Rndom()*2.*starlightConstants::pi;// (random()/(RAND_MAX+1.0))* 2. * starlightConstants::pi;
     //     figure out the momenta of the electron in the frames of the
     //     tauons from which they decayed, that is electron1 is in the
     //     rest frame of tauon1 and e2 is in the rest fram of tau2

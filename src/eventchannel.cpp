@@ -49,7 +49,6 @@ eventChannel::eventChannel(const inputParameters& input,
 	  _nmbAttempts(0),
 	  _nmbAccepted(0)
 {
-  _randy.SetSeed(input.randomSeed());
   _ptCutEnabled  = input.ptCutEnabled();
   _ptCutMin      = input.ptCutMin();
   _ptCutMax      = input.ptCutMax();

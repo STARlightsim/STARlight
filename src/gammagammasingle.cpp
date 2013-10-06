@@ -56,8 +56,8 @@ Gammagammasingle::Gammagammasingle(inputParameters& input, beamBeamSystem& bbsys
 #endif
   
   //Initialize randomgenerator with our seed.
-  _randy.SetSeed(input.randomSeed());
-  cout<<"Randy in Single Meson construction: "<<_randy.Rndom()<<endl;
+  randyInstance.SetSeed(input.randomSeed());
+  cout<<"Randy in Single Meson construction: "<<randyInstance.Rndom()<<endl;
   //Storing inputparameters into protected members for use
   _GGsingInputnumw=input.nmbWBins();
   _GGsingInputnumy=input.nmbRapidityBins();
@@ -173,7 +173,7 @@ void Gammagammasingle::pickw(double &w)
       sgfint[i]=sgfint[i]/signorm;
     }
     //pick a random number
-    x = _randy.Rndom();//random()/(RAND_MAX+1.0);
+    x = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
     //compare x and sgfint to find the ivalue which is just less than the random number x
     for(int i=0;i<_GGsingInputnumw;i++){
       if(x > sgfint[i]) ivalw=i;
@@ -234,7 +234,7 @@ void Gammagammasingle::picky(double &y)
     sgfint[j]=sgfint[j]/signorm;
   }
   //pick a random number
-  x = _randy.Rndom();//random()/(RAND_MAX+1.0);
+  x = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
   //compare x and sgfint to find the ivalue which is just less then the random number x
   for(int i=0;i<_GGsingInputnumy;i++){
     if(x > sgfint[i]) 
@@ -271,8 +271,8 @@ void Gammagammasingle::parentMomentum(double w,double y,double &E,double &px,dou
   //pz = E1-E2;
   //calculate px and py
   //to get x and y components-- phi is random between 0 and 2*pi
-  anglepp1 = _randy.Rndom();//random()/(RAND_MAX+1.0);
-  anglepp2 = _randy.Rndom();//random()/(RAND_MAX+1.0);
+  anglepp1 = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
+  anglepp2 = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
   
   pp1 = pp(E1);
   pp2 = pp(E2);
@@ -283,7 +283,7 @@ void Gammagammasingle::parentMomentum(double w,double y,double &E,double &px,dou
   //W is the mass of the produced particle (not necessarily on-mass-shell).Now compute its energy and pz
   E = sqrt(w*w+pt*pt)*cosh(y);
   pz= sqrt(w*w+pt*pt)*sinh(y);
-  signpx = _randy.Rndom();//random()/(RAND_MAX+1.0);
+  signpx = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
   //pick the z direction
   if(signpx > 0.5) 
     pz = -pz;	
@@ -308,18 +308,18 @@ double Gammagammasingle::pp(double E)
   Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(starlightConstants::pi)*(ereds+Cm*Cm))*(2.*(starlightConstants::pi)*(ereds+Cm*Cm)));
         
   //pick a test value pp, and find the amplitude there
-  x = _randy.Rndom();//random()/(RAND_MAX+1.0);
+  x = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
   pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); //Will use nucleus #1, there should be two for symmetry//nextline
   singleformfactorpp1=_bbs.beam1().formFactor(pp*pp+ereds);
   test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
 
   while(satisfy==0){
-    u = _randy.Rndom();//random()/(RAND_MAX+1.0);
+    u = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
     if(u*Coef <= test){
       satisfy =1;
     }
     else{
-      x =_randy.Rndom();//random()/(RAND_MAX+1.0);
+      x =randyInstance.Rndom();//random()/(RAND_MAX+1.0);
       pp = 5*starlightConstants::hbarc/_bbs.beam1().nuclearRadius()*x;
       singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);//Symmetry
       test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
@@ -348,7 +348,7 @@ void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,d
     break;
   case starlightConstants::F2PRIME:
     //  decays 50% to K+/K-, 50% to K_0's
-    ytest = _randy.Rndom();
+    ytest = randyInstance.Rndom();
     if(ytest >= 0.5){
       mdec = starlightConstants::kaonChargedMass;
     }
@@ -376,15 +376,15 @@ void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,d
   }
   //     pick an orientation, based on the spin
   //      phi has a flat distribution in 2*pi
-  phi = _randy.Rndom()*2.*starlightConstants::pi; //(random()/(RAND_MAX+1.0))* 2.*starlightConstants::pi;
+  phi = randyInstance.Rndom()*2.*starlightConstants::pi; //(random()/(RAND_MAX+1.0))* 2.*starlightConstants::pi;
   
   //     find theta, the angle between one of the outgoing particles and
   //    the beamline, in the frame of the two photons
   //this will depend on spin, F2,F2' and z/z03 all have spin 2, all other photonphoton-single mesons are handled by jetset
   //Applies to spin2 mesons.
  L300td:
-  theta = starlightConstants::pi*_randy.Rndom();
-  xtest = _randy.Rndom();
+  theta = starlightConstants::pi*randyInstance.Rndom();
+  xtest = randyInstance.Rndom();
   dndtheta = sin(theta)*sin(theta)*sin(theta)*sin(theta)*sin(theta);
   if(xtest > dndtheta)
     goto L300td;
@@ -514,8 +514,8 @@ upcEvent Gammagammasingle::produceEvent()
 		
     single._numberOfTracks=4;//number of tracks per event
     if (iFbadevent==0){
-      xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
-      ztest = _randy.Rndom();
+      xtest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
+      ztest = randyInstance.Rndom();
       //Assigning charges randomly.
       if (xtest<0.5){
 	single._charge[0]=1;//q1=1;
@@ -564,7 +564,7 @@ upcEvent Gammagammasingle::produceEvent()
     
     single._numberOfTracks=2;
     if (iFbadevent==0){
-      xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+      xtest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
       if (xtest<0.5){
 	single._charge[0]=1;//q1=1;
 	single._charge[1]=-1;//q2=-1;

@@ -77,8 +77,8 @@ double theta=0.;
 double xtest=0.;
 double dndtheta=0.;
         L200td:
-          theta = starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
-          xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+          theta = starlightConstants::pi*randyInstance.Rndom();//random()/(RAND_MAX+1.0);
+          xtest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
           //  Follow distribution for helicity +/-1
           //  Eq. 19 of J. Breitweg et al., Eur. Phys. J. C2, 247 (1998)//Does Not Apply for J/psi?
           //  SRK 11/14/2000
@@ -94,7 +94,7 @@ double psiFamily::getDaughterMass(starlightConstants::particleTypeEnum &ipid)
 {
 	double ytest=0.,mdec=0.;
 	//  decays 50% to e+/e-, 50% to mu+/mu-
-        ytest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+        ytest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
         if(ytest >= 0.5)
         {
 	        mdec = starlightConstants::mel;

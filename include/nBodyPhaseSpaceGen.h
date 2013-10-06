@@ -119,8 +119,7 @@ public:
 	              const double*              daughterMasses);  // array of daughter particle masses
   
 	// random generator
-	void   setSeed(const unsigned int seed) { _rnd.SetSeed(seed);  }  ///< sets seed of random number generator
-	double random ()                        { return _rnd.Rndom(); }  ///< returns number from internal random generator
+	double random ()                        { return randyInstance.Rndom(); }  ///< returns number from internal random generator
 
 	// high-level generator interface
 	/// generates full event with certain n-body mass and momentum and returns event weight
@@ -197,7 +196,6 @@ private:
 	double                     _maxWeightObserved;  ///< maximum event weight calculated processing the input data
 	double                     _maxWeight;          ///< maximum weight used to weight events in hit-miss MC
 
-	randomGenerator _rnd;  ///< random number generator instance
 
 };
 

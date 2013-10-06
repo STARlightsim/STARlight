@@ -69,7 +69,6 @@ public:
 	                      double&      pz,
 	                      int&         iFbadevent); ///< Lorentz-transforms given 4-vector
 
-	randomGenerator _randy;
 	beamBeamSystem  _bbs;
 
 	static double pseudoRapidity(const double px,

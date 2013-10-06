@@ -61,7 +61,7 @@ Gammaavectormeson::Gammaavectormeson(inputParameters& input,beamBeamSystem& bbsy
 	_VMpidtest=input.prodParticleType();
 	_VMptmax=input.maxPtInterference();
 	_VMdpt=input.ptBinWidthInterference();
-	_randy.SetSeed(input.randomSeed());
+	randyInstance.SetSeed(input.randomSeed());
 	_VMCoherence=input.coherentProduction();
 	_VMCoherenceFactor=input.coherentProduction();
         _ProductionMode=input.productionMode();
@@ -75,7 +75,6 @@ Gammaavectormeson::Gammaavectormeson(inputParameters& input,beamBeamSystem& bbsy
 	case starlightConstants::FOURPRONG:
 		// create n-body phase-space generator instance
 		_phaseSpaceGen = new nBodyPhaseSpaceGen();
-		_phaseSpaceGen->setSeed(input.randomSeed());
 		_width = 0.360;
 		_mass  = 1.350;
 		break;
@@ -141,17 +140,17 @@ void Gammaavectormeson::pickwy(double &W, double &Y)
   
  L201pwy:
 
-	xw = _randy.Rndom();// random()/(RAND_MAX+1.0);
+	xw = randyInstance.Rndom();// random()/(RAND_MAX+1.0);
 	W = _VMWmin + xw*(_VMWmax-_VMWmin);
 
 	if (W < 2 * starlightConstants::pionChargedMass)
 		goto L201pwy;
   
 	IW = int((W-_VMWmin)/dW); //+ 1;
-	xy = _randy.Rndom();//random()/(RAND_MAX+1.0);
+	xy = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
 	Y = _VMYmin + xy*(_VMYmax-_VMYmin);
 	IY = int((Y-_VMYmin)/dY); //+ 1;
-	xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+	xtest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
 
 	if( xtest > _Farray[IW][IY] )
 		goto L201pwy;
@@ -191,7 +190,7 @@ void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
   
 	//     pick an orientation, based on the spin
 	//      phi has a flat distribution in 2*pi
-	phi = _randy.Rndom()*2.*starlightConstants::pi;//(random()/(RAND_MAX+1.0))* 2.*pi;
+	phi = randyInstance.Rndom()*2.*starlightConstants::pi;//(random()/(RAND_MAX+1.0))* 2.*pi;
                                                                                                                 
 	//     find theta, the angle between one of the outgoing particles and
 	//    the beamline, in the frame of the two photons
@@ -314,7 +313,7 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particleTypeEnum &
 	case starlightConstants::UPSILON2S:
 	case starlightConstants::UPSILON3S:
 		//  decays 50% to e+/e-, 50% to mu+/mu-
-		ytest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+		ytest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
     
 		mdec = starlightConstants::muonMass;
 		ipid = starlightConstants::MUON;
@@ -348,8 +347,8 @@ double Gammaavectormeson::getTheta(starlightConstants::particleTypeEnum ipid)
 	double dndtheta=0.;
  L200td:
                                                                                                                                                  
-	theta = starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
-	xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+	theta = starlightConstants::pi*randyInstance.Rndom();//random()/(RAND_MAX+1.0);
+	xtest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
 	//  Follow distribution for helicity +/-1
 	//  Eq. 19 of J. Breitweg et al., Eur. Phys. J. C2, 247 (1998)
 	//  SRK 11/14/2000
@@ -441,7 +440,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 
         // cout<<" Y: "<<Y<<" W: "<<W<<" Egam: "<<Egam<<" Epom: "<<Epom<<endl; 
         pt1 = pTgamma(Egam);  
-	phi1 = 2.*starlightConstants::pi*_randy.Rndom();
+	phi1 = 2.*starlightConstants::pi*randyInstance.Rndom();
 
 	//      cout<<" pt1: "<<pt1<<endl; 
 
@@ -450,9 +449,9 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	    if( (_VMpidtest == starlightConstants::RHO) || (_VMpidtest == starlightConstants::RHOZEUS) || (_VMpidtest == starlightConstants::OMEGA)){
 	      // Use dipole form factor for light VM
 	      L555vm:
-	      xtest = 2.0*_randy.Rndom();
+	      xtest = 2.0*randyInstance.Rndom();
               double ttest = xtest*xtest; 
-              ytest = _randy.Rndom();
+              ytest = randyInstance.Rndom();
               double t0 = 1./2.23; 
               double yprob = xtest*_bbs.beam1().dipoleFormFactor(ttest,t0)*_bbs.beam1().dipoleFormFactor(ttest,t0); 
               if( ytest > yprob ) goto L555vm; 
@@ -460,7 +459,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
               pt2 = xtest;              
 	    }else{
 		//Use dsig/dt= exp(-_VMbslope*t) for heavy VM
-		xtest = _randy.Rndom(); 
+		xtest = randyInstance.Rndom(); 
 		t2 = (-1./_VMbslope)*log(xtest);
 		pt2 = sqrt(1.*t2);
 	    }
@@ -476,7 +475,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 			return;
 		}
  L203vm:
-		xt = _randy.Rndom(); 
+		xt = randyInstance.Rndom(); 
                 if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
                   if( _ProductionMode == 2 ){
                     pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
@@ -493,7 +492,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
                     pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
                 }
 
-		xtest = _randy.Rndom();
+		xtest = randyInstance.Rndom();
 		t2 = tmin + pt2*pt2;
     
 		if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
@@ -525,14 +524,14 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 		/*
 		if(_VMCoherence==0 && (!(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2))){
    		     //dsig/dt= exp(-_VMbslope*t)
-		     xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+		     xtest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
 		     t2 = (-1./_VMbslope)*log(xtest);
 		     pt2 = sqrt(1.*t2);
 		}
 		*/
 
 	}//else end from pp
-	phi2 = 2.*starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
+	phi2 = 2.*starlightConstants::pi*randyInstance.Rndom();//random()/(RAND_MAX+1.0);
 
 	//        cout<<" pt2: "<<pt2<<endl;  
 
@@ -558,7 +557,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	  // Don't switch      
         }
 	else{
-		if (_randy.Rndom() >= 0.5) pz = -pz;
+		if (randyInstance.Rndom() >= 0.5) pz = -pz;
 	}
 
 }
@@ -596,7 +595,7 @@ double Gammaavectormeson::pTgamma(double E)
     Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(starlightConstants::pi)*(ereds+Cm*Cm))*(2.*(starlightConstants::pi)*(ereds+Cm*Cm)));
         
     //pick a test value pp, and find the amplitude there
-    x = _randy.Rndom();
+    x = randyInstance.Rndom();
 
     if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
       if( _ProductionMode == 2 ){
@@ -622,13 +621,13 @@ double Gammaavectormeson::pTgamma(double E)
     test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
 
     while(satisfy==0){
-	u = _randy.Rndom();
+	u = randyInstance.Rndom();
 	if(u*Coef <= test)
 	{
 	    satisfy =1;
 	}
 	else{
-	    x =_randy.Rndom();
+	    x =randyInstance.Rndom();
             if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
               if( _ProductionMode == 2 ){
                 pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
@@ -682,7 +681,7 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 	yleft=fabs(Y)-(IY)*dY;
 	yfract=yleft*dY;
                                                                                                                                   
-	xpt=_randy.Rndom(); //random()/(RAND_MAX+1.0);
+	xpt=randyInstance.Rndom(); //random()/(RAND_MAX+1.0);
                                                                                                                                   
 	for(j=0;j<_VMNPT+1;j++){
 		if (xpt < _fptarray[IY][j]) goto L60;
@@ -744,7 +743,7 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
                                                                                                                                   
 	//  we have a pt
                                                                                                                                   
-	theta=2.*starlightConstants::pi*_randy.Rndom();//(random()/(RAND_MAX+1.0))*2.*pi;
+	theta=2.*starlightConstants::pi*randyInstance.Rndom();//(random()/(RAND_MAX+1.0))*2.*pi;
 	px=pt*cos(theta);
 	py=pt*sin(theta);
                                                                                                                                   
@@ -754,7 +753,7 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 	E  = sqrt(W*W+pt*pt)*cosh(Y);
 	pz = sqrt(W*W+pt*pt)*sinh(Y);
 	//      randomly choose to make pz negative 50% of the time
-	if(_randy.Rndom()>=0.5) pz = -pz;
+	if(randyInstance.Rndom()>=0.5) pz = -pz;
 }
 
 
@@ -862,7 +861,7 @@ upcEvent Gammaavectormeson::produceEvent()
 			int q1=0,q2=0;
                         int ipid1,ipid2=0;
 
-			double xtest = _randy.Rndom(); 
+			double xtest = randyInstance.Rndom(); 
 			if (xtest<0.5)
 				{
 					q1=1;
