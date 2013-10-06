@@ -62,7 +62,8 @@ starlightStandalone::init()
 {
 	// read input parameters from config file
 	_inputParameters = new inputParameters();
-	if (!_inputParameters->init(_configFileName)) {
+	_inputParameters->configureFromFile(_configFileName);
+	if (!_inputParameters->init()) {
 		printWarn << "problems initializing input parameters. cannot initialize starlight." << endl;
 		return false;
 	}
