@@ -7,3 +7,4 @@
 #cmakedefine ENABLE_PYTHIA
 #cmakedefine ENABLE_PYTHIA6
 #cmakedefine ENABLE_DPMJET
+#cmakedefine CPP11
