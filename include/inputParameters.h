@@ -37,6 +37,7 @@
 
 #include "starlightconstants.h"
 #include "inputParser.h"
+#include "singleton.h"
 #include <string>
 #include <ostream>
 #include <vector>
@@ -173,9 +174,12 @@ std::string parameterlist::validationKey()
 
 class inputParameters {
 
+private:
+	// inputParameters is now a singleton
+	friend class Singleton<inputParameters>;
+	inputParameters();
 public:
 
-	inputParameters();
 	~inputParameters();
 
 	bool init();
@@ -381,6 +385,7 @@ private:
 	
 };
 
+#define inputParametersInstance Singleton<inputParameters>::instance()
 
 template<typename T>
 inline 
