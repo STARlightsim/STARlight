@@ -25,11 +25,11 @@
 #include <cmath>
 #include <sstream>
 
-starlightPythia::starlightPythia(inputParameters &input, beamBeamSystem &bbs) : eventChannel(input, bbs)
+starlightPythia::starlightPythia(beamBeamSystem& bbsystem) : eventChannel(bbsystem)
         ,_spectrum(0)
         ,_doDoubleEvent(false)
-        ,_minGammaEnergy(input.minGammaEnergy())
-        ,_maxGammaEnergy(input.maxGammaEnergy())
+        ,_minGammaEnergy(inputParametersInstance.minGammaEnergy())
+        ,_maxGammaEnergy(inputParametersInstance.maxGammaEnergy())
 	,_fullEventRecord(false)
 {
 }
@@ -44,7 +44,6 @@ int starlightPythia::init(std::string pythiaParams, bool fullEventRecord)
    _fullEventRecord = fullEventRecord;
    _spectrum = new spectrumProtonNucleus(&_bbs);
    //_spectrum = new Spectrum(&bbs);
-   _spectrum->setRandomGenerator(&_randy);
 
    _spectrum->setMinGammaEnergy(_minGammaEnergy);
    _spectrum->setMaxGammaEnergy(_maxGammaEnergy);
@@ -126,7 +125,7 @@ upcEvent starlightPythia::produceEvent()
 	starlightParticle particle(pyjets_.p[0][idx], pyjets_.p[1][idx], -zdirection*pyjets_.p[2][idx], pyjets_.p[3][idx], pyjets_.p[4][idx], pyjets_.k[1][idx], charge);
 	if(_fullEventRecord)
 	{
-	  particle.setParent(pyjets_.k[2][idx]);
+// 	  particle.setParent(pyjets_.k[2][idx]);
 	  particle.setFirstDaughter(pyjets_.k[3][idx]);
 	  particle.setLastDaughter(pyjets_.k[4][idx]);
 	  particle.setStatus(pyjets_.k[0][idx]);

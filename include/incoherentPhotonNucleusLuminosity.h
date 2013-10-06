@@ -43,11 +43,10 @@
 class incoherentPhotonNucleusLuminosity : public photonNucleusCrossSection
 {
  public:
-  incoherentPhotonNucleusLuminosity(inputParameters& input, beamBeamSystem& bbsystem);
+  incoherentPhotonNucleusLuminosity(beamBeamSystem& bbsystem);
   ~incoherentPhotonNucleusLuminosity();
   
  private:
-  inputParameters _inputgammaa;
   void incoherentPhotonNucleusDifferentialLuminosity();
   double nofe(double Egamma,double bimp);
 };

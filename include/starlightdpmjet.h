@@ -30,7 +30,7 @@ class starlightDpmJet : public eventChannel
 
 public:
    
-    starlightDpmJet(inputParameters& input, beamBeamSystem& beamsystem);
+    starlightDpmJet(beamBeamSystem& beamsystem);
 
     int init();
     

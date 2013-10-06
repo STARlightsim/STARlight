@@ -42,19 +42,18 @@ using namespace std;
 
 
 //______________________________________________________________________________
-eventChannel::eventChannel(const inputParameters& input,
-                           beamBeamSystem&        bbsystem)
-	: readLuminosity(input),
+eventChannel::eventChannel(beamBeamSystem& bbsystem)
+	: readLuminosity(),
 	  _bbs(bbsystem),
 	  _nmbAttempts(0),
 	  _nmbAccepted(0)
 {
-  _ptCutEnabled  = input.ptCutEnabled();
-  _ptCutMin      = input.ptCutMin();
-  _ptCutMax      = input.ptCutMax();
-  _etaCutEnabled = input.etaCutEnabled();
-  _etaCutMin     = input.etaCutMin();
-  _etaCutMax     = input.etaCutMax();
+  _ptCutEnabled  = inputParametersInstance.ptCutEnabled();
+  _ptCutMin      = inputParametersInstance.ptCutMin();
+  _ptCutMax      = inputParametersInstance.ptCutMax();
+  _etaCutEnabled = inputParametersInstance.etaCutEnabled();
+  _etaCutMin     = inputParametersInstance.etaCutMin();
+  _etaCutMax     = inputParametersInstance.etaCutMax();
 }
 
 

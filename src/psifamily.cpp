@@ -41,7 +41,7 @@
 using namespace std;
 
 
-psiFamily::psiFamily(inputParameters& input,beamBeamSystem& bbsystem):Gammaanarrowvm(input,bbsystem)
+psiFamily::psiFamily(beamBeamSystem& bbsystem):Gammaanarrowvm(bbsystem)
 {
 //Defining _width and mass...
  

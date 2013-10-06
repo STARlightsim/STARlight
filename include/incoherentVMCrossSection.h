@@ -42,8 +42,7 @@ class incoherentVMCrossSection : public photonNucleusCrossSection {
 
 public:
 
-	incoherentVMCrossSection(const inputParameters& input,
-	                            const beamBeamSystem&  bbsystem);
+	incoherentVMCrossSection(const beamBeamSystem& bbsystem);
 	~incoherentVMCrossSection();
 
 	void crossSectionCalculation(const double bwnormsave);

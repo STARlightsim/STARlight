@@ -42,7 +42,7 @@
 class readLuminosity
 {
  public:
-  readLuminosity(const inputParameters& input);
+  readLuminosity();
   ~readLuminosity();
   
   void read();

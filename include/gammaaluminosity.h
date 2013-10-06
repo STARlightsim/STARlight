@@ -43,15 +43,18 @@
 class photonNucleusLuminosity : public photonNucleusCrossSection
 {
  public:
-  photonNucleusLuminosity(inputParameters& input, beamBeamSystem& bbsystem);
+  photonNucleusLuminosity(beamBeamSystem& bbsystem);
   ~photonNucleusLuminosity();
   
  private:
-  inputParameters _inputgammaa;
   void photonNucleusDifferentialLuminosity();
   double *vmsigmapt(double W,double Egamma,double *SIGMAPT);
   double nofe(double Egamma,double bimp);
   void pttablegen();
+
+  const double _nPtBinsInterference;  
+  const double _ptBinWidthInterference;
+  const double _interferenceStrength;
 };
 
 #endif //GAMMAALUMINOSITY_H

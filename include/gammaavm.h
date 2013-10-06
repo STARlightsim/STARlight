@@ -50,7 +50,7 @@ class Gammaavectormeson : public eventChannel
 {
   
  public:
-  Gammaavectormeson(inputParameters& input,beamBeamSystem& bbsystem);
+  Gammaavectormeson(beamBeamSystem& bbsystem);
   virtual ~Gammaavectormeson();
   starlightConstants::event produceEvent(int &ievent);
   
@@ -95,21 +95,21 @@ class Gammaavectormeson : public eventChannel
 class Gammaanarrowvm : public Gammaavectormeson
 {
  public:
-  Gammaanarrowvm(inputParameters& input, beamBeamSystem& bbsystem);
+  Gammaanarrowvm(beamBeamSystem& bbsystem);
   virtual ~Gammaanarrowvm();
 };
 
 class Gammaawidevm : public Gammaavectormeson
 {  
  public:
-  Gammaawidevm(inputParameters& input, beamBeamSystem& bbsystem);
+  Gammaawidevm(beamBeamSystem& bbsystem);
   virtual ~Gammaawidevm();
 };
 
 class Gammaaincoherentvm : public Gammaavectormeson
 {  
  public:
-  Gammaaincoherentvm(inputParameters& input, beamBeamSystem& bbsystem);
+  Gammaaincoherentvm(beamBeamSystem& bbsystem);
   virtual ~Gammaaincoherentvm();
 };
 

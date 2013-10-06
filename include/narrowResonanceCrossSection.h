@@ -42,8 +42,7 @@ class narrowResonanceCrossSection : public photonNucleusCrossSection {
 
 public:
 
-	narrowResonanceCrossSection(const inputParameters& input,
-	                            const beamBeamSystem&  bbsystem);
+	narrowResonanceCrossSection(const beamBeamSystem&  bbsystem);
 	~narrowResonanceCrossSection();
 
 	void crossSectionCalculation(const double bwnormsave);

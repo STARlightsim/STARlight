@@ -49,22 +49,22 @@ using namespace std;
 
 
 //_____________________________________________________________________________
-Gammagammaleptonpair::Gammagammaleptonpair(inputParameters& input, beamBeamSystem& bbsystem)
-: eventChannel(input, bbsystem)
+Gammagammaleptonpair::Gammagammaleptonpair(beamBeamSystem& bbsystem)
+: eventChannel(bbsystem)
 {
     //Initialize randomgenerator with our seed.
     cout<<"Randy in leptonpair construction: "<<randyInstance.Rndom()<<endl;
     //Storing inputparameters into protected members for use
-    _GGlepInputnumw=input.nmbWBins();
-    _GGlepInputnumy=input.nmbRapidityBins();
-    _GGlepInputpidtest=input.prodParticleType();
-    _GGlepInputGamma_em=input.beamLorentzGamma();
+    _GGlepInputnumw=inputParametersInstance.nmbWBins();
+    _GGlepInputnumy=inputParametersInstance.nmbRapidityBins();
+    _GGlepInputpidtest=inputParametersInstance.prodParticleType();
+    _GGlepInputGamma_em=inputParametersInstance.beamLorentzGamma();
     //Let us read in the luminosity tables
     read();
     //Now we will calculate the crosssection
     twoLeptonCrossSection();
     //If it is a tauon, calculate its tables
-    if(input.prodParticleId()==starlightConstants::TAUON) calculateTable();
+    if(inputParametersInstance.prodParticleId()==starlightConstants::TAUON) calculateTable();
 }
 
 

@@ -45,20 +45,17 @@
 using namespace std;
 using namespace starlightConstants;
 
-
 //______________________________________________________________________________
 beam::beam(const int              Z,
            const int              A,
            const double           bdeuteron,
-           const bool             dAuCoherentProduction,
-           const inputParameters& input)
+           const bool             dAuCoherentProduction)
 	: nucleus(Z,
 	          A,
 	          bdeuteron,
 	          dAuCoherentProduction)
+	,_beamLorentzGamma(inputParametersInstance.beamLorentzGamma())
 {
-  // setting needed inputparameters to protected variables
-	_beamLorentzGamma = input.beamLorentzGamma();
 }
 
 

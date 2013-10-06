@@ -61,7 +61,6 @@ public:
 	unsigned long nmbAttempts   () const { return _eventChannel->nmbAttempts(); }
 	unsigned long nmbAccepted   () const { return _eventChannel->nmbAccepted(); } 
    
-	void setInputParameters(inputParameters* inputParams) { _inputParameters = inputParams; }
 
 private:
       
@@ -69,7 +68,6 @@ private:
 
 	bool createEventChannel();
       
-	inputParameters*   _inputParameters;
 	beam*              _beam0;
 	beam*              _beam1;
 	beamBeamSystem*    _beamSystem;

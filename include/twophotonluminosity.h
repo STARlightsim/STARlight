@@ -43,7 +43,7 @@
 class twoPhotonLuminosity : public beamBeamSystem
 {
 public:
-    twoPhotonLuminosity(beam beam_1, beam beam_2,inputParameters& input);
+    twoPhotonLuminosity(beam beam_1, beam beam_2);
     ~twoPhotonLuminosity();
 
 protected:
@@ -71,7 +71,15 @@ private:
     double _W1; //Energy of photon #1
     double _W2; //Energy of photon #2
     double _gamma; //Gamma of the system
-    inputParameters _input2photon;
+    
+    const unsigned int _nWbins;
+    const unsigned int _nYbins;
+    
+    const double _wMin;
+    const double _yMin;
+    const double _wMax;
+    const double _yMax;
+    
 };
 
 

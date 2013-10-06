@@ -50,8 +50,15 @@ using namespace starlightConstants;
 
 
 //______________________________________________________________________________
-twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2,inputParameters& input):
-beamBeamSystem(beam_1,beam_2,input),_input2photon(input)
+twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2):
+beamBeamSystem(beam_1,beam_2)
+,_gamma(inputParametersInstance.beamLorentzGamma())
+,_nWbins(inputParametersInstance.nmbWBins())
+,_nYbins(inputParametersInstance.nmbRapidityBins())
+,_wMin(inputParametersInstance.minW())
+,_yMin(-inputParametersInstance.maxRapidity())
+,_wMax(inputParametersInstance.maxW())
+,_yMax(inputParametersInstance.maxRapidity())
 {
   //Lets check to see if we need to recalculate the luminosity tables
   twoPhotonDifferentialLuminosity();
@@ -69,48 +76,49 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   ofstream wylumfile;
   wylumfile.precision(15);
   wylumfile.open("slight.txt");
-  std::vector<double> w(_input2photon.nmbWBins());
-  std::vector<double> y(_input2photon.nmbRapidityBins());
+  std::vector<double> w(_nWbins);
+  std::vector<double> y(_nYbins);
   double xlum = 0.; 
   double Normalize = 0.,OldNorm;
   double wmev = 0;
  
-  Normalize = 1./sqrt(1*(double)_input2photon.nmbWBins()*_input2photon.nmbRapidityBins()); //if your grid is very fine, you'll want high accuracy-->small Normalize
+  Normalize = 1./sqrt(1*(double)_nWbins*_nYbins); //if your grid is very fine, you'll want high accuracy-->small Normalize
   OldNorm   = Normalize;
   
   //Writing out our input parameters+(w,y)grid+diff._lum.
+  wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile << beam1().Z() <<endl;
   wylumfile << beam1().A() <<endl;
   wylumfile << beam2().Z() <<endl;
   wylumfile << beam2().A() <<endl;
-  wylumfile << _input2photon.beamLorentzGamma() <<endl;
-  wylumfile << _input2photon.maxW() <<endl;
-  wylumfile << _input2photon.minW() <<endl;
-  wylumfile << _input2photon.nmbWBins() <<endl;
-  wylumfile << _input2photon.maxRapidity() <<endl;
-  wylumfile << _input2photon.nmbRapidityBins() <<endl;
-  wylumfile << _input2photon.productionMode() <<endl;
-  wylumfile << _input2photon.beamBreakupMode() <<endl;
-  wylumfile << _input2photon.interferenceEnabled() <<endl;
-  wylumfile << _input2photon.interferenceStrength() <<endl;
-  wylumfile << _input2photon.coherentProduction() <<endl;
-  wylumfile << _input2photon.incoherentFactor() <<endl;
-  wylumfile << _input2photon.deuteronSlopePar() <<endl;
-  wylumfile << _input2photon.maxPtInterference() <<endl;
-  wylumfile << _input2photon.nmbPtBinsInterference() <<endl;
-  for (unsigned int i = 0; i < _input2photon.nmbWBins(); ++i) {
-    w[i] = _input2photon.minW() + (_input2photon.maxW()-_input2photon.minW())/_input2photon.nmbWBins()*i;
+  wylumfile << inputParametersInstance.beamLorentzGamma() <<endl;
+  wylumfile << inputParametersInstance.maxW() <<endl;
+  wylumfile << inputParametersInstance.minW() <<endl;
+  wylumfile << inputParametersInstance.nmbWBins() <<endl;
+  wylumfile << inputParametersInstance.maxRapidity() <<endl;
+  wylumfile << inputParametersInstance.nmbRapidityBins() <<endl;
+  wylumfile << inputParametersInstance.productionMode() <<endl;
+  wylumfile << inputParametersInstance.beamBreakupMode() <<endl;
+  wylumfile << inputParametersInstance.interferenceEnabled() <<endl;
+  wylumfile << inputParametersInstance.interferenceStrength() <<endl;
+  wylumfile << inputParametersInstance.coherentProduction() <<endl;
+  wylumfile << inputParametersInstance.incoherentFactor() <<endl;
+  wylumfile << inputParametersInstance.deuteronSlopePar() <<endl;
+  wylumfile << inputParametersInstance.maxPtInterference() <<endl;
+  wylumfile << inputParametersInstance.nmbPtBinsInterference() <<endl;
+  for (unsigned int i = 0; i < _nWbins; ++i) {
+    w[i] = _wMin + (_wMax-_wMin)/_nWbins*i;
     wylumfile << w[i] <<endl;
   }
-  for (unsigned int i = 0; i < _input2photon.nmbRapidityBins(); ++i) {
-    y[i] = -_input2photon.maxRapidity() + 2.*_input2photon.maxRapidity()*i/(_input2photon.nmbRapidityBins());
+  for (unsigned int i = 0; i < _nYbins; ++i) {
+    y[i] = -_yMax + 2.*_yMax*i/(_nYbins);
     wylumfile << y[i] <<endl;
   }
 
-  if(_input2photon.xsecCalcMethod() == 0) {
+  if(inputParametersInstance.xsecCalcMethod() == 0) {
     
-    for (unsigned int i = 0; i < _input2photon.nmbWBins(); ++i) {   //For each (w,y) pair, calculate the diff. _lum
-      for (unsigned int j = 0; j < _input2photon.nmbRapidityBins(); ++j) {
+    for (unsigned int i = 0; i < _nWbins; ++i) {   //For each (w,y) pair, calculate the diff. _lum
+      for (unsigned int j = 0; j < _nYbins; ++j) {
         wmev = w[i]*1000.;
         xlum = wmev * D2LDMDY(wmev,y[j],Normalize);   //Convert photon flux dN/dW to Lorentz invariant photon number WdN/dW
         if (j==0) OldNorm = Normalize;       //Save value of integral for each new W(i) and Y(i)
@@ -120,9 +128,9 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   }
 
   }
-  else if(_input2photon.xsecCalcMethod() == 1) {
+  else if(inputParametersInstance.xsecCalcMethod() == 1) {
     
-        const int nthreads = _input2photon.nThreads();
+        const int nthreads = inputParametersInstance.nThreads();
         pthread_t threads[nthreads];
         difflumiargs args[nthreads];
 
@@ -130,11 +138,11 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
         {
             args[t].self = this;
         }
-        for (unsigned int i = 1; i <= _input2photon.nmbWBins(); ++i) {   //For each (w,y) pair, calculate the diff. _lum
-            printf("Calculating cross section: %2.0f %% \r", float(i)/float(_input2photon.nmbWBins())*100);
+        for (unsigned int i = 1; i <= _nWbins; ++i) {   //For each (w,y) pair, calculate the diff. _lum
+            printf("Calculating cross section: %2.0f %% \r", float(i)/float(_nWbins)*100);
 	    fflush(stdout);
             unsigned int r = 1;
-            for(unsigned int j = 0; j < _input2photon.nmbRapidityBins()/nthreads; ++j)
+            for(unsigned int j = 0; j < _nYbins/nthreads; ++j)
             {
 
                 for(int t = 0; t < nthreads; t++)
@@ -152,7 +160,7 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
                     wylumfile << xlum <<endl;
                 }
             }
-            for(unsigned int t = 0; t < _input2photon.nmbRapidityBins()%nthreads; t++)
+            for(unsigned int t = 0; t < _nYbins%nthreads; t++)
             {
                 args[t].m = w[i];
                 args[t].y = y[r];
@@ -160,7 +168,7 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
                 pthread_create(&threads[t], NULL, &twoPhotonLuminosity::D2LDMDY_Threaded, &args[t]);
                 r++;
             }
-            for(unsigned int t = 0; t < _input2photon.nmbRapidityBins()%nthreads; t++)
+            for(unsigned int t = 0; t < _nYbins%nthreads; t++)
             {
                 pthread_join(threads[t], NULL);
                 xlum = w[i] * args[t].res;
@@ -169,6 +177,7 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
 	}
     }
     
+    wylumfile << inputParametersInstance.parameterValueKey() << endl;
     wylumfile.close();
     return;
 }
@@ -182,7 +191,6 @@ double twoPhotonLuminosity::D2LDMDY(double M,double Y,double &Normalize)
 
   _W1    =  M/2.0*exp(Y);
   _W2    =  M/2.0*exp(-Y);
-  _gamma = _input2photon.beamLorentzGamma();
   int Zin=beam1().Z();
   D2LDMDYx = 2.0/M*Zin*Zin*Zin*Zin*(starlightConstants::alpha*starlightConstants::alpha)*integral(Normalize);  //treats it as a symmetric collision
   Normalize = D2LDMDYx*M/(2.0*beam1().Z()*beam1().Z()*
@@ -202,7 +210,6 @@ double twoPhotonLuminosity::D2LDMDY(double M, double Y) const
   double D2LDMDYx = 0.;
   double w1    =  M/2.0*exp(Y);
   double w2    =  M/2.0*exp(-Y);
-  double gamma = _input2photon.beamLorentzGamma();
   
   //int Z1=beam1().Z();
   //int Z2=beam2().Z();
@@ -213,8 +220,8 @@ double twoPhotonLuminosity::D2LDMDY(double M, double Y) const
   double b1min = r_nuc1;
   double b2min = r_nuc2;
   
-  double b1max = max(5.*gamma*hbarc/w1,5*r_nuc1);
-  double b2max = max(5.*gamma*hbarc/w2,5*r_nuc2);
+  double b1max = max(5.*_gamma*hbarc/w1,5*r_nuc1);
+  double b2max = max(5.*_gamma*hbarc/w2,5*r_nuc2);
   
   const int nbins_b1 = 120;
   const int nbins_b2 = 120;

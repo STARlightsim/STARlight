@@ -50,7 +50,7 @@
 class Gammagammasingle : public eventChannel
 {
  public:
-  Gammagammasingle(inputParameters& input,beamBeamSystem& bbsystem);
+  Gammagammasingle(beamBeamSystem& bbsystem);
   ~Gammagammasingle();
   
   void singleCrossSection();

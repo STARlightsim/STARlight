@@ -43,7 +43,6 @@ spectrum::spectrum(beamBeamSystem *bbs) :
         ,_zTarget(82)
         ,_aTarget(278)
         ,_hadBreakProbCalculated(false)
-        ,_randomGenerator(0)
 {
     _eGamma.resize(_nK+1);
     _probOfBreakup.resize(_nBbins);
@@ -239,7 +238,7 @@ double spectrum::drawKsingle()
     int itest = 0;
     double egamma = 0.0;
 
-    xtest = _randomGenerator->Rndom();
+    xtest = randyInstance.Rndom();
     while (xtest > _fnSingleCumulative[itest])
     {
         itest++;
@@ -279,7 +278,7 @@ void spectrum::drawKdouble(float& egamma1, float& egamma2)
     int itest1 = 0;
     int itest2 = 0;
 
-    xtest1 = _randomGenerator->Rndom();
+    xtest1 = randyInstance.Rndom();
 
     while (xtest1 > _fnDoubleIntCumulative[itest1])
     {
@@ -334,7 +333,7 @@ void spectrum::drawKdouble(float& egamma1, float& egamma2)
       fn_second_cumulative[i] = norm_factor*fn_second_cumulative[i];
     }
     
-    xtest2 = _randomGenerator->Rndom();
+    xtest2 = randyInstance.Rndom();
 
     while (xtest2 > fn_second_cumulative[itest2])
     {

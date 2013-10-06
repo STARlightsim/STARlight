@@ -44,15 +44,14 @@ using namespace starlightConstants;
 
 
 //______________________________________________________________________________
-wideResonanceCrossSection::wideResonanceCrossSection(const inputParameters& input,
-                                                     const beamBeamSystem&  bbsystem)
-	: photonNucleusCrossSection(input, bbsystem)//hrm
+wideResonanceCrossSection::wideResonanceCrossSection(const beamBeamSystem&  bbsystem)
+	: photonNucleusCrossSection(bbsystem)//hrm
 {
-	_wideWmax = input.maxW();
-	_wideWmin = input.minW();
-	_wideYmax = input.maxRapidity();
+	_wideWmax = _wMax;
+	_wideWmin = _wMin;
+	_wideYmax = _yMax;
 	_wideYmin = -1.0 * _wideYmax;
-	_Ep       = input.protonEnergy();
+	_Ep       = inputParametersInstance.protonEnergy();
 }
 
 

@@ -44,14 +44,13 @@ using namespace starlightConstants;
 
 
 //______________________________________________________________________________
-incoherentVMCrossSection::incoherentVMCrossSection(const inputParameters& input,
-                                                         const beamBeamSystem&  bbsystem)
-	:photonNucleusCrossSection(input, bbsystem)
+incoherentVMCrossSection::incoherentVMCrossSection(const beamBeamSystem&  bbsystem)
+	:photonNucleusCrossSection(bbsystem)
 {
-	_narrowYmax = input.maxRapidity();
+	_narrowYmax = inputParametersInstance.maxRapidity();
 	_narrowYmin = -1.0*_narrowYmax;
-	_narrowNumY = input.nmbRapidityBins();
-	_Ep         = input.protonEnergy();	
+	_narrowNumY = inputParametersInstance.nmbRapidityBins();
+	_Ep         = inputParametersInstance.protonEnergy();	
 }
 
 

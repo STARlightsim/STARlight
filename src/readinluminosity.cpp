@@ -45,15 +45,15 @@ using namespace std;
 
 
 //______________________________________________________________________________
-readLuminosity::readLuminosity(const inputParameters& input)//:inputread(input)
+readLuminosity::readLuminosity()//:inputread(input)
 : _Warray(0), _Yarray(0), _Farray(0)
 {
   //storing inputparameters into protected variables for the object to use them
-  _ReadInputNPT=input.nmbPtBinsInterference();
-  _ReadInputnumy=input.nmbRapidityBins();
-  _ReadInputnumw=input.nmbWBins();
-  _ReadInputgg_or_gP=input.productionMode();
-  _ReadInputinterferencemode=input.interferenceEnabled();
+  _ReadInputNPT=inputParametersInstance.nmbPtBinsInterference();
+  _ReadInputnumy=inputParametersInstance.nmbRapidityBins();
+  _ReadInputnumw=inputParametersInstance.nmbWBins();
+  _ReadInputgg_or_gP=inputParametersInstance.productionMode();
+  _ReadInputinterferencemode=inputParametersInstance.interferenceEnabled();
   
 }
 

@@ -49,8 +49,7 @@ class eventChannel : public readLuminosity
 
 public:
 
-	eventChannel(const inputParameters& input,
-	             beamBeamSystem&        bbsystem);
+	eventChannel(beamBeamSystem&        bbsystem);
 	virtual ~eventChannel();
 
 	unsigned long nmbAttempts() const {return _nmbAttempts;}  ///< returns number of attempted events

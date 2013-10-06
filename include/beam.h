@@ -48,8 +48,8 @@ public:
 	beam(const int              Z,
 	     const int              A,
 	     const double           bdeuteron,
-	     const bool             dAuCoherentProduction,
-	     const inputParameters& input);
+	     const bool             dAuCoherentProduction);
+	
 	~beam();
 
 	double photonFlux(const double impactparameter,

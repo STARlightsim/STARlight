@@ -42,8 +42,7 @@ class wideResonanceCrossSection : public photonNucleusCrossSection {
 
 public:
 
-	wideResonanceCrossSection(const inputParameters& input,
-	                          const beamBeamSystem&  bbsystem);
+	wideResonanceCrossSection(const beamBeamSystem& bbsystem);
 	~wideResonanceCrossSection();
 
 	void crossSectionCalculation(const double bwnormsave);

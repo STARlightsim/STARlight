@@ -43,8 +43,7 @@ class photonNucleusCrossSection {
 
 public:
 
-	photonNucleusCrossSection(const inputParameters& input,
-	                          const beamBeamSystem&  bbsystem);
+	photonNucleusCrossSection(const beamBeamSystem&  bbsystem);
 	~photonNucleusCrossSection();
   
 	double         slopeParameter  () const { return _slopeParameter;   }  ///< returns slope of t-distribution [(GeV/c)^{-2}]
@@ -70,14 +69,23 @@ public:
 	                   const double C);
 	double nepoint(const double Egamma,
 	               const double bmin);
-
+	
+protected:
+	const unsigned int _nWbins;
+	const unsigned int _nYbins;
+	
+	const double _wMin;
+	const double _wMax;
+	const double _yMax;
+	
+	const double _beamLorentzGamma;
+	
 private:
 
 	beamBeamSystem _bbs;
   
 	// copied from inputParameters
 	double                               _protonEnergy;
-	double                               _beamLorentzGamma;    ///< Lorentz gamma factor of beams in collider frame
 	starlightConstants::particleTypeEnum _particleType;
 	int                                  _beamBreakupMode;     ///< breakup mode for beam particles
 	bool                                 _coherentProduction;  ///< if true, production is coherent, else incoherent
@@ -95,6 +103,7 @@ private:
 	double _maxPhotonEnergy;  ///< max photon energy in lab frame [GeV] (for vectormesons only)
 	double _width;            ///< width of the produced system  [GeV/c^2]
 	double _channelMass;      ///< mass of the produced system  [GeV/c^2]
+	
 };
 
 

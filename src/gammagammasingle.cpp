@@ -44,8 +44,8 @@ using namespace std;
 
 
 //______________________________________________________________________________
-Gammagammasingle::Gammagammasingle(inputParameters& input, beamBeamSystem& bbsystem)
-: eventChannel(input, bbsystem)
+Gammagammasingle::Gammagammasingle(beamBeamSystem& bbsystem)
+: eventChannel(bbsystem)
 #ifdef ENABLE_PYTHIA
 ,_pyDecayer()
 #endif
@@ -55,14 +55,11 @@ Gammagammasingle::Gammagammasingle(inputParameters& input, beamBeamSystem& bbsys
     _pyDecayer.init();
 #endif
   
-  //Initialize randomgenerator with our seed.
-  randyInstance.SetSeed(input.randomSeed());
-  cout<<"Randy in Single Meson construction: "<<randyInstance.Rndom()<<endl;
   //Storing inputparameters into protected members for use
-  _GGsingInputnumw=input.nmbWBins();
-  _GGsingInputnumy=input.nmbRapidityBins();
-  _GGsingInputpidtest=input.prodParticleType();
-  _GGsingInputGamma_em=input.beamLorentzGamma();
+  _GGsingInputnumw=inputParametersInstance.nmbWBins();
+  _GGsingInputnumy=inputParametersInstance.nmbRapidityBins();
+  _GGsingInputpidtest=inputParametersInstance.prodParticleType();
+  _GGsingInputGamma_em=inputParametersInstance.beamLorentzGamma();
   cout<<"SINGLE MESON pid test: "<<_GGsingInputpidtest<<endl;
   //reading in luminosity tables
   read();

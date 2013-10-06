@@ -46,25 +46,24 @@ using namespace std;
 
 
 //______________________________________________________________________________
-Gammaavectormeson::Gammaavectormeson(inputParameters& input,beamBeamSystem& bbsystem):eventChannel(input,bbsystem), _phaseSpaceGen(0)  //:readLuminosity(input),_bbs(bbsystem)
+Gammaavectormeson::Gammaavectormeson(beamBeamSystem& bbsystem):eventChannel(bbsystem), _phaseSpaceGen(0)  //:readLuminosity(input),_bbs(bbsystem)
 {
-	_VMNPT=input.nmbPtBinsInterference();
-	_VMWmax=input.maxW();
-	_VMWmin=input.minW();
-	_VMYmax=input.maxRapidity();
+	_VMNPT=inputParametersInstance.nmbPtBinsInterference();
+	_VMWmax=inputParametersInstance.maxW();
+	_VMWmin=inputParametersInstance.minW();
+	_VMYmax=inputParametersInstance.maxRapidity();
 	_VMYmin=-1.*_VMYmax;
-	_VMnumw=input.nmbWBins();
-	_VMnumy=input.nmbRapidityBins();
-	_VMgamma_em=input.beamLorentzGamma();
-	_VMinterferencemode=input.interferenceEnabled();
+	_VMnumw=inputParametersInstance.nmbWBins();
+	_VMnumy=inputParametersInstance.nmbRapidityBins();
+	_VMgamma_em=inputParametersInstance.beamLorentzGamma();
+	_VMinterferencemode=inputParametersInstance.interferenceEnabled();
 	_VMbslope=0.;//Will define in wide/narrow constructor
-	_VMpidtest=input.prodParticleType();
-	_VMptmax=input.maxPtInterference();
-	_VMdpt=input.ptBinWidthInterference();
-	randyInstance.SetSeed(input.randomSeed());
-	_VMCoherence=input.coherentProduction();
-	_VMCoherenceFactor=input.coherentProduction();
-        _ProductionMode=input.productionMode();
+	_VMpidtest=inputParametersInstance.prodParticleType();
+	_VMptmax=inputParametersInstance.maxPtInterference();
+	_VMdpt=inputParametersInstance.ptBinWidthInterference();
+	_VMCoherence=inputParametersInstance.coherentProduction();
+	_VMCoherenceFactor=inputParametersInstance.coherentProduction();
+        _ProductionMode=inputParametersInstance.productionMode();
 
 	switch(_VMpidtest){
 	case starlightConstants::RHO:
@@ -905,12 +904,12 @@ double Gammaavectormeson::pseudoRapidity(double px, double py, double pz)
 }
 
 //______________________________________________________________________________
-Gammaanarrowvm::Gammaanarrowvm(inputParameters& input,beamBeamSystem& bbsystem):Gammaavectormeson(input,bbsystem)
+Gammaanarrowvm::Gammaanarrowvm(beamBeamSystem& bbsystem):Gammaavectormeson(bbsystem)
 {
 	cout<<"Reading in luminosity tables. Gammaanarrowvm()"<<endl;
 	read();
 	cout<<"Creating and calculating crosssection. Gammaanarrowvm()"<<endl;
-	narrowResonanceCrossSection sigma(input,bbsystem);
+	narrowResonanceCrossSection sigma(bbsystem);
 	sigma.crossSectionCalculation(_bwnormsave);
 	_VMbslope=sigma.slopeParameter(); 
 }
@@ -922,13 +921,12 @@ Gammaanarrowvm::~Gammaanarrowvm()
 
 
 //______________________________________________________________________________
-Gammaaincoherentvm::Gammaaincoherentvm(inputParameters& input,beamBeamSystem& bbsystem):Gammaavectormeson(input,bbsystem)
+Gammaaincoherentvm::Gammaaincoherentvm(beamBeamSystem& bbsystem):Gammaavectormeson(bbsystem)
 {
         cout<<"Reading in luminosity tables. Gammaainkoherentvm()"<<endl;
         read();
         cout<<"Creating and calculating crosssection. Gammaainkoherentvm()"<<endl;
-        incoherentVMCrossSection sigma(input,bbsystem);
-        sigma.crossSectionCalculation(_bwnormsave);
+        incoherentVMCrossSection sigma(bbsystem); sigma.crossSectionCalculation(_bwnormsave);
         _VMbslope=sigma.slopeParameter(); 
 }
 
@@ -939,12 +937,12 @@ Gammaaincoherentvm::~Gammaaincoherentvm()
 
 
 //______________________________________________________________________________
-Gammaawidevm::Gammaawidevm(inputParameters& input,beamBeamSystem& bbsystem):Gammaavectormeson(input,bbsystem)
+Gammaawidevm::Gammaawidevm(beamBeamSystem& bbsystem):Gammaavectormeson(bbsystem)
 {
 	cout<<"Reading in luminosity tables. Gammaawidevm()"<<endl;
 	read();
 	cout<<"Creating and calculating crosssection. Gammaawidevm()"<<endl;
-	wideResonanceCrossSection sigma(input,bbsystem);
+	wideResonanceCrossSection sigma(bbsystem);
 	sigma.crossSectionCalculation(_bwnormsave);
 	_VMbslope=sigma.slopeParameter();
 }

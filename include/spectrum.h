@@ -63,11 +63,6 @@ public:
         _beamBeamSystem = bbs;
     }
 
-    /** Set seed for random generator */
-    void setRandomGenerator(randomGenerator *rand) {
-        _randomGenerator = rand;
-    }
-
     /** Set the minimum gamma energy */
     void setMinGammaEnergy(double energy) { _eGammaMin = energy; }
 
@@ -150,9 +145,6 @@ private:
 
     /** Hadron breakup probability is calculated */
     bool _hadBreakProbCalculated;
-
-    /** The random generator */
-    randomGenerator *_randomGenerator;
 
     /** Default constructed disallowed (not implemented) */
     spectrum();

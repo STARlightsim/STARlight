@@ -43,12 +43,14 @@ class nucleus
 {
 
 public:
-
+	nucleus();
 	nucleus(const int    Z,
 	        const int    A,
 	        const double deuteronSlopePar,
 	        const bool   dAuCoherentProduction);
 	~nucleus();
+	
+	void init();
  
 	int    Z              () const { return _Z;                     }  ///< returns atomic number of nucleus
 	int    A              () const { return _A;                     }  ///< returns nucleon number of nucleus

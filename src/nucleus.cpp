@@ -37,11 +37,11 @@
 #include "starlightconstants.h"
 #include "reportingUtils.h"
 #include "nucleus.h"
+#include <inputParameters.h>
 
 
 using namespace std;
 using namespace starlightConstants;
-
 
 //______________________________________________________________________________
 nucleus::nucleus(const int    Z,
@@ -53,7 +53,12 @@ nucleus::nucleus(const int    Z,
 	  _deuteronSlopePar(deuteronSlopePar),
 	  _dAuCoherentProduction(dAuCoherentProduction)
 {
-	switch (_Z) {
+  init();	
+}
+
+void nucleus::init()
+{
+  switch (_Z) {
 	case 79:
 		{
 			_Q0   = 0.060;
@@ -110,7 +115,6 @@ nucleus::nucleus(const int    Z,
 	}
 	_r0 = 1.16 * (1. - 1.16 * pow(_A, -2. / 3.));  // for FRITIOF and FormFactor.
 }
-
 
 //______________________________________________________________________________
 nucleus::~nucleus()

@@ -46,9 +46,8 @@ class beamBeamSystem
 public:
 
 	beamBeamSystem(const beam&            beam1,
-	               const beam&            beam2,
-	               const inputParameters& parameters);
-	beamBeamSystem(const inputParameters& parameters);
+	               const beam&            beam2);
+	beamBeamSystem();
 	~beamBeamSystem();
 
 	const beam& beam1() const { return _beam1; }  ///< returns beam particle 1
@@ -61,7 +60,7 @@ public:
 	
 	double beamLorentzGamma() const { return _beamLorentzGamma; }
 	
-	void init(const inputParameters &p);
+	void init();
 
 private:
 	void generateBreakupProbabilities();

@@ -48,8 +48,8 @@ using namespace std;
 
 
 //______________________________________________________________________________
-incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusLuminosity(inputParameters& input, beamBeamSystem& bbsystem)
-  : photonNucleusCrossSection(input, bbsystem), _inputgammaa(input)
+incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusLuminosity(beamBeamSystem& bbsystem)
+  : photonNucleusCrossSection(bbsystem)
 {
   cout <<"Creating Luminosity Tables for incoherent vector meson production."<<endl;
   incoherentPhotonNucleusDifferentialLuminosity();
@@ -78,64 +78,65 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
   
   double  bwnorm,Eth;
 
-  dW = (_inputgammaa.maxW()-_inputgammaa.minW())/_inputgammaa.nmbWBins();
-  dY  = (_inputgammaa.maxRapidity()-(-1.0)*_inputgammaa.maxRapidity())/_inputgammaa.nmbRapidityBins();
+  dW = (_wMax - _wMin)/_nWbins;
+  dY  = (_yMax-(-1.0)*_yMax)/_nYbins;
     
   // Write the values of W used in the calculation to slight.txt.  
   wylumfile.open("slight.txt");
+  wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile << getbbs().beam1().Z() <<endl;
   wylumfile << getbbs().beam1().A() <<endl;
   wylumfile << getbbs().beam2().Z() <<endl;
   wylumfile << getbbs().beam2().A() <<endl;
-  wylumfile << _inputgammaa.beamLorentzGamma() <<endl;
-  wylumfile << _inputgammaa.maxW() <<endl;
-  wylumfile << _inputgammaa.minW() <<endl;
-  wylumfile << _inputgammaa.nmbWBins() <<endl;
-  wylumfile << _inputgammaa.maxRapidity() <<endl;
-  wylumfile << _inputgammaa.nmbRapidityBins() <<endl;
-  wylumfile << _inputgammaa.productionMode() <<endl;
-  wylumfile << _inputgammaa.beamBreakupMode() <<endl;
-  wylumfile << _inputgammaa.interferenceEnabled() <<endl;
-  wylumfile << _inputgammaa.interferenceStrength() <<endl;
-  wylumfile << _inputgammaa.coherentProduction() <<endl;
-  wylumfile << _inputgammaa.incoherentFactor() <<endl;
-  wylumfile << _inputgammaa.deuteronSlopePar() <<endl;
-  wylumfile << _inputgammaa.maxPtInterference() <<endl;
-  wylumfile << _inputgammaa.nmbPtBinsInterference() <<endl;
+  wylumfile << inputParametersInstance.beamLorentzGamma() <<endl;
+  wylumfile << inputParametersInstance.maxW() <<endl;
+  wylumfile << inputParametersInstance.minW() <<endl;
+  wylumfile << inputParametersInstance.nmbWBins() <<endl;
+  wylumfile << inputParametersInstance.maxRapidity() <<endl;
+  wylumfile << inputParametersInstance.nmbRapidityBins() <<endl;
+  wylumfile << inputParametersInstance.productionMode() <<endl;
+  wylumfile << inputParametersInstance.beamBreakupMode() <<endl;
+  wylumfile << inputParametersInstance.interferenceEnabled() <<endl;
+  wylumfile << inputParametersInstance.interferenceStrength() <<endl;
+  wylumfile << inputParametersInstance.coherentProduction() <<endl;
+  wylumfile << inputParametersInstance.incoherentFactor() <<endl;
+  wylumfile << inputParametersInstance.deuteronSlopePar() <<endl;
+  wylumfile << inputParametersInstance.maxPtInterference() <<endl;
+  wylumfile << inputParametersInstance.nmbPtBinsInterference() <<endl;
   
   //     Normalize the Breit-Wigner Distribution and write values of W to slight.txt
   testint=0.0;
   //Grabbing default value for C in the breit-wigner calculation
   C=getDefaultC();
-  for(unsigned int i = 0; i <= _inputgammaa.nmbWBins() - 1; ++i) {
-    W = _inputgammaa.minW() + double(i)*dW + 0.5*dW;
+  for(unsigned int i = 0; i <= _nWbins - 1; ++i) {
+    W = _wMin + double(i)*dW + 0.5*dW;
     testint = testint + breitWigner(W,C)*dW;
     wylumfile << W << endl;
   }
   bwnorm = 1./testint;
   
   //     Write the values of Y used in the calculation to slight.txt.
-  for(unsigned int i = 0; i <= _inputgammaa.nmbRapidityBins() - 1; ++i) {
-    Y = -1.0*_inputgammaa.maxRapidity() + double(i)*dY + 0.5*dY;
+  for(unsigned int i = 0; i <= _nYbins - 1; ++i) {
+    Y = -1.0*_yMax + double(i)*dY + 0.5*dY;
     wylumfile << Y << endl;
   }
  
-  //  Eth=0.5*(((_inputgammaa.minW()+starlightConstants::protonMass)*(_inputgammaa.minW()
+  //  Eth=0.5*(((_wMin+starlightConstants::protonMass)*(_wMin
   //							    +starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/
   //	   (Ep + sqrt(Ep*Ep-starlightConstants::protonMass*starlightConstants::protonMass)));
   
-  for(unsigned int i = 0; i <= _inputgammaa.nmbWBins() - 1; ++i) {
+  for(unsigned int i = 0; i <= _nWbins - 1; ++i) {
 
-    W = _inputgammaa.minW() + double(i)*dW + 0.5*dW;
+    W = _wMin + double(i)*dW + 0.5*dW;
 
-    double Ep = _inputgammaa.protonEnergy();
+    double Ep = inputParametersInstance.protonEnergy();
 
     Eth=0.5*(((W+starlightConstants::protonMass)*(W+starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/
 	   (Ep + sqrt(Ep*Ep-starlightConstants::protonMass*starlightConstants::protonMass)));
     
-    for(unsigned int j = 0; j <= _inputgammaa.nmbRapidityBins() - 1; ++j) {
+    for(unsigned int j = 0; j <= _nYbins - 1; ++j) {
 
-      Y = -1.0*_inputgammaa.maxRapidity() + double(j)*dY + 0.5*dY;
+      Y = -1.0*_yMax + double(j)*dY + 0.5*dY;
 
       int A_1 = getbbs().beam1().A(); 
       int A_2 = getbbs().beam2().A();
@@ -181,12 +182,15 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
     }
   }
 
+  wylumfile << bwnorm << endl;
+  wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile.close();
   
-  wylumfile.open("slight.txt",ios::app);
+//   wylumfile.open("slight.txt",ios::app);
   cout << "bwnorm: "<< bwnorm <<endl;
-  wylumfile << bwnorm << endl;
-  wylumfile.close();
+//   wylumfile << bwnorm << endl;
+//   wylumfile << inputParametersInstance.parameterValueKey() << endl;
+//   wylumfile.close();
 }
 
 
@@ -199,7 +203,7 @@ double incoherentPhotonNucleusLuminosity::nofe(double Egamma, double bimp)
   
   double X=0.,nofex=0.,factor1=0.,factor2=0.,factor3=0.;
   
-  X = (bimp*Egamma)/(_inputgammaa.beamLorentzGamma()*starlightConstants::hbarc);
+  X = (bimp*Egamma)/(_beamLorentzGamma*starlightConstants::hbarc);
   
   if( X <= 0.0) 
     cout<<"In nofe, X= "<<X<<endl;

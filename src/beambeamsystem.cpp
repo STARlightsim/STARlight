@@ -48,41 +48,38 @@ using namespace starlightConstants;
 
 //______________________________________________________________________________
 beamBeamSystem::beamBeamSystem(const beam&            beam1,
-                               const beam&            beam2,
-                               const inputParameters& input)
-  : _beamLorentzGamma(input.beamLorentzGamma()),
-	  _beamBreakupMode (input.beamBreakupMode()),
+                               const beam&            beam2)
+  : _beamLorentzGamma(inputParametersInstance.beamLorentzGamma()),
+    _beamBreakupMode (inputParametersInstance.beamBreakupMode()),
     _beam1           (beam1),
     _beam2           (beam2),
     _breakupProbabilities(0),
     _breakupImpactParameterStep(1.007),
     _breakupCutOff(10e-6)
 { 
-  init(input);
+  init();
 }
   
 
 
 
 //______________________________________________________________________________
-beamBeamSystem::beamBeamSystem(const inputParameters &input)
-	: _beamLorentzGamma(input.beamLorentzGamma()),
-	  _beamBreakupMode (input.beamBreakupMode()),
-	  _beam1           (input.beam1Z(),
-	                    input.beam1A(),
-	                    input.deuteronSlopePar(),
-	                    input.coherentProduction(),
-	                    input),
-	  _beam2           (input.beam2Z(),
-	                    input.beam2A(),
-	                    input.deuteronSlopePar(),
-	                    input.coherentProduction(),
-	                    input),
+beamBeamSystem::beamBeamSystem()
+	: _beamLorentzGamma(inputParametersInstance.beamLorentzGamma()),
+	  _beamBreakupMode (inputParametersInstance.beamBreakupMode()),
+	  _beam1           (inputParametersInstance.beam1Z(),
+	                    inputParametersInstance.beam1A(),
+	                    inputParametersInstance.deuteronSlopePar(),
+	                    inputParametersInstance.coherentProduction()),
+	  _beam2           (inputParametersInstance.beam2Z(),
+	                    inputParametersInstance.beam2A(),
+	                    inputParametersInstance.deuteronSlopePar(),
+	                    inputParametersInstance.coherentProduction()),
 	  _breakupProbabilities(0),
 	  _breakupImpactParameterStep(1.007),
 	  _breakupCutOff(10e-10)
 {
-  init(input);
+  init();
 }
 
 
@@ -91,11 +88,11 @@ beamBeamSystem::beamBeamSystem(const inputParameters &input)
 beamBeamSystem::~beamBeamSystem()
 { }
 
-void beamBeamSystem::init(const inputParameters &p)
+void beamBeamSystem::init()
 {
    // Calculate beam gamma in CMS frame
-   double rap1 = acosh(p.beam1LorentzGamma());
-   double rap2 = -acosh(p.beam2LorentzGamma());
+   double rap1 = acosh(inputParametersInstance.beam1LorentzGamma());
+   double rap2 = -acosh(inputParametersInstance.beam2LorentzGamma());
    
    _cmsBoost = (rap1+rap2)/2.;
 

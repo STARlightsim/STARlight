@@ -45,16 +45,20 @@ using namespace starlightConstants;
 
 
 //______________________________________________________________________________
-photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& input,
-                                                     const beamBeamSystem&  bbsystem)
-	: _bbs               (bbsystem                  ),
-	  _protonEnergy      (input.protonEnergy()   ),
-	  _beamLorentzGamma  (input.beamLorentzGamma()  ),
-	  _particleType      (input.prodParticleType()  ),
-	  _beamBreakupMode   (input.beamBreakupMode()   ),
-	  _coherentProduction(input.coherentProduction()),
-	  _incoherentFactor  (input.incoherentFactor()  ),
-          _productionMode    (input.productionMode()    ),
+photonNucleusCrossSection::photonNucleusCrossSection(const beamBeamSystem& bbsystem)
+	: _nWbins            (inputParametersInstance.nmbWBins()          ),
+	  _nYbins            (inputParametersInstance.nmbRapidityBins()   ),
+	  _wMin              (inputParametersInstance.minW()              ),
+	  _wMax              (inputParametersInstance.maxW()              ),
+	  _yMax              (inputParametersInstance.maxRapidity()       ),
+	  _beamLorentzGamma  (inputParametersInstance.beamLorentzGamma()  ),
+	  _bbs               (bbsystem                                    ),
+	  _protonEnergy      (inputParametersInstance.protonEnergy()      ),
+	  _particleType      (inputParametersInstance.prodParticleType()  ),
+	  _beamBreakupMode   (inputParametersInstance.beamBreakupMode()   ),
+	  _coherentProduction(inputParametersInstance.coherentProduction()),
+	  _incoherentFactor  (inputParametersInstance.incoherentFactor()  ),
+          _productionMode    (inputParametersInstance.productionMode()    ),
 	  _sigmaNucleus      (_bbs.beam2().A()          )
 {
 	// define luminosity for various beam particles in units of 10^{26} cm^{-2} sec^{-1}
