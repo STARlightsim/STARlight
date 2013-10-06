@@ -39,6 +39,8 @@
 #include <iostream>
 #include <map>
 
+#include <reportingUtils.h>
+
 class inputParser
 {
 public:
@@ -51,6 +53,9 @@ public:
 
   /** Parse a file */
   int parseFile(std::string filename);
+
+  /** Parse a file */
+  int parseString(std::string str);
   
   /** Add parameter to pass */
   void addIntParameter(std::string name, int *var, bool required = true);
@@ -75,6 +80,14 @@ public:
   
   /** Validate */
   bool validateParameters(std::ostream &warnOut = std::cout, std::ostream &errOut = std::cerr);
+  
+  /** Add a parameter */
+  template<typename S>
+  inline void addParameter(S &param);
+  
+  /** Add a parameter */
+  template<typename P>
+  inline void addParameter(const std::string &name, P *varPtr, bool required = false);
 
 private:
   
@@ -117,5 +130,19 @@ private:
   std::map<std::string, _parameter<std::string> > _stringParameters;
   
 };
+
+template<typename S>
+void inputParser::addParameter(S& param)
+{
+  addParameter(param.name(), param.ptr(), param.required());
+
+}
+
+template<typename P>
+void inputParser::addParameter(const std::string& name, P* /*varPtr*/, bool /*required*/)
+{
+  printWarn << "Trying to add unknown parameter type with name: " << name;
+}
+
 
 #endif // INPUTPARSER_H

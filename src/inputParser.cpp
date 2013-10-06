@@ -52,6 +52,24 @@ int inputParser::parseFile(std::string filename)
     {
       return -1;
     }
+    
+    int lineSize = 256;
+    char tmp[lineSize];
+    int nParameters = 0;
+    while (!infile.getline(tmp, lineSize).eof())
+    {
+
+        std::string line(tmp);
+	nParameters += parseString(line);
+    }
+
+    infile.close();
+    return nParameters;
+
+}
+int inputParser::parseString(std::string str)
+{
+
     std::string word;
     std::string name;
     std::string val;
@@ -62,89 +80,76 @@ int inputParser::parseFile(std::string filename)
     std::map<std::string, _parameter<double> >::iterator doubleIt;
     std::map<std::string, _parameter<bool> >::iterator boolIt;
     std::map<std::string, _parameter<std::string> >::iterator stringIt;
+    
+    // Check if there is commented out stuff...
+    size_t pos = str.find_first_of("#");
 
-    int lineSize = 256;
-    char tmp[lineSize];
-    int nParameters = 0;
-    while (!infile.getline(tmp, lineSize).eof())
+    // Cut the comment out of the str
+    if (pos != str.npos) str.erase(pos, str.find_first_of('\n'));
+
+    // Find the required equal sign and split the string into name and value
+    size_t eqPos = str.find("=");
+    std::string whitespaces (" \t\f\v\n\r");
+
+    name = "";
+    val = "";
+
+    if (eqPos != str.npos)
     {
-
-        std::string line(tmp);
-
-        // Check if there is commented out stuff...
-        size_t pos = line.find_first_of("#");
-
-        // Cut the comment out of the line
-        if (pos != line.npos) line.erase(pos, line.find_first_of('\n'));
-
-        // Find the required equal sign and split the string into name and value
-        size_t eqPos = line.find("=");
-        std::string whitespaces (" \t\f\v\n\r");
-
-        name = "";
-        val = "";
-
-        if (eqPos != line.npos)
-        {
-            name = line.substr(0, eqPos);
-            name.erase(name.find_last_not_of(whitespaces)+1);
-            val = line.substr(eqPos+1);
-            val.erase(0, val.find_first_not_of(whitespaces));
-        }
-
-        if (name.length() > 0 && val.length() > 0)
-        {
-            intIt = _intParameters.find(name);
-            if (intIt != _intParameters.end())
-            {
-                intIt->second._found = true;
-                *(intIt->second._val) = atoi(val.c_str());
-		nParameters++;
-            }
-            uIntIt = _uintParameters.find(name);
-            if (uIntIt != _uintParameters.end())
-            {
-                uIntIt->second._found = true;
-                *(uIntIt->second._val) = atoi(val.c_str());
-		nParameters++;
-            }
-            floatIt = _floatParameters.find(name);
-            if (floatIt != _floatParameters.end())
-            {
-                floatIt->second._found = true;
-                *(floatIt->second._val) = atof(val.c_str());
-		nParameters++;
-            }
-            doubleIt = _doubleParameters.find(name);
-            if (doubleIt != _doubleParameters.end())
-            {
-                doubleIt->second._found = true;
-                *(doubleIt->second._val) = atof(val.c_str());
-		nParameters++;
-            }
-            boolIt = _boolParameters.find(name);
-            if (boolIt != _boolParameters.end())
-            {
-                boolIt->second._found = true;
-                *(boolIt->second._val) = atoi(val.c_str());
-		nParameters++;
-            }
-            stringIt = _stringParameters.find(name);
-            if (stringIt != _stringParameters.end())
-            {
-                stringIt->second._found = true;
-                *(stringIt->second._val) = val;
-		nParameters++;
-            }
-
-        }
-      
+        name = str.substr(0, eqPos);
+        name.erase(name.find_last_not_of(whitespaces)+1);
+        val = str.substr(eqPos+1);
+        val.erase(0, val.find_first_not_of(whitespaces));
     }
-    infile.close();
-    return 0;
 
+    if (name.length() > 0 && val.length() > 0)
+    {
+        intIt = _intParameters.find(name);
+        if (intIt != _intParameters.end())
+        {
+            intIt->second._found = true;
+            *(intIt->second._val) = atoi(val.c_str());
+	    return true;
+        }
+        uIntIt = _uintParameters.find(name);
+        if (uIntIt != _uintParameters.end())
+        {
+            uIntIt->second._found = true;
+            *(uIntIt->second._val) = atoi(val.c_str());
+	    return true;
+        }
+        floatIt = _floatParameters.find(name);
+        if (floatIt != _floatParameters.end())
+        {
+            floatIt->second._found = true;
+            *(floatIt->second._val) = atof(val.c_str());
+	    return true;
+        }
+        doubleIt = _doubleParameters.find(name);
+        if (doubleIt != _doubleParameters.end())
+        {
+            doubleIt->second._found = true;
+            *(doubleIt->second._val) = atof(val.c_str());
+	    return true;
+        }
+        boolIt = _boolParameters.find(name);
+        if (boolIt != _boolParameters.end())
+        {
+            boolIt->second._found = true;
+            *(boolIt->second._val) = atoi(val.c_str());
+	    return true;
+        }
+        stringIt = _stringParameters.find(name);
+        if (stringIt != _stringParameters.end())
+        {
+            stringIt->second._found = true;
+            *(stringIt->second._val) = val;
+	    return true;
+        }
+
+    }
+    return false;
 }
-
 void inputParser::addIntParameter(std::string name, int *var, bool required)
 {
     _parameter<int> par(name, var, required);
@@ -301,3 +306,36 @@ bool inputParser::validateParameters(std::ostream& warnOut, std::ostream& errOut
 }
 
 
+template<>
+void inputParser::addParameter(const std::string& name, int * varPtr, bool required)
+{
+  addIntParameter(name, varPtr, required);
+}
+template<>
+void inputParser::addParameter(const std::string& name, unsigned int * varPtr, bool required)
+{
+  addUintParameter(name, varPtr, required);
+}
+template<>
+void inputParser::addParameter(const std::string& name, float * varPtr, bool required)
+{
+  addFloatParameter(name, varPtr, required);
+}
+
+template<>
+void inputParser::addParameter(const std::string& name, double * varPtr, bool required)
+{
+  addDoubleParameter(name, varPtr, required);
+}
+
+template<>
+void inputParser::addParameter(const std::string& name, bool * varPtr, bool required)
+{
+  addBoolParameter(name, varPtr, required);
+}
+
+template<>
+void inputParser::addParameter(const std::string& name, std::string * varPtr, bool required)
+{
+  addStringParameter(name, varPtr, required);
+}
