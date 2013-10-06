@@ -317,6 +317,10 @@ configure_file (
   "${PROJECT_SOURCE_DIR}/starlightconfig.h.in"
   "${PROJECT_BINARY_DIR}/starlightconfig.h"
   )
+# Erase xsec values in case changes in code affects the xsec, executed during make process
+add_custom_command (TARGET Starlib POST_BUILD COMMAND touch ARGS slight.txt)
+add_custom_command (TARGET Starlib POST_BUILD COMMAND cp ARGS slight.txt slight.txt.bak)
+add_custom_command (TARGET Starlib POST_BUILD COMMAND echo ARGS '' > slight.txt )
 
 
 message(STATUS "Cmake did not find any errors. run 'make' to build the project.")
