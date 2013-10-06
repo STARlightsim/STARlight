@@ -187,7 +187,7 @@ nBodyPhaseSpaceGen::calcWeight()
 	_weight = _norm * pow(massInterval, (int)_n - 2) * momProd / _M[_n - 1];
 	if (_weight > _maxWeightObserved)
 		_maxWeightObserved = _weight;
-	if (isnan(_weight))
+	if (std::isnan(_weight))
 		printWarn << "weight = " << _weight << endl;
 	return _weight;
 }
