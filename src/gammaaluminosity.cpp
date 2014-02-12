@@ -87,7 +87,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
     
   // Write the values of W used in the calculation to slight.txt.  
   wylumfile.open("slight.txt");
-  wylumfile << inputParametersInstance.parameterValueKey() << endl;
+  // wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile << getbbs().beam1().Z() <<endl;
   wylumfile << getbbs().beam1().A() <<endl;
   wylumfile << getbbs().beam2().Z() <<endl;
