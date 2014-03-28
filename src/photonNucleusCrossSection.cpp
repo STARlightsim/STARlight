@@ -455,7 +455,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 		//  integrate flux over 2R_A < b < 2R_A+ 6* gamma hbar/energy
 		//  use exponential steps
     
-		bmin=RNuc+RNuc2; //2.*nuclearRadius; Sergey
+		bmin=0.8*(RNuc+RNuc2); //Start slightly below 2*Radius 
 		bmax=bmin + 6.*hbarc*_beamLorentzGamma/energy;
     
 		bmult=exp(log(bmax/bmin)/double(nbstep));
@@ -475,18 +475,55 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 		    // This is pA 
                     if( _productionMode == PHOTONPOMERONINCOHERENT ){
                       // This is pA incoherent 
-                      // cout<<" This is incoherent! "<<" j = "<<j<<endl;
                       double zproj = 0.0;
-                      double localbmin = 0.0;   
                       if( _bbs.beam1().A() == 1 ){
                         zproj = (_bbs.beam2().Z());
-			localbmin = _bbs.beam2().nuclearRadius() + 0.7; 
-                      }		      
-                      if( _bbs.beam2().A() == 1 ){ 
-                        zproj = (_bbs.beam1().Z());
-			localbmin = _bbs.beam1().nuclearRadius() + 0.7; 
                       }
-                      integratedflux = zproj*zproj*nepoint(energy,localbmin); 
+		      else if( _bbs.beam2().A() == 1 ){
+                        zproj = (_bbs.beam1().Z());
+                      }
+
+ 		      int nbsteps = 400;
+		      double bmin = 0.7*(RNuc+RNuc2);
+		      double bmax = 2.0*(RNuc+RNuc2) + (8.0*_beamLorentzGamma*hbarc/energy);
+		      double dlnb = (log(bmax)-log(bmin))/(1.*nbsteps);
+
+		      double local_sum=0.0;
+
+		      // Impact parameter loop 
+		      for (int i = 0; i<=nbsteps; i++){
+
+        		  double bnn0 = bmin*exp(i*dlnb);
+			  double bnn1 = bmin*exp((i+1)*dlnb);
+			  double db   = bnn1-bnn0;
+        
+			  // double PofB0 = 1.0; 
+			  // if( bnn0 > _bbs.beam2().nuclearRadius() + 0.7 )PofB0=0.0;
+			  // double PofB1 = 1.0; 
+			  // if( bnn1 > _bbs.beam2().nuclearRadius() + 0.7 )PofB1=0.0;
+
+                          double PofB0 = _bbs.probabilityOfBreakup(bnn0); 
+                          double PofB1 = _bbs.probabilityOfBreakup(bnn1); 
+      
+			  double Xarg = energy*bnn0/(hbarc*_beamLorentzGamma);
+			  double loc_nofe0 = (zproj*zproj*alpha)/
+				(pi*pi); 
+			  loc_nofe0 *= (1./(energy*bnn0*bnn0)); 
+			  loc_nofe0 *= Xarg*Xarg*(bessel::dbesk1(Xarg))*(bessel::dbesk1(Xarg)); 
+
+			  Xarg = energy*bnn1/(hbarc*_beamLorentzGamma);
+			  double loc_nofe1 = (zproj*zproj*alpha)/
+				(pi*pi); 
+			  loc_nofe1 *= (1./(energy*bnn1*bnn1)); 
+			  loc_nofe1 *= Xarg*Xarg*(bessel::dbesk1(Xarg))*(bessel::dbesk1(Xarg)); 
+                          // cout<<" i: "<<i<<" bnn0: "<<bnn0<<" PofB0: "<<PofB0<<" loc_nofe0: "<<loc_nofe0<<endl; 
+
+			  local_sum += loc_nofe0*PofB0*bnn0*db; 
+			  local_sum += loc_nofe1*PofB1*bnn1*db; 
+		      }  // End Impact parameter loop 
+
+		      // Note: 2*pi --> pi because of no factor 2 above 
+	              integratedflux = local_sum*pi; 
                     } else if ( _productionMode == PHOTONPOMERONNARROW ||  _productionMode == PHOTONPOMERONWIDE ){
                       // cout<<" This is pA coherent "<<" j= "<<j<<endl; 
                       double localbmin = 0.0;   
