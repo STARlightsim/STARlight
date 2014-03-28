@@ -69,9 +69,11 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
 	// double Av,Wgp,cs,cvma;
 	double W,dY;
 	double y1,y2,y12,ega1,ega2,ega12;
+        double y1lab,y2lab,y12lab;
 	// double t,tmin,tmax;
 	double csgA1,csgA2,csgA12,int_r,dR,rate;
         double Wgp,csVN,csVA; 
+        double Wgpm; 
 	double tmp;
 	// double ax,bx;
 	double Eth;
@@ -94,13 +96,35 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
   
 	for(J=0;J<=(NY-1);J++){
     
-		y1  = _narrowYmin + double(J)*dY;
-		y2  = _narrowYmin + double(J+1)*dY;
-		y12 = 0.5*(y1+y2);
+	        // This is the fdefault
+		// y1  = _narrowYmin + double(J)*dY;
+		// y2  = _narrowYmin + double(J+1)*dY;
+		// y12 = 0.5*(y1+y2);
     
-		ega1  = 0.5*W*exp(y1);
-		ega2  = 0.5*W*exp(y2);
-		ega12 = 0.5*W*exp(y12);
+		// ega1  = 0.5*W*exp(y1);
+		// ega2  = 0.5*W*exp(y2);
+		// ega12 = 0.5*W*exp(y12);
+
+                y1lab  = _narrowYmin + double(J)*dY;
+                y2lab  = _narrowYmin + double(J+1)*dY;
+                y12lab = 0.5*(y1lab+y2lab);
+                // cout<<" J: "<<J<<"  y1lab: "<<y1lab<<"  y2lab: "<<y2lab<<"  y12lab: "<<y12lab<<endl;   
+                // p+Pb
+                y1 = y1lab + 0.465;
+                y2 = y2lab + 0.465;
+                y12 = y12lab + 0.465; 
+                ega1  = 0.5*W*exp(y1);
+                ega2  = 0.5*W*exp(y2);
+                ega12 = 0.5*W*exp(y12);
+
+                // Pb+p
+                // y1 = y1lab - 0.465;
+                // y2 = y2lab - 0.465;
+                // y12 = y12lab - 0.465; 
+                // ega1  = 0.5*W*exp(-y1);
+                // ega2  = 0.5*W*exp(-y2);
+                // ega12 = 0.5*W*exp(-y12);
+
     
 		if(ega1 < Eth)   
 			continue;
@@ -120,6 +144,7 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
 		// Middle point 
                 Wgp = sqrt(2.*ega12*(_Ep+sqrt(_Ep*_Ep-starlightConstants::protonMass*starlightConstants::protonMass))
 			          +starlightConstants::protonMass*starlightConstants::protonMass);
+                Wgpm = Wgp; 
                 csVN = sigma_N(Wgp);            
                 csVA = sigma_A(csVN); 
                 csgA12 = (csVA/csVN)*sigmagp(Wgp); 
@@ -143,6 +168,7 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
                 dR = dR*(dY/6.); 
 
 		// cout<<" y: "<<y12<<" egamma: "<<ega12<<" flux: "<<photonFlux(ega12)<<" sigma_gA: "<<10000000.*csgA12<<" dsig/dy (microb): "<<10000.*dR/dY<<endl;
+                // cout<<" y: "<<y12lab<<" egamma: "<<ega12<<" flux: "<<ega12*photonFlux(ega12)<<" W: "<<Wgpm<<" Wflux: "<<Wgpm*photonFlux(ega12)<<" sigma_gA (nb): "<<10000000.*csgA12<<" dsig/dy (microb): "<<10000.*ega12*photonFlux(ega12)*csgA12<<endl;
 
 		// The 2 accounts for the 2 beams    
 	        if(getbbs().beam1().A()==getbbs().beam2().A()){
