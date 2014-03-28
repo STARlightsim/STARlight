@@ -86,7 +86,7 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   OldNorm   = Normalize;
   
   //Writing out our input parameters+(w,y)grid+diff._lum.
-  wylumfile << inputParametersInstance.parameterValueKey() << endl;
+  // wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile << beam1().Z() <<endl;
   wylumfile << beam1().A() <<endl;
   wylumfile << beam2().Z() <<endl;
@@ -125,11 +125,12 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
         wylumfile << xlum <<endl;
       }
       Normalize = OldNorm;
-  }
+    }
 
   }
   else if(inputParametersInstance.xsecCalcMethod() == 1) {
     
+    /*
         const int nthreads = inputParametersInstance.nThreads();
         pthread_t threads[nthreads];
         difflumiargs args[nthreads];
@@ -179,6 +180,18 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
     
     wylumfile << inputParametersInstance.parameterValueKey() << endl;
     wylumfile.close();
+    */ 
+
+    for (unsigned int i = 0; i < _nWbins; i++) {   //For each (w,y) pair, calculate the diff. _lum
+      printf("Calculating cross section: %2.0f %% \r", float(i)/float(_nWbins)*100);
+      fflush(stdout);
+      for (unsigned int j = 0; j < _nYbins; j++) {
+        xlum = w[i] * D2LDMDY(w[i],y[j]);   //Convert photon flux dN/dW to Lorentz invariant photon number WdN/dW
+        wylumfile << xlum <<endl;
+        // cout<<" i: "<<i<<" j: "<<j<<" W*dN/dW: "<<xlum<<endl; 
+      }
+    }
+  }
     return;
 }
 
