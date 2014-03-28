@@ -125,14 +125,17 @@ beamBeamSystem::probabilityOfBreakup(const double D) const
 	else if ( ( (_beam1.A() == 1) && (_beam2.A() != 1) ) || ((_beam1.A() != 1) && (_beam2.A() == 1)) ) {  
 	  // This is pA
           if( _beam1.A() == 1 ){ 
-            bMin = _beam2.nuclearRadius() + 0.7; 
+            bMin = _beam2.nuclearRadius() + 0.7;
+            pOfB = exp(-7.0*_beam2.rho0()*_beam2.thickness(D));
           }else if( _beam2.A() == 1 ){ 
             bMin = _beam1.nuclearRadius() + 0.7; 
+            pOfB = exp(-7.0*_beam1.rho0()*_beam1.thickness(D));
           }else{
             cout<<"Some logical problem here!"<<endl;
           }
-          if( D > bMin )pOfB=1.0; 
+          // if( D > bMin )pOfB=1.0; 
           return pOfB;
+          
 	}
 
 	//use the lookup table and return...
