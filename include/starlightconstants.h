@@ -71,6 +71,7 @@ namespace starlightConstants
 		ELECTRON       = 11,
 		MUON           = 13,
 		TAUON          = 15,
+		TAUONDECAY     = 10015,
 		PROTON         = 212,
 		PION           = 211,
 		KAONCHARGE     = 321,
