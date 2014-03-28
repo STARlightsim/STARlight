@@ -64,7 +64,7 @@ Gammagammaleptonpair::Gammagammaleptonpair(beamBeamSystem& bbsystem)
     //Now we will calculate the crosssection
     twoLeptonCrossSection();
     //If it is a tauon, calculate its tables
-    if(inputParametersInstance.prodParticleId()==starlightConstants::TAUON) calculateTable();
+    if(inputParametersInstance.prodParticleId()==starlightConstants::TAUONDECAY) calculateTable();
 }
 
 
@@ -198,7 +198,6 @@ void Gammagammaleptonpair::pickw(double &w)
 	_remainwd = remainw;
 	//calculate the w value
 	w = _Warray[ivalw]+(_Warray[ivalw+1]-_Warray[ivalw])*remainw;
-
     }
 }
 
@@ -403,8 +402,6 @@ void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ip
     double betax,betay,betaz;
     double hirestheta,hirestest,hiresw;  //added from JN->needed precision
 
-    //    set the mass of the daughter particles
-
     mdec = getMass();
     if(W < 2*mdec)
     {
@@ -472,7 +469,7 @@ void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ip
     E2 = sqrt(mdec*mdec+px2*px2+py2*py2+pz2*pz2);
     //        decay tau to electrons
     //        note that after this routine px1, etc., refer to the electrons
-    if(_GGlepInputpidtest == starlightConstants::TAUON)
+    if(_GGlepInputpidtest == starlightConstants::TAUONDECAY)
         tauDecay(px1,py1,pz1,E1,px2,py2,pz2,E2);
 
     //     Lorentz transform into the lab frame
@@ -490,10 +487,11 @@ void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ip
 
     // change particle id from that of parent to that of daughters
     // change taoun id into electron id, already switched particles in tau decay
-    if(_GGlepInputpidtest == starlightConstants::TAUON)
+    if(_GGlepInputpidtest == starlightConstants::TAUONDECAY)
         ipid = starlightConstants::ELECTRON;
     //        electrons remain electrons; muons remain muons
-    if ((_GGlepInputpidtest == starlightConstants::ELECTRON) || (_GGlepInputpidtest == starlightConstants::MUON))
+    if ( (_GGlepInputpidtest == starlightConstants::ELECTRON) || (_GGlepInputpidtest == starlightConstants::MUON) || 
+         (_GGlepInputpidtest == starlightConstants::TAUON) )
         ipid = _GGlepInputpidtest;
 }
 
