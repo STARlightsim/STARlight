@@ -305,37 +305,3 @@ bool inputParser::validateParameters(std::ostream& warnOut, std::ostream& errOut
     return true;
 }
 
-
-template<>
-void inputParser::addParameter(const std::string& name, int * varPtr, bool required)
-{
-  addIntParameter(name, varPtr, required);
-}
-template<>
-void inputParser::addParameter(const std::string& name, unsigned int * varPtr, bool required)
-{
-  addUintParameter(name, varPtr, required);
-}
-template<>
-void inputParser::addParameter(const std::string& name, float * varPtr, bool required)
-{
-  addFloatParameter(name, varPtr, required);
-}
-
-template<>
-void inputParser::addParameter(const std::string& name, double * varPtr, bool required)
-{
-  addDoubleParameter(name, varPtr, required);
-}
-
-template<>
-void inputParser::addParameter(const std::string& name, bool * varPtr, bool required)
-{
-  addBoolParameter(name, varPtr, required);
-}
-
-template<>
-void inputParser::addParameter(const std::string& name, std::string * varPtr, bool required)
-{
-  addStringParameter(name, varPtr, required);
-}
