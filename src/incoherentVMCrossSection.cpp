@@ -69,7 +69,7 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
 	// double Av,Wgp,cs,cvma;
 	double W,dY;
 	double y1,y2,y12,ega1,ega2,ega12;
-        double y1lab,y2lab,y12lab;
+        // double y1lab,y2lab,y12lab;
 	// double t,tmin,tmax;
 	double csgA1,csgA2,csgA12,int_r,dR,rate;
         double Wgp,csVN,csVA; 
@@ -97,25 +97,26 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
 	for(J=0;J<=(NY-1);J++){
     
 	        // This is the fdefault
-		// y1  = _narrowYmin + double(J)*dY;
-		// y2  = _narrowYmin + double(J+1)*dY;
-		// y12 = 0.5*(y1+y2);
+		y1  = _narrowYmin + double(J)*dY;
+		y2  = _narrowYmin + double(J+1)*dY;
+		y12 = 0.5*(y1+y2);
     
-		// ega1  = 0.5*W*exp(y1);
-		// ega2  = 0.5*W*exp(y2);
-		// ega12 = 0.5*W*exp(y12);
+		ega1  = 0.5*W*exp(y1);
+		ega2  = 0.5*W*exp(y2);
+		ega12 = 0.5*W*exp(y12);
 
-                y1lab  = _narrowYmin + double(J)*dY;
-                y2lab  = _narrowYmin + double(J+1)*dY;
-                y12lab = 0.5*(y1lab+y2lab);
-                // cout<<" J: "<<J<<"  y1lab: "<<y1lab<<"  y2lab: "<<y2lab<<"  y12lab: "<<y12lab<<endl;   
+                // This is for checking things in the lab frame 
+                // y1lab  = _narrowYmin + double(J)*dY;
+                // y2lab  = _narrowYmin + double(J+1)*dY;
+                // y12lab = 0.5*(y1lab+y2lab);
+
                 // p+Pb
-                y1 = y1lab + 0.465;
-                y2 = y2lab + 0.465;
-                y12 = y12lab + 0.465; 
-                ega1  = 0.5*W*exp(y1);
-                ega2  = 0.5*W*exp(y2);
-                ega12 = 0.5*W*exp(y12);
+                // y1 = y1lab + 0.465;
+                // y2 = y2lab + 0.465;
+                // y12 = y12lab + 0.465; 
+                // ega1  = 0.5*W*exp(y1);
+                // ega2  = 0.5*W*exp(y2);
+                // ega12 = 0.5*W*exp(y12);
 
                 // Pb+p
                 // y1 = y1lab - 0.465;
