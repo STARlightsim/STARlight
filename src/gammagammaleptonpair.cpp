@@ -642,6 +642,8 @@ upcEvent Gammagammaleptonpair::produceEvent()
 	 }
        }
      }
+     else if(!_ptCutEnabled && !_etaCutEnabled) 
+	_nmbAccepted++;
     
    }while((_ptCutEnabled || _etaCutEnabled) && !accepted);
    //twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);

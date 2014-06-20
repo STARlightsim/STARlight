@@ -1,9 +1,25 @@
-#include "analyse.h"
+#include "analyze.h"
 #include <TMath.h>
 #include <iostream>
 
+// This macro reads in a starlight output file and creates histograms of 
+// the p_T and rapidity of the daughters, as well as the p_T, rapidity and 
+// mass of the parent.  The macro assumes there are only two daughter 
+// tracks.  Currently, the macro only accomodates electrons, muons or 
+// pions as daughter particles.  The histograms for the daughter particles 
+// are called fPt2, fPt2, fRap1, and fRap2.  Parent histograms are created 
+// for each possible daughter species (e.g., parent p_T histograms are 
+// created with the names fPtEl, fPtMu, and fPtPi), but only the ones 
+// corresponding to  the actual daughter particle are filled. The 
+// histograms are saved in a  file called histograms.root.
+//
+// To use this macro, modify the file ana.C to call your input file 
+// (as downloaded, it calls slight.out) and the number of events you wish to 
+// process (as downloaded, it processes 20 events).  Then open root and type 
+// ".x ana.C" .
+
 using namespace std;
-Analyse::Analyse() :
+Analyze::Analyze() :
   fInfile("slight.out"),
   fNEvents(1)
 {
@@ -24,9 +40,12 @@ Analyse::Analyse() :
   
   fPt1 = new TH1F("fPt1", "Transverse momentum track 1", 100, 0, 2.);
   fPt2 = new TH1F("fPt2", "Transverse momentum track 2", 100, 0, 2.);
+
+  fRap1 = new TH1F("fRap1", "Rapidity track 1", 200, -10, 10);
+  fRap2 = new TH1F("fRap2", "Rapidity track 2", 200, -10, 10);
 }
 
-Analyse::Analyse(char* infile, Int_t nEvents) :
+Analyze::Analyze(char* infile, Int_t nEvents) :
   fInfile(infile),
   fNEvents(nEvents)
 {
@@ -48,9 +67,12 @@ Analyse::Analyse(char* infile, Int_t nEvents) :
 
   fPt1 = new TH1F("fPt1", "Transverse momentum track 1", 100, 0, 2.);
   fPt2 = new TH1F("fPt2", "Transverse momentum track 2", 100, 0, 2.);
+
+  fRap1 = new TH1F("fRap1", "Rapidity track 1", 200, -10, 10);
+  fRap2 = new TH1F("fRap2", "Rapidity track 2", 200, -10, 10);
 }
 
-Analyse::~Analyse()
+Analyze::~Analyze()
 {
   //Destructor
   delete fPtEl;
@@ -67,11 +89,13 @@ Analyse::~Analyse()
   
   delete fPt1;
   delete fPt2;
-  
+
+  delete fRap1;
+  delete fRap2;  
  
 }
 
-Int_t Analyse::Init()
+Int_t Analyze::Init()
 {
   
   
@@ -84,7 +108,7 @@ Int_t Analyse::Init()
   return 0;
 }
 
-Int_t Analyse::NextEvent()
+Int_t Analyze::NextEvent()
 {
   char linelabel[20];
   int i1=0;
@@ -109,7 +133,7 @@ Int_t Analyse::NextEvent()
   return fNParticles;
 }
 
-TParticle* Analyse::NextParticle()
+TParticle* Analyze::NextParticle()
 {
   char tracklabel[20];
   int i1=0;
@@ -133,58 +157,71 @@ TParticle* Analyse::NextParticle()
   
     TParticle *particle = 
       new TParticle(idpart, 0, -1, -1, -1, -1, px, py, pz, ep, 0., 0., 0., 0.);
-
-    //  }
+      if(idpart == 11 || idpart == -11){particle->SetCalcMass(0.00051099907);}
+      else if(idpart == 13 || idpart == -13){particle->SetCalcMass(0.105658389);}
+      else if(idpart == 211 || idpart == -211){particle->SetCalcMass(0.13956995);}
+      else {cout << "unknown daughter!  please edit the code to accomodate"<< endl;
+	      exit(0);
+	   }
 
   return particle;
 }
 
-void Analyse::doAnalysis()
+void Analyze::doAnalysis()
 {
 
   Int_t check = Init();
   if(check < 0) return;
-  //Doing the analysis
+  Double_t mass;
+  //Doing the analysis:  loop over events
   for(Int_t ev = 0; ev < fNEvents; ev++){
     	   
     const Int_t ntracks = NextEvent();
-    //Array of TLorentzVectors. One vector for each tracks
+    //Array of TLorentzVectors. One vector for each track
     TLorentzVector* vecArr[ntracks];
-    TParticle* partArr[ntracks];
     //Looping over the tracks of the event
     for(Int_t tr = 0; tr < ntracks; tr++){
-      //Getting a TParticle from the TClonesArray
+      //Getting the TParticle for the track
       TParticle *part = NextParticle();
-      Double_t mpi = 0.13957018;
-      Double_t energy = TMath::Sqrt(mpi*mpi+part->Px()*part->Px()+part->Py()*part->Py()+part->Pz()*part->Pz());
+      mass = part->GetCalcMass();
+      idpart = part->GetPdgCode();
+      Double_t energy = TMath::Sqrt(mass*mass+part->Px()*part->Px()+part->Py()*part->Py()+part->Pz()*part->Pz());
       //Creating a new TLorentzVector and setting px, py, pz and E.
       vecArr[tr] = new TLorentzVector;
       vecArr[tr]->SetPxPyPzE(part->Px(), part->Py(), part->Pz(), energy); 
       cout << "particle " << tr << ": px: " << part->Px() << " py: " << part->Py() << " pz: " << part->Pz() << " Energy: " << energy << endl;
-      partArr[tr] = part;
     }
- 
+  
+    // Fill the individual track histograms
+
     fPt1->Fill(vecArr[0]->Pt());
     fPt2->Fill(vecArr[1]->Pt());
+
+    fRap1->Fill(vecArr[0]->Rapidity());
+    fRap2->Fill(vecArr[1]->Rapidity());
     
     //Creating a new TLorentzVector, which is the sum of the elements in vecArr
     TLorentzVector sum;
     for(Int_t i = 0; i < ntracks; i++){
       sum += *vecArr[i];
     }
-    //Filling the histograms depending on particle type
+    //Filling the parent histograms, depending on daughter particle type
     
-    if(partArr[0]->GetPdgCode() == 11 || partArr[0]->GetPdgCode() == -11){
+    if(idpart== 11 || idpart== -11){
       fPtEl->Fill(sum.Pt());
+      cout << "sum.Rapidity: " << sum.Rapidity() << endl;
+      cout << "sum.M(): " << sum.M() << endl;
       fRapEl->Fill(sum.Rapidity());
       fInvMassEl->Fill(sum.M());
     }
-    else if(partArr[0]->GetPdgCode() == 13 || partArr[0]->GetPdgCode() == -13){
+    else if(idpart == 13 || idpart == -13){
       fPtMu->Fill(sum.Pt());
+      cout << "sum.Rapidity: " << sum.Rapidity() << endl;
+      cout << "sum.M(): " << sum.M() << endl;
       fRapMu->Fill(sum.Rapidity());
       fInvMassMu->Fill(sum.M());
     }
-    else if(partArr[0]->GetPdgCode() == 211 || partArr[0]->GetPdgCode() == -211){
+    else if(idpart == 211 || idpart == -211){
       fPtPi->Fill(sum.Pt());
       cout << "sum.Rapidity: " << sum.Rapidity() << endl;
       cout << "sum.M(): " << sum.M() << endl;
@@ -193,6 +230,7 @@ void Analyse::doAnalysis()
     }
   
   }
+
   //Writing the histograms to file
   TFile file("histograms.root", "RECREATE");
   fPtEl->Write();
@@ -206,6 +244,7 @@ void Analyse::doAnalysis()
   fInvMassPi->Write();
   fPt1->Write();
   fPt2->Write();
-  
+  fRap1->Write();
+  fRap2->Write();
   
 }

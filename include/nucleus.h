@@ -46,7 +46,6 @@ public:
 	nucleus();
 	nucleus(const int    Z,
 	        const int    A,
-	        const double deuteronSlopePar,
 	        const bool   dAuCoherentProduction);
 	~nucleus();
 	
@@ -75,7 +74,6 @@ private:
 
 	int    _Z;                      ///< atomic number of nucleus
 	int    _A;                      ///< nucleon number of nucleus
-	double _deuteronSlopePar;       ///< slope parameter for deuteron form factor [(GeV/c)^{-2}]
 	bool   _dAuCoherentProduction;  ///< if true, production in d Au collisions is coherent, else incoherent
 
 	double _r0;

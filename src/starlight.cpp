@@ -240,10 +240,10 @@ starlight::luminosityTableIsValid() const
 	      >> productionMode
 	      >> beamBreakupMode
 	      >> interferenceEnabled >> interferenceStrength
-	      >> coherentProduction >> incoherentFactor
-	      >> deuteronSlopePar
 	      >> maxPtInterference
-	      >> nmbPtBinsInterference))
+	      >> nmbPtBinsInterference
+	      >> coherentProduction >> incoherentFactor
+	      >> deuteronSlopePar))
 		// cannot read parameters from lookup table file
 		return false;
 		

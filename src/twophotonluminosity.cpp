@@ -103,7 +103,7 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   wylumfile << inputParametersInstance.interferenceStrength() <<endl;
   wylumfile << inputParametersInstance.coherentProduction() <<endl;
   wylumfile << inputParametersInstance.incoherentFactor() <<endl;
-  wylumfile << inputParametersInstance.deuteronSlopePar() <<endl;
+  wylumfile << starlightConstants::deuteronSlopePar <<endl;
   wylumfile << inputParametersInstance.maxPtInterference() <<endl;
   wylumfile << inputParametersInstance.nmbPtBinsInterference() <<endl;
   for (unsigned int i = 0; i < _nWbins; ++i) {

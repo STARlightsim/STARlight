@@ -49,8 +49,6 @@ N_EVENTS = 10    #Number of events produced
 PROD_PID = 443013   #Channel of interest (in PDG notation); currently supported	options listed below
 RND_SEED = 34533    #Random number seed
 
-OUTPUT_FORMAT = 2    #Form of the output (not considered at this state)
-
 BREAKUP_MODE = 5     #Controls the nuclear breakup
 	             # Note that this option only works for lead or gold; it should work at any energy
 		     # 1 = hard sphere nuclei (b>2R)
@@ -65,11 +63,10 @@ BREAKUP_MODE = 5     #Controls the nuclear breakup
 
 INTERFERENCE = 0     #Interference (0 = off, 1 = on)
 IF_STRENGTH = 1.     #% of intefernce (0.0 - 0.1)
-COHERENT = 1         #Coherent=1,Incoherent=0 production for assym collisions
-INCO_FACTOR = 1.     #percentage of incoherence
-BFORD = 9.5          #Deuteron slope parameter (dsig/dt = exp(BFORD*t))
 INT_PT_MAX = 0.24    #Maximum pt considered, when interference is turned on
 INT_PT_N_BINS =120   #Number of pt bins when interference is turned on
+COHERENT = 1         #Coherent=1,Incoherent=0 production for assym collisions
+INCO_FACTOR = 1.     #percentage of incoherence
 
 
 ----------------------------------------------------------------------------

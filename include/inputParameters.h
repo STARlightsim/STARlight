@@ -207,16 +207,14 @@ public:
 	unsigned int nmbEvents             () const { return _nmbEventsTot.value();           }  ///< returns total number of events to generate
 	int          prodParticleId        () const { return _prodParticleId.value();         }  ///< returns PDG particle ID of produced particle
 	int          randomSeed            () const { return _randomSeed.value();             }  ///< returns seed for random number generator
-	int          outputFormat          () const { return _outputFormat.value();           }  ///< returns output format
 	int          beamBreakupMode       () const { return _beamBreakupMode.value();        }  ///< returns breakup mode for beam particles
 	bool         interferenceEnabled   () const { return _interferenceEnabled.value();    }  ///< returns whether interference is taken into account
 	double       interferenceStrength  () const { return _interferenceStrength.value();   }  ///< returns percentage of interference
-	bool         coherentProduction    () const { return _coherentProduction.value();     }  ///< returns whether production is coherent or incoherent
-	double       incoherentFactor      () const { return _incoherentFactor.value();       }  ///< returns incoherent contribution in vector meson production
-	double       deuteronSlopePar      () const { return _deuteronSlopePar.value();       }  ///< returns slope parameter for deuteron form factor [(GeV/c)^{-2}]
 	double       maxPtInterference     () const { return _maxPtInterference.value();      }  ///< returns maximum p_T for interference calculation [GeV/c]
 	int          nmbPtBinsInterference () const { return _nmbPtBinsInterference.value();  }  ///< returns number of p_T bins for interference calculation
 	double       ptBinWidthInterference() const { return _ptBinWidthInterference.value(); }  ///< returns width of p_T bins for interference calculation [GeV/c]
+	bool         coherentProduction    () const { return _coherentProduction.value();     }  ///< returns whether production is coherent or incoherent
+	double       incoherentFactor      () const { return _incoherentFactor.value();       }  ///< returns incoherent contribution in vector meson production
 	double 	     minGammaEnergy        () const { return _minGammaEnergy.value();         }  ///< returns minimum gamma energy in case of photo nuclear processes [GeV]
 	double       maxGammaEnergy        () const { return _maxGammaEnergy.value();         }  ///< returns maximum gamma energy in case of photo nuclear processes [GeV]
 	std::string  pythiaParams          () const { return _pythiaParams.value();           }  ///< returns parameters to be passed to pythia
@@ -261,16 +259,14 @@ public:
 	void setNmbEvents             (unsigned int v)  {  _nmbEventsTot = v;           }  ///< returns total number of events to generate
 	void setProdParticleId        (int v)  {  _prodParticleId = v;         }  ///< returns PDG particle ID of produced particle
 	void setRandomSeed            (int v)  {  _randomSeed = v;             }  ///< returns seed for random number generator
-	void setOutputFormat          (int v)  {  _outputFormat = v;           }  ///< returns output format
 	void setBeamBreakupMode       (int v)  {  _beamBreakupMode = v;        }  ///< returns breakup mode for beam particles
 	void setInterferenceEnabled   (bool v)  {  _interferenceEnabled = v;    }  ///< returns whether interference is taken into account
 	void setInterferenceStrength  (double v)  {  _interferenceStrength = v;   }  ///< returns percentage of interference
-	void setCoherentProduction    (bool v)  {  _coherentProduction = v;     }  ///< returns whether production is coherent or incoherent
-	void setIncoherentFactor      (double v)  {  _incoherentFactor = v;       }  ///< returns incoherent contribution in vector meson production
-	void setDeuteronSlopePar      (double v)  {  _deuteronSlopePar = v;       }  ///< returns slope parameter for deuteron form factor [(GeV/c)^{-2}]
 	void setMaxPtInterference     (double v)  {  _maxPtInterference = v;      }  ///< returns maximum p_T for voiderference calculation [GeV/c]
 	void setNmbPtBinsInterference (int v)  {  _nmbPtBinsInterference = v;  }  ///< returns number of p_T bins for interference calculation
 	void setPtBinWidthInterference(double v)  {  _ptBinWidthInterference = v; }  ///< returns width of p_T bins for voiderference calculation [GeV/c]
+	void setCoherentProduction    (bool v)  {  _coherentProduction = v;     }  ///< returns whether production is coherent or incoherent
+	void setIncoherentFactor      (double v)  {  _incoherentFactor = v;       }  ///< returns incoherent contribution in vector meson production
 	void setMinGammaEnergy        (double v)  {  _minGammaEnergy = v;         }  ///< returns minimum gamma energy in case of photo nuclear processes [GeV]
 	void setMaxGammaEnergy        (double v)  {  _maxGammaEnergy = v;         }  ///< returns maximum gamma energy in case of photo nuclear processes [GeV]
 	void setPythiaParams          (std::string v)  {  _pythiaParams = v;           }  ///< returns parameters to be passed to pythia
@@ -338,7 +334,6 @@ private:
 	parameter<unsigned int, VALIDITY_CHECK>    _nmbEventsTot;            ///< total number of events to generate
 	parameter<unsigned int, VALIDITY_CHECK>    _prodParticleId;          ///< PDG particle ID of produced particle
 	parameter<unsigned int, VALIDITY_CHECK>    _randomSeed;              ///< seed for random number generator
-	parameter<unsigned int, NO_VALIDITY_CHECK> _outputFormat;            ///< \brief output format
 	                                                                     ///<
 	                                                                     ///< 1 = ASCII
 	                                                                     ///< 2 = GSTARtext,
@@ -352,17 +347,16 @@ private:
 	                                                                     ///< 5 = no hadronic break up (similar to option 1, but with the actual hadronic interaction)
 	parameter<bool, VALIDITY_CHECK>            _interferenceEnabled;     ///< if VALIDITY_CHECK, interference is taken into account
 	parameter<double, VALIDITY_CHECK>          _interferenceStrength;    ///< percentage of interference: from 0 = none to 1 = full
-	parameter<bool, VALIDITY_CHECK>            _coherentProduction;      ///< if VALIDITY_CHECK, production is coherent, else incoherent
-	parameter<double, VALIDITY_CHECK>          _incoherentFactor;        ///< allows to scale the incoherent contribution in vector meson production
-	parameter<double, VALIDITY_CHECK>          _deuteronSlopePar;        ///< slope parameter for deuteron form factor [(GeV/c)^{-2}]
 	parameter<double, VALIDITY_CHECK>          _maxPtInterference;       ///< maximum p_T for interference calculation [GeV/c]
 	parameter<unsigned int, VALIDITY_CHECK>    _nmbPtBinsInterference;   ///< number of p_T bins for interference calculation
 	parameter<double, VALIDITY_CHECK>          _ptBinWidthInterference;  ///< width of p_T bins for interference calculation [GeV/c]
+	parameter<bool, VALIDITY_CHECK>            _coherentProduction;      ///< if VALIDITY_CHECK, production is coherent, else incoherent
+	parameter<double, VALIDITY_CHECK>          _incoherentFactor;        ///< allows to scale the incoherent contribution in vector meson production
 	parameter<double, VALIDITY_CHECK>          _protonEnergy;
 	parameter<double, VALIDITY_CHECK>          _minGammaEnergy;          ///< minimum gamma energy in case of photo nuclear processes [GeV]
 	parameter<double, VALIDITY_CHECK>          _maxGammaEnergy;          ///< maximum gamma energy in case of photo nuclear processes [GeV]
 	parameter<std::string,NO_VALIDITY_CHECK>   _pythiaParams;            ///< semi-colon separated parameters to pass to pythia, e.g. "mstj(1)=0;paru(13)=0.1" 
-	parameter<bool, NO_VALIDITY_CHECK>         _pythiaFullEventRecord;   ///< if the full pythia event record should be in the outputu
+	parameter<bool, NO_VALIDITY_CHECK>         _pythiaFullEventRecord;   ///< if the full pythia event record should be in the output
 	parameter<unsigned int, VALIDITY_CHECK>    _xsecCalcMethod;	     ///< Select x-sec calc method. (0 is standard starlight method, 1 must be used for assym. collisions (e.g. p-A), but is slow)
 	parameter<unsigned int, NO_VALIDITY_CHECK> _nThreads;	             ///< Number of threads used in the case of using method 1 for calculating the x-sections
         parameter<unsigned int, VALIDITY_CHECK>    _nBinsQKniehl;            ///< Number of bins in Q used for the transformation to the impact paramter space of the Kniehl function

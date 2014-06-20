@@ -45,6 +45,7 @@
 
 
 using namespace std;
+using namespace starlightConstants;
 
 
 //______________________________________________________________________________
@@ -104,7 +105,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   wylumfile << inputParametersInstance.interferenceStrength() <<endl;
   wylumfile << inputParametersInstance.coherentProduction() <<endl;
   wylumfile << inputParametersInstance.incoherentFactor() <<endl;
-  wylumfile << inputParametersInstance.deuteronSlopePar() <<endl;
+  wylumfile << starlightConstants::deuteronSlopePar <<endl;
   wylumfile << inputParametersInstance.maxPtInterference() <<endl;
   wylumfile << inputParametersInstance.nmbPtBinsInterference() <<endl;
   

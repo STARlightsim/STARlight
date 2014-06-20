@@ -1,20 +1,19 @@
-#ifndef ANALYSE_H
-#define ANALYSE_H
+#ifndef ANALYZE_H
+#define ANALYZE_H
 
 #include "TFile.h"
 #include "TTree.h"
 #include "TLorentzVector.h"
-#include "TClonesArray.h"
 #include "TParticle.h"
 #include "TH1F.h"
 #include <string>
 
-class Analyse 
+class Analyze 
 {
  public:
-  Analyse(); //Constructor
-  Analyse(char* infile, Int_t nEvents); //Special constructor
-  ~Analyse(); //Destructor
+  Analyze(); //Constructor
+  Analyze(char* infile, Int_t nEvents); //Special constructor
+  ~Analyze(); //Destructor
   Int_t Init();
   Int_t NextEvent();
   TParticle* NextParticle();
@@ -36,6 +35,9 @@ class Analyse
 
   TH1F *fPt1;
   TH1F *fPt2;
+
+  TH1F *fRap1;
+  TH1F *fRap2;
   
   FILE *filelist;
   char *fInfile;

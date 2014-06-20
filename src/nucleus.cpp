@@ -46,11 +46,9 @@ using namespace starlightConstants;
 //______________________________________________________________________________
 nucleus::nucleus(const int    Z,
                  const int    A,
-                 const double deuteronSlopePar,
                  const bool   dAuCoherentProduction)
 	: _Z(Z),
 	  _A(A),
-	  _deuteronSlopePar(deuteronSlopePar),
 	  _dAuCoherentProduction(dAuCoherentProduction)
 {
   init();	
@@ -156,7 +154,8 @@ nucleus::formFactor(const double t) const
 		const double st4 = 0.34 * exp(-141.5 * t / 4) + 0.58 * exp(-26.1 * t / 4) + 0.08 * exp(-15.5 * t / 4);
 		// st paramters from Franco and Varma for st eqn PRL33 ...
 		// form factor from Eisenberg, nuclear physics B 104
-		const double arg = _deuteronSlopePar * t;
+//		const double arg = _deuteronSlopePar * t;
+		const double arg = starlightConstants::deuteronSlopePar * t;
 		if (_dAuCoherentProduction)
 			return (st4 * st4 * exp(-arg) - 0.068 * st4 * exp(-arg * 3. / 4.));
 		return exp(-arg) * 0.5 * (1 + st) - 0.068 * exp(-arg * 3. / 4.)

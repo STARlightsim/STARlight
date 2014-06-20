@@ -49,6 +49,8 @@ namespace starlightConstants
 	static const double twoPi    = 2 * pi;
 	static const double alpha    = 1/137.0359895;
 
+	// deuteron slope parameter
+	static const double deuteronSlopePar = 9.5; // [(GeV/c)^{-2}]
 	// particle masses
 	static const double protonMass      = 0.93827231;   // [GeV/c^2]
 	static const double pionChargedMass = 0.13956995;   // [GeV/c^2]

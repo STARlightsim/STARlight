@@ -47,7 +47,6 @@ public:
 
 	beam(const int              Z,
 	     const int              A,
-	     const double           bdeuteron,
 	     const bool             dAuCoherentProduction);
 	
 	~beam();

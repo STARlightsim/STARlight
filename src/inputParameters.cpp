@@ -75,16 +75,14 @@ inputParameters::inputParameters()
 	  _nmbEventsTot          ("N_EVENTS",0),
 	  _prodParticleId        ("PROD_PID",0),
 	  _randomSeed            ("RND_SEED",0),
-	  _outputFormat          ("OUTPUT_FORMAT",0),
 	  _beamBreakupMode       ("BREAKUP_MODE",0),
 	  _interferenceEnabled   ("INTERFERENCE",false),
 	  _interferenceStrength  ("IF_STRENGTH",0),
-	  _coherentProduction    ("COHERENT",false),
-	  _incoherentFactor      ("INCO_FACTOR",0),
-	  _deuteronSlopePar      ("BFORD",0),
 	  _maxPtInterference     ("INT_PT_MAX",0),
 	  _nmbPtBinsInterference ("INT_PT_N_BINS",0),
 	  _ptBinWidthInterference("INT_PT_WIDTH",0),
+	  _coherentProduction    ("COHERENT",false),
+	  _incoherentFactor      ("INCO_FACTOR",0),
 	  _protonEnergy          ("PROTON_ENERGY",0, NOT_REQUIRED),
 	  _minGammaEnergy	 ("MIN_GAMMA_ENERGY",0, NOT_REQUIRED),
 	  _maxGammaEnergy	 ("MAX_GAMMA_ENERGY",0, NOT_REQUIRED),
@@ -133,15 +131,13 @@ inputParameters::inputParameters()
 	_ip.addParameter(_nmbEventsTot);
 	_ip.addParameter(_prodParticleId);
 	_ip.addParameter(_randomSeed);
-	_ip.addParameter(_outputFormat);
 	_ip.addParameter(_beamBreakupMode);
 	_ip.addParameter(_interferenceEnabled);
 	_ip.addParameter(_interferenceStrength);
-	_ip.addParameter(_coherentProduction);
-	_ip.addParameter(_incoherentFactor);
-	_ip.addParameter(_deuteronSlopePar);
 	_ip.addParameter(_maxPtInterference);
 	_ip.addParameter(_nmbPtBinsInterference);
+	_ip.addParameter(_coherentProduction);
+	_ip.addParameter(_incoherentFactor);
 	_ip.addParameter(_minGammaEnergy);
 	_ip.addParameter(_maxGammaEnergy);
 	_ip.addParameter(_pythiaParams);
@@ -494,25 +490,29 @@ inputParameters::print(ostream& out) const
 	    << "    # of W bins ............................ " << _nmbWBins.value() << endl
 	    << "    maximum absolute value for rapidity .... " << _maxRapidity.value() << endl
 	    << "    # of rapidity bins ..................... " << _nmbRapidityBins.value() << endl
-	    << "    cut in pT............................... " << yesNo(_ptCutEnabled.value()) << endl
-	    << "        minumum pT.......................... " << _ptCutMin.value() << " GeV/c" << endl
-	    << "        maximum pT.......................... " << _ptCutMax.value() << " GeV/c" << endl
-	    << "    cut in eta.............................. " << yesNo(_etaCutEnabled.value()) << endl
-	    << "        minumum eta......................... " << _etaCutMin.value() << endl
-	    << "        maximum eta......................... " << _etaCutMax.value() << endl
-	    << "    meson production mode .................. " << _productionMode.value() << endl
+	    << "    cut in pT............................... " << yesNo(_ptCutEnabled.value()) << endl;
+    if (_ptCutEnabled.value()) {
+	out << "        minumum pT.......................... " << _ptCutMin.value() << " GeV/c" << endl
+	    << "        maximum pT.......................... " << _ptCutMax.value() << " GeV/c" << endl;}
+	out << "    cut in eta.............................. " << yesNo(_etaCutEnabled.value()) << endl;
+    if (_etaCutEnabled.value()) {
+	out << "        minumum eta......................... " << _etaCutMin.value() << endl
+	    << "        maximum eta......................... " << _etaCutMax.value() << endl;}
+        out << "    production mode ........................ " << _productionMode.value() << endl
 	    << "    number of events to generate ........... " << _nmbEventsTot.value() << endl
 	    << "    PDG ID of produced particle ............ " << _prodParticleId.value() << endl
 	    << "    seed for random generator .............. " << _randomSeed.value() << endl
-	    << "    output format .......................... " << _outputFormat.value() << endl
 	    << "    breakup mode for beam particles ........ " << _beamBreakupMode.value() << endl
-	    << "    interference enabled ................... " << yesNo(_interferenceEnabled.value()) << endl
-	    << "    interference strength .................. " << _interferenceStrength.value() << endl
-	    << "    coherent scattering off nucleus ........ " << yesNo(_coherentProduction.value()) << endl
-	    << "    scaling factor for incoh. VM prod. ..... " << _incoherentFactor.value() << endl
-	    << "    deuteron slope parameter ............... " << _deuteronSlopePar.value() << " (GeV/c)^{-2}" << endl
+	    << "    interference enabled ................... " << yesNo(_interferenceEnabled.value()) << endl;
+    if (_interferenceEnabled.value()) {
+	out << "    interference strength .................. " << _interferenceStrength.value() << endl
 	    << "    maximum p_T for interference calc. ..... " << _maxPtInterference.value() << " GeV/c" << endl
-	    << "    # of p_T bins for interference calc. ... " << _nmbPtBinsInterference.value() << endl;
+	    << "    # of p_T bins for interference calc. ... " << _nmbPtBinsInterference.value() << endl;}
+    if (_productionMode.value()!=1) {
+	out  << "    coherent scattering off nucleus ........ " << yesNo(_coherentProduction.value()) << endl;
+    	if (!_coherentProduction.value()) {
+	 out << "    scaling factor for incoh. VM prod. ..... " << _incoherentFactor.value() << endl;}
+	}
 	return out;
 }
 
@@ -542,15 +542,13 @@ inputParameters::write(ostream& out) const
 	    << "N_EVENTS"      << nmbEvents            () <<endl
 	    << "PROD_PID"      << prodParticleId       () <<endl
 	    << "RND_SEED"      << randomSeed           () <<endl
-	    << "OUTPUT_FORMAT" << outputFormat         () <<endl
 	    << "BREAKUP_MODE"  << beamBreakupMode      () <<endl
 	    << "INTERFERENCE"  << interferenceEnabled  () <<endl
 	    << "IF_STRENGTH"   << interferenceStrength () <<endl
-	    << "COHERENT"      << coherentProduction   () <<endl
-	    << "INCO_FACTOR"   << incoherentFactor     () <<endl
-	    << "BFORD"         << deuteronSlopePar     () <<endl
 	    << "INT_PT_MAX"    << maxPtInterference    () <<endl
-	    << "INT_PT_N_BINS" << nmbPtBinsInterference() <<endl;
+	    << "INT_PT_N_BINS" << nmbPtBinsInterference() <<endl
+	    << "COHERENT"      << coherentProduction   () <<endl
+	    << "INCO_FACTOR"   << incoherentFactor     () <<endl;
 
 	return out;
 }
