@@ -572,7 +572,11 @@ double Gammaavectormeson::pTgamma(double E)
     ereds = (E/_VMgamma_em)*(E/_VMgamma_em);
     //sqrt(3)*E/gamma_em is p_t where the distribution is a maximum
     Cm = sqrt(3.)*E/_VMgamma_em;
-
+    // If E is very small, the drawing of a pT below is extremely slow. 
+    // ==> Set pT = sqrt(3.)*E/_VMgamma_em for very small E. 
+    // Should have no observable consequences (JN, SRK 11-Sep-2014)
+    if( E < 0.0005 )return Cm; 
+ 
     //the amplitude of the p_t spectrum at the maximum
 
     if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
