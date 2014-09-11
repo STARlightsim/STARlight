@@ -220,16 +220,6 @@ public:
 	std::string  pythiaParams          () const { return _pythiaParams.value();           }  ///< returns parameters to be passed to pythia
 	bool         pythiaFullEventRecord () const { return _pythiaFullEventRecord.value();  }  ///< returns if the full pythia event record should be printed
 	int	     xsecCalcMethod        () const { return _xsecCalcMethod.value();         }  ///< returns the method used for the x-sec calculation
-	int          nThreads              () const { return _nThreads.value();               }  ///< returns the number of threads in case method 1 is used for the x-sec calc
-	unsigned int nBinsQKniehl          () const { return _nBinsQKniehl.value();           }  ///< Number of bins in Q used for the transformation to the impact paramter space of the Kniehl function
-        unsigned int nBinsEKniehl          () const { return _nBinsEKniehl.value();           }  ///< Number of bins in photon energy used for the Kniehl function
-        unsigned int nBinsBKniehl          () const { return _nBinsBKniehl.value();           }  ///< Number of bins in impact parameter used for the Kniehl function
-        double       qMaxKniehl            () const { return _qMaxKniehl.value();             }  ///< Max value of Q used for the Kniehl funcion
-        double       eGammaMinKniehl       () const { return _eGammaMinKniehl.value();        }  ///< Min value of gamma energy used for the Kniehl funcion
-        double       eGammaMaxKniehl       () const { return _eGammaMaxKniehl.value();        }  ///< Max value of gamma energy used for the Kniehl funcion
-        double       bMinKniehl            () const { return _bMinKniehl.value();             }  ///< Min value of impact parameter used for the Kniehl funcion
-        double       bMaxKniehl            () const { return _bMaxKniehl.value();             }  ///< Max value of impact parameter used for the Kniehl funcion
-        
 	starlightConstants::particleTypeEnum    prodParticleType     () const { return _particleType;    }  ///< returns type of produced particle
 	starlightConstants::decayTypeEnum       prodParticleDecayType() const { return _decayType;       }  ///< returns decay type of produced particle
 	starlightConstants::interactionTypeEnum interactionType      () const { return _interactionType; }  ///< returns interaction type
@@ -272,15 +262,6 @@ public:
 	void setPythiaParams          (std::string v)  {  _pythiaParams = v;           }  ///< returns parameters to be passed to pythia
 	void setPythiaFullEventRecord (bool v)  {  _pythiaFullEventRecord = v;  }  ///< returns if the full pythia event record should be prvoided
 	void setXsecCalcMethod        (int v)  {  _xsecCalcMethod = v;         }  ///< returns the method used for the x-sec calculation
-	void setNThreads              (int v)  {  _nThreads = v;               }  ///< returns the number of threads in case method 1 is used for the x-sec calc
-	void setNBinsQKniehl          (unsigned int v)  {  _nBinsQKniehl = v;           }  ///< Number of bins in Q used for the transformation to the impact paramter space of the Kniehl function
-        void setNBinsEKniehl          (unsigned int v)  {  _nBinsEKniehl = v;           }  ///< Number of bins in photon energy used for the Kniehl function
-        void setNBinsBKniehl          (unsigned int v)  {  _nBinsBKniehl = v;           }  ///< Number of bins in impact parameter used for the Kniehl function
-        void setQMaxKniehl            (double v)  {  _qMaxKniehl = v;             }  ///< Max value of Q used for the Kniehl funcion
-        void setEGammaMinKniehl       (double v)  {  _eGammaMinKniehl = v;        }  ///< Min value of gamma energy used for the Kniehl funcion
-        void setEGammaMaxKniehl       (double v)  {  _eGammaMaxKniehl = v;        }  ///< Max value of gamma energy used for the Kniehl funcion
-        void setBMinKniehl            (double v)  {  _bMinKniehl = v;             }  ///< Min value of impact parameter used for the Kniehl funcion
-        void setBMaxKniehl            (double v)  {  _bMaxKniehl = v;             }  ///< Max value of impact parameter used for the Kniehl funcion
         
 	void setProdParticleType      (starlightConstants::particleTypeEnum v)   { _particleType = v;    }  ///< returns type of produced particle
 	void setProdParticleDecayType (starlightConstants::decayTypeEnum v)        { _decayType = v;       }  ///< returns decay type of produced particle
@@ -357,18 +338,8 @@ private:
 	parameter<double, VALIDITY_CHECK>          _maxGammaEnergy;          ///< maximum gamma energy in case of photo nuclear processes [GeV]
 	parameter<std::string,NO_VALIDITY_CHECK>   _pythiaParams;            ///< semi-colon separated parameters to pass to pythia, e.g. "mstj(1)=0;paru(13)=0.1" 
 	parameter<bool, NO_VALIDITY_CHECK>         _pythiaFullEventRecord;   ///< if the full pythia event record should be in the output
-	parameter<unsigned int, VALIDITY_CHECK>    _xsecCalcMethod;	     ///< Select x-sec calc method. (0 is standard starlight method, 1 must be used for assym. collisions (e.g. p-A), but is slow)
-	parameter<unsigned int, NO_VALIDITY_CHECK> _nThreads;	             ///< Number of threads used in the case of using method 1 for calculating the x-sections
-        parameter<unsigned int, VALIDITY_CHECK>    _nBinsQKniehl;            ///< Number of bins in Q used for the transformation to the impact paramter space of the Kniehl function
-        parameter<unsigned int, VALIDITY_CHECK>    _nBinsEKniehl;            ///< Number of bins in photon energy used for the Kniehl function
-        parameter<unsigned int, VALIDITY_CHECK>    _nBinsBKniehl;            ///< Number of bins in impact parameter used for the Kniehl function
-        parameter<double, VALIDITY_CHECK>          _qMaxKniehl;              ///< Max value of Q used for the Kniehl funcion
-        parameter<double, VALIDITY_CHECK>          _eGammaMinKniehl;         ///< Min value of gamma energy used for the Kniehl funcion
-        parameter<double, VALIDITY_CHECK>          _eGammaMaxKniehl;         ///< Max value of gamma energy used for the Kniehl funcion
-        parameter<double, VALIDITY_CHECK>          _bMinKniehl;              ///< Min value of impact parameter used for the Kniehl funcion
-        parameter<double, VALIDITY_CHECK>          _bMaxKniehl;              ///< Max value of impact parameter used for the Kniehl funcion
-        
-	
+	parameter<unsigned int, VALIDITY_CHECK>    _xsecCalcMethod;	     ///< Select x-sec calc method. (0 is standard starlight method, 1 must be used for assym. collisions (e.g. p-A), but is slow)	
+
 	starlightConstants::particleTypeEnum       _particleType;
 	starlightConstants::decayTypeEnum          _decayType;
 	starlightConstants::interactionTypeEnum    _interactionType;
