@@ -239,6 +239,11 @@ inputParameters::configureFromFile(const std::string &configFileName)
 		_decayType    = LEPTONPAIR;
 		defaultMinW   = 2 * tauMass;
 		break;
+	case 10015:  // tau+tau- pair
+		_particleType = TAUONDECAY;
+		_decayType    = LEPTONPAIR;
+		defaultMinW   = 2 * tauMass;
+		break;
 // 	case 24:  // W+W- pair
 // 		_particleType = W;
 // 		_decayType    = WW;
