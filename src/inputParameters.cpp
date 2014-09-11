@@ -88,16 +88,7 @@ inputParameters::inputParameters()
 	  _maxGammaEnergy	 ("MAX_GAMMA_ENERGY",0, NOT_REQUIRED),
 	  _pythiaParams          ("PYTHIA_PARAMS","", NOT_REQUIRED),
 	  _pythiaFullEventRecord ("PYTHIA_FULL_EVENTRECORD",false, NOT_REQUIRED),
-	  _xsecCalcMethod	 ("XSEC_METHOD",0, NOT_REQUIRED),
-	  _nThreads		 ("N_THREADS",1, NOT_REQUIRED),
-          _nBinsQKniehl          ("N_BINS_Q_KNIEHL", 0, NOT_REQUIRED),
-          _nBinsEKniehl          ("N_BINS_E_KNIEHL", 0, NOT_REQUIRED),
-          _nBinsBKniehl          ("N_BINS_B_KNIEHL", 0, NOT_REQUIRED),
-          _qMaxKniehl            ("Q_MAX_KNIEHL", 0, NOT_REQUIRED),
-          _eGammaMinKniehl       ("E_GAMMA_MIN_KNIEHL", 0, NOT_REQUIRED),
-          _eGammaMaxKniehl       ("E_GAMMA_MAX_KNIEHL", 0, NOT_REQUIRED),
-          _bMinKniehl            ("B_MIN_KNIEHL", 0, NOT_REQUIRED),
-          _bMaxKniehl            ("B_MAX_KNIEHL", 0, NOT_REQUIRED) 
+	  _xsecCalcMethod	 ("XSEC_METHOD",0, NOT_REQUIRED)
 {
   // All parameters must be initialised in initialisation list! 
   // If not: error: 'parameter<T, validate>::parameter() [with T = unsigned int, bool validate = true]' is private
@@ -143,15 +134,6 @@ inputParameters::inputParameters()
 	_ip.addParameter(_pythiaParams);
 	_ip.addParameter(_pythiaFullEventRecord);
 	_ip.addParameter(_xsecCalcMethod);
-	_ip.addParameter(_nThreads);
-	_ip.addParameter(_nBinsBKniehl);
-	_ip.addParameter(_nBinsQKniehl);
-	_ip.addParameter(_nBinsEKniehl);
-	_ip.addParameter(_qMaxKniehl);
-	_ip.addParameter(_eGammaMaxKniehl);
-	_ip.addParameter(_eGammaMinKniehl);
-	_ip.addParameter(_bMaxKniehl);
-	_ip.addParameter(_bMinKniehl);
 }
 
 
