@@ -265,6 +265,7 @@ starlight::createEventChannel()
 	case ELECTRON:
 	case MUON:
 	case TAUON:
+        case TAUONDECAY:
 		{
 			_eventChannel = new Gammagammaleptonpair(*_beamSystem);
 			if (_eventChannel)
