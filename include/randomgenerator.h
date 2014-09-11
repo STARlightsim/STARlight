@@ -34,7 +34,7 @@
 #ifndef RANDOMGENERATOR_H
 #define RANDOMGENERATOR_H
 #include "singleton.h"
-#include "slmutex.h"
+//#include "slmutex.h"
 
 
 class randomGenerator
@@ -48,7 +48,7 @@ class randomGenerator
 	unsigned int _Mt[624];
 	int _count624;
 	
-	MutexPosix _mutex;
+	//	MutexPosix _mutex;
 	
 	randomGenerator(){}
 	randomGenerator(const randomGenerator &);
