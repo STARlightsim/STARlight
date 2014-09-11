@@ -823,6 +823,9 @@ double Gammagammaleptonpair::getMass()
     case starlightConstants::TAUON:
 	leptonmass=starlightConstants::tauMass;
 	break;
+    case starlightConstants::TAUONDECAY:
+	leptonmass=starlightConstants::tauMass;
+	break;
     default:
 	cout<<"Not a recognized lepton, Gammagammaleptonpair::getmass(), mass = 0."<<endl;
     }
