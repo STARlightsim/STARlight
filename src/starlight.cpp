@@ -55,7 +55,6 @@
 #include "gammagammaleptonpair.h"
 #include "gammagammasingle.h"
 #include "gammaavm.h"
-#include "psifamily.h"
 #include "twophotonluminosity.h"
 #include "gammaaluminosity.h"
 #include "incoherentPhotonNucleusLuminosity.h"
