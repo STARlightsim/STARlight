@@ -484,30 +484,6 @@ src/nucleus.cpp.s:
 	$(MAKE) -f CMakeFiles/Starlight.dir/build.make CMakeFiles/Starlight.dir/src/nucleus.cpp.s
 .PHONY : src/nucleus.cpp.s
 
-src/psifamily.o: src/psifamily.cpp.o
-.PHONY : src/psifamily.o
-
-# target to build an object file
-src/psifamily.cpp.o:
-	$(MAKE) -f CMakeFiles/Starlight.dir/build.make CMakeFiles/Starlight.dir/src/psifamily.cpp.o
-.PHONY : src/psifamily.cpp.o
-
-src/psifamily.i: src/psifamily.cpp.i
-.PHONY : src/psifamily.i
-
-# target to preprocess a source file
-src/psifamily.cpp.i:
-	$(MAKE) -f CMakeFiles/Starlight.dir/build.make CMakeFiles/Starlight.dir/src/psifamily.cpp.i
-.PHONY : src/psifamily.cpp.i
-
-src/psifamily.s: src/psifamily.cpp.s
-.PHONY : src/psifamily.s
-
-# target to generate assembly for a file
-src/psifamily.cpp.s:
-	$(MAKE) -f CMakeFiles/Starlight.dir/build.make CMakeFiles/Starlight.dir/src/psifamily.cpp.s
-.PHONY : src/psifamily.cpp.s
-
 src/randomgenerator.o: src/randomgenerator.cpp.o
 .PHONY : src/randomgenerator.o
 
