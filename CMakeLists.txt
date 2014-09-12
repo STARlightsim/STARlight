@@ -20,9 +20,9 @@
 ###########################################################################
 #
 # File and Version Information:
-# $Rev:: 111                         $: revision of last commit
-# $Author:: odjuvsla                 $: author of last commit
-# $Date:: 2013-02-05 15:11:52 -0600 #$: date of last commit
+# $Rev::                             $: revision of last commit
+# $Author::                          $: author of last commit
+# $Date::                            $: date of last commit
 #
 # Description:
 #      Starlight build file
@@ -239,7 +239,6 @@ set(SOURCES
   src/nucleus.cpp
   src/eventchannel.cpp
   src/gammaavm.cpp
-  src/psifamily.cpp
   src/gammagammasingle.cpp
   src/photonNucleusCrossSection.cpp
   src/wideResonanceCrossSection.cpp
