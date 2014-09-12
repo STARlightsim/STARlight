@@ -120,8 +120,3 @@ fixed types for class Particle
 
 - changed PID of the charged KAON to 321 and neutral kaon to 310 .. it should work now for phi -> kk 
 
-- incoherent formfactor was hardcoded for dAu events, it should now accept coherent too.
-- Had hardcoded narrow and wide resonances for VMs. The user can again select gg_or_gp (2 or 3)
-except for the psi family.  This is still always narrow.
-- Changed the spin dependence for VMs going to ee/mumu(gammaavectormeson::gettheta).  It was only for psi and now upsilon will follow too
-inretrospect, i should probably have done this first and merge psifamily back into gammaavm.cpp
