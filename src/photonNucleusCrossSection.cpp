@@ -851,7 +851,8 @@ photonNucleusCrossSection::breitWigner(const double W,
 	// width depends on energy - Jackson Eq. A.2
 	// if below threshold, then return 0.  Added 5/3/2001 SRK
 	// 0.5% extra added for safety margin
-	if( _particleType==RHO ||_particleType==RHOZEUS){  
+        // omega added here 10/26/2014 SRK
+	if( _particleType==RHO ||_particleType==RHOZEUS || _particleType==OMEGA){  
 		if (W < 2.01*pionChargedMass){
 			nrbw_r=0.;
 			return nrbw_r;
