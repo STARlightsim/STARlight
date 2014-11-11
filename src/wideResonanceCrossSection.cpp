@@ -130,17 +130,9 @@ wideResonanceCrossSection::crossSectionCalculation(const double bwnormsave)
       
 			if(ega1 < Eth) continue;
 			if(ega2 > maxPhotonEnergy()) continue;
-			// check it !!
           
-			if(J == 0){
-				// >> 1st Point (Calculated only the first time)     =====>>>
-				//ega1 used.                                                        
-				csgA1=getcsgA(ega1,W);
-			}
-			else{
-				csgA1 = csgA2;
-			}
-          
+			csgA1=getcsgA(ega1,W);
+
 			//         >> Middle Point                      =====>>>
 			csgA12=getcsgA(ega12,W);         
 
