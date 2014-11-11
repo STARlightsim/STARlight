@@ -84,7 +84,7 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
     
   // Write the values of W used in the calculation to slight.txt.  
   wylumfile.open("slight.txt");
-  wylumfile << inputParametersInstance.parameterValueKey() << endl;
+  // wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile << getbbs().beam1().Z() <<endl;
   wylumfile << getbbs().beam1().A() <<endl;
   wylumfile << getbbs().beam2().Z() <<endl;
@@ -180,6 +180,7 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
       }
 
       wylumfile << dndWdY << endl;
+
     }
   }
 
@@ -187,11 +188,8 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
   wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile.close();
   
-//   wylumfile.open("slight.txt",ios::app);
-  cout << "bwnorm: "<< bwnorm <<endl;
-//   wylumfile << bwnorm << endl;
-//   wylumfile << inputParametersInstance.parameterValueKey() << endl;
-//   wylumfile.close();
+  // cout << "bwnorm: "<< bwnorm <<endl;
+
 }
 
 
