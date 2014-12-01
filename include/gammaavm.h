@@ -77,6 +77,9 @@ class Gammaavectormeson : public eventChannel
   int _VMinterferencemode;
   int _VMCoherence;
   int _ProductionMode;
+  int _TargetBeam; 
+  int N1;
+  int N2; 
   double _VMCoherenceFactor;
   double _VMgamma_em;
   double _VMNPT;

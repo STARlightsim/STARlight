@@ -60,10 +60,13 @@ public:
 	// So just use the wide or narrow constructor to calculate it
 	// wide/narrow will inherit this.
 	double getcsgA(const double Egamma,
-	               const double W);
-	double photonFlux(const double Egamma);
+	               const double W,
+                       const int beam);
+	double photonFlux(const double Egamma,
+                       const int beam);
 	double sigmagp(const double Wgp);
-	double sigma_A(const double sig_N);
+	double sigma_A(const double sig_N, 
+                       const int beam);
         double sigma_N(const double Wgp);
 	double breitWigner(const double W,
 	                   const double C);

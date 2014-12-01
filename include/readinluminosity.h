@@ -52,11 +52,16 @@ class readLuminosity
   */
   double *_Warray;
   double *_Yarray;
-  double **_Farray;
+  double **_Farray; 
+  double **_Farray1;
+  double **_Farray2;
   
   double _f_max;
+  double _f_max1;
+  double _f_max2;
+
   double _fptarray[500][500];
-  //		inputParameters inputread;
+
   double _bwnormsave;
 
  protected:
