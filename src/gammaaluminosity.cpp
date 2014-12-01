@@ -69,14 +69,12 @@ photonNucleusLuminosity::~photonNucleusLuminosity()
 //______________________________________________________________________________
 void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
 {
-	// double Av,Wgp,cs,cvma;
   double W,dW,dY;
   double Egamma,Y;
-  // double t,tmin,tmax;
   double testint,dndWdY;
   double csgA;
-  // double ax,bx;
   double C;  
+  int beam; 
 
   ofstream wylumfile;
   wylumfile.precision(15);
@@ -129,34 +127,41 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   Eth=0.5*(((_wMin+starlightConstants::protonMass)*(_wMin
 							    +starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/
 	   (inputParametersInstance.protonEnergy()+sqrt(inputParametersInstance.protonEnergy()*
-					       inputParametersInstance.protonEnergy()-starlightConstants::protonMass*starlightConstants::protonMass)));
-  
+					       inputParametersInstance.protonEnergy()-starlightConstants::protonMass*starlightConstants::protonMass))); 
+
+  int A_1 = getbbs().beam1().A(); 
+  int A_2 = getbbs().beam2().A();
+
+  // Do this first for the case when the first beam is the photon emitter 
+  // Treat pA separately with defined beams 
+  // The variable beam (=1,2) defines which nucleus is the target 
   for(unsigned int i = 0; i <= _nWbins - 1; ++i) {
 
     W = _wMin + double(i)*dW + 0.5*dW;
     
-    for(unsigned int j = 0; j <= _nYbins - 1; ++j) {
+    for(unsigned int j = 0; j <= _nYbins - 1; ++j) { 
 
       Y = -1.0*_yMax + double(j)*dY + 0.5*dY;
 
-      int A_1 = getbbs().beam1().A(); 
-      int A_2 = getbbs().beam2().A();
       if( A_2 == 1 && A_1 != 1 ){
-        // pA, first beam is the nucleus 
-        Egamma = 0.5*W*exp(-Y);
+        // pA, first beam is the nucleus and is in this case the target  
+        Egamma = 0.5*W*exp(-Y); 
+        beam = 1; 
       } else if( A_1 ==1 && A_2 != 1){
-        // pA, second beam is the nucleus 
+        // pA, second beam is the nucleus and is in this case the target 
         Egamma = 0.5*W*exp(Y); 
+        beam = 2; 
       } else {
         Egamma = 0.5*W*exp(Y);        
+        beam = 2; 
       }
 
       dndWdY = 0.; 
 
       if( Egamma > Eth && Egamma < maxPhotonEnergy() ){
 
-       csgA=getcsgA(Egamma,W);
-       dndWdY = Egamma*photonFlux(Egamma)*csgA*breitWigner(W,bwnorm);
+	csgA=getcsgA(Egamma,W,beam);
+        dndWdY = Egamma*photonFlux(Egamma,beam)*csgA*breitWigner(W,bwnorm);
 
       }
 
@@ -165,16 +170,49 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
     }
   }
 
+  // Repeat the loop for the case when the second beam is the photon emitter. 
+  // Don't repeat for pA
+  if( !( (A_2 == 1 && A_1 != 1) || (A_1 == 1 && A_2 != 1) ) ){ 
+    
+    for(unsigned int i = 0; i <= _nWbins - 1; ++i) {
+
+      W = _wMin + double(i)*dW + 0.5*dW;
+    
+      for(unsigned int j = 0; j <= _nYbins - 1; ++j) {
+
+        Y = -1.0*_yMax + double(j)*dY + 0.5*dY;
+
+        beam = 1; 
+        Egamma = 0.5*W*exp(-Y);        
+
+        dndWdY = 0.; 
+ 
+        if( Egamma > Eth && Egamma < maxPhotonEnergy() ){
+
+	  csgA=getcsgA(Egamma,W,beam);
+          dndWdY = Egamma*photonFlux(Egamma,beam)*csgA*breitWigner(W,bwnorm);
+
+        }
+
+        wylumfile << dndWdY << endl;
+
+      }
+    }
+  }
+
+  wylumfile << bwnorm << endl;
+  wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile.close();
   
   if(inputParametersInstance.interferenceEnabled()==1) 
     pttablegen();
  
-  wylumfile.open("slight.txt",ios::app);
-  cout << "bwnorm: "<< bwnorm <<endl;
-  wylumfile << bwnorm << endl;
-  wylumfile << inputParametersInstance.parameterValueKey() << endl;
-  wylumfile.close();
+  //  wylumfile.open("slight.txt",ios::app);
+  // cout << "bwnorm: "<< bwnorm <<endl;
+  //wylumfile << bwnorm << endl;
+  //wylumfile << inputParametersInstance.parameterValueKey() << endl;
+  //wylumfile.close();
+
 }
 
 
@@ -240,6 +278,7 @@ void photonNucleusLuminosity::pttablegen()
   double NPT = inputParametersInstance.nmbPtBinsInterference();
   double gamma_em=inputParametersInstance.beamLorentzGamma();
   double mass= getChannelMass();
+  int beam; 
   
   //  loop over y from 0 (not -ymax) to yma
   
@@ -256,6 +295,7 @@ void photonNucleusLuminosity::pttablegen()
     //  Find the sigma(gammaA) for the two directions
     //  Photonuclear Cross Section 1
     //  Gamma-proton CM energy
+    beam=2; 
     
     Wgp=sqrt(2.*Egamma1*(Ep+sqrt(Ep*Ep-starlightConstants::protonMass*
 				 starlightConstants::protonMass))+starlightConstants::protonMass*starlightConstants::protonMass);
@@ -267,8 +307,7 @@ void photonNucleusLuminosity::pttablegen()
 	    /starlightConstants::alpha);
     
     // Calculate V.M.+nucleus cross section
-    
-    cvma=sigma_A(cs);
+    cvma=sigma_A(cs,beam);
     
     // Calculate Av = dsigma/dt(t=0) Note Units: fm**2/Gev**2
     
@@ -293,6 +332,7 @@ void photonNucleusLuminosity::pttablegen()
     sig_ga_1 = csgA;
 	   
     // Photonuclear Cross Section 2
+    beam=1; 
     
     Wgp=sqrt(2.*Egamma2*(Ep+sqrt(Ep*Ep-starlightConstants::protonMass*
 				 starlightConstants::protonMass))+starlightConstants::protonMass*starlightConstants::protonMass);
@@ -300,7 +340,7 @@ void photonNucleusLuminosity::pttablegen()
     cs=sqrt(16.*starlightConstants::pi*vmPhotonCoupling()*slopeParameter()*
 	    starlightConstants::hbarc*starlightConstants::hbarc*sigmagp(Wgp)/starlightConstants::alpha);
     
-    cvma=sigma_A(cs);
+    cvma=sigma_A(cs,beam);
     
     Av=(starlightConstants::alpha*cvma*cvma)/(16.*starlightConstants::pi
 					      *vmPhotonCoupling()*starlightConstants::hbarc*starlightConstants::hbarc);

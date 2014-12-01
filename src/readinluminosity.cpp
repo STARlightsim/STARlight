@@ -40,13 +40,12 @@
 #include "starlightconstants.h"
 #include "inputParameters.h"
 
-
 using namespace std;
 
 
 //______________________________________________________________________________
 readLuminosity::readLuminosity()//:inputread(input)
-: _Warray(0), _Yarray(0), _Farray(0)
+  : _Warray(0), _Yarray(0), _Farray(0), _Farray1(0), _Farray2(0)
 {
   //storing inputparameters into protected variables for the object to use them
   _ReadInputNPT=inputParametersInstance.nmbPtBinsInterference();
@@ -64,6 +63,8 @@ readLuminosity::~readLuminosity()
   if(_Warray) delete [] _Warray;
   if(_Yarray) delete [] _Yarray;
   if(_Farray) delete [] _Farray;
+  if(_Farray1) delete [] _Farray1;
+  if(_Farray2) delete [] _Farray2; 
 }
 
 
@@ -81,40 +82,87 @@ void readLuminosity::read()
       _Farray[i] = new double[_ReadInputnumy];
     }
   }
+  if(!_Farray1) 
+  {
+    _Farray1 = new double*[_ReadInputnumw];
+    for(int i = 0; i < _ReadInputnumw; i++)
+    {
+      _Farray1[i] = new double[_ReadInputnumy];
+    }
+  }
+  if(!_Farray2) 
+  {
+    _Farray2 = new double*[_ReadInputnumw];
+    for(int i = 0; i < _ReadInputnumw; i++)
+    {
+      _Farray2[i] = new double[_ReadInputnumy];
+    }
+  }
+
   double dummy[19]; //14//18
-//  double (*finterm)[starlightLimits::MAXWBINS]=new double[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];  
-  
+
+  //  double (*finterm)[starlightLimits::MAXWBINS]=new double[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];  
   //decreased from 1000*1000; too big! causes fault!
+
   double fpart =0.;
   double fptsum=0.;
   ifstream wylumfile;
 
   _f_max=0.0;
+  _f_max1=0.0;
+  _f_max2=0.0;
 
   wylumfile.open("slight.txt");
   for(int i=0;i < 19;i++){ // was 14; this is to account for sergei's additional parameters ie d-Au//was19
     wylumfile >> dummy[i];
   }
+  int A_1 = dummy[1];
+  int A_2 = dummy[3];
+
   for(int i=0;i<_ReadInputnumw;i++){
     wylumfile >> _Warray[i];
   }
   for(int i=0;i<_ReadInputnumy;i++){
     wylumfile >> _Yarray[i];
   }
-  for(int i=0;i<_ReadInputnumw;i++){
-    for(int j=0;j<_ReadInputnumy;j++){
-      wylumfile >> _Farray[i][j];
-      if( _Farray[i][j] > _f_max ) _f_max=_Farray[i][j];
+
+  if( (_ReadInputgg_or_gP == 1) || (A_2 == 1 && A_1 != 1) || (A_1 ==1 && A_2 != 1) ){ 
+    for(int i=0;i<_ReadInputnumw;i++){
+      for(int j=0;j<_ReadInputnumy;j++){
+        wylumfile >> _Farray[i][j];
+        if( _Farray[i][j] > _f_max ) _f_max=_Farray[i][j];
+      }
     }
-  }
-  //Normalize farray (JN 010402)
-  for(int i=0;i<_ReadInputnumw;i++){
-    for(int j=0;j<_ReadInputnumy;j++){
-      _Farray[i][j]=_Farray[i][j]/_f_max;
+    //Normalize farray 
+    for(int i=0;i<_ReadInputnumw;i++){
+      for(int j=0;j<_ReadInputnumy;j++){
+        _Farray[i][j]=_Farray[i][j]/_f_max;
+      }
+    }
+  } else {
+    for(int i=0;i<_ReadInputnumw;i++){
+      for(int j=0;j<_ReadInputnumy;j++){
+        wylumfile >> _Farray1[i][j];
+	//        if( _Farray1[i][j] > _f_max ) _f_max=_Farray1[i][j];
+      }
+    }
+    for(int i=0;i<_ReadInputnumw;i++){
+      for(int j=0;j<_ReadInputnumy;j++){
+        wylumfile >> _Farray2[i][j];
+        if( _Farray1[i][j] + _Farray2[i][j] > _f_max ) _f_max=(_Farray1[i][j] + _Farray2[i][j]);
+      }
+    }
+    //Normalize farray, farray1, farray2 
+    for(int i=0;i<_ReadInputnumw;i++){
+      for(int j=0;j<_ReadInputnumy;j++){
+        _Farray1[i][j]=_Farray1[i][j]/_f_max;
+        _Farray2[i][j]=_Farray2[i][j]/_f_max;
+        _Farray[i][j]=_Farray1[i][j]+_Farray2[i][j];
+      }
     }
   }
 
- if (_ReadInputgg_or_gP != 1 && _ReadInputinterferencemode != 0) {
+  if (_ReadInputgg_or_gP != 1 && _ReadInputinterferencemode != 0) {
         // only numy/2 y bins here, from 0 (not -ymax) to ymax
         double **finterm  = new double*[starlightLimits::MAXWBINS];
         for (int i = 0; i < starlightLimits::MAXWBINS; i++) finterm[i] = new double[starlightLimits::MAXYBINS];

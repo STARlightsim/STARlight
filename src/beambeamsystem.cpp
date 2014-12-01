@@ -188,7 +188,6 @@ beamBeamSystem::generateBreakupProbabilities()
         if (_beamBreakupMode == 7)
             printInfo << "Requiring breakup of one nucleus (Xn,0n). " << endl;
 
-        //pp may cause segmentation fault in here and it does not use this...
 	double pOfB = 0;
 	double b = bMin;
         double totRad = _beam1.nuclearRadius()+_beam2.nuclearRadius();
@@ -212,7 +211,7 @@ beamBeamSystem::generateBreakupProbabilities()
             {
                 if((1-pOfB)<_breakupCutOff)
                 {
- //                         std::cout << "Break off b: " << b << std::endl;
+//                         std::cout << "Break off b: " << b << std::endl;
 //                         std::cout << "Number of PofB bins: " << _breakupProbabilities.size() << std::endl;
                         break;
                 }
@@ -239,7 +238,7 @@ beamBeamSystem::generateBreakupProbabilities()
             b *= _breakupImpactParameterStep;
 	    pOfB = exp(-1 * _pHadronBreakup) * _pPhotonBreakup;
             _breakupProbabilities.push_back(pOfB);
-        }
+        } // End while(1)
     }
     else if (((_beam1.Z() == 1) && (_beam1.A() == 1)) || ((_beam2.Z() == 1) && (_beam2.A() == 1))) {  
       
@@ -282,21 +281,20 @@ beamBeamSystem::generateBreakupProbabilities()
 double
 beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
 {
-	//	double pbreakup =0.; 
 	//probability of hadron breakup, 
 	//this is what is returned when the function is called
 	double gamma = _beamLorentzGamma; 
 	//input for gamma_em
 	//this will need to be StarlightInputParameters::gamma or whatever
 	double b = impactparameter;
-	int ap = _beam1.A();  
-	//Notice this is  taking from nucleus 1.Still assuming symmetric system?
+	int a1 = _beam1.A();  
+	int a2 = _beam2.A();  
 
 	static int IFIRSTH = 0;
-	static double DELL=0., DELR=0., SIGNN=0., R1=0., A1=0., R2=0., RHO1=0.;
-	static double RHO2=0., NZ1=0., NZ2=0., NR1=0., NR2=0.,RR1=0., NY=0., NX=0.;
+	static double DELL=0., DELR=0., SIGNN=0., R1=0., A1=0., A2=0., R2=0., RHO1=0.;
+	static double RHO2=0., NZ1=0., NZ2=0., NR1=0., NR2=0.,RR1=0., RR2=0., NY=0., NX=0.;
 	static double AN1=0., AN2=0.;
-	double delo=0.,RSQ=0.,Z1=0.,Y=0.,X=0.,XB=0.,RPU=0.,IRUP=0.,RTU=0.;
+	double delo=0.,RSQ=0.,Z1=0.,Z2=0.,Y=0.,X=0.,XB=0.,RPU=0.,IRUP=0.,RTU=0.;
 	double IRUT=0.,T1=0.,T2=0.;
 	static double DEN1[20002], DEN2[20002];
 	if (IFIRSTH != 0) goto L100;
@@ -308,21 +306,25 @@ beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
 
 	//use two sigma_NN's. 52mb at rhic 100gev/beam, 88mb at LHC 2.9tev/beam, gamma is in cm system
 	SIGNN = 5.2;
-	if ( gamma > 500. ) SIGNN = 8.8;
+	if ( gamma > 500. ) SIGNN = 8.8; 
 	//use parameter from Constants
-	R1 = ( _beam1.nuclearRadius());  //remember _beam2? better way to do this generically
-	A1 = 0.535; //This is woodsaxonskindepth?
+	R1 = ( _beam1.nuclearRadius());  
+        R2 = ( _beam2.nuclearRadius());
+	A1 = 0.535; //This is woodsaxonskindepth
+        A2 = 0.535; 
 	//write(6,12)r1,a1,signn  Here is where we could probably set this up asymmetrically R2=_beam2.nuclearRadius() and RHO2=ap2=_beam2.A()
-	R2 = R1;
-	RHO1 = ap;
-	RHO2 = RHO1;
+	// R2 = R1;
+	RHO1 = a1;
+	RHO2 = a2;
 	NZ1  = ((R1+5.)/DELR);
 	NR1  = NZ1;
 	NZ2  = ((R2+5.)/DELR);
 	NR2  = NZ2;
 	RR1  = -DELR;
+        RR2  = -DELR; 
 	NY   = ((R1+5.)/DELL);
 	NX   = 2*NY;
+	// This calculates T_A(b) for beam 1 and stores it in DEN1[IR1] 
 	for ( int IR1 = 1; IR1 <= NR1; IR1++) {
 		DEN1[IR1] = 0.;
 		RR1       = RR1+DELR;
@@ -332,21 +334,40 @@ beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
 			Z1  = Z1+DELR;
 			RSQ = RR1*RR1+Z1*Z1;
 			DEN1[IR1] = DEN1[IR1]+1./(1.+exp((sqrt(RSQ)-R1)/A1));
-		}//for(IZ)
+		}
 
 		DEN1[IR1] = DEN1[IR1]*2.*DELR;
-		DEN2[IR1] = DEN1[IR1];
-	}//for(IR)
+	}
+
+	// This calculates T_A(b) for beam 2 and stores it in DEN2[IR2] 
+	for ( int IR2 = 1; IR2 <= NR2; IR2++) {
+		DEN2[IR2] = 0.;
+		RR2       = RR2+DELR;
+		Z2        = -DELR/2;
+
+		for ( int IZ2 = 1; IZ2 <= NZ2; IZ2++) {
+			Z2  = Z2+DELR;
+			RSQ = RR2*RR2+Z2*Z2;
+			DEN2[IR2] = DEN2[IR2]+1./(1.+exp((sqrt(RSQ)-R2)/A2));
+		}
+
+		DEN2[IR2] = DEN2[IR2]*2.*DELR;
+	}
 
 	AN1 = 0.;
 	RR1 = 0.;
+        RR2 = 0.;
     
 	for ( int IR1 =1; IR1 <= NR1; IR1++) {
 		RR1 = RR1+DELR;
 		AN1 = AN1+RR1*DEN1[IR1]*DELR*2.*3.141592654;
-	}//for(IR)
+	}
+	for ( int IR2 =1; IR2 <= NR2; IR2++) {
+		RR2 = RR2+DELR;
+		AN2 = AN2+RR2*DEN2[IR2]*DELR*2.*3.141592654;
+	}
         
-	AN2 = AN1; //This will also probably need to be changed?
+	// AN2 = AN1; //This will also probably need to be changed?
 
 	delo = .05;
 	//.1 to turn mb into fm^2

@@ -65,6 +65,8 @@ Gammaavectormeson::Gammaavectormeson(beamBeamSystem& bbsystem):eventChannel(bbsy
 	_VMCoherenceFactor=inputParametersInstance.coherentProduction();
         _ProductionMode=inputParametersInstance.productionMode();
 
+        N1 = 0; N2 = 0; 
+
 	switch(_VMpidtest){
 	case starlightConstants::RHO:
 	case starlightConstants::RHOZEUS:
@@ -131,7 +133,7 @@ Gammaavectormeson::~Gammaavectormeson()
 //______________________________________________________________________________
 void Gammaavectormeson::pickwy(double &W, double &Y)
 {
-	double dW, dY, xw,xy,xtest;
+        double dW, dY, xw,xy,xtest,btest;
 	int  IW,IY;
   
 	dW = (_VMWmax-_VMWmin)/double(_VMnumw);
@@ -153,7 +155,32 @@ void Gammaavectormeson::pickwy(double &W, double &Y)
 
 	if( xtest > _Farray[IW][IY] )
 		goto L201pwy;
-  
+
+	// Determine the target nucleus 
+	// For pA this is given, for all other cases use the relative probabilities in _Farray1 and _Farray2 
+        if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
+           if( _ProductionMode == 2 ){
+	     _TargetBeam = 2;
+	   } else {
+             _TargetBeam = 1;
+           }
+        } else if(  _bbs.beam1().A() != 1 && _bbs.beam2().A()==1 ){
+           if( _ProductionMode == 2 ){
+	     _TargetBeam = 1;
+	   } else {
+             _TargetBeam = 2;
+           }
+        } else {
+          btest = randyInstance.Rndom();
+          if ( btest < _Farray1[IW][IY]/_Farray[IW][IY] ){
+            _TargetBeam = 2;
+            N2++;
+          }  else {
+            _TargetBeam = 1;
+            N1++; 
+          }
+        }
+	// cout<<"N1: "<<N1<<" N2; "<<N2<<endl;
 }         
 
 
@@ -432,16 +459,17 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
     	    Egam = 0.5*W*exp(Y);
   	    Epom = 0.5*W*exp(-Y);
           }  
-        } else {
-	  Egam = 0.5*W*exp(Y);
+        } else if ( _TargetBeam == 1 ) {
+	  Egam = 0.5*W*exp(-Y);
+	  Epom = 0.5*W*exp(Y);
+        } else { 
+          Egam = 0.5*W*exp(Y);
 	  Epom = 0.5*W*exp(-Y);
-        }
+	}
 
-        // cout<<" Y: "<<Y<<" W: "<<W<<" Egam: "<<Egam<<" Epom: "<<Epom<<endl; 
+        // cout<<" Y: "<<Y<<" W: "<<W<<" TargetBeam; "<<_TargetBeam<<" Egam: "<<Egam<<" Epom: "<<Epom<<endl; 
         pt1 = pTgamma(Egam);  
 	phi1 = 2.*starlightConstants::pi*randyInstance.Rndom();
-
-	//      cout<<" pt1: "<<pt1<<endl; 
 
 	if( (_bbs.beam1().A()==1 && _bbs.beam2().A()==1) || 
             (_ProductionMode == 4) ) {
@@ -487,6 +515,8 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
                   }else{
                     pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
                   }  
+                } else if (_TargetBeam==1) {
+                    pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
                 } else {
                     pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
                 }
@@ -513,26 +543,17 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
                     }else{
                       comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2;
                     }  
+                  } else if (_TargetBeam==1) {
+                    comp = _bbs.beam2().formFactor(t2)*_bbs.beam1().formFactor(t2)*pt2;
                   } else {
-                    comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2;
+                    comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2; 
                   }
 	      
                   if( xtest > comp ) goto L203vm;
        		}
 
-		/*
-		if(_VMCoherence==0 && (!(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2))){
-   		     //dsig/dt= exp(-_VMbslope*t)
-		     xtest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
-		     t2 = (-1./_VMbslope)*log(xtest);
-		     pt2 = sqrt(1.*t2);
-		}
-		*/
-
 	}//else end from pp
 	phi2 = 2.*starlightConstants::pi*randyInstance.Rndom();//random()/(RAND_MAX+1.0);
-
-	//        cout<<" pt2: "<<pt2<<endl;  
 
 	px1 = pt1*cos(phi1);
 	py1 = pt1*sin(phi1);
@@ -549,16 +570,19 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
  
         // cout<< " Y = "<<Y<<" W = "<<W<<" Egam = "<<Egam<<" gamma = "<<_VMgamma_em<<endl; 
 
-	// Randomly choose to make pz negative 50% of the time
+	// Keep this special case for d+A 
 	if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
 		pz = -pz;
-	}else if( (_bbs.beam1().A()==1 && _bbs.beam2().A() != 1) || (_bbs.beam2().A()==1 && _bbs.beam1().A() != 1) ){
+	}
+
+        /*
+        else if( (_bbs.beam1().A()==1 && _bbs.beam2().A() != 1) || (_bbs.beam2().A()==1 && _bbs.beam1().A() != 1) ){
 	  // Don't switch      
         }
 	else{
 		if (randyInstance.Rndom() >= 0.5) pz = -pz;
 	}
-
+        */
 }
 
 //______________________________________________________________________________
@@ -591,6 +615,8 @@ double Gammaavectormeson::pTgamma(double E)
       }else{
          singleformfactorCm=_bbs.beam1().formFactor(Cm*Cm+ereds);
       }  
+    } else if (_TargetBeam == 1) {
+      singleformfactorCm=_bbs.beam2().formFactor(Cm*Cm+ereds);
     } else {
       singleformfactorCm=_bbs.beam1().formFactor(Cm*Cm+ereds);
     }
@@ -616,6 +642,9 @@ double Gammaavectormeson::pTgamma(double E)
         pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
         singleformfactorpp1=_bbs.beam1().formFactor(pp*pp+ereds);
       }  
+    } else if (_TargetBeam == 1) {
+        pp = x*5.*starlightConstants::hbarc/_bbs.beam2().nuclearRadius(); 
+        singleformfactorpp1=_bbs.beam1().formFactor(pp*pp+ereds);
     } else {
         pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
         singleformfactorpp1=_bbs.beam1().formFactor(pp*pp+ereds);
@@ -647,6 +676,9 @@ double Gammaavectormeson::pTgamma(double E)
                 pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
                 singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);
               }  
+            } else if (_TargetBeam == 1) {
+              pp = x*5.*starlightConstants::hbarc/_bbs.beam2().nuclearRadius(); 
+              singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);
             } else {
               pp = x*5.*starlightConstants::hbarc/_bbs.beam1().nuclearRadius(); 
               singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);
@@ -664,8 +696,8 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
                              int&) // tcheck (unused)
 {
 	//    This function calculates momentum and energy of vector meson
-	//     given W and Y, including interference.
-	//     It gets the pt distribution from a lookup table.
+	//    given W and Y, including interference.
+	//    It gets the pt distribution from a lookup table.
 	double dW=0.,dY=0.,yleft=0.,yfract=0.,xpt=0.,pt1=0.,ptfract=0.,pt=0.,pt2=0.,theta=0.;
 	int IY=0,j=0;
   
@@ -674,7 +706,7 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
   
 	//  Y is already fixed; choose a pt
 	//  Follow the approavh in pickwy.f
-	// in   _fptarray(IY,pt) IY=1 corresponds to Y=0, IY=numy/2 corresponds to +y
+	//  in  _fptarray(IY,pt) IY=1 corresponds to Y=0, IY=numy/2 corresponds to +y
   
 	IY=int(fabs(Y)/dY);//+1;
 	if (IY > (_VMnumy/2)-1){
@@ -683,17 +715,16 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
   
 	yleft=fabs(Y)-(IY)*dY;
 	yfract=yleft*dY;
-                                                                                                                                  
+  
 	xpt=randyInstance.Rndom(); //random()/(RAND_MAX+1.0);
-                                                                                                                                  
+        
 	for(j=0;j<_VMNPT+1;j++){
 		if (xpt < _fptarray[IY][j]) goto L60;
 	}
  L60:
   
 	//  now do linear interpolation - start with extremes
-  
-	if (j == 0){
+  	if (j == 0){
 		pt1=xpt/_fptarray[IY][j]*_VMdpt/2.;
 		goto L80;
 	}
@@ -703,8 +734,7 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 	}
   
 	//  we're in the middle
-  
-	ptfract=(xpt-_fptarray[IY][j])/(_fptarray[IY][j+1]-_fptarray[IY][j]);
+  	ptfract=(xpt-_fptarray[IY][j])/(_fptarray[IY][j+1]-_fptarray[IY][j]);
 	pt1=(j+1)*_VMdpt+ptfract*_VMdpt;
   
 	//  at an extreme in y?
@@ -713,15 +743,14 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 		goto L120;
 	}
  L80:
-	//  interpolate in y repeat for next fractional y bin
-                                                                                                                                  
+
+	//  interpolate in y repeat for next fractional y bin      
 	for(j=0;j<_VMNPT+1;j++){
 		if (xpt < _fptarray[IY+1][j]) goto L90;
 	}
  L90:
   
 	//  now do linear interpolation - start with extremes
-                                                                                                                                  
 	if (j == 0){
 		pt2=xpt/_fptarray[IY+1][j]*_VMdpt/2.;
 		goto L100;
@@ -732,27 +761,20 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 	}
   
 	//  we're in the middle
-                                                                                                                                  
 	ptfract=(xpt-_fptarray[IY+1][j])/(_fptarray[IY+1][j+1]-_fptarray[IY+1][j]);
 	pt2=(j+1)*_VMdpt+ptfract*_VMdpt;
-                                                                                                                                  
  L100:
-                                                                                                                                  
-	//  now interpolate in y
-                                                                                                                                  
+
+	//  now interpolate in y  
 	pt=yfract*pt2+(1-yfract)*pt1;
-                                                                                                                                  
+
  L120:
-                                                                                                                                  
-	//  we have a pt
-                                                                                                                                  
+
+	//  we have a pt 
 	theta=2.*starlightConstants::pi*randyInstance.Rndom();//(random()/(RAND_MAX+1.0))*2.*pi;
 	px=pt*cos(theta);
 	py=pt*sin(theta);
-                                                                                                                                  
-	//      I guess W is the mass of the vector meson (not necessarily
-	//      on-mass-shell), and E is the energy
-                                                                                                                                  
+
 	E  = sqrt(W*W+pt*pt)*cosh(Y);
 	pz = sqrt(W*W+pt*pt)*sinh(Y);
 	//      randomly choose to make pz negative 50% of the time

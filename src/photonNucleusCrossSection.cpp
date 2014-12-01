@@ -61,39 +61,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const beamBeamSystem& bbsys
           _productionMode    (inputParametersInstance.productionMode()    ),
 	  _sigmaNucleus      (_bbs.beam2().A()          )
 {
-	// define luminosity for various beam particles in units of 10^{26} cm^{-2} sec^{-1}
-	switch(_bbs.beam1().Z()) {
-	case 1:   // proton
-		_luminosity = 1.E8;
-		break;
-	case 8:   // O
-		_luminosity = 980.;
-		break;
-	case 14:  // Si
-		_luminosity = 440.;
-		break;
-	case 20:  // Ca
-		_luminosity = 2000.;
-		break;
-	case 29:  // Cu
-		_luminosity = 95.;
-		break;
-	case 49:  // Indium, uses same as Iodine
-		_luminosity = 27.;
-		break;
-	case 53:  // I
-		_luminosity = 27.;
-		break;
-	case 79:  // Au
-		_luminosity = 2.0;
-		break;
-	case 82:  // Pb
-		_luminosity = 1.;
-		break;
-	default:
-		printWarn << "luminosity is not defined for beam with Z = " << _bbs.beam1().Z()
-		          << ". using " << _luminosity << " 10^{26} cm^{-2} sec^{-1}" << endl;
-	}
+	// The _luminosity variable should note be used. Set it to 1.0 here. 
+        _luminosity = 1.0; 
 
 	switch(_particleType) {
 	case RHO:
@@ -201,8 +170,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const beamBeamSystem& bbsys
 		     <<" GammaAcrosssection"<<endl;
 	}
 
-        double maxradius = (_bbs.beam1().nuclearRadius()<_bbs.beam2().nuclearRadius())?_bbs.beam2().nuclearRadius():_bbs.beam1().nuclearRadius();
-	_maxPhotonEnergy = 5. * _beamLorentzGamma * hbarc/maxradius; 
+        // double maxradius = (_bbs.beam1().nuclearRadius()<_bbs.beam2().nuclearRadius())?_bbs.beam2().nuclearRadius():_bbs.beam1().nuclearRadius();
+	_maxPhotonEnergy = 12. * _beamLorentzGamma * hbarc/(_bbs.beam1().nuclearRadius()+_bbs.beam2().nuclearRadius()); 
 }
 
 
@@ -222,7 +191,8 @@ photonNucleusCrossSection::crossSectionCalculation(const double)
 //______________________________________________________________________________
 double
 photonNucleusCrossSection::getcsgA(const double Egamma,
-                                   const double W)
+                                   const double W, 
+                                   const int beam)
 {
 	//This function returns the cross-section for photon-nucleus interaction 
 	//producing vectormesons
@@ -230,7 +200,7 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
 	double Av,Wgp,cs,cvma;
 	double t,tmin,tmax;
 	double csgA,ax,bx;
-	int NGAUSS;                                                                                                                                       
+	int NGAUSS; 
   
 	//     DATA FOR GAUSS INTEGRATION
 	double xg[6] = {0, 0.1488743390, 0.4333953941, 0.6794095683, 0.8650633667, 0.9739065285};
@@ -266,20 +236,19 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
 		}
 		csgA = 0.5 * (tmax - tmin) * csgA;
 		csgA = Av * csgA;
-	}	else if (!_coherentProduction &&
-		         (!((_bbs.beam2().Z() == 1) && (_bbs.beam2().A() == 2)))) {  // incoherent AA interactions
+		//	}	else if (!_coherentProduction &&
+		//		         (!((_bbs.beam2().Z() == 1) && (_bbs.beam2().A() == 2)))) {  // incoherent AA interactions
 		// For incoherent AA interactions, since incoherent treating it as gamma-p
 		// Calculate the differential V.M.+proton cross section
-		csgA = 1.E-4 * _incoherentFactor * _sigmaNucleus * _slopeParameter * sigmagp(Wgp);
-
+		//		csgA = 1.E-4 * _incoherentFactor * _sigmaNucleus * _slopeParameter * sigmagp(Wgp);
 	}	else {	// coherent AA interactions
 		// For typical AA interactions.
 		// Calculate V.M.+proton cross section
-		cs = sqrt(16. * pi * _vmPhotonCoupling * _slopeParameter * hbarc * hbarc * sigmagp(Wgp) / alpha);
+		cs = sqrt(16. * pi * _vmPhotonCoupling * _slopeParameter * hbarc * hbarc * sigmagp(Wgp) / alpha); 
     
 		// Calculate V.M.+nucleus cross section
 		// cvma = _bbs.beam1().A()*cs; 
-		cvma = sigma_A(cs); 
+		cvma = sigma_A(cs,beam); 
 
 		// Calculate Av = dsigma/dt(t=0) Note Units: fm**s/Gev**2
 		Av = (alpha * cvma * cvma) / (16. * pi * _vmPhotonCoupling * hbarc * hbarc);
@@ -300,7 +269,13 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
                         }else if(A_2 ==1 && A_1 != 1){
 			  csgA = csgA + ag[k] * _bbs.beam1().formFactor(t) * _bbs.beam1().formFactor(t);
                         }else{     
-			  csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
+                          if( beam==1 ){
+ 			    csgA = csgA + ag[k] * _bbs.beam1().formFactor(t) * _bbs.beam1().formFactor(t);
+                          }else if(beam==2){
+ 			    csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);	
+  		          }else{
+			    cout<<"Something went wrong here, beam= "<<beam<<endl; 
+                          }
                         }
 
 			t    = ax * (-xg[k]) + bx;
@@ -309,7 +284,13 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
                         }else if(A_2 ==1 && A_1 != 1){
 			  csgA = csgA + ag[k] * _bbs.beam1().formFactor(t) * _bbs.beam1().formFactor(t);
                         }else{     
-			  csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
+                          if( beam==1 ){
+ 			    csgA = csgA + ag[k] * _bbs.beam1().formFactor(t) * _bbs.beam1().formFactor(t);
+                          }else if(beam==2){
+ 			    csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);	
+  		          }else{
+			    cout<<"Something went wrong here, beam= "<<beam<<endl; 
+                          }
                         }
 		}
 		csgA = 0.5 * (tmax - tmin) * csgA;
@@ -322,7 +303,7 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
 
 //______________________________________________________________________________
 double
-photonNucleusCrossSection::photonFlux(const double Egamma)
+photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 {
 	// This routine gives the photon flux as a function of energy Egamma
 	// It works for arbitrary nuclei and gamma; the first time it is
@@ -331,27 +312,36 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 	// It returns dN_gamma/dE (dimensions 1/E), not dI/dE
 	// energies are in GeV, in the lab frame
 	// rewritten 4/25/2001 by SRK
-  
+
+        // NOTE: beam (=1,2) defines the photon TARGET
+
 	double lEgamma,Emin,Emax;
 	static double lnEmax, lnEmin, dlnE;
-	double stepmult,energy,rZ,rA;
+	// double stepmult,energy,rZ,rA;
+	double stepmult,energy,rZ;
 	int nbstep,nrstep,nphistep,nstep;
 	double bmin,bmax,bmult,biter,bold,integratedflux;
 	double fluxelement,deltar,riter;
 	double deltaphi,phiiter,dist;
 	static double dide[401];
 	double lnElt;
-	double rA2, rZ2; 
+	// double rA2, rZ2; 
 	double flux_r; 
 	double Xvar;
 	int Ilt;
-	double RNuc=0.,RNuc2=0.,maxradius=0.;
+	double RNuc=0.,RSum=0.;
 
-	RNuc=_bbs.beam1().nuclearRadius();
-	RNuc2=_bbs.beam2().nuclearRadius();
-        maxradius =  (RNuc<RNuc2)?RNuc2:RNuc;
-	// static ->>> dide,lnEMax,lnEmin,dlnE
+	RSum=_bbs.beam1().nuclearRadius()+_bbs.beam2().nuclearRadius();
+        if( beam == 1){
+          rZ=double(_bbs.beam2().Z());
+          RNuc = _bbs.beam1().nuclearRadius();
+        } else { 
+	  rZ=double(_bbs.beam1().Z());
+          RNuc = _bbs.beam2().nuclearRadius();
+        }
+
 	static int  Icheck = 0;
+	static int  Ibeam  = 0; 
   
 	//Check first to see if pp 
 	if( _bbs.beam1().A()==1 && _bbs.beam2().A()==1 ){
@@ -359,7 +349,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 		double bmin = 0.5;
 		double bmax = 5.0 + (5.0*_beamLorentzGamma*hbarc/Egamma);
 		double dlnb = (log(bmax)-log(bmin))/(1.*nbsteps);
-
+ 
 		double local_sum=0.0;
 
 		// Impact parameter loop 
@@ -402,19 +392,13 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 		double flux_r=local_sum*pi; 
 		return flux_r;
 
-		//    bmin = nuclearRadius+nuclearRadius;
-		//    flux_r = nepoint(Egamma,bmin);
-		//    return flux_r;
 	}
 
-	//   first call?  - initialize - calculate photon flux
-	Icheck=Icheck+1;
-	if(Icheck > 1) goto L1000f;
+	//   first call or new beam?  - initialize - calculate photon flux
+	Icheck=Icheck+1; 
+	if(Icheck > 1 && beam == Ibeam ) goto L1000f; 
+        Ibeam = beam; 
   
-	rZ=double(_bbs.beam1().Z());
-	rA=double(_bbs.beam1().A());
-	rZ2=double(_bbs.beam2().Z());  //Sergey--dAu
-	rA2=double(_bbs.beam2().A());  //Sergey
   
 	//  Nuclear breakup is done by PofB
 	//  collect number of integration steps here, in one place
@@ -431,19 +415,18 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 	if (_beamLorentzGamma < 500) 
 		Emin=1.E-3;
   
-	//  maximum energy is 6 times the cutoff
-	//	Emax=12.*hbarc*_beamLorentzGamma/RNuc;
-	Emax=6.*hbarc*_beamLorentzGamma/maxradius;
-  
+	//  maximum energy is 12 times the cutoff
+        Emax=_maxPhotonEnergy; 
+	// Emax=12.*hbarc*_beamLorentzGamma/RSum;
+ 
 	//     >> lnEmin <-> ln(Egamma) for the 0th bin
 	//     >> lnEmax <-> ln(Egamma) for the last bin
-  
-	lnEmin=log(Emin);
+  	lnEmin=log(Emin);
 	lnEmax=log(Emax);
-	dlnE=(lnEmax-lnEmin)/nstep;                                                                                                                  
+	dlnE=(lnEmax-lnEmin)/nstep; 
 
 	cout<<" Calculating flux for photon energies from E= "<<Emin 
-	    <<" to  "<<Emax<<"  GeV (CM frame) "<<endl;
+	    <<" to  "<<Emax<<"  GeV (CM frame) for source nucleus with Z = "<<rZ<<endl;
 
 
 	stepmult= exp(log(Emax/Emin)/double(nstep));
@@ -455,7 +438,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 		//  integrate flux over 2R_A < b < 2R_A+ 6* gamma hbar/energy
 		//  use exponential steps
     
-		bmin=0.8*(RNuc+RNuc2); //Start slightly below 2*Radius 
+		bmin=0.8*RSum; //Start slightly below 2*Radius 
 		bmax=bmin + 6.*hbarc*_beamLorentzGamma/energy;
     
 		bmult=exp(log(bmax/bmin)/double(nbstep));
@@ -464,7 +447,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
     
 		if (_bbs.beam2().Z()==1&&_bbs.beam1().A()==2){
 		     //This is for deuteron-gold
-		     Xvar = (RNuc+RNuc2)*energy/(hbarc*(_beamLorentzGamma));
+		     Xvar = RSum*energy/(hbarc*(_beamLorentzGamma));
       
 		     fluxelement = (2.0/pi)*rZ*rZ*alpha/
 		      	 energy*(Xvar*bessel::dbesk0(Xvar)*bessel::dbesk1(Xvar)-(1/2)*Xvar*Xvar*
@@ -484,8 +467,8 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
                       }
 
  		      int nbsteps = 400;
-		      double bmin = 0.7*(RNuc+RNuc2);
-		      double bmax = 2.0*(RNuc+RNuc2) + (8.0*_beamLorentzGamma*hbarc/energy);
+		      double bmin = 0.7*RSum;
+		      double bmax = 2.0*RSum + (8.0*_beamLorentzGamma*hbarc/energy);
 		      double dlnb = (log(bmax)-log(bmin))/(1.*nbsteps);
 
 		      double local_sum=0.0;
@@ -572,7 +555,8 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
             
 						for( int jphi=1;jphi<= nphistep;jphi++){
 							phiiter=(double(jphi)-0.5)*deltaphi;
-							//  dist is the distance from the center of the emitting nucleus to the point in question
+							// dist is the distance from the center of the emitting nucleus 
+							// to the point in question
 							dist=sqrt((biter+riter*cos(phiiter))*(biter+riter*
 							           cos(phiiter))+(riter*sin(phiiter))*(riter*sin(phiiter)));
 							Xvar=energy*dist/(hbarc*_beamLorentzGamma);  
@@ -593,9 +577,11 @@ photonNucleusCrossSection::photonFlux(const double Egamma)
 				//  multiply by volume element to get total flux in the volume element
 				fluxelement=fluxelement*2.*pi*biter*(biter-bold);
 				//  modulate by the probability of nuclear breakup as f(biter)
+                                // cout<<" jb: "<<jb<<" biter: "<<biter<<" fluxelement: "<<fluxelement<<endl; 
 				if (_beamBreakupMode > 1){
 					fluxelement=fluxelement*_bbs.probabilityOfBreakup(biter);
 				}
+                                // cout<<" jb: "<<jb<<" biter: "<<biter<<" fluxelement: "<<fluxelement<<endl; 
 				integratedflux=integratedflux+fluxelement;
 	
 			} //end loop over impact parameter 
@@ -670,9 +656,9 @@ photonNucleusCrossSection::nepoint(const double Egamma,
 double
 photonNucleusCrossSection::sigmagp(const double Wgp)
 {
-	//     >> Function for the gamma-proton --> VectorMeson
-	//     >> cross section. Wgp is the gamma-proton CM energy.
-	//     >> Unit for cross section: fm**2
+	// Function for the gamma-proton --> VectorMeson
+	// cross section. Wgp is the gamma-proton CM energy.
+	// Unit for cross section: fm**2
   
 	double sigmagp_r=0.;
   
@@ -730,7 +716,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 
 //______________________________________________________________________________
 double
-photonNucleusCrossSection::sigma_A(const double sig_N)
+photonNucleusCrossSection::sigma_A(const double sig_N, const int beam)
 {                                                         
 	// Nuclear Cross Section
 	// sig_N,sigma_A in (fm**2) 
@@ -782,13 +768,19 @@ photonNucleusCrossSection::sigma_A(const double sig_N)
                   arg=-sig_N*_bbs.beam2().rho0()*_bbs.beam2().thickness(b);
                 }else if(A_2 == 1 && A_1 != 1){
                   arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
-                }else{ 
-                  arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
+                }else{
+		  // Check which beam is target 
+                  if( beam == 1 ){ 
+                    arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
+                  }else if( beam==2 ){
+                    arg=-sig_N*_bbs.beam2().rho0()*_bbs.beam2().thickness(b);
+                  }else{
+                    cout<<" Something went wrong here, beam= "<<beam<<endl; 
+                  } 
                 }
     
 		Pint=1.0-exp(arg);
 		sum=sum+2.*pi*b*Pint*ag[IB];
-
     
 		b = 0.5*bmax*(-xg[IB])+0.5*bmax;
 
@@ -797,7 +789,14 @@ photonNucleusCrossSection::sigma_A(const double sig_N)
                 }else if(A_2 == 1 && A_1 != 1){
                   arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
                 }else{ 
-                  arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
+		  // Check which beam is target 
+                  if( beam == 1 ){ 
+                    arg=-sig_N*_bbs.beam1().rho0()*_bbs.beam1().thickness(b);
+                  }else if(beam==2){
+                    arg=-sig_N*_bbs.beam2().rho0()*_bbs.beam2().thickness(b);
+                  }else{
+                    cout<<" Something went wrong here, beam= "<<beam<<endl; 
+                  } 
                 }
 
 		Pint=1.0-exp(arg);

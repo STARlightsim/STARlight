@@ -66,13 +66,11 @@ incoherentPhotonNucleusLuminosity::~incoherentPhotonNucleusLuminosity()
 //______________________________________________________________________________
 void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLuminosity()
 {
-	// double Av,Wgp,cs,cvma;
   double W,dW,dY;
   double Egamma,Y;
-  // double t,tmin,tmax;
   double testint,dndWdY;
-  // double ax,bx;
   double C;  
+  int beam; 
 
   ofstream wylumfile;
   wylumfile.precision(15);
@@ -121,11 +119,13 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
     Y = -1.0*_yMax + double(i)*dY + 0.5*dY;
     wylumfile << Y << endl;
   }
- 
-  //  Eth=0.5*(((_wMin+starlightConstants::protonMass)*(_wMin
-  //							    +starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/
-  //	   (Ep + sqrt(Ep*Ep-starlightConstants::protonMass*starlightConstants::protonMass)));
-  
+
+  int A_1 = getbbs().beam1().A(); 
+  int A_2 = getbbs().beam2().A();
+
+  // Do this first for the case when the first beam is the photon emitter 
+  // Treat pA separately with defined beams 
+  // The variable beam (=1,2) defines which nucleus is the target 
   for(unsigned int i = 0; i <= _nWbins - 1; ++i) {
 
     W = _wMin + double(i)*dW + 0.5*dW;
@@ -139,16 +139,17 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
 
       Y = -1.0*_yMax + double(j)*dY + 0.5*dY;
 
-      int A_1 = getbbs().beam1().A(); 
-      int A_2 = getbbs().beam2().A();
       if( A_2 == 1 && A_1 != 1 ){
-        // pA, first beam is the nucleus 
+        // pA, first beam is the nucleus and photon emitter
         Egamma = 0.5*W*exp(Y);
+        beam = 2; 
       } else if( A_1 ==1 && A_2 != 1){
-        // pA, second beam is the nucleus 
+        // pA, second beam is the nucleus and photon emitter
         Egamma = 0.5*W*exp(-Y); 
+        beam = 1; 
       } else {
         Egamma = 0.5*W*exp(Y);        
+        beam = 2; 
       }
       
       dndWdY = 0.; 
@@ -165,17 +166,17 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
           // localbmin = getbbs().beam2().nuclearRadius() + 0.7; 
           // localz = getbbs().beam2().Z(); 
 	  //   dndWdY = Egamma*localz*localz*nepoint(Egamma,localbmin)*localsig*breitWigner(W,bwnorm); 
-          dndWdY = Egamma*photonFlux(Egamma)*localsig*breitWigner(W,bwnorm); 
+          dndWdY = Egamma*photonFlux(Egamma,beam)*localsig*breitWigner(W,bwnorm); 
         }else if (A_2 ==1 && A_1 !=1){
           // localbmin = getbbs().beam1().nuclearRadius() + 0.7; 
           // localz = getbbs().beam1().Z(); 
 	  //   dndWdY = Egamma*localz*localz*nepoint(Egamma,localbmin)*localsig*breitWigner(W,bwnorm); 
-          dndWdY = Egamma*photonFlux(Egamma)*localsig*breitWigner(W,bwnorm); 
+          dndWdY = Egamma*photonFlux(Egamma,beam)*localsig*breitWigner(W,bwnorm); 
         }else{ 
           double csVN = sigma_N(Wgp);         
-          double csVA = sigma_A(csVN); 
+          double csVA = sigma_A(csVN,beam); 
           double csgA= (csVA/csVN)*sigmagp(Wgp); 
-          dndWdY = Egamma*photonFlux(Egamma)*csgA*breitWigner(W,bwnorm); 
+          dndWdY = Egamma*photonFlux(Egamma,beam)*csgA*breitWigner(W,bwnorm); 
         }
       }
 
@@ -184,12 +185,49 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
     }
   }
 
+  // Repeat the loop for the case when the second beam is the photon emitter. 
+  // Don't repeat for pA
+  if( !( (A_2 == 1 && A_1 != 1) || (A_1 == 1 && A_2 != 1) ) ){ 
+    for(unsigned int i = 0; i <= _nWbins - 1; ++i) {
+
+      W = _wMin + double(i)*dW + 0.5*dW;
+
+      double Ep = inputParametersInstance.protonEnergy();
+
+      Eth=0.5*(((W+starlightConstants::protonMass)*(W+starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/
+	   (Ep + sqrt(Ep*Ep-starlightConstants::protonMass*starlightConstants::protonMass)));
+    
+      for(unsigned int j = 0; j <= _nYbins - 1; ++j) {
+
+        Y = -1.0*_yMax + double(j)*dY + 0.5*dY;
+
+        beam = 1; 
+        Egamma = 0.5*W*exp(-Y);        
+      
+        dndWdY = 0.; 
+
+        if(Egamma > Eth){
+	  if(Egamma > maxPhotonEnergy())Egamma = maxPhotonEnergy();
+          double Wgp = sqrt(2.*Egamma*(Ep+sqrt(Ep*Ep-starlightConstants::protonMass*
+                                 starlightConstants::protonMass))+starlightConstants::protonMass*starlightConstants::protonMass);
+
+          double csVN = sigma_N(Wgp);         
+          double csVA = sigma_A(csVN,beam); 
+          double csgA= (csVA/csVN)*sigmagp(Wgp); 
+          dndWdY = Egamma*photonFlux(Egamma,beam)*csgA*breitWigner(W,bwnorm); 
+        
+        }
+
+        wylumfile << dndWdY << endl;
+
+      }
+    }
+  }
+
   wylumfile << bwnorm << endl;
   wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile.close();
   
-  // cout << "bwnorm: "<< bwnorm <<endl;
-
 }
 
 

@@ -66,19 +66,15 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
 	// This subroutine calculates the vector meson cross section assuming
 	// a narrow resonance.  For reference, see STAR Note 386.
   
-	// double Av,Wgp,cs,cvma;
 	double W,dY;
 	double y1,y2,y12,ega1,ega2,ega12;
         // double y1lab,y2lab,y12lab;
-	// double t,tmin,tmax;
-	double csgA1,csgA2,csgA12,int_r,dR,rate;
+	double csgA1,csgA2,csgA12,int_r,dR;
         double Wgp,csVN,csVA; 
         double Wgpm; 
 	double tmp;
-	// double ax,bx;
 	double Eth;
-	int    J,NY;
-	// int    K,NGAUSS;
+	int    J,NY,beam;
   
 	NY   =  _narrowNumY;
 	dY   = (_narrowYmax-_narrowYmin)/double(NY);
@@ -94,6 +90,12 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
   
 	tmp = 0.0;
   
+        int A_1 = getbbs().beam1().A(); 
+        int A_2 = getbbs().beam2().A();
+
+        // Do this first for the case when the first beam is the photon emitter 
+        // Treat pA separately with defined beams 
+        // The variable beam (=1,2) defines which nucleus is the target 
 	for(J=0;J<=(NY-1);J++){
     
 	        // This is the fdefault
@@ -101,9 +103,31 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
 		y2  = _narrowYmin + double(J+1)*dY;
 		y12 = 0.5*(y1+y2);
     
-		ega1  = 0.5*W*exp(y1);
-		ega2  = 0.5*W*exp(y2);
-		ega12 = 0.5*W*exp(y12);
+                if( A_2 == 1 && A_1 != 1 ){
+                  // pA, first beam is the nucleus and photon emitter
+                  // Egamma = 0.5*W*exp(Y);
+ 		  ega1  = 0.5*W*exp(y1);
+		  ega2  = 0.5*W*exp(y2);
+		  ega12 = 0.5*W*exp(y12);
+                  beam = 2; 
+                } else if( A_1 ==1 && A_2 != 1){
+                  // pA, second beam is the nucleus and photon emitter
+                  // Egamma = 0.5*W*exp(-Y); 
+		  ega1  = 0.5*W*exp(-y1);
+		  ega2  = 0.5*W*exp(-y2);
+		  ega12 = 0.5*W*exp(-y12);
+                  beam = 1; 
+                } else {
+                  // Egamma = 0.5*W*exp(Y);        
+		  ega1  = 0.5*W*exp(y1);
+		  ega2  = 0.5*W*exp(y2);
+		  ega12 = 0.5*W*exp(y12);
+                  beam = 2; 
+                }
+
+		// ega1  = 0.5*W*exp(y1);
+		// ega2  = 0.5*W*exp(y2);
+		// ega12 = 0.5*W*exp(y12);
 
                 // This is for checking things in the lab frame 
                 // y1lab  = _narrowYmin + double(J)*dY;
@@ -136,7 +160,7 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
                 Wgp = sqrt(2.*ega1*(_Ep+sqrt(_Ep*_Ep-starlightConstants::protonMass*starlightConstants::protonMass))
 			          +starlightConstants::protonMass*starlightConstants::protonMass);
                 csVN = sigma_N(Wgp);            
-                csVA = sigma_A(csVN); 
+                csVA = sigma_A(csVN,beam); 
                 csgA1 = (csVA/csVN)*sigmagp(Wgp); 
                 if( getbbs().beam1().A() == 1 || getbbs().beam2().A()==1 ){
                   csgA1 = sigmagp(Wgp);
@@ -147,7 +171,7 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
 			          +starlightConstants::protonMass*starlightConstants::protonMass);
                 Wgpm = Wgp; 
                 csVN = sigma_N(Wgp);            
-                csVA = sigma_A(csVN); 
+                csVA = sigma_A(csVN,beam); 
                 csgA12 = (csVA/csVN)*sigmagp(Wgp); 
                 if( getbbs().beam1().A() == 1 || getbbs().beam2().A()==1 ){
                   csgA12 = sigmagp(Wgp);
@@ -157,28 +181,118 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
                 Wgp = sqrt(2.*ega2*(_Ep+sqrt(_Ep*_Ep-starlightConstants::protonMass*starlightConstants::protonMass))
 			          +starlightConstants::protonMass*starlightConstants::protonMass);
                 csVN = sigma_N(Wgp);            
-                csVA = sigma_A(csVN); 
+                csVA = sigma_A(csVN,beam); 
                 csgA2 = (csVA/csVN)*sigmagp(Wgp); 
                 if( getbbs().beam1().A() == 1 || getbbs().beam2().A()==1 ){
                   csgA2 = sigmagp(Wgp);
                 }
 
-                dR = ega1*photonFlux(ega1)*csgA1;  
-                dR = dR + 4*ega12*photonFlux(ega12)*csgA12;
-                dR = dR + ega2*photonFlux(ega2)*csgA2; 
+                dR = ega1*photonFlux(ega1,beam)*csgA1;  
+                dR = dR + 4*ega12*photonFlux(ega12,beam)*csgA12;
+                dR = dR + ega2*photonFlux(ega2,beam)*csgA2; 
                 dR = dR*(dY/6.); 
 
 		// cout<<" y: "<<y12<<" egamma: "<<ega12<<" flux: "<<photonFlux(ega12)<<" sigma_gA: "<<10000000.*csgA12<<" dsig/dy (microb): "<<10000.*dR/dY<<endl;
                 // cout<<" y: "<<y12lab<<" egamma: "<<ega12<<" flux: "<<ega12*photonFlux(ega12)<<" W: "<<Wgpm<<" Wflux: "<<Wgpm*photonFlux(ega12)<<" sigma_gA (nb): "<<10000000.*csgA12<<" dsig/dy (microb): "<<10000.*ega12*photonFlux(ega12)*csgA12<<endl;
 
 		// The 2 accounts for the 2 beams    
-	        if(getbbs().beam1().A()==getbbs().beam2().A()){
-	        	dR  = 2.*dR;
-		}
+		//	        if(getbbs().beam1().A()==getbbs().beam2().A()){
+		// 	dR  = 2.*dR;
+		//}
 
 		int_r = int_r+dR;
 
 	}
-	rate=luminosity()*int_r;
+
+        // Repeat the loop for the case when the second beam is the photon emitter. 
+        // Don't repeat for pA
+        if( !( (A_2 == 1 && A_1 != 1) || (A_1 == 1 && A_2 != 1) ) ){ 
+	  for(J=0;J<=(NY-1);J++){
+    
+	        // This is the fdefault
+		y1  = _narrowYmin + double(J)*dY;
+		y2  = _narrowYmin + double(J+1)*dY;
+		y12 = 0.5*(y1+y2);
+    
+                beam = 1; 
+		ega1  = 0.5*W*exp(-y1);
+		ega2  = 0.5*W*exp(-y2);
+		ega12 = 0.5*W*exp(-y12);
+
+                // This is for checking things in the lab frame 
+                // y1lab  = _narrowYmin + double(J)*dY;
+                // y2lab  = _narrowYmin + double(J+1)*dY;
+                // y12lab = 0.5*(y1lab+y2lab);
+
+                // p+Pb
+                // y1 = y1lab + 0.465;
+                // y2 = y2lab + 0.465;
+                // y12 = y12lab + 0.465; 
+                // ega1  = 0.5*W*exp(y1);
+                // ega2  = 0.5*W*exp(y2);
+                // ega12 = 0.5*W*exp(y12);
+
+                // Pb+p
+                // y1 = y1lab - 0.465;
+                // y2 = y2lab - 0.465;
+                // y12 = y12lab - 0.465; 
+                // ega1  = 0.5*W*exp(-y1);
+                // ega2  = 0.5*W*exp(-y2);
+                // ega12 = 0.5*W*exp(-y12);
+
+    
+		if(ega2 < Eth)   
+			continue;
+		if(ega1 > maxPhotonEnergy()) 
+			continue;
+
+		// First point 
+                Wgp = sqrt(2.*ega1*(_Ep+sqrt(_Ep*_Ep-starlightConstants::protonMass*starlightConstants::protonMass))
+			          +starlightConstants::protonMass*starlightConstants::protonMass);
+                csVN = sigma_N(Wgp);            
+                csVA = sigma_A(csVN,beam); 
+                csgA1 = (csVA/csVN)*sigmagp(Wgp); 
+                if( getbbs().beam1().A() == 1 || getbbs().beam2().A()==1 ){
+                  csgA1 = sigmagp(Wgp);
+                }
+
+		// Middle point 
+                Wgp = sqrt(2.*ega12*(_Ep+sqrt(_Ep*_Ep-starlightConstants::protonMass*starlightConstants::protonMass))
+			          +starlightConstants::protonMass*starlightConstants::protonMass);
+                Wgpm = Wgp; 
+                csVN = sigma_N(Wgp);            
+                csVA = sigma_A(csVN,beam); 
+                csgA12 = (csVA/csVN)*sigmagp(Wgp); 
+                if( getbbs().beam1().A() == 1 || getbbs().beam2().A()==1 ){
+                  csgA12 = sigmagp(Wgp);
+                }
+
+		// Last point 
+                Wgp = sqrt(2.*ega2*(_Ep+sqrt(_Ep*_Ep-starlightConstants::protonMass*starlightConstants::protonMass))
+			          +starlightConstants::protonMass*starlightConstants::protonMass);
+                csVN = sigma_N(Wgp);            
+                csVA = sigma_A(csVN,beam); 
+                csgA2 = (csVA/csVN)*sigmagp(Wgp); 
+                if( getbbs().beam1().A() == 1 || getbbs().beam2().A()==1 ){
+                  csgA2 = sigmagp(Wgp);
+                }
+
+                dR = ega1*photonFlux(ega1,beam)*csgA1;  
+                dR = dR + 4*ega12*photonFlux(ega12,beam)*csgA12;
+                dR = dR + ega2*photonFlux(ega2,beam)*csgA2; 
+                dR = dR*(dY/6.); 
+
+		// cout<<" y: "<<y12<<" egamma: "<<ega12<<" flux: "<<photonFlux(ega12)<<" sigma_gA: "<<10000000.*csgA12<<" dsig/dy (microb): "<<10000.*dR/dY<<endl;
+                // cout<<" y: "<<y12lab<<" egamma: "<<ega12<<" flux: "<<ega12*photonFlux(ega12)<<" W: "<<Wgpm<<" Wflux: "<<Wgpm*photonFlux(ega12)<<" sigma_gA (nb): "<<10000000.*csgA12<<" dsig/dy (microb): "<<10000.*ega12*photonFlux(ega12)*csgA12<<endl;
+
+		// The 2 accounts for the 2 beams    
+	        // if(getbbs().beam1().A()==getbbs().beam2().A()){
+	        //	dR  = 2.*dR;
+		//}
+
+		int_r = int_r+dR;
+
+	  }
+        }
 	cout<<" Cross section (mb): " <<10.*int_r<<endl;
 }
