@@ -272,7 +272,9 @@ void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,d
 {
     //this function calculates px,py,pz,and E given w and y
 
-    double anglepp1=0.,anglepp2=0.,pp1=0.,pp2=0.,E1=0.,E2=0.,signpx=0.,pt=0.;
+  double anglepp1=0.,anglepp2=0.,pp1=0.,pp2=0.,E1=0.,E2=0.;
+      //,signpx=0.  unused variable SRK 4/2015
+      double pt=0.;
 
     //E1 and E2 are for the 2 photons in the CM frame
     E1 = w*exp(y)/2.;
@@ -294,7 +296,7 @@ void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,d
     //W is the mass of the produced particle (not necessarily on-mass-shell).Now compute its energy and pz
     E = sqrt(w*w+pt*pt)*cosh(y);
     pz= sqrt(w*w+pt*pt)*sinh(y);
-    signpx = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
+    //    signpx = randyInstance.Rndom();//random()/(RAND_MAX+1.0);  unused variable SRK 4/2015
 
     //pick the z direction
     //Don't do this anymore since y goes from -ymax to +ymax (JN 15-02-2013)
@@ -400,7 +402,9 @@ void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ip
     // double ytest=0.,dndtheta;
     double phi,theta,xtest,Ecm;
     double betax,betay,betaz;
-    double hirestheta,hirestest,hiresw;  //added from JN->needed precision
+    double hirestheta;
+    //hirestest SRK unused variable SRK 4/2015
+    double hiresw;  //added from JN->needed precision
 
     mdec = getMass();
     if(W < 2*mdec)
@@ -439,7 +443,7 @@ void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ip
 
 	hirestheta = 0.;
 	xtest = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
-	hirestest = xtest;
+	//	hirestest = xtest;  // unused variable SRK 4/2015
 	for(int i =1;i<=20000;i++)
 	{
 	    if(xtest > (anglelep[i]/anglelep[20000]))

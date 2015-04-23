@@ -295,7 +295,7 @@ starlight::createEventChannel()
 	case ZOVERZ03:
 		{
 		  //  #ifdef ENABLE_PYTHIA
-	 	        cout<<" This is f2, f2prim, zoverz03 "<<endl; 
+	 	        cout<<" This is f2, f2prim or rho^0 rho^0 "<<endl; 
 			_eventChannel= new Gammagammasingle(*_beamSystem);
 			if (_eventChannel)
 				return true;

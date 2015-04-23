@@ -280,7 +280,7 @@ inputParameters::configureFromFile(const std::string &configFileName)
 		_decayType    = SINGLEMESON;
                 defaultMinW   = 2*pionNeutralMass;
 		break;
-	case 33:  // Z"/Z03
+	case 33:  // Z"/Z0  This is the rho^0 rho^0 final state SRK
 		_particleType = ZOVERZ03;
 		_decayType    = SINGLEMESON;
 		break;

@@ -260,7 +260,7 @@ void Gammagammasingle::picky(double &y)
 void Gammagammasingle::parentMomentum(double w,double y,double &E,double &px,double &py,double &pz)
 {
   //this function calculates px,py,pz,and E given w and y
-  double anglepp1=0.,anglepp2=0.,pp1=0.,pp2=0.,E1=0.,E2=0.,signpx=0.,pt=0.;
+  double anglepp1=0.,anglepp2=0.,ppp1=0.,ppp2=0.,E1=0.,E2=0.,signpx=0.,pt=0.;
   
   //E1 and E2 are for the 2 photons in the CM frame
   E1 = w*exp(y)/2.;
@@ -271,10 +271,10 @@ void Gammagammasingle::parentMomentum(double w,double y,double &E,double &px,dou
   anglepp1 = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
   anglepp2 = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
   
-  pp1 = pp(E1);
-  pp2 = pp(E2);
-  px = pp1*cos(2.*starlightConstants::pi*anglepp1)+pp2*cos(2.*starlightConstants::pi*anglepp2);
-  py = pp1*sin(2.*starlightConstants::pi*anglepp1)+pp2*sin(2.*starlightConstants::pi*anglepp2);
+  ppp1 = pp1(E1);
+  ppp2 = pp2(E2);
+  px = ppp1*cos(2.*starlightConstants::pi*anglepp1)+ppp2*cos(2.*starlightConstants::pi*anglepp2);
+  py = ppp1*sin(2.*starlightConstants::pi*anglepp1)+ppp2*sin(2.*starlightConstants::pi*anglepp2);
   //Compute vector sum Pt=Pt1+Pt2 to find pt for the produced particle
   pt = sqrt(px*px+py*py);
   //W is the mass of the produced particle (not necessarily on-mass-shell).Now compute its energy and pz
@@ -288,8 +288,9 @@ void Gammagammasingle::parentMomentum(double w,double y,double &E,double &px,dou
 
 
 //______________________________________________________________________________
-double Gammagammasingle::pp(double E)
+double Gammagammasingle::pp1(double E)
 {
+  // First 'copy' of pp, for nucleus 1 form factor.  The split was needed to handle asymmetric beams.  SRK 4/2015
   //  will probably have to pass in beambeamsys? that way we can do beam1.formFactor(t) or beam2..., careful with the way sergey did it for asymmetry
   //  returns on random draw from pp(E) distribution
       
@@ -301,7 +302,7 @@ double Gammagammasingle::pp(double E)
   Cm = sqrt(3.)*E/_GGsingInputGamma_em;
   //the amplitude of the p_t spectrum at the maximum
   singleformfactorCm=_bbs.beam1().formFactor(Cm*Cm+ereds);
-  //Doing this once and then storing it as a double, which we square later...SYMMETRY?using beam1 for now.
+  //Doing this once and then storing it as a double, for the beam 1 form factor.
   Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(starlightConstants::pi)*(ereds+Cm*Cm))*(2.*(starlightConstants::pi)*(ereds+Cm*Cm)));
         
   //pick a test value pp, and find the amplitude there
@@ -319,6 +320,45 @@ double Gammagammasingle::pp(double E)
       x =randyInstance.Rndom();//random()/(RAND_MAX+1.0);
       pp = 5*starlightConstants::hbarc/_bbs.beam1().nuclearRadius()*x;
       singleformfactorpp2=_bbs.beam1().formFactor(pp*pp+ereds);//Symmetry
+      test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
+    }
+  }
+  return pp;
+}
+
+//______________________________________________________________________________
+double Gammagammasingle::pp2(double E)
+{
+  // Second 'copy' of pp, for nucleus 1 form factor.  The split was needed to handle asymmetric beams.  SRK 4/2015
+  //  will probably have to pass in beambeamsys? that way we can do beam1.formFactor(t) or beam2..., careful with the way sergey did it for asymmetry
+  //  returns on random draw from pp(E) distribution
+      
+  double ereds =0.,Cm=0.,Coef=0.,x=0.,pp=0.,test=0.,u=0.;
+  double singleformfactorCm=0.,singleformfactorpp1=0.,singleformfactorpp2=0.;
+  int satisfy =0;
+        
+  ereds = (E/_GGsingInputGamma_em)*(E/_GGsingInputGamma_em);
+  Cm = sqrt(3.)*E/_GGsingInputGamma_em;
+  //the amplitude of the p_t spectrum at the maximum
+  singleformfactorCm=_bbs.beam2().formFactor(Cm*Cm+ereds);
+  //Doing this once and then storing it as a double, which we square later...SYMMETRY?using beam1 for now.
+  Coef = 3.0*(singleformfactorCm*singleformfactorCm*Cm*Cm*Cm)/((2.*(starlightConstants::pi)*(ereds+Cm*Cm))*(2.*(starlightConstants::pi)*(ereds+Cm*Cm)));
+        
+  //pick a test value pp, and find the amplitude there
+  x = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
+  pp = x*5.*starlightConstants::hbarc/_bbs.beam2().nuclearRadius(); //Will use nucleus #1, there should be two for symmetry//nextline
+  singleformfactorpp1=_bbs.beam2().formFactor(pp*pp+ereds);
+  test = (singleformfactorpp1*singleformfactorpp1)*pp*pp*pp/((2.*starlightConstants::pi*(ereds+pp*pp))*(2.*starlightConstants::pi*(ereds+pp*pp)));
+
+  while(satisfy==0){
+    u = randyInstance.Rndom();//random()/(RAND_MAX+1.0);
+    if(u*Coef <= test){
+      satisfy =1;
+    }
+    else{
+      x =randyInstance.Rndom();//random()/(RAND_MAX+1.0);
+      pp = 5*starlightConstants::hbarc/_bbs.beam2().nuclearRadius()*x;
+      singleformfactorpp2=_bbs.beam2().formFactor(pp*pp+ereds);//Symmetry
       test = (singleformfactorpp2*singleformfactorpp2)*pp*pp*pp/(2.*starlightConstants::pi*(ereds+pp*pp)*2.*starlightConstants::pi*(ereds+pp*pp));
     }
   }
