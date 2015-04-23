@@ -297,6 +297,7 @@ beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
 	double RSQ=0.,Z1=0.,Z2=0.,Y=0.,X=0.,XB=0.,RPU=0.,IRUP=0.,RTU=0.;
 	double IRUT=0.,T1=0.,T2=0.;
 	static double DEN1[20002], DEN2[20002];
+	double energy,sigmainmb;
 	if (IFIRSTH != 0) goto L100;
 	//Initialize
 	//Integration delta x, delta z
@@ -304,9 +305,16 @@ beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
 	DELL   = .05;
 	DELR   = .01;
 
+	// replace this with a parameterization from the particle data book  SRK 4/1025
 	//use two sigma_NN's. 52mb at rhic 100gev/beam, 88mb at LHC 2.9tev/beam, gamma is in cm system
-	SIGNN = 5.2;
-	if ( gamma > 500. ) SIGNN = 8.8; 
+	//SIGNN = 5.2;
+	//if ( gamma > 500. ) SIGNN = 8.8; 
+	energy=2*gamma*0.938;   // center of mass energy, in GeV
+	  // This equation is from section 50 of the particle data book, the subsection on "Total Hadronic Cross-Sections, using the parameterization for sqrt{s} > 7 GeV.
+	  // only the first and second terms contribute significantly, but leave them all here for good measure
+	  sigmainmb = 0.2838*pow(log(energy),2)+33.73+pow(energy,-0.412)-pow(energy,-0.5626);
+	  SIGNN=sigmainmb/10.;
+
 	//use parameter from Constants
 	R1 = ( _beam1.nuclearRadius());  
         R2 = ( _beam2.nuclearRadius());
