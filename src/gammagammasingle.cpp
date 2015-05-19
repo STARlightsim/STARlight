@@ -688,28 +688,30 @@ double Gammagammasingle::getMass()
 //______________________________________________________________________________
 double Gammagammasingle::getWidth()
 {
+
+  /* Partial widths(GAMMA(gammgamma)) taken from PDG 2014- Chinese Physics C 38, no 9, Sept. 2014.*/
   double singlewidth=0.;
   switch(_GGsingInputpidtest){
   case starlightConstants::ETA:
-    singlewidth=1.E-6;
+    singlewidth=0.516E-6;
     break;
   case starlightConstants::ETAPRIME:
-    singlewidth=5.E-6;
+    singlewidth=4.35E-6;
     break;
   case starlightConstants::ETAC:
-    singlewidth=6.4E-6;
+    singlewidth=5.0E-6;
     break;
   case starlightConstants::F0:
-    singlewidth=0.56E-6;
+    singlewidth=0.29E-6;
     break;
   case starlightConstants::F2:
-    singlewidth=2.6E-6;
+    singlewidth=3.03E-6;
     break;
   case starlightConstants::A2:
-    singlewidth=1.04E-6;
+    singlewidth=1.0E-6;
     break;
   case starlightConstants::F2PRIME:
-    singlewidth=0.1E-6;
+    singlewidth=0.081E-6;
     break;
   case starlightConstants::ZOVERZ03:
     singlewidth=0.1E-6;

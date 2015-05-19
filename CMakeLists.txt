@@ -186,8 +186,10 @@ if(ENABLE_PYTHIA)
   find_package(Pythia8)
   if(PYTHIA8_FOUND)
     set(optionalLibs ${optionalLibs} ${PYTHIA8_LIBRARY})
-    find_package(LHAPDF REQUIRED) # implemented for dummy version in Pythia8
-    set(optionalLibs ${optionalLibs} ${LHAPDF_LIBRARIES})
+#    find_package(LHAPDF REQUIRED) # implemented for dummy version in Pythia8
+#    set(optionalLibs ${optionalLibs} ${LHAPDF_LIBRARIES})#liblhapdfdummy
+#    removed from v8.2, if you want to add your own lhapdf set, uncomment
+#    find_package + set  - jb 05192015
     option(ENABLE_PYTHIA  "Should we use the Pythia8 library" ON) 
   else() 
     option(ENABLE_PYTHIA  "Should we use the Pythia8 library" OFF) 
@@ -223,7 +225,7 @@ if(ENABLE_DPMJET)
 set(INCLUDE_DIRECTORIES
 	${CMAKE_SOURCE_DIR}/include
 	${PROJECT_BINARY_DIR}
-#	${PYTHIA8_INCLUDE_DIR}
+	${PYTHIA8_INCLUDE_DIR}#uncommented 05192015
 	)
 include_directories(${INCLUDE_DIRECTORIES})
 

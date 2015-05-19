@@ -1,8 +1,8 @@
-FIND_PATH(PYTHIA8_INCLUDE_DIR Pythia.h /usr/include/ /usr/include/pythia /usr/local/include/ $ENV{PYTHIADIR}/include)
+FIND_PATH(PYTHIA8_INCLUDE_DIR Pythia8/Pythia.h /usr/include/ /usr/include/pythia /usr/local/include/ $ENV{PYTHIADIR}/include)
 
-FIND_PATH(PYTHIA8_SETTINGS_DIR Index.xml /usr/share/pythia/xmldoc $ENV{PYTHIADIR}/xmldoc)
+FIND_PATH(PYTHIA8_SETTINGS_DIR Index.xml /usr/share/pythia/xmldoc $ENV{PYTHIADIR}/share/Pythia8/xmldoc)
 
-FIND_LIBRARY(PYTHIA8_LIBRARY NAMES pythia8 PATHS /usr/lib /usr/lib/pythia /usr/local/lib $ENV{PYTHIADIR}/lib/archive/)
+FIND_LIBRARY(PYTHIA8_LIBRARY NAMES pythia8 PATHS /usr/lib /usr/lib/pythia /usr/local/lib $ENV{PYTHIADIR}/lib)
 
 IF (PYTHIA8_INCLUDE_DIR AND PYTHIA8_LIBRARY AND PYTHIA8_SETTINGS_DIR)
    SET(PYTHIA8_FOUND TRUE)

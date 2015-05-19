@@ -28,7 +28,7 @@ pythiaDecayer& pythiaDecayer::operator=(const pythiaDecayer &other)
 void pythiaDecayer::init()
 {
   _pythia.readString("ProcessLevel:all = off"); 
-  _pythia.readString("Standalone:allowResDec = on");
+//  _pythia.readString("Standalone:allowResDec = on");//Option removed from Pythia8 JB05192015
   _pythia.readString("Next:numberShowEvent = 0");
   _pythia.init();                               
   _pythia.event.reset();
@@ -64,7 +64,7 @@ upcEvent pythiaDecayer::execute()
   {
     
       Particle p = pyEvent[i];
-      starlightParticle slPart(p.px(), p.py(), p.pz(), p.e(), p.mass(), p.idAbs()*(p.charge()<0?-1:1), p.charge(),
+      starlightParticle slPart(p.px(), p.py(), p.pz(), p.e(), p.m(), p.idAbs()*(p.charge()<0?-1:1), p.charge(),
 			       p.xProd(), p.yProd(), p.zProd(), p.tProd(),
 			       p.mother1(), p.mother2(), p.daughter1(), p.daughter2(), p.status());
       slEvent.addParticle(slPart);

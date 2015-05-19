@@ -37,7 +37,7 @@
 
 #include <string>
 
-#include "Pythia.h"
+#include "Pythia8/Pythia.h"
 
 
 class pythiaStarlight

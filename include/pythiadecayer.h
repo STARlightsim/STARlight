@@ -1,7 +1,7 @@
 #ifndef PYTHIADECAYER_H
 #define PYTHIADECAYER_H
 
-#include "Pythia.h"
+#include "Pythia8/Pythia.h"
 #include "starlightparticle.h"
 #include "upcevent.h"
 
