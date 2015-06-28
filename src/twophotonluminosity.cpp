@@ -333,7 +333,8 @@ double twoPhotonLuminosity::integral(double Normalize)
   double NEval      = 0.;
   double Lower[3];
   double Upper[3];
-  double WK[500000]; //used to be [1000000]
+  //double WK[500000]; //used to be [1000000]
+  double *WK = new double[500000];
   double Result, Summary, ResErr, NFNEVL;
 
   EPS = .01*Normalize;   //This is EPS for integration, 1% of previous integral value.
@@ -467,6 +468,7 @@ double twoPhotonLuminosity::integral(double Normalize)
     }
   }
   Integrala = 2*starlightConstants::pi*Integrala;
+  delete [] WK;
   return Integrala;
 }
 
