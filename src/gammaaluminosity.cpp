@@ -201,14 +201,14 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   }
 
   wylumfile << bwnorm << endl;
-  wylumfile << inputParametersInstance.parameterValueKey() << endl;
+  //wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile.close();
   
   if(inputParametersInstance.interferenceEnabled()==1) 
     pttablegen();
  
-  //  wylumfile.open("slight.txt",ios::app);
-  // cout << "bwnorm: "<< bwnorm <<endl;
+   // wylumfile.open("slight.txt",ios::app);
+   //cout << "bwnorm: "<< bwnorm <<endl;
   //wylumfile << bwnorm << endl;
   //wylumfile << inputParametersInstance.parameterValueKey() << endl;
   //wylumfile.close();

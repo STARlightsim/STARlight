@@ -161,6 +161,7 @@ void readLuminosity::read()
       }
     }
   }
+  wylumfile >> _bwnormsave;
 
   if (_ReadInputgg_or_gP != 1 && _ReadInputinterferencemode != 0) {
         // only numy/2 y bins here, from 0 (not -ymax) to ymax
@@ -188,7 +189,7 @@ void readLuminosity::read()
         delete [] finterm;
 
     }
-  wylumfile >> _bwnormsave;
+//  wylumfile >> _bwnormsave;
   wylumfile.close();
   //8delete[] finterm;	
   return;

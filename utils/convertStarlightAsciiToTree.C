@@ -100,7 +100,7 @@ void convertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 
 	double IDtoMass(int particleCode){
 		double mass;
-		if (particleCode == 2 || particleCode==3) {mass = 0.0051099907;} // electron
+		if (particleCode == 2 || particleCode==3) {mass = 0.00051099907;} // electron
 		else if (particleCode == 5 || particleCode==6) {mass = 0.105658389;} // muon
 		else if (particleCode == 8 || particleCode==9)  {mass = 0.13956995;} // charged pion
 		else if (particleCode == 7) {mass = 0.1345766;} // neutral pion

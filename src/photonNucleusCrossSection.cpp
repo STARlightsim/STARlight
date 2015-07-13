@@ -958,6 +958,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 	//  Alternative, a simple, no-background BW, following J. Breitweg et al.
 	//  Eq. 15 of Eur. Phys. J. C2, 247 (1998).  SRK 11/10/2000
 	//      nrbw_r = (_ANORM*_mass*GammaPrim/(bb*bb+cc*cc))**2
+
   
 	nrbw_r = C*nrbw_r;
   

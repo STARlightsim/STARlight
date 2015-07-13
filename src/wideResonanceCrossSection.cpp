@@ -79,7 +79,6 @@ wideResonanceCrossSection::crossSectionCalculation(const double bwnormsave)
 
 	double bwnorm = bwnormsave; //used to transfer the bwnorm from the luminosity tables
 
-        cout<<" in wideResonanceCrossSection, bwnorm: "<<bwnorm<<endl; 
 	//gamma+nucleon threshold.
 	Eth=0.5*(((_wideWmin+protonMass)*(_wideWmin+protonMass)
 	          -protonMass*protonMass)/(_Ep+sqrt(_Ep*_Ep-protonMass*protonMass)));
@@ -165,7 +164,6 @@ wideResonanceCrossSection::crossSectionCalculation(const double bwnormsave)
 			dR  = dR + ega2*photonFlux(ega2,beam)*csgA2;
 			dR  = dR*(dY/6.)*breitWigner(W,bwnorm)*dW;
       
-                        // cout<<" W: "<<W<<" Y: "<<y12<<" dR: "<<dR<<endl;
 			//For identical beams, we double.  Either may emit photon/scatter
 			//For large differences in Z, we approx, that only beam1 emits photon
 			//and beam2 scatters, eg d-Au where beam1=au and beam2=d

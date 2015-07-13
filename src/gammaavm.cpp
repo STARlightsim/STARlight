@@ -468,7 +468,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	  Epom = 0.5*W*exp(-Y);
 	}
 
-        // cout<<" Y: "<<Y<<" W: "<<W<<" TargetBeam; "<<_TargetBeam<<" Egam: "<<Egam<<" Epom: "<<Epom<<endl; 
+         //cout<<" Y: "<<Y<<" W: "<<W<<" TargetBeam; "<<_TargetBeam<<" Egam: "<<Egam<<" Epom: "<<Epom<<endl; 
         pt1 = pTgamma(Egam);  
 	phi1 = 2.*starlightConstants::pi*randyInstance.Rndom();
 
@@ -569,7 +569,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	E  = sqrt(W*W+pt*pt)*cosh(Y);
 	pz = sqrt(W*W+pt*pt)*sinh(Y);
  
-        // cout<< " Y = "<<Y<<" W = "<<W<<" Egam = "<<Egam<<" gamma = "<<_VMgamma_em<<endl; 
+         //cout<< " Y = "<<Y<<" W = "<<W<<" Egam = "<<Egam<<" gamma = "<<_VMgamma_em<<endl; 
 
 	// Keep this special case for d+A 
 	if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
@@ -769,7 +769,6 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 
 	//  now interpolate in y  
 	pt=yfract*pt2+(1-yfract)*pt1;
-
  L120:
 
 	//  we have a pt 
@@ -852,8 +851,6 @@ upcEvent Gammaavectormeson::produceEvent()
 			twoBodyDecay(ipid,E,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
 			double pt1chk = sqrt(px1*px1+py1*py1);
 			double pt2chk = sqrt(px2*px2+py2*py2);
-    
-			//cout << "pt1: " << pt1chk  << " pt2: " << pt2chk << endl;
 			double eta1 = pseudoRapidity(px1, py1, pz1);
 			double eta2 = pseudoRapidity(px2, py2, pz2);
 			//cout << "eta1: " << eta1 << " eta2: " << eta2 << endl;
