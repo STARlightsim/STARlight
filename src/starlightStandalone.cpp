@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
 //
 //    Copyright 2010
 //
@@ -45,7 +45,7 @@ using namespace std;
 
 starlightStandalone::starlightStandalone()
 	:	_configFileName   ("slight.in"),
-		_eventDataFileName("slight.out"),
+//		_eventDataFileName("slight.out"),
 		_starlight        (0),
 		_inputParameters  (0),
 		_nmbEventsTot     (1),
@@ -66,6 +66,30 @@ starlightStandalone::init()
 		printWarn << "problems initializing input parameters. cannot initialize starlight." << endl;
 		return false;
 	}
+
+	// copy input file to one with baseFileName naming scheme
+        std::string inputCopyName, _baseFileName;
+        _baseFileName = inputParametersInstance.baseFileName();
+         inputCopyName = _baseFileName +".in";
+
+        ofstream inputCopyFile;
+	inputCopyFile.open(inputCopyName.c_str());
+
+        std::ifstream infile(_configFileName.c_str());
+        if ((!infile) || (!infile.good()))
+        {
+          return -1;
+        }
+
+        int lineSize = 256;
+        char tmp[lineSize];
+        while (!infile.getline(tmp, lineSize).eof())
+        {
+     	 cout << tmp << endl;
+         inputCopyFile << tmp << endl;
+        }
+        inputCopyFile.close();
+
 
 	// get the number of events
 	// for now we write everything to one file
@@ -92,6 +116,8 @@ starlightStandalone::run()
 	// open output file
 	eventFileWriter fileWriter;
 	fileWriter.writeFullPythiaInfo(inputParametersInstance.pythiaFullEventRecord());
+        _baseFileName = inputParametersInstance.baseFileName();
+        _eventDataFileName = _baseFileName +".out";
 	fileWriter.open(_eventDataFileName);
 
 	printInfo << "generating events:" << endl;

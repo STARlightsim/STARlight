@@ -73,9 +73,14 @@ twoPhotonLuminosity::~twoPhotonLuminosity()
 //______________________________________________________________________________
 void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
 {
+  std::string wyFileName, _baseFileName;
+  _baseFileName = inputParametersInstance.baseFileName();
+  wyFileName = _baseFileName +".txt";
+
   ofstream wylumfile;
   wylumfile.precision(15);
-  wylumfile.open("slight.txt");
+//  wylumfile.open("slight.txt");
+  wylumfile.open(wyFileName.c_str());
   std::vector<double> w(_nWbins);
   std::vector<double> y(_nYbins);
   double xlum = 0.; 

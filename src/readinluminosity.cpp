@@ -104,6 +104,12 @@ void readLuminosity::read()
   //  double (*finterm)[starlightLimits::MAXWBINS]=new double[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];  
   //decreased from 1000*1000; too big! causes fault!
 
+  std::string wyFileName, _baseFileName;
+  _baseFileName = inputParametersInstance.baseFileName();
+  wyFileName = _baseFileName +".txt";
+  
+  cout << "wyFileName being read in" << wyFileName << endl;
+
   double fpart =0.;
   double fptsum=0.;
   ifstream wylumfile;
@@ -112,7 +118,9 @@ void readLuminosity::read()
   _f_max1=0.0;
   _f_max2=0.0;
 
-  wylumfile.open("slight.txt");
+//  wylumfile.open("slight.txt");
+  wylumfile.open(wyFileName.c_str());
+
   for(int i=0;i < 19;i++){ // was 14; this is to account for sergei's additional parameters ie d-Au//was19
     wylumfile >> dummy[i];
   }

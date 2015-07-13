@@ -76,6 +76,10 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   double C;  
   int beam; 
 
+  std::string wyFileName, _baseFileName;
+  _baseFileName = inputParametersInstance.baseFileName();
+  wyFileName = _baseFileName +".txt";
+
   ofstream wylumfile;
   wylumfile.precision(15);
   
@@ -85,7 +89,8 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   dY  = (_yMax-(-1.0)*_yMax)/_nYbins;
     
   // Write the values of W used in the calculation to slight.txt.  
-  wylumfile.open("slight.txt");
+//  wylumfile.open("slight.txt");
+  wylumfile.open(wyFileName.c_str());
   // wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile << getbbs().beam1().Z() <<endl;
   wylumfile << getbbs().beam1().A() <<endl;
@@ -237,12 +242,18 @@ void photonNucleusLuminosity::pttablegen()
   //  Then, loop over b and phi (the angle between the VM \vec{p_t} and \vec{b}
   //  and calculate the cross section at each step.
   //  Put the results in pttable
-  
+
+  std::string wyFileName, _baseFileName;
+  _baseFileName = inputParametersInstance.baseFileName();
+  wyFileName = _baseFileName +".txt";
+
   ofstream wylumfile;
+//  ofstream wylumfile(wyFileName.c_str());  
   wylumfile.precision(15);
-  wylumfile.open("slight.txt",ios::app);
-  
-  
+
+//  wylumfile.open("slight.txt",ios::app);
+  wylumfile.open(wyFileName.c_str(),ios::app);
+
   double param1pt[500],param2pt[500];
   double  *ptparam1=param1pt;
   double  *ptparam2=param2pt;

@@ -53,9 +53,11 @@ public:
 	bool init();  ///< reads configuration file and initializes startlight
 	bool run ();  ///< creates output file and runs starlight
 
+        const std::string& baseFileName     () const { return _baseFileName;        }
 	const std::string& configFileName   () const { return _configFileName;      }  ///< returns path to config file
 	const std::string& eventDataFileName() const { return _eventDataFileName;   }  ///< returns path to output file
 
+        void setBaseFileName     (const std::string& baseFileName     ) { _baseFileName      = baseFileName;    }  ///< sets path to base file
 	void setConfigFileName   (const std::string& configFileName   ) { _configFileName    = configFileName;    }  ///< sets path to config file
 	void setEventDataFileName(const std::string& eventDataFileName) { _eventDataFileName = eventDataFileName; }  ///< sets path to output file
 	
@@ -63,6 +65,7 @@ public:
 
 private:
 
+        std::string      _baseFileName;       ///< path to base filename
 	std::string      _configFileName;     ///< path to configuration file
 	std::string      _eventDataFileName;  ///< path to output file
 

@@ -74,9 +74,9 @@ starlight::starlight() :
 		_eventChannel          (0),
 		_nmbEventsPerFile      (100),
 		_nmbEventsToGenerate   (10),
-		_configFileName        ("slight.in"),
-		_eventDataFileName     ("slight.out"),
-		_lumLookUpTableFileName("slight.txt"),
+//		_configFileName        ("slight.in"),
+//		_eventDataFileName     ("slight.out"),
+//		_lumLookUpTableFileName("slight.txt"),
 		_isInitialised         (false)
 { }
 
@@ -111,6 +111,11 @@ starlight::init()
 	// streamsize precision(15);
 	cout.setf(ios_base::fixed,ios_base::floatfield);
 	cout.precision(15);
+
+        std::string _baseFileName;
+        _baseFileName = inputParametersInstance.baseFileName();
+       _lumLookUpTableFileName = _baseFileName + ".txt";
+
 	const bool lumTableIsValid = luminosityTableIsValid();
 	bool createChannel = true;
 	switch (inputParametersInstance.interactionType())	{

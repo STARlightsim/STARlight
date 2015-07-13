@@ -194,6 +194,7 @@ void inputParser::printParameterInfo(std::ostream &out)
     std::map<std::string, _parameter<float> >::iterator floatIt;
     std::map<std::string, _parameter<double> >::iterator doubleIt;
     std::map<std::string, _parameter<bool> >::iterator boolIt;
+    std::map<std::string, _parameter<std::string> >::iterator stringIt;
     out << "#########################################" << std::endl;
     out << "PARAMETER:\t\tVALUE:" << std::endl;
     out << "#########################################" << std::endl;
@@ -221,6 +222,11 @@ void inputParser::printParameterInfo(std::ostream &out)
     for (boolIt = _boolParameters.begin(); boolIt != _boolParameters.end(); ++boolIt)
     {
         boolIt->second.printParameterInfo();
+        out << "-----------------------------------------" << std::endl;
+    }
+    for (stringIt = _stringParameters.begin(); stringIt != _stringParameters.end(); ++stringIt)
+    {
+     	stringIt->second.printParameterInfo();
         out << "-----------------------------------------" << std::endl;
     }
     out << "#########################################" << std::endl;

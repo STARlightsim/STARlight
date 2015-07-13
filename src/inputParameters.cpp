@@ -1,33 +1,31 @@
-///////////////////////////////////////////////////////////////////////////
-//
-//    Copyright 2010
-//
-//    This file is part of starlight.
-//
-//    starlight is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
-//    (at your option) any later version.
-//
-//    starlight is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with starlight. If not, see <http://www.gnu.org/licenses/>.
-//
-///////////////////////////////////////////////////////////////////////////
-//
-// File and Version Information:
-// $Rev::                             $: revision of last commit
-// $Author::                          $: author of last commit
-// $Date::                            $: date of last commit
-//
-// Description:
-//
-//
-//
+/////////////////////////////////////////////////////////////////////////// 
+// 
+// Copyright 2010 
+// 
+// This file is part of starlight. 
+// 
+// starlight is free software: you can redistribute it and/or modify 
+// it under the terms of the GNU General Public License as published by 
+// the Free Software Foundation, either version 3 of the License, or 
+// (at your option) any later version. 
+// 
+// starlight is distributed in the hope that it will be useful, 
+// but WITHOUT ANY WARRANTY; without even the implied warranty of 
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+// GNU General Public License for more details. 
+// 
+// You should have received a copy of the GNU General Public License 
+// along with starlight. If not, see <http://www.gnu.org/licenses/>. 
+// 
+/////////////////////////////////////////////////////////////////////////// 
+// 
+// File and Version Information: 
+// $Rev::     $: revision of last commit // $Author::         $: author of last commit 
+// $Date::                            $: date of last commit // 
+// Description: 
+// 
+// 
+// 
 ///////////////////////////////////////////////////////////////////////////
 
 
@@ -53,7 +51,7 @@ parameterlist parameterbase::_parameters;
 
 //______________________________________________________________________________
 inputParameters::inputParameters()
-	: _configFileName        ("slight.in"),
+        : _baseFileName          ("baseFileName","slight"),
  	  _beam1Z                ("BEAM_1_Z",0),
 	  _beam1A                ("BEAM_1_A",0),
 	  _beam2Z                ("BEAM_2_Z",0),
@@ -94,6 +92,8 @@ inputParameters::inputParameters()
   // If not: error: 'parameter<T, validate>::parameter() [with T = unsigned int, bool validate = true]' is private
   // or similar
 	
+        _ip.addParameter(_baseFileName);
+
 	_ip.addParameter(_beam1Z);
 	_ip.addParameter(_beam2Z);
 	_ip.addParameter(_beam1A);
@@ -144,11 +144,39 @@ inputParameters::~inputParameters()
 
 //______________________________________________________________________________
 bool
-inputParameters::configureFromFile(const std::string &configFileName)
+inputParameters::configureFromFile(const std::string &_configFileName)
 {
 	// open config file
-	_configFileName = configFileName;
-	
+//	_configFileName = configFileName;
+
+//  std::string inputCopyName, _baseFileName;
+//  _baseFileName = inputParametersInstance.baseFileName();
+//  inputCopyName = _baseFileName +".in";
+
+//  ofstream inputCopyFile;
+
+//    std::ifstream infile(_configFileName.c_str());
+//    if ((!infile) || (!infile.good()))
+//    {
+//      return -1;
+//    }
+
+//    int lineSize = 256;
+//    char tmp[lineSize];
+//    while (!infile.getline(tmp, lineSize).eof())
+//    {
+//	cout << tmp;
+//	inputCopyFile << tmp;
+//     	std::string line(tmp);
+//    }
+
+//  {
+//  _configFileName.get(ch); //reading from file object 'a'
+//  cout<<ch;
+//  inputCopyFile<<ch; //writing to file baseFileName.in
+//  }
+//  inputCopyFile.close();
+
 	int nParameters = _ip.parseFile(_configFileName);
 	
 	if(nParameters == -1) 
@@ -467,7 +495,7 @@ ostream&
 inputParameters::print(ostream& out) const
 {
 	out << "starlight parameters:" << endl
-	    << "    config file name  ...................... '" << _configFileName << "'" << endl
+	    << "    base file name  ...................... '"  << _baseFileName.value() << "'" << endl
 	    << "    beam 1 atomic number ................... " << _beam1Z.value() << endl
 	    << "    beam 1 atomic mass number .............. " << _beam1A.value() << endl
 	    << "    beam 2 atomic number ................... " << _beam2Z.value() << endl
@@ -509,7 +537,8 @@ ostream&
 inputParameters::write(ostream& out) const
 {
   
-	out << "BEAM_1_Z"      << beam1Z               () <<endl
+        out << "baseFileName"  << baseFileName         () <<endl
+	    << "BEAM_1_Z"      << beam1Z               () <<endl
 	    << "BEAM_2_Z"      << beam1A               () <<endl
 	    << "BEAM_1_A"      << beam2Z               () <<endl
 	    << "BEAM_2_A"      << beam2A               () <<endl

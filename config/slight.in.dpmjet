@@ -1,3 +1,4 @@
+baseFileName = slight	#suite of output files will be saved with this base name 
 BEAM_1_Z = 82    #Z of projectile
 BEAM_1_A = 208   #A of projectile
 BEAM_2_Z = 82   #Z of target

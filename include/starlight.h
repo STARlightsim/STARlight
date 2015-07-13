@@ -57,7 +57,7 @@ public:
 
 	upcEvent produceEvent();
       
-	std::string   configFileName() const { return _configFileName;              }
+        std::string   baseFileName  () const { return _baseFileName;		  }
 	unsigned long nmbAttempts   () const { return _eventChannel->nmbAttempts(); }
 	unsigned long nmbAccepted   () const { return _eventChannel->nmbAccepted(); } 
    
@@ -74,8 +74,9 @@ private:
 	eventChannel*      _eventChannel;
 	unsigned int       _nmbEventsPerFile;
 	unsigned long long _nmbEventsToGenerate;
-	std::string        _configFileName;
-	std::string        _eventDataFileName;
+	std::string        _baseFileName;
+//	std::string        _configFileName;
+//	std::string        _eventDataFileName;
 	std::string        _lumLookUpTableFileName;
 	bool               _isInitialised;
 

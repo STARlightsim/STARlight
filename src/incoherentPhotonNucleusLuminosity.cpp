@@ -72,6 +72,10 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
   double C;  
   int beam; 
 
+  std::string wyFileName, _baseFileName;
+  _baseFileName = inputParametersInstance.baseFileName();
+  wyFileName = _baseFileName +".txt";
+
   ofstream wylumfile;
   wylumfile.precision(15);
   
@@ -81,7 +85,8 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
   dY  = (_yMax-(-1.0)*_yMax)/_nYbins;
     
   // Write the values of W used in the calculation to slight.txt.  
-  wylumfile.open("slight.txt");
+//  wylumfile.open("slight.txt");
+  wylumfile.open(wyFileName.c_str());
   // wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile << getbbs().beam1().Z() <<endl;
   wylumfile << getbbs().beam1().A() <<endl;
