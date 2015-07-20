@@ -66,59 +66,6 @@ Gammaavectormeson::Gammaavectormeson(beamBeamSystem& bbsystem):eventChannel(bbsy
         _ProductionMode=inputParametersInstance.productionMode();
 
         N1 = 0; N2 = 0; 
-
-	switch(_VMpidtest){
-	case starlightConstants::RHO:
-	case starlightConstants::RHOZEUS:
-		_width=0.1507;
-		_mass=0.7685;
-		break;
-	case starlightConstants::FOURPRONG:
-		// create n-body phase-space generator instance
-		_phaseSpaceGen = new nBodyPhaseSpaceGen();
-		_width = 0.360;
-		_mass  = 1.350;
-		break;
-	case starlightConstants::OMEGA:
-		_width=0.00843;
-		_mass=0.78194;
-		break;
-	case starlightConstants::PHI:
-		_width=0.00443;
-		_mass=1.019413;
-		break;
-	case starlightConstants::JPSI:
-	case starlightConstants::JPSI_ee:
-	case starlightConstants::JPSI_mumu:
-		_width=0.000091;
-		_mass=3.09692;
-		break;
-	case starlightConstants::JPSI2S:
-	case starlightConstants::JPSI2S_ee:
-	case starlightConstants::JPSI2S_mumu:
-		_width=0.000337;
-		_mass=3.686093;
-		break;
-	case starlightConstants::UPSILON:
-	case starlightConstants::UPSILON_ee:
-	case starlightConstants::UPSILON_mumu:
-		_width=0.00005402;
-		_mass=9.46030;
-		break;
-	case starlightConstants::UPSILON2S:
-	case starlightConstants::UPSILON2S_ee:
-	case starlightConstants::UPSILON2S_mumu:
-		_width=0.00003198;
-		_mass=10.02326;
-		break;
-	case starlightConstants::UPSILON3S:
-	case starlightConstants::UPSILON3S_ee:
-	case starlightConstants::UPSILON3S_mumu:
-		_width=0.00002032;
-		_mass=10.3552;
-		break;
-	default: cout<<"No proper vector meson defined, gammaavectormeson::gammaavectormeson"<<endl;
-	}  
 }
 
 
