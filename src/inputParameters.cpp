@@ -319,160 +319,161 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 	case 113:  // rho(770)
 		_particleType = RHO;
 		_decayType    = WIDEVMDEFAULT;
-		mass          = 0.7685;
-		width         = 0.1507;
+		mass          = starlightConstants::rho0Mass;
+		width         = starlightConstants::rho0Width;
 		defaultMinW   = 2 * pionChargedMass;
 		_maxW         = mass + 5 * width;
 		break;
 	case 913:  // rho(770) with direct pi+pi- decay, interference given by ZEUS data
 		_particleType = RHOZEUS;
 		_decayType    = WIDEVMDEFAULT;
-		mass          = 0.7685;                    
-		width         = 0.1507;
+		mass          = starlightConstants::rho0Mass;
+		width         = starlightConstants::rho0Width;
 		defaultMinW   = 2 * pionChargedMass;
 		_maxW         = mass + 5 * width;  // use the same 1.5GeV max mass as ZEUS
 		break;
 	case 999:  // pi+pi-pi+pi- phase space decay
 		_particleType = FOURPRONG;
 		_decayType    = WIDEVMDEFAULT;
-		mass          = 1.350;
-		width         = 0.360;
+		mass          = starlightConstants::rho0PrimeMass;
+		width         = starlightConstants::rho0PrimeWidth;		
 		defaultMinW   = 4 * pionChargedMass;
 		_maxW         = 3;
 		break;
 	case 223:  // omega(782)
 		_particleType = OMEGA;
 		_decayType    = NARROWVMDEFAULT;  // will probably be moved to 3-body decay
-		mass          = 0.78194;
-		width         = 0.00843;
+		mass          = starlightConstants::OmegaMass;
+		width         = starlightConstants::OmegaWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
 	case 333:  // phi(1020)
 		_particleType = PHI;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 1.019413;
-		width         = 0.00443;
+		mass          = starlightConstants::PhiMass;
+		width         = starlightConstants::PhiWidth;
 		defaultMinW   = 2 * kaonChargedMass;
 		_maxW         = mass + 5 * width;
 		break;
 	case 443:  // J/psi
 		_particleType = JPSI;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 3.09692;   // JN  3.09688;
-		width         = 0.000091;  // JN  0.000087;
+		mass          = starlightConstants::JpsiMass;
+		width         = starlightConstants::JpsiWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
-	case 443011:  // J/psi
+   	case 443011:  // J/psi
 		_particleType = JPSI_ee;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 3.09692;   // JN  3.09688;
-		width         = 0.000091;  // JN  0.000087;
+		mass          = starlightConstants::JpsiMass;
+		width         = starlightConstants::JpsiWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
 	case 443013:  // J/psi
+	        cout<<"In inputParameters setting J/psi mass!"<<endl; 
 		_particleType = JPSI_mumu;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 3.09692;   // JN  3.09688;
-		width         = 0.000091;  // JN  0.000087;
+		mass          = starlightConstants::JpsiMass;
+		width         = starlightConstants::JpsiWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
-	case 444:  // J/psi
+	case 444:  // psi(2S) 
 		_particleType = JPSI2S;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 3.686093;
-		width         = 0.000337;
+		mass          = starlightConstants::Psi2SMass;
+		width         = starlightConstants::Psi2SWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
-	case 444011: // J/psi
+	case 444011: // psi(2S)
 		_particleType = JPSI2S_ee;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 3.686093;     
-		width         = 0.000337;
+		mass          = starlightConstants::Psi2SMass;
+		width         = starlightConstants::Psi2SWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
-	case 444013:  // J/psi
+	case 444013:  // psi(2S)
 		_particleType = JPSI2S_mumu;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 3.686093;
-		width         = 0.000337;
+		mass          = starlightConstants::Psi2SMass;
+		width         = starlightConstants::Psi2SWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
-	case 553:  // Upsilon
+	case 553:  // Upsilon(1S) 
 		_particleType = UPSILON;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 9.46030;
-		width         = 0.00005402;
+		mass          = starlightConstants::Upsilon1SMass;
+		width         = starlightConstants::Upsilon1SWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
 	case 553011:  // Upsilon
 		_particleType = UPSILON_ee;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 9.46030;
-		width         = 0.00005402;
+		mass          = starlightConstants::Upsilon1SMass;
+		width         = starlightConstants::Upsilon1SWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
 	case 553013:  // Upsilon
 		_particleType = UPSILON_mumu;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 9.46030;
-		width         = 0.00005402;
+		mass          = starlightConstants::Upsilon1SMass;
+		width         = starlightConstants::Upsilon1SWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
 	case 554:  // Upsilon(2S)
 		_particleType = UPSILON2S;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 10.02326;
-		width         = 0.00003198;
+		mass          = starlightConstants::Upsilon2SMass;
+		width         = starlightConstants::Upsilon2SWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
 	case 554011:  // Upsilon(2S)
 		_particleType = UPSILON2S_ee;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 10.02326;
-		width         = 0.00003198;
+		mass          = starlightConstants::Upsilon2SMass;
+		width         = starlightConstants::Upsilon2SWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
 	case 554013:  // Upsilon(2S)
 		_particleType = UPSILON2S_mumu;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 10.02326;
-		width         = 0.00003198;
+		mass          = starlightConstants::Upsilon2SMass;
+		width         = starlightConstants::Upsilon2SWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
 	case 555:  // Upsilon(3S)
-		mass          = 10.3552;
-		width         = 0.00002032;
-		defaultMinW   = mass - 5 * width;
-		_maxW         = mass + 5 * width;
 		_particleType = UPSILON3S;
 		_decayType    = NARROWVMDEFAULT;
+		mass          = starlightConstants::Upsilon3SMass;
+		width         = starlightConstants::Upsilon3SWidth;
+		defaultMinW   = mass - 5 * width;
+		_maxW         = mass + 5 * width;
 		break;
 	case 555011:  // Upsilon(3S)
 		_particleType = UPSILON3S_ee;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 10.3552;
-		width         = 0.00002032;
+		mass          = starlightConstants::Upsilon3SMass;
+		width         = starlightConstants::Upsilon3SWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
 	case 555013:  // Upsilon(3S)
 		_particleType = UPSILON3S_mumu;
 		_decayType    = NARROWVMDEFAULT;
-		mass          = 10.3552;
-		width         = 0.00002032;
+		mass          = starlightConstants::Upsilon3SMass;
+		width         = starlightConstants::Upsilon3SWidth;
 		defaultMinW   = mass - 5 * width;
 		_maxW         = mass + 5 * width;
 		break;
