@@ -71,8 +71,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const beamBeamSystem& bbsys
 		_ANORM       = -2.75;
 		_BNORM       = 0.0;
 		_defaultC    = 1.0;
-		_channelMass = 0.7685;  // [GeV/c^2]
-		_width       = 0.1507;  // [GeV/c^2]
+		_channelMass = starlightConstants::rho0Mass; 
+		_width       = starlightConstants::rho0Width; 
 		break;
 	case RHOZEUS:
 		_slopeParameter =11.0;
@@ -80,17 +80,17 @@ photonNucleusCrossSection::photonNucleusCrossSection(const beamBeamSystem& bbsys
 		_ANORM=-2.75;
 		_BNORM=1.84;
 		_defaultC=1.0;
-		_channelMass = 0.7685;
-		_width=0.1507;
+		_channelMass  = starlightConstants::rho0Mass;
+		_width        = starlightConstants::rho0Mass;
 		break;
 	case FOURPRONG:
 		_slopeParameter      = 11.0;
 		_vmPhotonCoupling      = 2.02;
 		_ANORM       = -2.75;
-		_BNORM       = 0;  // no coherent background component is implemented for four-prong
+		_BNORM       = 0;  
 		_defaultC    = 11.0;
-		_channelMass = 1.350;
-		_width       = 0.360;
+		_channelMass  = starlightConstants::rho0PrimeMass;
+		_width        = starlightConstants::rho0PrimeWidth;
 		break;
 	case OMEGA:
 		_slopeParameter=10.0;
@@ -98,8 +98,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const beamBeamSystem& bbsys
 		_ANORM=-2.75;
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass=0.78194;
-		_width=0.00843;
+		_channelMass  = starlightConstants::OmegaMass;
+		_width        = starlightConstants::OmegaWidth;
 		break;
 	case PHI:
 		_slopeParameter=7.0;
@@ -107,41 +107,41 @@ photonNucleusCrossSection::photonNucleusCrossSection(const beamBeamSystem& bbsys
 		_ANORM=-2.75;
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass=1.019413;
-		_width=0.00443;
+		_channelMass  = starlightConstants::PhiMass;
+		_width        = starlightConstants::PhiWidth;
 		break;
 	case JPSI:
 	case JPSI_ee:
 	case JPSI_mumu:
 		_slopeParameter=4.0;
 		_vmPhotonCoupling=10.45;
-		_ANORM=-2.75;//Artificial Breit-Wigner parameters--no direct pions
+		_ANORM=-2.75; 
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass=3.09692;//JN 3.09688
-		_width=0.000091;//JN 0.000087
+		_channelMass  = starlightConstants::JpsiMass; 
+		_width        = starlightConstants::JpsiWidth; 
 		break;
 	case JPSI2S:
 	case JPSI2S_ee:
 	case JPSI2S_mumu:
 		_slopeParameter=4.3;
 		_vmPhotonCoupling=26.39;
-		_ANORM=-2.75;//Artificial
+		_ANORM=-2.75; 
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass=3.686093;
-		_width=0.000337;
+		_channelMass  = starlightConstants::Psi2SMass;
+		_width        = starlightConstants::Psi2SWidth;
 		break;
 	case UPSILON:
 	case UPSILON_ee:
 	case UPSILON_mumu:
 		_slopeParameter=4.0;
 		_vmPhotonCoupling=125.37;
-		_ANORM=-2.75;//Artificial
+		_ANORM=-2.75; 
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass=9.46030;
-		_width=0.00005402;
+		_channelMass  = starlightConstants::Upsilon1SMass;
+		_width        = starlightConstants::Upsilon1SWidth;
 		break;
 	case UPSILON2S:
 	case UPSILON2S_ee:
@@ -151,8 +151,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const beamBeamSystem& bbsys
 		_ANORM=-2.75;
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass=10.02326;
-		_width=0.00003198;
+		_channelMass  = starlightConstants::Upsilon2SMass;
+		_width        = starlightConstants::Upsilon2SWidth;		
 		break;
 	case UPSILON3S:
 	case UPSILON3S_ee:
@@ -162,15 +162,14 @@ photonNucleusCrossSection::photonNucleusCrossSection(const beamBeamSystem& bbsys
 		_ANORM=-2.75;
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass=10.3552;
-		_width=0.00002032;
+		_channelMass  = starlightConstants::Upsilon3SMass;
+		_width        = starlightConstants::Upsilon3SWidth;
 		break;
 	default:
 		cout <<"No sigma constants parameterized for pid: "<<_particleType
 		     <<" GammaAcrosssection"<<endl;
 	}
 
-        // double maxradius = (_bbs.beam1().nuclearRadius()<_bbs.beam2().nuclearRadius())?_bbs.beam2().nuclearRadius():_bbs.beam1().nuclearRadius();
 	_maxPhotonEnergy = 12. * _beamLorentzGamma * hbarc/(_bbs.beam1().nuclearRadius()+_bbs.beam2().nuclearRadius()); 
 }
 
