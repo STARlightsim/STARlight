@@ -70,7 +70,7 @@ private:
 	double fritiofR0         () const { return _r0 * pow(_A, (1./3.)); }  ///< Fritiof _r0 (rws)/formfactor
 
 	double rws(const double r) const
-	{ return 1.0 / (1. + exp((r - fritiofR0()) / woodSaxonSkinDepth())); } ///< Wood-Saxon nuclear density
+	{ return 1.0 / (1. + exp((r - nuclearRadius()) / woodSaxonSkinDepth())); } ///< Wood-Saxon nuclear density
 
 	int    _Z;                      ///< atomic number of nucleus
 	int    _A;                      ///< nucleon number of nucleus
