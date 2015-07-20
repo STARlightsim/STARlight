@@ -67,7 +67,26 @@ namespace starlightConstants
         static const double f2Mass = 1.2751;                // [GeV/c^2]
         static const double a2Mass = 1.3183;                // [GeV/c^2]
         static const double f2PrimeMass = 1.525;            // [GeV/c^2]
-        
+
+        static const double rho0Mass  = 0.7685;             // [GeV/c^2]
+	static const double rho0Width = 0.1507;             // [GeV/c^2]
+        static const double rho0PrimeMass  = 1.350;         // [GeV/c^2]
+	static const double rho0PrimeWidth = 0.360;         // [GeV/c^2]
+        static const double OmegaMass  = 0.78194;           // [GeV/c^2]
+	static const double OmegaWidth = 0.00843;           // [GeV/c^2]
+        static const double PhiMass  = 1.019413;            // [GeV/c^2]
+	static const double PhiWidth = 0.00443;             // [GeV/c^2]
+        static const double JpsiMass = 3.09692;             // [GeV/c^2]
+        static const double JpsiWidth = 0.000091;           // [GeV/c^2]
+        static const double Psi2SMass = 3.686093;           // [GeV/c^2]
+        static const double Psi2SWidth = 0.000337;          // [GeV/c^2]
+        static const double Upsilon1SMass = 9.46030;        // [GeV/c^2]
+        static const double Upsilon1SWidth = 0.00005402;    // [GeV/c^2]
+        static const double Upsilon2SMass = 10.02326;       // [GeV/c^2]
+        static const double Upsilon2SWidth = 0.00003198;    // [GeV/c^2]
+        static const double Upsilon3SMass = 10.3552;        // [GeV/c^2]
+        static const double Upsilon3SWidth = 0.00002032;    // [GeV/c^2]	
+	
 	enum particleTypeEnum {
 		UNKNOWN        = 0,
 		ELECTRON       = 11,
