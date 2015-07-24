@@ -100,6 +100,7 @@ int inputParser::parseString(std::string str)
         name.erase(name.find_last_not_of(whitespaces)+1);
         val = str.substr(eqPos+1);
         val.erase(0, val.find_first_not_of(whitespaces));
+        val.erase(val.find_last_not_of(whitespaces)+1);
     }
 
     if (name.length() > 0 && val.length() > 0)

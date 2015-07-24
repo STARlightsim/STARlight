@@ -255,23 +255,29 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 	case 11:  // e+e- pair
 		_particleType = ELECTRON;
 		_decayType    = LEPTONPAIR;
-		defaultMinW   = 0.01; // default is 0.01; up to 0.15 is safe for Summer 2000 triggering for e+e- pairs
+		mass          = starlightConstants::mel;
+		defaultMinW   = 2*mass; // default is 0.01; up to 0.15 is safe for Summer 2000 triggering for e+e- pairs
+                _maxW         = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/7; // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 13:  // mu+mu- pair
 		_particleType = MUON;
 		_decayType    = LEPTONPAIR;
 		defaultMinW   = 2 * muonMass;
+                _maxW         = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/7; // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 15:  // tau+tau- pair
 		_particleType = TAUON;
 		_decayType    = LEPTONPAIR;
 		defaultMinW   = 2 * tauMass;
+                _maxW         = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/7; // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 10015:  // tau+tau- pair
 		_particleType = TAUONDECAY;
 		_decayType    = LEPTONPAIR;
 		defaultMinW   = 2 * tauMass;
+                _maxW         = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/7; // JES 6.17.2015 to avoid problems with no default
 		break;
+
 // 	case 24:  // W+W- pair
 // 		_particleType = W;
 // 		_decayType    = WW;
@@ -280,37 +286,64 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 	case 115:  // a_2(1320)
 		_particleType = A2;
 		_decayType    = SINGLEMESON;
+		mass          = starlightConstants::a2Mass;
+		width         = starlightConstants::a2Width;
+                defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
+                _maxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 221:  // eta
 		_particleType = ETA;
 		_decayType    = SINGLEMESON;
+		mass          = starlightConstants::etaMass;
+		width         = starlightConstants::etaWidth;
+                defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
+                _maxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 225:  // f_2(1270)
 		_particleType = F2;
-                defaultMinW   = 2*pionChargedMass;
 		_decayType    = SINGLEMESON;
+		mass          = starlightConstants::f2Mass;
+		width         = starlightConstants::f2Width;
+                defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
+                _maxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 331:  // eta'(958)
 		_particleType = ETAPRIME;
 		_decayType    = SINGLEMESON;
+		mass          = starlightConstants::etaPrimeMass;
+		width         = starlightConstants::etaPrimeWidth;
+                defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
+                _maxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 335:  // f_2'(1525)
 		_particleType = F2PRIME;
 		_decayType    = SINGLEMESON;
+		mass          = starlightConstants::f2PrimeMass;
+		width         = starlightConstants::f2PrimeWidth;
+                defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
+                _maxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 441:  // eta_c(1s)
 		_particleType = ETAC;
 		_decayType    = SINGLEMESON;
-                defaultMinW   = etaCMass - 5 * 0.0267;
+		mass          = starlightConstants::etaCMass;
+		width         = starlightConstants::etaCWidth;
+                defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
+                _maxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 9010221:  // f_0(980), was orginally called 10221? updated to standard number
 		_particleType = F0;
 		_decayType    = SINGLEMESON;
-                defaultMinW   = 2*pionNeutralMass;
+		mass          = starlightConstants::f0Mass;
+		width         = starlightConstants::f0Width;
+                defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
+                _maxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 33:  // Z"/Z0  This is the rho^0 rho^0 final state SRK
 		_particleType = ZOVERZ03;
 		_decayType    = SINGLEMESON;
+                defaultMinW   = 4*pionChargedMass;
+                _maxW         = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/7; // JES 6.17.2015 to avoid problems with no default
 		break;
 // 	case 25: // Higgs
 // 		_particleType = HIGGS;
@@ -338,7 +371,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		mass          = starlightConstants::rho0PrimeMass;
 		width         = starlightConstants::rho0PrimeWidth;		
 		defaultMinW   = 4 * pionChargedMass;
-		_maxW         = 3;
+                _maxW         = beam1LorentzGamma()*(starlightConstants::hbarc)/7; // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 223:  // omega(782)
 		_particleType = OMEGA;

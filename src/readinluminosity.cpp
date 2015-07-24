@@ -108,7 +108,7 @@ void readLuminosity::read()
   _baseFileName = inputParametersInstance.baseFileName();
   wyFileName = _baseFileName +".txt";
   
-  cout << "wyFileName being read in" << wyFileName << endl;
+//  cout << "wyFileName being read in" << wyFileName << endl;
 
   double fpart =0.;
   double fptsum=0.;
