@@ -414,7 +414,6 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 	if (_beamLorentzGamma < 500) 
 		Emin=1.E-3;
   
-	//  maximum energy is 12 times the cutoff
         Emax=_maxPhotonEnergy; 
 	// Emax=12.*hbarc*_beamLorentzGamma/RSum;
  
@@ -424,8 +423,10 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 	lnEmax=log(Emax);
 	dlnE=(lnEmax-lnEmin)/nstep; 
 
-	cout<<" Calculating flux for photon energies from E= "<<Emin 
-	    <<" to  "<<Emax<<"  GeV (CM frame) for source nucleus with Z = "<<rZ<<endl;
+        printf("Calculating photon flux for energies from Emin = %e GeV to Emax = %e GeV (CM frame) for source nucleus with Z = %3.0f \n", Emin, Emax, rZ);
+	
+	//cout<<" Calculating flux for photon energies from E= "<<Emin 
+	//    <<" to  "<<Emax<<"  GeV (CM frame) for source nucleus with Z = "<<rZ<<endl;
 
 
 	stepmult= exp(log(Emax/Emin)/double(nstep));
@@ -695,17 +696,26 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 		case UPSILON_ee:
 		case UPSILON_mumu:
 			//       >> This is W**1.7 dependence from QCD calculations
-			sigmagp_r=1.E-10*(0.060)*exp(1.70*log(Wgp));
+			//  sigmagp_r=1.E-10*(0.060)*exp(1.70*log(Wgp));
+			sigmagp_r=(1.0-((_channelMass+protonMass)*(_channelMass+protonMass))/(Wgp*Wgp));
+			sigmagp_r*=sigmagp_r;
+			sigmagp_r*=1.E-10*6.4*exp(0.74*log(Wgp));
 			break;
 		case UPSILON2S:
 		case UPSILON2S_ee:
 		case UPSILON2S_mumu:
-			sigmagp_r=1.E-10*(0.0259)*exp(1.70*log(Wgp));
+		        // sigmagp_r=1.E-10*(0.0259)*exp(1.70*log(Wgp));
+		        sigmagp_r=(1.0-((_channelMass+protonMass)*(_channelMass+protonMass))/(Wgp*Wgp));
+			sigmagp_r*=sigmagp_r;
+			sigmagp_r*=1.E-10*2.9*exp(0.74*log(Wgp)); 
 			break;
 		case UPSILON3S:
 		case UPSILON3S_ee:
 		case UPSILON3S_mumu:
-			sigmagp_r=1.E-10*(0.0181)*exp(1.70*log(Wgp));
+		        // sigmagp_r=1.E-10*(0.0181)*exp(1.70*log(Wgp));
+		        sigmagp_r=(1.0-((_channelMass+protonMass)*(_channelMass+protonMass))/(Wgp*Wgp));
+			sigmagp_r*=sigmagp_r;
+			sigmagp_r*=1.E-10*2.1*exp(0.74*log(Wgp)); 
 			break;
 		default: cout<< "!!!  ERROR: Unidentified Vector Meson: "<< _particleType <<endl;
 		}                                                                  
