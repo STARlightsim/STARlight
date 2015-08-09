@@ -79,7 +79,7 @@ public:
   void printParameterInfo(std::ostream &out = std::cout);
   
   /** Validate */
-  bool validateParameters(std::ostream &warnOut = std::cout, std::ostream &errOut = std::cerr);
+  bool validateParameters(std::ostream &errOut = std::cerr);
   
   /** Add a parameter */
   template<typename S>
