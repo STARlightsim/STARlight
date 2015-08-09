@@ -43,56 +43,56 @@ namespace starlightConstants
 
 
 	// constants
-	static const double hbarc    = 0.197327053;
+	static const double hbarc    = 0.1973269718;
 	static const double hbarcmev = hbarc*1000.;
 	static const double pi       = 3.141592654;
 	static const double twoPi    = 2 * pi;
-	static const double alpha    = 1/137.0359895;
+	static const double alpha    = 1/137.035999074;
 
 	// deuteron slope parameter
 	static const double deuteronSlopePar = 9.5; // [(GeV/c)^{-2}]
 	// particle masses
-	static const double protonMass      = 0.93827231;   // [GeV/c^2]
-	static const double pionChargedMass = 0.13956995;   // [GeV/c^2]
-        static const double pionNeutralMass = 0.1349766;    // [GeV/c^2]
-	static const double kaonChargedMass = 0.493677;     // [GeV/c^2]
-	static const double mel      = 0.00051099907;       // [GeV/c^2]
-	static const double muonMass = 0.105658389;         // [GeV/c^2]
-	static const double tauMass  = 1.777;               // [GeV/c^2]
+	static const double protonMass      = 0.938272046;   // [GeV/c^2]
+	static const double pionChargedMass = 0.13957018;    // [GeV/c^2]
+        static const double pionNeutralMass = 0.1349766;     // [GeV/c^2]
+	static const double kaonChargedMass = 0.493677;      // [GeV/c^2]
+	static const double mel      = 0.000510998928;       // [GeV/c^2]
+	static const double muonMass = 0.1056583715;         // [GeV/c^2]
+	static const double tauMass  = 1.77682;              // [GeV/c^2]
 	
-	static const double f0Mass = 0.980;                 // [GeV/c^2]
+	static const double f0Mass = 0.990;                  // [GeV/c^2]
 	static const double f0Width = 0.100;                 // [GeV/c^2]
-        static const double etaMass = 0.54730;              // [GeV/c^2]
-        static const double etaWidth = 0.000001;         // [GeV/c^2]
-        static const double etaPrimeMass = 0.95766;         // [GeV/c^2]
-        static const double etaPrimeWidth = 0.000198;         // [GeV/c^2]
-        static const double etaCMass = 2.9803;              // [GeV/c^2]
+        static const double etaMass = 0.547862;              // [GeV/c^2]
+        static const double etaWidth = 0.00000131;           // [GeV/c^2]
+        static const double etaPrimeMass = 0.95778;          // [GeV/c^2]
+        static const double etaPrimeWidth = 0.000198;        // [GeV/c^2]
+        static const double etaCMass = 2.9836;               // [GeV/c^2]
         static const double etaCWidth = 0.0322;              // [GeV/c^2]
-        static const double f2Mass = 1.2751;                // [GeV/c^2]
+        static const double f2Mass = 1.2751;                 // [GeV/c^2]
         static const double f2Width = 0.1851;                // [GeV/c^2]
-        static const double a2Mass = 1.3183;                // [GeV/c^2]
-        static const double a2Width = 0.001;                // [GeV/c^2]
-        static const double f2PrimeMass = 1.525;            // [GeV/c^2]
+        static const double a2Mass = 1.3183;                 // [GeV/c^2]
+        static const double a2Width = 0.105;                 // [GeV/c^2]
+        static const double f2PrimeMass = 1.525;             // [GeV/c^2]
         static const double f2PrimeWidth = 0.073;            // [GeV/c^2]
 
-        static const double rho0Mass  = 0.7685;             // [GeV/c^2]
-	static const double rho0Width = 0.1507;             // [GeV/c^2]
-        static const double rho0PrimeMass  = 1.350;         // [GeV/c^2]
-	static const double rho0PrimeWidth = 0.360;         // [GeV/c^2]
-        static const double OmegaMass  = 0.78194;           // [GeV/c^2]
-	static const double OmegaWidth = 0.00843;           // [GeV/c^2]
-        static const double PhiMass  = 1.019413;            // [GeV/c^2]
-	static const double PhiWidth = 0.00443;             // [GeV/c^2]
-        static const double JpsiMass = 3.09692;             // [GeV/c^2]
-        static const double JpsiWidth = 0.000091;           // [GeV/c^2]
-        static const double Psi2SMass = 3.686093;           // [GeV/c^2]
-        static const double Psi2SWidth = 0.000337;          // [GeV/c^2]
-        static const double Upsilon1SMass = 9.46030;        // [GeV/c^2]
-        static const double Upsilon1SWidth = 0.00005402;    // [GeV/c^2]
-        static const double Upsilon2SMass = 10.02326;       // [GeV/c^2]
-        static const double Upsilon2SWidth = 0.00003198;    // [GeV/c^2]
-        static const double Upsilon3SMass = 10.3552;        // [GeV/c^2]
-        static const double Upsilon3SWidth = 0.00002032;    // [GeV/c^2]	
+        static const double rho0Mass  = 0.769;               // [GeV/c^2]
+	static const double rho0Width = 0.1517;              // [GeV/c^2]
+        static const double rho0PrimeMass  = 1.450;          // [GeV/c^2]
+	static const double rho0PrimeWidth = 0.400;          // [GeV/c^2]
+        static const double OmegaMass  = 0.78265;            // [GeV/c^2]
+	static const double OmegaWidth = 0.00849;            // [GeV/c^2]
+        static const double PhiMass  = 1.019461;             // [GeV/c^2]
+	static const double PhiWidth = 0.004266;             // [GeV/c^2]
+        static const double JpsiMass = 3.096916;             // [GeV/c^2]
+        static const double JpsiWidth = 0.0000929;           // [GeV/c^2]
+        static const double Psi2SMass = 3.686109;            // [GeV/c^2]
+        static const double Psi2SWidth = 0.000299;           // [GeV/c^2]
+        static const double Upsilon1SMass = 9.46030;         // [GeV/c^2]
+        static const double Upsilon1SWidth = 0.00005402;     // [GeV/c^2]
+        static const double Upsilon2SMass = 10.02326;        // [GeV/c^2]
+        static const double Upsilon2SWidth = 0.00003198;     // [GeV/c^2]
+        static const double Upsilon3SMass = 10.3552;         // [GeV/c^2]
+        static const double Upsilon3SWidth = 0.00002032;     // [GeV/c^2]	
 	
 	enum particleTypeEnum {
 		UNKNOWN        = 0,
@@ -161,8 +161,6 @@ namespace starlightConstants
 	public:
 
 		int _numberOfTracks;
-		//Right now this is set up for a maximum of 4 tracks,if we want more, just increase the arrays
-		//Moved it to 30, this way when pythia returns, it wont complain too much...hedging bets...not sure how many
 		double px[30],py[30],pz[30];
 		//starlightConstants::particleTypeEnum _fsParticle[30];
 		int _fsParticle[30];
