@@ -43,7 +43,7 @@
 class twoPhotonLuminosity : public beamBeamSystem
 {
 public:
-    twoPhotonLuminosity(beam beam_1, beam beam_2);
+    twoPhotonLuminosity(const inputParameters& input, beam beam_1, beam beam_2);
     ~twoPhotonLuminosity();
 
 protected:
@@ -79,7 +79,16 @@ private:
     const double _yMin;
     const double _wMax;
     const double _yMax;
-    
+    const int _productionMode;
+    const int _beamBreakupMode;
+    const int _interferenceEnabled;
+    const double _interferenceStrength;
+    const int _coherentProduction;
+    const double _incoherentFactor;
+    const double _maxPtInterference;
+    const int _nmbPtBinsInterference;
+    const int _xsecCalcMethod;
+    const std::string _baseFileName;    
 };
 
 

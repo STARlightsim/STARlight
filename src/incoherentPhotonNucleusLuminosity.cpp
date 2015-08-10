@@ -49,8 +49,25 @@ using namespace starlightConstants;
 
 
 //______________________________________________________________________________
-incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusLuminosity(beamBeamSystem& bbsystem)
-  : photonNucleusCrossSection(bbsystem)
+incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusLuminosity(const inputParameters& inputParametersInstance, beamBeamSystem& bbsystem)
+  : photonNucleusCrossSection(inputParametersInstance, bbsystem)
+  ,_baseFileName(inputParametersInstance.baseFileName())
+  ,_beamLorentzGamma(inputParametersInstance.beamLorentzGamma())
+  ,_maxW(inputParametersInstance.maxW())
+  ,_minW(inputParametersInstance.minW())
+  ,_nmbWBins(inputParametersInstance.nmbWBins())
+  ,_maxRapidity(inputParametersInstance.maxRapidity())
+  ,_nmbRapidityBins(inputParametersInstance.nmbRapidityBins())
+  ,_productionMode(inputParametersInstance.productionMode())
+  ,_beamBreakupMode(inputParametersInstance.beamBreakupMode())
+  ,_interferenceEnabled(inputParametersInstance.interferenceEnabled())
+  ,_interferenceStrength(inputParametersInstance.interferenceStrength())
+  ,_coherentProduction(inputParametersInstance.coherentProduction())
+  ,_incoherentFactor(inputParametersInstance.incoherentFactor())
+  ,_maxPtInterference(inputParametersInstance.maxPtInterference())
+  ,_nmbPtBinsInterference(inputParametersInstance.nmbPtBinsInterference())
+  ,_protonEnergy(inputParametersInstance.protonEnergy())
+  ,_parameterValueKey(inputParametersInstance.parameterValueKey())
 {
   cout <<"Creating Luminosity Tables for incoherent vector meson production."<<endl;
   incoherentPhotonNucleusDifferentialLuminosity();
@@ -72,8 +89,7 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
   double C;  
   int beam; 
 
-  std::string wyFileName, _baseFileName;
-  _baseFileName = inputParametersInstance.baseFileName();
+  std::string wyFileName;
   wyFileName = _baseFileName +".txt";
 
   ofstream wylumfile;
@@ -92,21 +108,21 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
   wylumfile << getbbs().beam1().A() <<endl;
   wylumfile << getbbs().beam2().Z() <<endl;
   wylumfile << getbbs().beam2().A() <<endl;
-  wylumfile << inputParametersInstance.beamLorentzGamma() <<endl;
-  wylumfile << inputParametersInstance.maxW() <<endl;
-  wylumfile << inputParametersInstance.minW() <<endl;
-  wylumfile << inputParametersInstance.nmbWBins() <<endl;
-  wylumfile << inputParametersInstance.maxRapidity() <<endl;
-  wylumfile << inputParametersInstance.nmbRapidityBins() <<endl;
-  wylumfile << inputParametersInstance.productionMode() <<endl;
-  wylumfile << inputParametersInstance.beamBreakupMode() <<endl;
-  wylumfile << inputParametersInstance.interferenceEnabled() <<endl;
-  wylumfile << inputParametersInstance.interferenceStrength() <<endl;
-  wylumfile << inputParametersInstance.coherentProduction() <<endl;
-  wylumfile << inputParametersInstance.incoherentFactor() <<endl;
+  wylumfile << _beamLorentzGamma <<endl;
+  wylumfile << _maxW <<endl;
+  wylumfile << _minW <<endl;
+  wylumfile << _nmbWBins <<endl;
+  wylumfile << _maxRapidity <<endl;
+  wylumfile << _nmbRapidityBins <<endl;
+  wylumfile << _productionMode <<endl;
+  wylumfile << _beamBreakupMode <<endl;
+  wylumfile << _interferenceEnabled <<endl;
+  wylumfile << _interferenceStrength <<endl;
+  wylumfile << _coherentProduction <<endl;
+  wylumfile << _incoherentFactor <<endl;
   wylumfile << starlightConstants::deuteronSlopePar <<endl;
-  wylumfile << inputParametersInstance.maxPtInterference() <<endl;
-  wylumfile << inputParametersInstance.nmbPtBinsInterference() <<endl;
+  wylumfile << _maxPtInterference <<endl;
+  wylumfile << _nmbPtBinsInterference <<endl;
   
   //     Normalize the Breit-Wigner Distribution and write values of W to slight.txt
   testint=0.0;
@@ -135,7 +151,7 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
 
     W = _wMin + double(i)*dW + 0.5*dW;
 
-    double Ep = inputParametersInstance.protonEnergy();
+    double Ep = _protonEnergy;
 
     Eth=0.5*(((W+starlightConstants::protonMass)*(W+starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/
 	   (Ep + sqrt(Ep*Ep-starlightConstants::protonMass*starlightConstants::protonMass)));
@@ -197,7 +213,7 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
 
       W = _wMin + double(i)*dW + 0.5*dW;
 
-      double Ep = inputParametersInstance.protonEnergy();
+      double Ep = _protonEnergy;
 
       Eth=0.5*(((W+starlightConstants::protonMass)*(W+starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/
 	   (Ep + sqrt(Ep*Ep-starlightConstants::protonMass*starlightConstants::protonMass)));
@@ -230,7 +246,7 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
   }
 
   wylumfile << bwnorm << endl;
-  wylumfile << inputParametersInstance.parameterValueKey() << endl;
+  wylumfile << _parameterValueKey << endl;
   wylumfile.close();
   
 }

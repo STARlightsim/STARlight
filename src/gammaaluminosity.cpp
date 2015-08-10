@@ -49,11 +49,25 @@ using namespace starlightConstants;
 
 
 //______________________________________________________________________________
-photonNucleusLuminosity::photonNucleusLuminosity(beamBeamSystem& bbsystem)
-  : photonNucleusCrossSection(bbsystem)
-  ,_nPtBinsInterference(inputParametersInstance.nmbPtBinsInterference())
+photonNucleusLuminosity::photonNucleusLuminosity(const inputParameters& inputParametersInstance, beamBeamSystem& bbsystem)
+  : photonNucleusCrossSection(inputParametersInstance, bbsystem)
   ,_ptBinWidthInterference(inputParametersInstance.ptBinWidthInterference())
   ,_interferenceStrength(inputParametersInstance.interferenceStrength())
+  ,_protonEnergy(inputParametersInstance.protonEnergy())
+  ,_beamLorentzGamma(inputParametersInstance.beamLorentzGamma())
+  ,_baseFileName(inputParametersInstance.baseFileName())
+  ,_maxW(inputParametersInstance.maxW())
+  ,_minW(inputParametersInstance.minW())
+  ,_nmbWBins(inputParametersInstance.nmbWBins())
+  ,_maxRapidity(inputParametersInstance.maxRapidity())
+  ,_nmbRapidityBins(inputParametersInstance.nmbRapidityBins())
+  ,_productionMode(inputParametersInstance.productionMode())
+  ,_beamBreakupMode(inputParametersInstance.beamBreakupMode())
+  ,_interferenceEnabled(inputParametersInstance.interferenceEnabled())
+  ,_coherentProduction(inputParametersInstance.coherentProduction())
+  ,_incoherentFactor(inputParametersInstance.incoherentFactor())
+  ,_maxPtInterference(inputParametersInstance.maxPtInterference())
+  ,_nmbPtBinsInterference(inputParametersInstance.nmbPtBinsInterference())
 {
   cout <<"Creating Luminosity Tables."<<endl;
   photonNucleusDifferentialLuminosity();
@@ -76,8 +90,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   double C;  
   int beam; 
 
-  std::string wyFileName, _baseFileName;
-  _baseFileName = inputParametersInstance.baseFileName();
+  std::string wyFileName;
   wyFileName = _baseFileName +".txt";
 
   ofstream wylumfile;
@@ -96,21 +109,21 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   wylumfile << getbbs().beam1().A() <<endl;
   wylumfile << getbbs().beam2().Z() <<endl;
   wylumfile << getbbs().beam2().A() <<endl;
-  wylumfile << inputParametersInstance.beamLorentzGamma() <<endl;
-  wylumfile << inputParametersInstance.maxW() <<endl;
-  wylumfile << inputParametersInstance.minW() <<endl;
-  wylumfile << inputParametersInstance.nmbWBins() <<endl;
-  wylumfile << inputParametersInstance.maxRapidity() <<endl;
-  wylumfile << inputParametersInstance.nmbRapidityBins() <<endl;
-  wylumfile << inputParametersInstance.productionMode() <<endl;
-  wylumfile << inputParametersInstance.beamBreakupMode() <<endl;
-  wylumfile << inputParametersInstance.interferenceEnabled() <<endl;
-  wylumfile << inputParametersInstance.interferenceStrength() <<endl;
-  wylumfile << inputParametersInstance.coherentProduction() <<endl;
-  wylumfile << inputParametersInstance.incoherentFactor() <<endl;
+  wylumfile << _beamLorentzGamma <<endl;
+  wylumfile << _maxW <<endl;
+  wylumfile << _minW <<endl;
+  wylumfile << _nmbWBins <<endl;
+  wylumfile << _maxRapidity <<endl;
+  wylumfile << _nmbRapidityBins <<endl;
+  wylumfile << _productionMode <<endl;
+  wylumfile << _beamBreakupMode <<endl;
+  wylumfile << _interferenceEnabled <<endl;
+  wylumfile << _interferenceStrength <<endl;
+  wylumfile << _coherentProduction <<endl;
+  wylumfile << _incoherentFactor <<endl;
   wylumfile << starlightConstants::deuteronSlopePar <<endl;
-  wylumfile << inputParametersInstance.maxPtInterference() <<endl;
-  wylumfile << inputParametersInstance.nmbPtBinsInterference() <<endl;
+  wylumfile << _maxPtInterference <<endl;
+  wylumfile << _nmbPtBinsInterference <<endl;
   
   //     Normalize the Breit-Wigner Distribution and write values of W to slight.txt
   testint=0.0;
@@ -129,10 +142,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
     wylumfile << Y << endl;
   }
     
-  Eth=0.5*(((_wMin+starlightConstants::protonMass)*(_wMin
-							    +starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/
-	   (inputParametersInstance.protonEnergy()+sqrt(inputParametersInstance.protonEnergy()*
-					       inputParametersInstance.protonEnergy()-starlightConstants::protonMass*starlightConstants::protonMass))); 
+  Eth=0.5*(((_wMin+starlightConstants::protonMass)*(_wMin +starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/(_protonEnergy+sqrt(_protonEnergy*_protonEnergy-starlightConstants::protonMass*starlightConstants::protonMass))); 
 
   int A_1 = getbbs().beam1().A(); 
   int A_2 = getbbs().beam2().A();
@@ -209,7 +219,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   //wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile.close();
   
-  if(inputParametersInstance.interferenceEnabled()==1) 
+  if(_interferenceEnabled==1) 
     pttablegen();
  
    // wylumfile.open("slight.txt",ios::app);
@@ -243,8 +253,7 @@ void photonNucleusLuminosity::pttablegen()
   //  and calculate the cross section at each step.
   //  Put the results in pttable
 
-  std::string wyFileName, _baseFileName;
-  _baseFileName = inputParametersInstance.baseFileName();
+  std::string wyFileName;
   wyFileName = _baseFileName +".txt";
 
   ofstream wylumfile;
@@ -285,11 +294,11 @@ void photonNucleusLuminosity::pttablegen()
   //Setting input calls to variables/less calls this way.
   double Ymax=_yMax;
   int numy = _nYbins;
-  double Ep = inputParametersInstance.protonEnergy();
-  int ibreakup = inputParametersInstance.beamBreakupMode();
-  double NPT = inputParametersInstance.nmbPtBinsInterference();
-  double gamma_em=inputParametersInstance.beamLorentzGamma();
-  double mass= getChannelMass();
+  double Ep = _protonEnergy;
+  int ibreakup = _beamBreakupMode;
+  double NPT = _nmbPtBinsInterference;
+  double gamma_em = _beamLorentzGamma;
+  double mass = getChannelMass();
   int beam; 
   
   //  loop over y from 0 (not -ymax) to yma
@@ -479,7 +488,7 @@ double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGM
   
   //     >> Loop over total Pt to find distribution
       
-      for(int k=1;k<=_nPtBinsInterference;k++){
+      for(int k=1;k<=_nmbPtBinsInterference;k++){
 	
               pt=_ptBinWidthInterference*(double(k)-0.5);
               

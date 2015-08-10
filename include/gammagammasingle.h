@@ -43,6 +43,7 @@
 #include "randomgenerator.h"
 #include "eventchannel.h"
 #include "starlightconfig.h"
+#include "inputParameters.h"
 #ifdef ENABLE_PYTHIA
 #include "pythiadecayer.h"
 #endif
@@ -50,7 +51,7 @@
 class Gammagammasingle : public eventChannel
 {
  public:
-  Gammagammasingle(beamBeamSystem& bbsystem);
+  Gammagammasingle(const inputParameters& input, beamBeamSystem& bbsystem);
   ~Gammagammasingle();
   
   void singleCrossSection();

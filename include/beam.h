@@ -37,7 +37,6 @@
 
 //This calls inclues a single beam of nucleons
 #include "nucleus.h"
-#include "inputParameters.h"
 
 
 class beam : public nucleus
@@ -47,7 +46,8 @@ public:
 
 	beam(const int              Z,
 	     const int              A,
-	     const bool             dAuCoherentProduction);
+	     const bool             dAuCoherentProduction,
+	     const double	    beamLorentzGamma);
 	
 	~beam();
 

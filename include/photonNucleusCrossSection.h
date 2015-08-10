@@ -37,13 +37,13 @@
 
 #include "starlightconstants.h"
 #include "beambeamsystem.h"
-
+#include "inputParameters.h"
 
 class photonNucleusCrossSection {
 
 public:
 
-	photonNucleusCrossSection(const beamBeamSystem&  bbsystem);
+	photonNucleusCrossSection(const inputParameters& input, const beamBeamSystem&  bbsystem);
 	~photonNucleusCrossSection();
   
 	double         slopeParameter  () const { return _slopeParameter;   }  ///< returns slope of t-distribution [(GeV/c)^{-2}]

@@ -43,7 +43,7 @@
 class photonNucleusLuminosity : public photonNucleusCrossSection
 {
  public:
-  photonNucleusLuminosity(beamBeamSystem& bbsystem);
+  photonNucleusLuminosity(const inputParameters& input, beamBeamSystem& bbsystem);
   ~photonNucleusLuminosity();
   
  private:
@@ -52,9 +52,23 @@ class photonNucleusLuminosity : public photonNucleusCrossSection
   double nofe(double Egamma,double bimp);
   void pttablegen();
 
-  const double _nPtBinsInterference;  
   const double _ptBinWidthInterference;
   const double _interferenceStrength;
+  const double _protonEnergy;
+  const double _beamLorentzGamma;
+  const std::string _baseFileName;
+  const double _maxW;
+  const double _minW;
+  const unsigned int _nmbWBins;
+  const double _maxRapidity;
+  const unsigned int _nmbRapidityBins;
+  const int _productionMode;
+  const int _beamBreakupMode;
+  const bool _interferenceEnabled;
+  const bool _coherentProduction;
+  const double _incoherentFactor;
+  const double _maxPtInterference;
+  const int _nmbPtBinsInterference;
 };
 
 #endif //GAMMAALUMINOSITY_H

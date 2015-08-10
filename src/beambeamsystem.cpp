@@ -47,9 +47,12 @@ using namespace starlightConstants;
 
 
 //______________________________________________________________________________
-beamBeamSystem::beamBeamSystem(const beam&            beam1,
+beamBeamSystem::beamBeamSystem(const inputParameters& inputParametersInstance,
+			       const beam&            beam1,
                                const beam&            beam2)
   : _beamLorentzGamma(inputParametersInstance.beamLorentzGamma()),
+    _beamLorentzGamma1(inputParametersInstance.beam1LorentzGamma()),
+    _beamLorentzGamma2(inputParametersInstance.beam2LorentzGamma()),
     _beamBreakupMode (inputParametersInstance.beamBreakupMode()),
     _beam1           (beam1),
     _beam2           (beam2),
@@ -64,15 +67,19 @@ beamBeamSystem::beamBeamSystem(const beam&            beam1,
 
 
 //______________________________________________________________________________
-beamBeamSystem::beamBeamSystem()
+beamBeamSystem::beamBeamSystem(const inputParameters& inputParametersInstance)
 	: _beamLorentzGamma(inputParametersInstance.beamLorentzGamma()),
+          _beamLorentzGamma1(inputParametersInstance.beam1LorentzGamma()),
+          _beamLorentzGamma2(inputParametersInstance.beam2LorentzGamma()),
 	  _beamBreakupMode (inputParametersInstance.beamBreakupMode()),
 	  _beam1           (inputParametersInstance.beam1Z(),
 	                    inputParametersInstance.beam1A(),
-	                    inputParametersInstance.coherentProduction()),
+	                    inputParametersInstance.coherentProduction(),
+                            inputParametersInstance.beam1LorentzGamma()),
 	  _beam2           (inputParametersInstance.beam2Z(),
 	                    inputParametersInstance.beam2A(),
-	                    inputParametersInstance.coherentProduction()),
+	                    inputParametersInstance.coherentProduction(),
+                            inputParametersInstance.beam2LorentzGamma()),
 	  _breakupProbabilities(0),
 	  _breakupImpactParameterStep(1.007),
 	  _breakupCutOff(10e-10)
@@ -89,8 +96,8 @@ beamBeamSystem::~beamBeamSystem()
 void beamBeamSystem::init()
 {
    // Calculate beam gamma in CMS frame
-   double rap1 = acosh(inputParametersInstance.beam1LorentzGamma());
-   double rap2 = -acosh(inputParametersInstance.beam2LorentzGamma());
+   double rap1 = acosh(_beamLorentzGamma1);
+   double rap2 = -acosh(_beamLorentzGamma2);
    
    _cmsBoost = (rap1+rap2)/2.;
 

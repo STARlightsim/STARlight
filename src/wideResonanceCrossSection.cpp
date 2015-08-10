@@ -44,8 +44,8 @@ using namespace starlightConstants;
 
 
 //______________________________________________________________________________
-wideResonanceCrossSection::wideResonanceCrossSection(const beamBeamSystem&  bbsystem)
-	: photonNucleusCrossSection(bbsystem)//hrm
+wideResonanceCrossSection::wideResonanceCrossSection(const inputParameters& inputParametersInstance, const beamBeamSystem&  bbsystem)
+	: photonNucleusCrossSection(inputParametersInstance, bbsystem)//hrm
 {
 	_wideWmax = _wMax;
 	_wideWmin = _wMin;

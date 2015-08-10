@@ -50,8 +50,8 @@ using namespace starlightConstants;
 
 
 //______________________________________________________________________________
-twoPhotonLuminosity::twoPhotonLuminosity(beam beam_1,beam beam_2):
-beamBeamSystem(beam_1,beam_2)
+twoPhotonLuminosity::twoPhotonLuminosity(const inputParameters& inputParametersInstance, beam beam_1,beam beam_2):
+beamBeamSystem(inputParametersInstance, beam_1,beam_2)
 ,_gamma(inputParametersInstance.beamLorentzGamma())
 ,_nWbins(inputParametersInstance.nmbWBins())
 ,_nYbins(inputParametersInstance.nmbRapidityBins())
@@ -59,6 +59,16 @@ beamBeamSystem(beam_1,beam_2)
 ,_yMin(-inputParametersInstance.maxRapidity())
 ,_wMax(inputParametersInstance.maxW())
 ,_yMax(inputParametersInstance.maxRapidity())
+,_productionMode(inputParametersInstance.productionMode())
+,_beamBreakupMode(inputParametersInstance.beamBreakupMode())
+,_interferenceEnabled(inputParametersInstance.interferenceEnabled())
+,_interferenceStrength(inputParametersInstance.interferenceStrength())
+,_coherentProduction(inputParametersInstance.coherentProduction())
+,_incoherentFactor(inputParametersInstance.incoherentFactor())
+,_maxPtInterference(inputParametersInstance.maxPtInterference())
+,_nmbPtBinsInterference(inputParametersInstance.nmbPtBinsInterference())
+,_xsecCalcMethod(inputParametersInstance.xsecCalcMethod())
+,_baseFileName(inputParametersInstance.baseFileName())
 {
   //Lets check to see if we need to recalculate the luminosity tables
   twoPhotonDifferentialLuminosity();
@@ -73,8 +83,7 @@ twoPhotonLuminosity::~twoPhotonLuminosity()
 //______________________________________________________________________________
 void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
 {
-  std::string wyFileName, _baseFileName;
-  _baseFileName = inputParametersInstance.baseFileName();
+  std::string wyFileName;
   wyFileName = _baseFileName +".txt";
 
   ofstream wylumfile;
@@ -96,21 +105,21 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   wylumfile << beam1().A() <<endl;
   wylumfile << beam2().Z() <<endl;
   wylumfile << beam2().A() <<endl;
-  wylumfile << inputParametersInstance.beamLorentzGamma() <<endl;
-  wylumfile << inputParametersInstance.maxW() <<endl;
-  wylumfile << inputParametersInstance.minW() <<endl;
-  wylumfile << inputParametersInstance.nmbWBins() <<endl;
-  wylumfile << inputParametersInstance.maxRapidity() <<endl;
-  wylumfile << inputParametersInstance.nmbRapidityBins() <<endl;
-  wylumfile << inputParametersInstance.productionMode() <<endl;
-  wylumfile << inputParametersInstance.beamBreakupMode() <<endl;
-  wylumfile << inputParametersInstance.interferenceEnabled() <<endl;
-  wylumfile << inputParametersInstance.interferenceStrength() <<endl;
-  wylumfile << inputParametersInstance.coherentProduction() <<endl;
-  wylumfile << inputParametersInstance.incoherentFactor() <<endl;
+  wylumfile << _gamma <<endl;
+  wylumfile << _wMax <<endl;
+  wylumfile << _wMin <<endl;
+  wylumfile << _nWbins <<endl;
+  wylumfile << _yMax <<endl;
+  wylumfile << _nYbins <<endl;
+  wylumfile << _productionMode <<endl;
+  wylumfile << _beamBreakupMode <<endl;
+  wylumfile << _interferenceEnabled <<endl;
+  wylumfile << _interferenceStrength <<endl;
+  wylumfile << _coherentProduction <<endl;
+  wylumfile << _incoherentFactor <<endl;
   wylumfile << starlightConstants::deuteronSlopePar <<endl;
-  wylumfile << inputParametersInstance.maxPtInterference() <<endl;
-  wylumfile << inputParametersInstance.nmbPtBinsInterference() <<endl;
+  wylumfile << _maxPtInterference <<endl;
+  wylumfile << _nmbPtBinsInterference <<endl;
   for (unsigned int i = 0; i < _nWbins; ++i) {
     w[i] = _wMin + (_wMax-_wMin)/_nWbins*i;
     wylumfile << w[i] <<endl;
@@ -120,7 +129,7 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
     wylumfile << y[i] <<endl;
   }
 
-  if(inputParametersInstance.xsecCalcMethod() == 0) {
+  if(_xsecCalcMethod == 0) {
     
     for (unsigned int i = 0; i < _nWbins; ++i) {   //For each (w,y) pair, calculate the diff. _lum
       for (unsigned int j = 0; j < _nYbins; ++j) {
@@ -133,7 +142,7 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
     }
 
   }
-  else if(inputParametersInstance.xsecCalcMethod() == 1) {
+  else if(_xsecCalcMethod == 1) {
     
     /*
         const int nthreads = inputParametersInstance.nThreads();

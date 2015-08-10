@@ -44,16 +44,16 @@ using namespace std;
 
 
 //______________________________________________________________________________
-readLuminosity::readLuminosity()//:inputread(input)
+readLuminosity::readLuminosity(const inputParameters& inputParametersInstance)
   : _Warray(0), _Yarray(0), _Farray(0), _Farray1(0), _Farray2(0)
+, _ReadInputNPT(inputParametersInstance.nmbPtBinsInterference())
+, _ReadInputnumy(inputParametersInstance.nmbRapidityBins())
+, _ReadInputnumw(inputParametersInstance.nmbWBins())
+, _ReadInputgg_or_gP(inputParametersInstance.productionMode())
+, _ReadInputinterferencemode(inputParametersInstance.interferenceEnabled())
+, _baseFileName(inputParametersInstance.baseFileName())
 {
-  //storing inputparameters into protected variables for the object to use them
-  _ReadInputNPT=inputParametersInstance.nmbPtBinsInterference();
-  _ReadInputnumy=inputParametersInstance.nmbRapidityBins();
-  _ReadInputnumw=inputParametersInstance.nmbWBins();
-  _ReadInputgg_or_gP=inputParametersInstance.productionMode();
-  _ReadInputinterferencemode=inputParametersInstance.interferenceEnabled();
-  
+
 }
 
 
@@ -104,8 +104,7 @@ void readLuminosity::read()
   //  double (*finterm)[starlightLimits::MAXWBINS]=new double[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];  
   //decreased from 1000*1000; too big! causes fault!
 
-  std::string wyFileName, _baseFileName;
-  _baseFileName = inputParametersInstance.baseFileName();
+  std::string wyFileName;
   wyFileName = _baseFileName +".txt";
   
 //  cout << "wyFileName being read in" << wyFileName << endl;

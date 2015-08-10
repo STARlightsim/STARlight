@@ -60,16 +60,17 @@ starlightStandalone::~starlightStandalone()
 bool
 starlightStandalone::init()
 {
+	_inputParameters = new inputParameters();
 	// read input parameters from config file
-	inputParametersInstance.configureFromFile(_configFileName);
-	if (!inputParametersInstance.init()) {
+	_inputParameters->configureFromFile(_configFileName);
+	if (!_inputParameters->init()) {
 		printWarn << "problems initializing input parameters. cannot initialize starlight." << endl;
 		return false;
 	}
 
 	// copy input file to one with baseFileName naming scheme
         std::string inputCopyName, _baseFileName;
-        _baseFileName = inputParametersInstance.baseFileName();
+        _baseFileName = _inputParameters->baseFileName();
          inputCopyName = _baseFileName +".in";
 
         ofstream inputCopyFile;
@@ -93,11 +94,14 @@ starlightStandalone::init()
 
 	// get the number of events
 	// for now we write everything to one file
-	_nmbEventsTot     = inputParametersInstance.nmbEvents();
+	_nmbEventsTot     = _inputParameters->nmbEvents();
 	_nmbEventsPerFile = _nmbEventsTot;
 
 	// create the starlight object
 	_starlight = new starlight();
+
+        // give starlight the input parameters
+        _starlight->setInputParameters(_inputParameters);
 	
 	// initialize starlight
 	return _starlight->init();
@@ -115,8 +119,8 @@ starlightStandalone::run()
 
 	// open output file
 	eventFileWriter fileWriter;
-	fileWriter.writeFullPythiaInfo(inputParametersInstance.pythiaFullEventRecord());
-        _baseFileName = inputParametersInstance.baseFileName();
+	fileWriter.writeFullPythiaInfo(_inputParameters->pythiaFullEventRecord());
+        _baseFileName = _inputParameters->baseFileName();
         _eventDataFileName = _baseFileName +".out";
 	fileWriter.open(_eventDataFileName);
 
@@ -143,8 +147,8 @@ void starlightStandalone::boostEvent(upcEvent &event)
   
   // Should probably move this calculation to inputParameters (and remove from bbs)
    // Calculate CMS boost 
-   double rap1 = acosh(inputParametersInstance.beam1LorentzGamma());
-   double rap2 = -acosh(inputParametersInstance.beam2LorentzGamma());
+   double rap1 = acosh(_inputParameters->beam1LorentzGamma());
+   double rap2 = -acosh(_inputParameters->beam2LorentzGamma());
    double boost = (rap1+rap2)/2.;
 
    event.boost(boost);

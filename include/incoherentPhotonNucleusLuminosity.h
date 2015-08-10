@@ -43,12 +43,30 @@
 class incoherentPhotonNucleusLuminosity : public photonNucleusCrossSection
 {
  public:
-  incoherentPhotonNucleusLuminosity(beamBeamSystem& bbsystem);
+  incoherentPhotonNucleusLuminosity(const inputParameters& input, beamBeamSystem& bbsystem);
   ~incoherentPhotonNucleusLuminosity();
   
  private:
   void incoherentPhotonNucleusDifferentialLuminosity();
   double nofe(double Egamma,double bimp);
+  const std::string _baseFileName;
+  const double _beamLorentzGamma;
+  const double _maxW;
+  const double _minW;
+  const unsigned int _nmbWBins;
+  const double _maxRapidity;
+  const unsigned int _nmbRapidityBins;
+  const int _productionMode;
+  const int _beamBreakupMode;
+  const int _interferenceEnabled;
+  const double _interferenceStrength;
+  const int _coherentProduction;
+  const double _incoherentFactor;
+  const double _maxPtInterference;
+  const int _nmbPtBinsInterference;
+  const double _protonEnergy;
+  const std::string _parameterValueKey;
+
 };
 
 #endif //INCOHERENTPHOTONNUCLEUSLUMINOSITY_H

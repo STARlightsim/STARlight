@@ -40,12 +40,12 @@
 #include "readinluminosity.h"
 #include "starlightlimits.h"
 #include "eventchannel.h"
-
+#include "inputParameters.h"
 
 class Gammagammaleptonpair : public eventChannel
 {
  public:
-  Gammagammaleptonpair(beamBeamSystem& bbsystem);
+  Gammagammaleptonpair(const inputParameters& input, beamBeamSystem& bbsystem);
   ~Gammagammaleptonpair();
   
   void twoLeptonCrossSection();
@@ -81,10 +81,10 @@ class Gammagammaleptonpair : public eventChannel
   double getWidth();
   double getSpin();
   
-  starlightConstants::particleTypeEnum _GGlepInputpidtest;
-  int _GGlepInputnumw;
-  int _GGlepInputnumy;
-  double _GGlepInputGamma_em;
+  const starlightConstants::particleTypeEnum _GGlepInputpidtest;
+  const int _GGlepInputnumw;
+  const int _GGlepInputnumy;
+  const double _GGlepInputGamma_em;
 };
 
 

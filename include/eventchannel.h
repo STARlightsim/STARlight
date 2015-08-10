@@ -41,7 +41,7 @@
 #include "beambeamsystem.h"
 #include "randomgenerator.h"
 #include "upcevent.h"
-
+#include "inputParameters.h"
 
 
 class eventChannel : public readLuminosity
@@ -49,7 +49,7 @@ class eventChannel : public readLuminosity
 
 public:
 
-	eventChannel(beamBeamSystem&        bbsystem);
+	eventChannel(const inputParameters& input, beamBeamSystem&        bbsystem);
 	virtual ~eventChannel();
 
 	unsigned long nmbAttempts() const {return _nmbAttempts;}  ///< returns number of attempted events
@@ -69,7 +69,7 @@ public:
 	                      int&         iFbadevent); ///< Lorentz-transforms given 4-vector
 
 	beamBeamSystem  _bbs;
-
+	randomGenerator _randy;
 	static double pseudoRapidity(const double px,
 	                             const double py,
 	                             const double pz);  ///< calculates pseudorapidity for given 3-momentum

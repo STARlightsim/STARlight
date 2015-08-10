@@ -60,7 +60,7 @@ public:
         std::string   baseFileName  () const { return _baseFileName;		  }
 	unsigned long nmbAttempts   () const { return _eventChannel->nmbAttempts(); }
 	unsigned long nmbAccepted   () const { return _eventChannel->nmbAccepted(); } 
-   
+	void setInputParameters(inputParameters* inputParams) { _inputParameters = inputParams; }   
 
 private:
       
@@ -79,7 +79,7 @@ private:
 //	std::string        _eventDataFileName;
 	std::string        _lumLookUpTableFileName;
 	bool               _isInitialised;
-
+	inputParameters*   _inputParameters;
 };
 
 

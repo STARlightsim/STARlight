@@ -39,15 +39,17 @@
 #include "nucleus.h"
 #include "beam.h"
 #include <vector>
+#include "inputParameters.h"
 
 class beamBeamSystem
 {
 
 public:
 
-	beamBeamSystem(const beam&            beam1,
+	beamBeamSystem(const inputParameters& input,
+		       const beam&            beam1,
 	               const beam&            beam2);
-	beamBeamSystem();
+	beamBeamSystem(const inputParameters& input);
 	~beamBeamSystem();
 
 	const beam& beam1() const { return _beam1; }  ///< returns beam particle 1
@@ -74,7 +76,9 @@ private:
 	//		double luminosity;
 
 	double _beamLorentzGamma;  ///< Lorentz gamma factor of beams in collider frame
-	int    _beamBreakupMode;   ///< \brief breakup mode for beam particles
+        const double _beamLorentzGamma1;  ///< Lorentz gamma factor of beam1 in collider frame
+        const double _beamLorentzGamma2;  ///< Lorentz gamma factor of beam2 in collider frame
+	const int    _beamBreakupMode;   ///< \brief breakup mode for beam particles
 	                           ///<
 	                           ///< 1 = hard sphere nuclei (b > 2R),
 	                           ///< 2 = both nuclei break up (XnXn),

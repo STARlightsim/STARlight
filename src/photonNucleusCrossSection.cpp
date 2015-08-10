@@ -45,7 +45,7 @@ using namespace starlightConstants;
 
 
 //______________________________________________________________________________
-photonNucleusCrossSection::photonNucleusCrossSection(const beamBeamSystem& bbsystem)
+photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inputParametersInstance, const beamBeamSystem& bbsystem)
 	: _nWbins            (inputParametersInstance.nmbWBins()          ),
 	  _nYbins            (inputParametersInstance.nmbRapidityBins()   ),
 	  _wMin              (inputParametersInstance.minW()              ),

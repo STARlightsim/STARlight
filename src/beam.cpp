@@ -36,7 +36,6 @@
 #include <cmath>
 
 #include "starlightconstants.h"
-#include "inputParameters.h"
 #include "reportingUtils.h"
 #include "bessel.h"
 #include "beam.h"
@@ -48,11 +47,12 @@ using namespace starlightConstants;
 //______________________________________________________________________________
 beam::beam(const int              Z,
            const int              A,
-           const bool             dAuCoherentProduction)
+           const bool             dAuCoherentProduction,
+	   const double		  beamLorentzGamma)
 	: nucleus(Z,
 	          A,
 	          dAuCoherentProduction)
-	,_beamLorentzGamma(inputParametersInstance.beamLorentzGamma())
+	,_beamLorentzGamma(beamLorentzGamma)
 {
 }
 

@@ -198,8 +198,6 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 }
  bool inputParameters::init()
  {
-	// Set the seed for the random generator
-	randyInstance.SetSeed(_randomSeed.value());
 	
  	// Calculate beam gamma in CMS frame
  	double rap1 = acosh(beam1LorentzGamma());

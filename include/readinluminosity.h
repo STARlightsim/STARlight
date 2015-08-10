@@ -42,7 +42,7 @@
 class readLuminosity
 {
  public:
-  readLuminosity();
+  readLuminosity(const inputParameters& input);
   ~readLuminosity();
   
   void read();
@@ -65,11 +65,12 @@ class readLuminosity
   double _bwnormsave;
 
  protected:
-  int _ReadInputNPT;
-  int _ReadInputnumy;
-  int _ReadInputnumw;
-  int _ReadInputgg_or_gP;
-  int _ReadInputinterferencemode;
+  const int _ReadInputNPT;
+  const int _ReadInputnumy;
+  const int _ReadInputnumw;
+  const int _ReadInputgg_or_gP;
+  const int _ReadInputinterferencemode;
+  const std::string _baseFileName;
 };
 
 
