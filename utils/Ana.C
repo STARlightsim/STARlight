@@ -2,10 +2,10 @@
 // file, slight.out, and creates a standard set of histograms, which are stored
 // in histograms.root
 
-#include "analyze.cxx"
+#include "Analyze.cxx"
 
 
-void ana()
+void Ana()
 {
   Analyze a("slight.out", 20);
   a.doAnalysis();

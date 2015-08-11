@@ -27,7 +27,7 @@
 using namespace std;
 
 
-void convertStarlightAsciiToTree(const char* inFileName  = "slight.out",
+void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
                         const char* outFileName = "starlight.root")
 {
 

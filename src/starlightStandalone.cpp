@@ -69,6 +69,7 @@ starlightStandalone::init()
 	}
 
 	// copy input file to one with baseFileName naming scheme
+	if (_configFileName != "slight.in"){
         std::string inputCopyName, _baseFileName;
         _baseFileName = _inputParameters->baseFileName();
          inputCopyName = _baseFileName +".in";
@@ -85,12 +86,12 @@ starlightStandalone::init()
         int lineSize = 256;
         char tmp[lineSize];
         while (!infile.getline(tmp, lineSize).eof())
-        {
+         {
      	 cout << tmp << endl;
          inputCopyFile << tmp << endl;
-        }
+         }
         inputCopyFile.close();
-
+	}
 
 	// get the number of events
 	// for now we write everything to one file
