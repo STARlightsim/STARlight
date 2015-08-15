@@ -47,10 +47,9 @@ class lorentzVector
       virtual ~lorentzVector();
       
       lorentzVector(double x, double y, double z, double t);
-      //lorentzVector(double px, double py, double pz, double e);
       
       void SetXYZT(double x, double y, double z, double t);
-	    void SetPxPyPzE(double px, double py, double pz, double e) { SetXYZT(px, py, pz, e); };
+      void SetPxPyPzE(double px, double py, double pz, double e) { SetXYZT(px, py, pz, e); };
       
       double GetPx() const { return fSpaceVec.GetVector()[0]; }
       double GetPy() const { return fSpaceVec.GetVector()[1]; }

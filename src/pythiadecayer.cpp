@@ -8,23 +8,8 @@ using namespace Pythia8;
 pythiaDecayer::pythiaDecayer() :
     _pythia(PYTHIA8_SETTINGS_DIR)
 {}
-/*
-pythiaDecayer::pythiaDecayer(const pythiaDecayer &obj) :
-    _pythia(obj._pythia)
-{}
-*/
 pythiaDecayer::~pythiaDecayer()
 {}
-/*
-pythiaDecayer& pythiaDecayer::operator=(const pythiaDecayer &other)
-{
-    if (this != &other)
-    {
-        _pythia = other._pythia;
-    }
-    return *this;
-}
-*/
 void pythiaDecayer::init()
 {
   _pythia.readString("ProcessLevel:all = off"); 

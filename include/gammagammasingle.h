@@ -74,8 +74,6 @@ class Gammagammasingle : public eventChannel
   double pp1(double E);
   double pp2(double E);
   void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,/*double &py2,*/double &pz2,int &iFbadevent);
-  // void transform(double betax,double betay,double betaz,double &E,double &px,double &py,double &pz,int &iFbadevent);
-  void thephi(double W,double px,double py,double pz,double E,double &theta,double &phi);
   
   double getMass();
   double getWidth();

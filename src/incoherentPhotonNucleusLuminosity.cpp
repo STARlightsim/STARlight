@@ -101,9 +101,7 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
   dY  = (_yMax-(-1.0)*_yMax)/_nYbins;
     
   // Write the values of W used in the calculation to slight.txt.  
-//  wylumfile.open("slight.txt");
   wylumfile.open(wyFileName.c_str());
-  // wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile << getbbs().beam1().Z() <<endl;
   wylumfile << getbbs().beam1().A() <<endl;
   wylumfile << getbbs().beam2().Z() <<endl;
@@ -181,17 +179,9 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
                                  starlightConstants::protonMass))+starlightConstants::protonMass*starlightConstants::protonMass);
 
         double localsig = sigmagp(Wgp); 
-        // int localz = 0; 
-        // double localbmin = 0; 
         if( A_1 == 1 && A_2 != 1 ){
-          // localbmin = getbbs().beam2().nuclearRadius() + 0.7; 
-          // localz = getbbs().beam2().Z(); 
-	  //   dndWdY = Egamma*localz*localz*nepoint(Egamma,localbmin)*localsig*breitWigner(W,bwnorm); 
           dndWdY = Egamma*photonFlux(Egamma,beam)*localsig*breitWigner(W,bwnorm); 
         }else if (A_2 ==1 && A_1 !=1){
-          // localbmin = getbbs().beam1().nuclearRadius() + 0.7; 
-          // localz = getbbs().beam1().Z(); 
-	  //   dndWdY = Egamma*localz*localz*nepoint(Egamma,localbmin)*localsig*breitWigner(W,bwnorm); 
           dndWdY = Egamma*photonFlux(Egamma,beam)*localsig*breitWigner(W,bwnorm); 
         }else{ 
           double csVN = sigma_N(Wgp);         

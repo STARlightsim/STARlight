@@ -146,36 +146,6 @@ inputParameters::~inputParameters()
 bool
 inputParameters::configureFromFile(const std::string &_configFileName)
 {
-	// open config file
-//	_configFileName = configFileName;
-
-//  std::string inputCopyName, _baseFileName;
-//  _baseFileName = inputParametersInstance.baseFileName();
-//  inputCopyName = _baseFileName +".in";
-
-//  ofstream inputCopyFile;
-
-//    std::ifstream infile(_configFileName.c_str());
-//    if ((!infile) || (!infile.good()))
-//    {
-//      return -1;
-//    }
-
-//    int lineSize = 256;
-//    char tmp[lineSize];
-//    while (!infile.getline(tmp, lineSize).eof())
-//    {
-//	cout << tmp;
-//	inputCopyFile << tmp;
-//     	std::string line(tmp);
-//    }
-
-//  {
-//  _configFileName.get(ch); //reading from file object 'a'
-//  cout<<ch;
-//  inputCopyFile<<ch; //writing to file baseFileName.in
-//  }
-//  inputCopyFile.close();
 
 	int nParameters = _ip.parseFile(_configFileName);
 	
@@ -185,7 +155,6 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 	  return false;
 	}
 	
-	//ip.printParameterInfo(cout);
 	
 	if(_ip.validateParameters(cerr))
 		printInfo << "successfully read input parameters from '" << _configFileName << "'" << endl;
@@ -604,15 +573,5 @@ inputParameters::write(ostream& out) const
 std::string
 inputParameters::parameterValueKey() const 
 {
- 
- // std::stringstream s;
-  
-//   s <<_beam1A<<_beam1Z<<_beam2A<<_beam1LorentzGamma<<_beam2LorentzGamma<<_maxW<<_minW;
-//     <<_nmbWBins<<_maxRapidity<<_nmbRapidityBins<<_
-    
-  
-  //return s;
-  
-  return parameterbase::_parameters.validationKey()
-  ;
+  return parameterbase::_parameters.validationKey();
 }

@@ -120,11 +120,6 @@ beamBeamSystem::probabilityOfBreakup(const double D) const
 		double ppslope=19.8;
 		double GammaProfile = exp(-D * D / (2. * hbarc * hbarc * ppslope));
 		pOfB = (1. - GammaProfile) * (1. - GammaProfile);
-		// if (D < 2. * _beam1.nuclearRadius())
-		//	//Should be the total of RNuc1+Rnuc2,used only beam #1
-		//	PofB = 0.0;
-		// else
-		//	PofB = 1.0;
 		return pOfB;
 	}
 	else if ( ( (_beam1.A() == 1) && (_beam2.A() != 1) ) || ((_beam1.A() != 1) && (_beam2.A() == 1)) ) {  
@@ -138,7 +133,6 @@ beamBeamSystem::probabilityOfBreakup(const double D) const
           }else{
             cout<<"Some logical problem here!"<<endl;
           }
-          // if( D > bMin )pOfB=1.0; 
           return pOfB;
           
 	}
@@ -148,7 +142,6 @@ beamBeamSystem::probabilityOfBreakup(const double D) const
 	if (D > 0.0) {             
 		//Now we must determine which step number in d corresponds to this D,
 		// and use appropiate Ptot(D_i)
-		//int i = (int)(log(D / Bmin) / log(1.01));
 		int i = (int)(log(D / bMin) / log(_breakupImpactParameterStep));
 		if (i <= 0)
 			pOfB = _breakupProbabilities[0];
@@ -156,9 +149,7 @@ beamBeamSystem::probabilityOfBreakup(const double D) const
 			if (i >= int(_breakupProbabilities.size()-1))
 				pOfB = _breakupProbabilities[_breakupProbabilities.size()-1];
 			else {
-				// const double DLow = Bmin * pow((1.01), i);
 				const double DLow = bMin * pow((_breakupImpactParameterStep), i);
-				// const double DeltaD = 0.01 * DLow;
 				const double DeltaD = (_breakupImpactParameterStep-1) * DLow;
 				const double DeltaP = _breakupProbabilities[i + 1] - _breakupProbabilities[i];
 				pOfB   = _breakupProbabilities[i] + DeltaP * (D - DLow) / DeltaD;
@@ -172,8 +163,6 @@ beamBeamSystem::probabilityOfBreakup(const double D) const
 void
 beamBeamSystem::generateBreakupProbabilities()
 {
-    // Step = 1.007;//.01; //We will multiplicateively increase Biter by 1%
-    
     
     double bMin = (_beam1.nuclearRadius()+_beam2.nuclearRadius())/2.;
     
@@ -224,13 +213,8 @@ beamBeamSystem::generateBreakupProbabilities()
                 }
             }
 //             std::cout << 1-pOfBreakup << std::endl;
-//             _pHadronBreakup = 0;
-//             _pPhotonBreakup = 0;
 
-//             double pHadronBreakup = probabilityOfHadronBreakup(b);
             probabilityOfHadronBreakup(b);
-            //moved gammatarg into photonbreakup
-//             double pPhotonBreakup = probabilityOfPhotonBreakup(b, _beamBreakupMode);
             probabilityOfPhotonBreakup(b, _beamBreakupMode);
 
             //What was probability of photonbreakup depending upon mode selection,
@@ -375,16 +359,14 @@ beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
     
 	for ( int IR1 =1; IR1 <= NR1; IR1++) {
 		RR1 = RR1+DELR;
-		AN1 = AN1+RR1*DEN1[IR1]*DELR*2.*3.141592654;
+		AN1 = AN1+RR1*DEN1[IR1]*DELR*2.*3.141592654;//Swap to starlightconstants::Pi?
 	}
 	for ( int IR2 =1; IR2 <= NR2; IR2++) {
 		RR2 = RR2+DELR;
 		AN2 = AN2+RR2*DEN2[IR2]*DELR*2.*3.141592654;
 	}
         
-	// AN2 = AN1; //This will also probably need to be changed?
 
-	//	delo = .05;
 	//.1 to turn mb into fm^2
 	//Calculate breakup probability here
  L100:
@@ -419,7 +401,6 @@ beamBeamSystem::probabilityOfPhotonBreakup(const double impactparameter, const i
 {
 	static double ee[10001], eee[162], se[10001];
 
-	//double gamma_em=108.4;  //This will be an input value.
 	_pPhotonBreakup =0.;   //Might default the probability with a different value?
 	double b = impactparameter;
 	int zp = _beam1.Z();  //What about _beam2? Generic approach?
@@ -526,11 +507,6 @@ beamBeamSystem::probabilityOfPhotonBreakup(const double impactparameter, const i
 	static int IFIRSTP=0;
 
 
-	//  Initialization needed?
-	//double hbar=197.3;
-	//double pi=3.141592654;
-
-	// added
 	double si1=0, g1 =0,   o1=0;
 	int   ne = 0, ij =0;
 	double delo=0, omax =0, gk1m=0;
@@ -581,7 +557,7 @@ beamBeamSystem::probabilityOfPhotonBreakup(const double impactparameter, const i
 	scon = .1*g1*g1*si1;
 	zcon = zp/(gammatarg*( pi)*( 
 	                                                hbarcmev))*zp/(gammatarg*( pi)*
-		             ( hbarcmev))/137.04;
+		             ( hbarcmev))/137.04;//hbarc?
 
 	//single neutron from GDR, Veyssiere et al. Nucl. Phys. A159, 561 (1970)
 	for ( int i = 1; i <= 160; i++) {
@@ -654,7 +630,6 @@ beamBeamSystem::probabilityOfPhotonBreakup(const double impactparameter, const i
 	}
 	ee[ij+1] = 99999999999.;
 	//done with initaliation
-	//write(6,99)o0;
 	//clear counters for 1N, XN
  L100:
 

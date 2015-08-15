@@ -162,7 +162,6 @@ namespace starlightConstants
 
 		int _numberOfTracks;
 		double px[30],py[30],pz[30];
-		//starlightConstants::particleTypeEnum _fsParticle[30];
 		int _fsParticle[30];
 		int _charge[30];
 		//To help track mothers and daughters produced through pythia.

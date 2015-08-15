@@ -42,7 +42,6 @@
 #include "nucleus.h"
 #include "bessel.h"
 #include "twophotonluminosity.h"
-#include <pthread.h>
 
 using namespace std;
 using namespace starlightConstants;
@@ -88,7 +87,6 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
 
   ofstream wylumfile;
   wylumfile.precision(15);
-//  wylumfile.open("slight.txt");
   wylumfile.open(wyFileName.c_str());
   std::vector<double> w(_nWbins);
   std::vector<double> y(_nYbins);
@@ -100,7 +98,6 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   OldNorm   = Normalize;
   
   //Writing out our input parameters+(w,y)grid+diff._lum.
-  // wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile << beam1().Z() <<endl;
   wylumfile << beam1().A() <<endl;
   wylumfile << beam2().Z() <<endl;
@@ -143,58 +140,6 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
 
   }
   else if(_xsecCalcMethod == 1) {
-    
-    /*
-        const int nthreads = inputParametersInstance.nThreads();
-        pthread_t threads[nthreads];
-        difflumiargs args[nthreads];
-
-        for(int t = 0; t < nthreads; t++)
-        {
-            args[t].self = this;
-        }
-        for (unsigned int i = 1; i <= _nWbins; ++i) {   //For each (w,y) pair, calculate the diff. _lum
-            printf("Calculating cross section: %2.0f %% \r", float(i)/float(_nWbins)*100);
-	    fflush(stdout);
-            unsigned int r = 1;
-            for(unsigned int j = 0; j < _nYbins/nthreads; ++j)
-            {
-
-                for(int t = 0; t < nthreads; t++)
-                {
-                    args[t].m = w[i];
-                    args[t].y = y[r];
-
-                    pthread_create(&threads[t], NULL, &twoPhotonLuminosity::D2LDMDY_Threaded, &args[t]);
-                    r++;
-                }
-                for(int t = 0; t < nthreads; t++)
-                {
-                    pthread_join(threads[t], NULL);
-                    xlum = w[i] * args[t].res;
-                    wylumfile << xlum <<endl;
-                }
-            }
-            for(unsigned int t = 0; t < _nYbins%nthreads; t++)
-            {
-                args[t].m = w[i];
-                args[t].y = y[r];
-
-                pthread_create(&threads[t], NULL, &twoPhotonLuminosity::D2LDMDY_Threaded, &args[t]);
-                r++;
-            }
-            for(unsigned int t = 0; t < _nYbins%nthreads; t++)
-            {
-                pthread_join(threads[t], NULL);
-                xlum = w[i] * args[t].res;
-                wylumfile << xlum <<endl;
-            }
-	}
-    }
-    
-    wylumfile << inputParametersInstance.parameterValueKey() << endl;
-    wylumfile.close();
-    */ 
 
     for (unsigned int i = 0; i < _nWbins; i++) {   //For each (w,y) pair, calculate the diff. _lum
       printf("Calculating cross section: %2.0f %% \r", float(i)/float(_nWbins)*100);
@@ -237,9 +182,6 @@ double twoPhotonLuminosity::D2LDMDY(double M, double Y) const
   double D2LDMDYx = 0.;
   double w1    =  M/2.0*exp(Y);
   double w2    =  M/2.0*exp(-Y);
-  
-  //int Z1=beam1().Z();
-  //int Z2=beam2().Z();
   
   double r_nuc1 = beam1().nuclearRadius();
   double r_nuc2 = beam2().nuclearRadius();
@@ -320,16 +262,6 @@ void * twoPhotonLuminosity::D2LDMDY_Threaded(void * a)
   return NULL;
 }
 
-  /*
-  D2LDMDYx = 2.0/M*Zin*Zin*Zin*Zin*(starlightConstants::alpha*starlightConstants::alpha)*integral(Normalize);  //treats it as a symmetric collision
-  Normalize = D2LDMDYx*M/(2.0*beam1().Z()*beam1().Z()*
-			  beam1().Z()*beam1().Z()*
-			  starlightConstants::alpha*starlightConstants::alpha); 
-  //Normalization also treats it as symmetric
-  return D2LDMDYx;
-  
-  */
-
 
 //______________________________________________________________________________ 
 double twoPhotonLuminosity::integral(double Normalize)
@@ -347,7 +279,6 @@ double twoPhotonLuminosity::integral(double Normalize)
   double NEval      = 0.;
   double Lower[3];
   double Upper[3];
-  //double WK[500000]; //used to be [1000000]
   double *WK = new double[500000];
   double Result, Summary, ResErr, NFNEVL;
 
@@ -720,8 +651,6 @@ double twoPhotonLuminosity::integrand(double ,  // N (unused)
   //breakup effects distances in fermis, so convert to fermis(factor of hbarcmev)
   double  D = sqrt(b1*b1+b2*b2-2*b1*b2*cos(theta))*starlightConstants::hbarcmev;
   double  integrandx = Nphoton(_W1,_gamma,b1)*Nphoton(_W2,_gamma,b2)*b1*b2*probabilityOfBreakup(D); 
-  //why not just use gamma?
-  //switching _input2photon.beamLorentzGamma()to gamma
   return integrandx;
 }
 

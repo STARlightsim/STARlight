@@ -246,7 +246,6 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
 		cs = sqrt(16. * pi * _vmPhotonCoupling * _slopeParameter * hbarc * hbarc * sigmagp(Wgp) / alpha); 
     
 		// Calculate V.M.+nucleus cross section
-		// cvma = _bbs.beam1().A()*cs; 
 		cvma = sigma_A(cs,beam); 
 
 		// Calculate Av = dsigma/dt(t=0) Note Units: fm**s/Gev**2
@@ -316,7 +315,6 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 
 	double lEgamma,Emin,Emax;
 	static double lnEmax, lnEmin, dlnE;
-	// double stepmult,energy,rZ,rA;
 	double stepmult,energy,rZ;
 	int nbstep,nrstep,nphistep,nstep;
 	double bmin,bmax,bmult,biter,bold,integratedflux;
@@ -324,7 +322,6 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 	double deltaphi,phiiter,dist;
 	static double dide[401];
 	double lnElt;
-	// double rA2, rZ2; 
 	double flux_r; 
 	double Xvar;
 	int Ilt;
@@ -358,11 +355,6 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 			double bnn1 = bmin*exp((i+1)*dlnb);
 			double db   = bnn1-bnn0;
         
-			//      double PofB0 = 1.0; 
-			//      if( bnn0 > 1.4 )PofB0=0.0;
-			//      double PofB1 = 1.0; 
-			//      if( bnn1 > 1.4 )PofB1=0.0;
-      
 			double ppslope = 19.0; 
 			double GammaProfile = exp(-bnn0*bnn0/(2.*hbarc*hbarc*ppslope));  
 			double PofB0 = 1. - (1. - GammaProfile)*(1. - GammaProfile);   
@@ -479,11 +471,6 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
         		  double bnn0 = bmin*exp(i*dlnb);
 			  double bnn1 = bmin*exp((i+1)*dlnb);
 			  double db   = bnn1-bnn0;
-        
-			  // double PofB0 = 1.0; 
-			  // if( bnn0 > _bbs.beam2().nuclearRadius() + 0.7 )PofB0=0.0;
-			  // double PofB1 = 1.0; 
-			  // if( bnn1 > _bbs.beam2().nuclearRadius() + 0.7 )PofB1=0.0;
 
                           double PofB0 = _bbs.probabilityOfBreakup(bnn0); 
                           double PofB1 = _bbs.probabilityOfBreakup(bnn1); 
@@ -639,9 +626,6 @@ photonNucleusCrossSection::nepoint(const double Egamma,
 
 	bracket = bracket+X*bessel::dbesk0(X)*bessel::dbesk1(X);
   
-	//	C1=(2.*double((_bbs.beam1().Z())*(_bbs.beam1().Z()))*
-	//    alpha)/pi;
-
 	// Note: NO  Z*Z!!
 	C1=(2.*alpha)/pi;
   

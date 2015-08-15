@@ -74,9 +74,6 @@ starlight::starlight() :
 		_eventChannel          (0),
 		_nmbEventsPerFile      (100),
 		_nmbEventsToGenerate   (10),
-//		_configFileName        ("slight.in"),
-//		_eventDataFileName     ("slight.out"),
-//		_lumLookUpTableFileName("slight.txt"),
 		_isInitialised         (false),
 		_inputParameters       (0)
 { }
@@ -109,7 +106,6 @@ starlight::init()
 	
 // 	cout << "Created beam system with beam lorentz gamma: " << _beamSystem->beamLorentzGamma() << endl;
 
-	// streamsize precision(15);
 	cout.setf(ios_base::fixed,ios_base::floatfield);
 	cout.precision(15);
 

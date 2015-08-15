@@ -90,7 +90,6 @@ upcEvent starlightDpmJet::produceEvent()
 
     if (!_doDoubleEvent)
     {
-      //int zdirection = (Randy.Rndom()) < 0.5 ? -1 : 1;
       int zdirection = 1;
         float gammaE = _spectrum->drawKsingle();
         event = produceSingleEvent(zdirection, gammaE);

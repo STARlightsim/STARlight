@@ -46,10 +46,6 @@ class readLuminosity
   ~readLuminosity();
   
   void read();
-  /*double _Warray[starlightLimits::MAXWBINS];   //decreased from 1000; too big! causes fault!
-  double _Yarray[starlightLimits::MAXYBINS];    
-  double _Farray[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];
-  */
   double *_Warray;
   double *_Yarray;
   double **_Farray; 

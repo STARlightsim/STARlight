@@ -55,7 +55,6 @@ public:
 	const beam& beam1() const { return _beam1; }  ///< returns beam particle 1
 	const beam& beam2() const { return _beam2; }  ///< returns beam particle 2
 
-	//	double getluminosity();
 	double probabilityOfBreakup(const double D) const;
 	
 	double cmsBoost() const { return _cmsBoost; }
@@ -66,14 +65,11 @@ public:
 
 private:
 	void generateBreakupProbabilities();
-	//	int _ibreakup;//temporary solution until read in parameters are done
 	double probabilityOfHadronBreakup(const double impactparameter);
 	double probabilityOfPhotonBreakup(const double impactparameter, const int mode);
 
 	double _pHadronBreakup;
 	double _pPhotonBreakup;
-	//inputParameters inputbbs;
-	//		double luminosity;
 
 	double _beamLorentzGamma;  ///< Lorentz gamma factor of beams in collider frame
         const double _beamLorentzGamma1;  ///< Lorentz gamma factor of beam1 in collider frame

@@ -72,8 +72,6 @@ wideResonanceCrossSection::crossSectionCalculation(const double bwnormsave)
 	double W,dW,dY;
 	double y1,y2,y12,ega1,ega2,ega12;
 	double csgA1,csgA2,csgA12,int_r,dR;
-	double dsigdW,dsigdWalt,dndW;
-	double dsigdW2;
 	double Eth;
 	int    I,J,NW,NY,beam;
 
@@ -110,11 +108,6 @@ wideResonanceCrossSection::crossSectionCalculation(const double bwnormsave)
     
 		W = _wideWmin + double(I)*dW + 0.5*dW;
     
-		dsigdW=0.0;
-		dsigdW2=0.0;
-		dsigdWalt=0.0;
-		dndW=0.0;
-    
 		for(J=0;J<=NY-1;J++){
       
 			y1  = _wideYmin + double(J)*dY;
@@ -143,9 +136,6 @@ wideResonanceCrossSection::crossSectionCalculation(const double bwnormsave)
                           beam = 2; 
                         }
       
-		        //			ega1  = 0.5*W*exp(y1);
-		        //	ega2  = 0.5*W*exp(y2);
-		        //	ega12 = 0.5*W*exp(y12);
       
 			if(ega1 < Eth) continue;
 			if(ega2 > maxPhotonEnergy()) continue;
@@ -180,11 +170,6 @@ wideResonanceCrossSection::crossSectionCalculation(const double bwnormsave)
 	  for(I=0;I<=NW-1;I++){
     
 		W = _wideWmin + double(I)*dW + 0.5*dW;
-    
-		dsigdW=0.0;
-		dsigdW2=0.0;
-		dsigdWalt=0.0;
-		dndW=0.0;
     
 		for(J=0;J<=NY-1;J++){
       

@@ -185,7 +185,7 @@ public:
 	unsigned int beam1A                () const { return _beam1A.value();                 }  ///< returns atomic mass number of beam particle 1
 	unsigned int beam2Z                () const { return _beam2Z.value();                 }  ///< returns atomic number of beam particle 2
 	unsigned int beam2A                () const { return _beam2A.value();                 }  ///< returns atomic mass number of beam particle 2
-	double       beamLorentzGamma      () const { return _beamLorentzGamma;       }  ///< returns Lorentz gamma factor of both beams in beam CMS frame
+	double       beamLorentzGamma      () const { return _beamLorentzGamma;       	      }  ///< returns Lorentz gamma factor of both beams in beam CMS frame
 	double       beam1LorentzGamma     () const { return _beam1LorentzGamma.value();      }  ///< returns Lorentz gamma factor of beam 1 in collider frame
 	double       beam2LorentzGamma     () const { return _beam2LorentzGamma.value();      }  ///< returns Lorentz gamma factor of beam 2 in collider frame
 	double       maxW                  () const { return _maxW.value();                   }  ///< returns maximum mass W of produced hadronic system [GeV/c^2]
@@ -219,8 +219,6 @@ public:
 	starlightConstants::particleTypeEnum    prodParticleType     () const { return _particleType;    }  ///< returns type of produced particle
 	starlightConstants::decayTypeEnum       prodParticleDecayType() const { return _decayType;       }  ///< returns decay type of produced particle
 	starlightConstants::interactionTypeEnum interactionType      () const { return _interactionType; }  ///< returns interaction type
-	// double vmPhotonCoupling();
-	// double slopeParameter();
 	double protonEnergy                () const { return _protonEnergy.value(); }
 
         void setBaseFileName          (std::string v )  {  _baseFileName = v;           }
@@ -264,8 +262,6 @@ public:
 	void setProdParticleDecayType (starlightConstants::decayTypeEnum v)        { _decayType = v;       }  ///< returns decay type of produced particle
 	void setInteractionType       (starlightConstants::interactionTypeEnum v)  { _interactionType = v; }  ///< returns interaction type
 	 
-	// double vmPhotonCoupling();
-	// double slopeParameter();
 	void setProtonEnergy        (double v)  { _protonEnergy = v; }
 	
 	template<typename T>

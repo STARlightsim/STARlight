@@ -65,7 +65,6 @@ int eventFileWriter::writeEvent(upcEvent &event, int eventnumber)
         }
     }
     
-    // int _numberOfVertices = event.getVertices()->size();
 
     // sometimes we don't have tracks due to wrongly picked W , check it
     if(numberoftracks){
@@ -108,16 +107,3 @@ int eventFileWriter::writeEvent(upcEvent &event, int eventnumber)
     return 0;
 }
 
-
-//______________________________________________________________________________
-// Output from the pythia based generation...
-// if (PythiaOutput==true) {
-//
-//             for (int t=0;t<(*VD)._numberOfVertices;t++) {
-//                 outputfile <<"VERTEX: "<<(*VD)._vertx[t]/10.<<" "<<(*VD)._verty[t]/10.<<" "<<(*VD)._vertz[t]/10.<<" "<<0.<<" "<<1<<" "<<0<<" "<<0<<" "<<_numberOfTracks<<endl; //convert from mm to cm for Geant
-//             }
-//
-//             for (int i=0;i<_numberOfTracks;i++) {
-//                 outputfile << "TRACK: " <<" "<<jtog((*VD)._charge[i]*(*VD)._fsParticle[i])<<" "<<(*VD).px[i]<<" "<<(*VD).py[i]<<" "<<(*VD).pz[i]<<" "<<eventnumber<<" "<<i<<" "<<(*VD)._mother1[i]<<" "<<(*VD)._mother2[i]<<" "<<(*VD)._daughter1[i]<<" "<<(*VD)._daughter2[i]<<" "<<(*VD)._charge[i]*(*VD)._fsParticle[i]<<endl;
-//             }//end of track for loop
-//         }//if pythiatrue loop

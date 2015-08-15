@@ -102,9 +102,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   dY  = (_yMax-(-1.0)*_yMax)/_nYbins;
     
   // Write the values of W used in the calculation to slight.txt.  
-//  wylumfile.open("slight.txt");
   wylumfile.open(wyFileName.c_str());
-  // wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile << getbbs().beam1().Z() <<endl;
   wylumfile << getbbs().beam1().A() <<endl;
   wylumfile << getbbs().beam2().Z() <<endl;
@@ -216,18 +214,11 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   }
 
   wylumfile << bwnorm << endl;
-  //wylumfile << inputParametersInstance.parameterValueKey() << endl;
   wylumfile.close();
   
   if(_interferenceEnabled==1) 
     pttablegen();
  
-   // wylumfile.open("slight.txt",ios::app);
-   //cout << "bwnorm: "<< bwnorm <<endl;
-  //wylumfile << bwnorm << endl;
-  //wylumfile << inputParametersInstance.parameterValueKey() << endl;
-  //wylumfile.close();
-
 }
 
 
@@ -257,10 +248,8 @@ void photonNucleusLuminosity::pttablegen()
   wyFileName = _baseFileName +".txt";
 
   ofstream wylumfile;
-//  ofstream wylumfile(wyFileName.c_str());  
   wylumfile.precision(15);
 
-//  wylumfile.open("slight.txt",ios::app);
   wylumfile.open(wyFileName.c_str(),ios::app);
 
   double param1pt[500],param2pt[500];
@@ -270,7 +259,6 @@ void photonNucleusLuminosity::pttablegen()
   double csgA=0.,t=0.,sig_ga_1=0.,sig_ga_2=0.,bmax=0.,bmin=0.,db=0.,pt=0.,sum1=0.,b=0.,A1=0.,A2=0.;
   double sumg=0.,theta=0.,amp_i_2=0.,sumint=0.;
   int NGAUSS=0,NBIN=0;
-  //int NThetaBIN=0;
   
   double xg[16]={.0483076656877383162E0,.144471961582796493E0,
 		 .239287362252137075E0, .331868602282127650E0,

@@ -117,10 +117,6 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
                   ega12 = 0.5*W*exp(y12);
                   beam = 2; 
                 }
-
-		//		ega1  = 0.5*W*exp(y1);
-		//		ega2  = 0.5*W*exp(y2);
-		//		ega12 = 0.5*W*exp(y12);
     
 		if(ega1 < Eth)   
 			continue;

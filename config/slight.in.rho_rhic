@@ -33,5 +33,4 @@ INT_PT_N_BINS =120   #Number of pt bins when interference is turned on; ignored 
 COHERENT = 1     #Coherent=1,Incoherent=0
 INCO_FACTOR = 1.    #percentage of incoherence; ignore if COHERENT=1
 XSEC_METHOD = 1 # Set to 0 to use old method for calculating gamma-gamma luminosity
-N_THREADS = 1 # Number of threads used for calculating luminosity (when using the new method)
 PYTHIA_FULL_EVENTRECORD = 0 # (0 = off, 1 = on) Writes full pythia information to output (vertex, parents, daughter etc), 0=do not write Pythia record

@@ -85,7 +85,6 @@ void Gammagammaleptonpair::twoLeptonCrossSection()
     {
 	for(int j=0;j<_GGlepInputnumy;j++)
 	{
-	    // _sigmax[i][j]=2.*Gammagammaleptonpair::twoMuonCrossSection(_Warray[i])*_f_max*_Farray[i][j]/100.;
             _sigmax[i][j]=twoMuonCrossSection(_Warray[i])*_f_max*_Farray[i][j]/(100.*_Warray[i]);
 	}
     }
@@ -95,8 +94,6 @@ void Gammagammaleptonpair::twoLeptonCrossSection()
     {
 	for(int j=0;j<_GGlepInputnumy-1;j++)
 	{
-	    // _sigmaSum = _sigmaSum +2.*((_sigmax[i][j]+_sigmax[i+1][j]+_sigmax[i][j+1]+_sigmax[i+1][j+1])/4.*(_Yarray[j+1]-_Yarray[j])*(_Warray[i+1]-_Warray[i])/((_Warray[i+1]+_Warray[i])/2.));
-	    // _sigmaSum = _sigmaSum +((_sigmax[i][j]+_sigmax[i+1][j]+_sigmax[i][j+1]+_sigmax[i+1][j+1])/4.*(_Yarray[j+1]-_Yarray[j])*(_Warray[i+1]-_Warray[i])/((_Warray[i+1]+_Warray[i])/2.));
           sigmasum = sigmasum +(_sigmax[i][j]+_sigmax[i+1][j]+_sigmax[i][j+1]+_sigmax[i+1][j+1])/4.*(_Yarray[j+1]-_Yarray[j])*(_Warray[i+1]-_Warray[i]);
 	}
     }
@@ -173,7 +170,7 @@ void Gammagammaleptonpair::pickw(double &w)
 	//sigint is the integral of sgfint, normalized
 
 	//pick a random number
-	x = _randy.Rndom();//random()/(RAND_MAX+1.0);
+	x = _randy.Rndom();
 	//compare x and sgfint to find the ivalue which is just less than the random number x
 	for(int i=0;i<_GGlepInputnumw;i++)
 	{
@@ -239,7 +236,7 @@ void Gammagammaleptonpair::picky(double &y)
     }
 
     //pick a random number
-    x = _randy.Rndom();//random()/(RAND_MAX+1.0);
+    x = _randy.Rndom();
     //compare x and sgfint to find the ivalue which is just less then the random number x
     for(int i=0;i<_GGlepInputnumy;i++)
     {
@@ -271,9 +268,8 @@ void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,d
 {
     //this function calculates px,py,pz,and E given w and y
 
-  double anglepp1=0.,anglepp2=0.,pp1=0.,pp2=0.,E1=0.,E2=0.;
-      //,signpx=0.  unused variable SRK 4/2015
-      double pt=0.;
+    double anglepp1=0.,anglepp2=0.,pp1=0.,pp2=0.,E1=0.,E2=0.;
+    double pt=0.;
 
     //E1 and E2 are for the 2 photons in the CM frame
     E1 = w*exp(y)/2.;
@@ -281,8 +277,8 @@ void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,d
 
     //calculate px and py
     //to get x and y components-- phi is random between 0 and 2*pi
-    anglepp1 = _randy.Rndom();//random()/(RAND_MAX+1.0);
-    anglepp2 = _randy.Rndom();//random()/(RAND_MAX+1.0);
+    anglepp1 = _randy.Rndom();
+    anglepp2 = _randy.Rndom();
 
     pp1 = pp_1(E1);
     pp2 = pp_2(E2);
@@ -295,11 +291,7 @@ void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,d
     //W is the mass of the produced particle (not necessarily on-mass-shell).Now compute its energy and pz
     E = sqrt(w*w+pt*pt)*cosh(y);
     pz= sqrt(w*w+pt*pt)*sinh(y);
-    //    signpx = _randy.Rndom();//random()/(RAND_MAX+1.0);  unused variable SRK 4/2015
 
-    //pick the z direction
-    //Don't do this anymore since y goes from -ymax to +ymax (JN 15-02-2013)
-    //if(signpx > 0.5) pz = -pz;
 }
 
 
@@ -398,11 +390,9 @@ void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ip
 
     double mdec=0.,E1=0.,E2=0.;
     double pmag, anglelep[20001];
-    // double ytest=0.,dndtheta;
     double phi,theta,xtest,Ecm;
     double betax,betay,betaz;
     double hirestheta;
-    //hirestest SRK unused variable SRK 4/2015
     double hiresw;  //added from JN->needed precision
 
     mdec = getMass();
@@ -441,8 +431,7 @@ void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ip
 	}
 
 	hirestheta = 0.;
-	xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
-	//	hirestest = xtest;  // unused variable SRK 4/2015
+	xtest = _randy.Rndom();
 	for(int i =1;i<=20000;i++)
 	{
 	    if(xtest > (anglelep[i]/anglelep[20000]))
@@ -540,7 +529,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
     starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
 	
     double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
-//this function decays particles and writes events to a file
+    //this function decays particles and writes events to a file
     //zero out the event structure
     leptonpair._numberOfTracks=0;
     for(int i=0;i<4;i++)
@@ -561,7 +550,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
     if (iFbadevent==0){
 	int q1=0,q2=0; 
 
-	double xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+	double xtest = _randy.Rndom();
 	if (xtest<0.5)
 	{
 	    q1=1;
@@ -649,12 +638,11 @@ upcEvent Gammagammaleptonpair::produceEvent()
 	_nmbAccepted++;
     
    }while((_ptCutEnabled || _etaCutEnabled) && !accepted);
-   //twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
    
    if (iFbadevent==0){
      int q1=0,q2=0; 
      
-     double xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+     double xtest = _randy.Rndom();
      if (xtest<0.5)
        {
 	 q1=1;
@@ -736,8 +724,8 @@ void Gammagammaleptonpair::tauDecay(double &px1,double &py1,double &pz1,double &
     //     get two random numbers to compare with
 
 
-    ran1 = _randy.Rndom()*_dgammade[100];//(random()/(RAND_MAX+1.0)) * _dgammade[100];
-    ran2 = _randy.Rndom()*_dgammade[100];//(random()/(RAND_MAX+1.0)) * _dgammade[100];
+    ran1 = _randy.Rndom()*_dgammade[100];
+    ran2 = _randy.Rndom()*_dgammade[100];
 
     //     compute the energies that correspond to those numbers
     Ee1 = 0.;
@@ -755,12 +743,12 @@ void Gammagammaleptonpair::tauDecay(double &px1,double &py1,double &pz1,double &
     //     we determine if the tauons have spin of +1 or -1 along the
     //     direction of the beam line
     dir = 1.;
-    if ( _randy.Rndom() < 0.5 )//(random()/(RAND_MAX+1.0)) < 0.5)
+    if ( _randy.Rndom() < 0.5 )
 	dir = -1.;
 
     //     get two random numbers to compare with
-    ran1 = _randy.Rndom()*_tautolangle[99];//(random()/(RAND_MAX+1.0))  * _tautolangle[100];
-    ran2 = _randy.Rndom()*_tautolangle[99];//(random()/(RAND_MAX+1.0))  * _tautolangle[100];
+    ran1 = _randy.Rndom()*_tautolangle[99];
+    ran2 = _randy.Rndom()*_tautolangle[99];
 
     //     find the angles corrsponding to those numbers
     theta1 = 0.;
@@ -772,8 +760,8 @@ void Gammagammaleptonpair::tauDecay(double &px1,double &py1,double &pz1,double &
     }
 
     //     grab another two random numbers to determine phi's
-    phi1 = _randy.Rndom()*2.*starlightConstants::pi;// (random()/(RAND_MAX+1.0))* 2. * starlightConstants::pi;
-    phi2 = _randy.Rndom()*2.*starlightConstants::pi;// (random()/(RAND_MAX+1.0))* 2. * starlightConstants::pi;
+    phi1 = _randy.Rndom()*2.*starlightConstants::pi;
+    phi2 = _randy.Rndom()*2.*starlightConstants::pi;
     //     figure out the momenta of the electron in the frames of the
     //     tauons from which they decayed, that is electron1 is in the
     //     rest frame of tauon1 and e2 is in the rest fram of tau2
@@ -791,7 +779,7 @@ void Gammagammaleptonpair::tauDecay(double &px1,double &py1,double &pz1,double &
     betax = -(px1/E1);
     betay = -(py1/E1);
     betaz = -(pz1/E1);
-//cout<<"2decay betax,pex1= "<<betax<<" "<<pex1<<endl;
+    //cout<<"2decay betax,pex1= "<<betax<<" "<<pex1<<endl;
     transform (betax,betay,betaz,Ee1,pex1,pey1,pez1,Tmp_Par);
     //     then do particle two
     betax = -(px1/E2);

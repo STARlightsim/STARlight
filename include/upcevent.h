@@ -49,8 +49,6 @@ class upcEvent
       upcEvent(starlightConstants::event &ev);
       ~upcEvent();
 
-//      upcEvent & operator  = (const starlightConstants::event &);
-
       void addParticle(starlightParticle &part) { _particles.push_back(part); }
       void addVertex(vector3 &vertex) { _vertices.push_back(vertex); }
       void addGamma(float egamma) { _gammaEnergies.push_back(egamma); }

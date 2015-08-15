@@ -45,7 +45,6 @@ class randomGenerator
 	unsigned int _Mt[624];
 	int _count624;
 	
-	
 };
 
 

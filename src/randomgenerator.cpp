@@ -91,7 +91,6 @@ void randomGenerator::SetSeed(unsigned int seed)
 // with many zero in the bit pattern (like 2**28).
 // see http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/MT2002/emt19937ar.html
 
-  // Lockguard<MutexPosix> guard(&_mutex);
   
   _count624 = 624;
   int i,j;
@@ -109,10 +108,9 @@ double randomGenerator::Rndom(int)
 {
 
 //  Machine independent random number generator.
-//  Produces uniformly-distributed floating points in ]0,1]
+//  Produces uniformly-distributed floating points in [0,1]
 //  Method: Mersenne Twistor
 
-  // Lockguard<MutexPosix> guard(&_mutex);
    
    unsigned int y;
 

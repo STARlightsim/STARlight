@@ -87,7 +87,6 @@ int spectrum::generateKsingle()
             double bold = b;
             if (j == 0)
             {
-                //f1 = fBeamBeamSystem->getBeam1().nofe(egamma, b)*GetSigma(egamma)*fProbOfBreakup[j]*b;
 		f1 = getTransformedNofe(egamma, b)*getSigma(egamma)*_probOfBreakup[j]*b;
 		//std::cout << fProbOfBreakup[j] << std::endl;
             }
@@ -96,7 +95,6 @@ int spectrum::generateKsingle()
                 f1 = f2;
             }
             b = b*binc;
-//            f2 = fBeamBeamSystem->getBeam1().nofe(egamma, b)*GetSigma(egamma)*fProbOfBreakup[j+1]*b;;
             f2 = getTransformedNofe(egamma, b)*getSigma(egamma)*_probOfBreakup[j+1]*b;;
             bint = bint + 0.5*(f1+f2)*(b-bold);
         }
@@ -164,14 +162,10 @@ int spectrum::generateKdouble()
 
     int nbbins = _nBbins;
 
-    //double b_min = _bMin;
-    //double b_max = _bMax;
-
     for (int i = 0; i < _nK; i++)
     {
 
         egamma2 = _eGammaMin;
-        //double sum_over_k = 0.0;
 
         for (int j = 0; j < _nK; j++)
         {
@@ -186,8 +180,6 @@ int spectrum::generateKdouble()
 
                 if (k == 0)
                 {
-		  // f1 = fBeamBeamSystem->getBeam1().nofe(egamma1, b) * fBeamBeamSystem->getBeam2().nofe(egamma2, b)
-                  //       * GetSigma(egamma1) * GetSigma(egamma2) *fProbOfBreakup[j]*b;
                   f1 = getTransformedNofe(egamma1, b) * getTransformedNofe(egamma2, b) 
                          * getSigma(egamma1) * getSigma(egamma2) *_probOfBreakup[k]*b;                }
                 else
@@ -195,8 +187,6 @@ int spectrum::generateKdouble()
                     f1 = f2;
                 }
                 b = b*binc;
-                // f2 = fBeamBeamSystem->getBeam1().nofe(egamma1, b) * fBeamBeamSystem->getBeam2().nofe(egamma2, b)
-                //     * GetSigma(egamma1) * GetSigma(egamma2) *fProbOfBreakup[j+1]*b;
                 f2 = getTransformedNofe(egamma1, b) * getTransformedNofe(egamma2, b) 
                      * getSigma(egamma1) * getSigma(egamma2) *_probOfBreakup[k+1]*b;
                 bint = bint + 0.5*(f1+f2)*(b-bold);
@@ -311,19 +301,11 @@ void spectrum::drawKdouble(float& egamma1, float& egamma2)
     
     // Second gamma
 
-    //    double reldw = delta_e/(fEGamma[itest1+1] - fEGamma[itest1]);
-    //    std::vector<double> fn_second(fNK);
     std::vector<double> fn_second_cumulative(_nK+1);
-    
-    //    for(int i = 0; i < fNK; i++)
-    //    {
-    //       fn_second[i] = fFnDouble[itest1][i] + (fFnDouble[itest1+1][i] - fFnDouble[itest1][i])*reldw;
-    //    }
     
     fn_second_cumulative[0] = 0.0;
     for(int i = 1; i < _nK+1; i++)
     {
-       //       fn_second_cumulative[i] = fn_second_cumulative[i-1] + fn_second[i-1]; //TODO:check indexing
        fn_second_cumulative[i] = fn_second_cumulative[i-1] + _fnDouble[itest1][i-1]; 
     }
     
@@ -374,9 +356,6 @@ bool spectrum::generateBreakupProbabilities()
     int nbbins = _nBbins;
 
     double b_min = _bMin;
-    //double b_max = _bMax;
-
-    //    double binc = (log(b_max/b_min))/(double)nbbins;
     double binc = exp((log(_bMax/_bMin))/(double)_nBbins);
 
     double b = b_min;

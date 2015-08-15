@@ -56,9 +56,4 @@ class pythiaStarlight
 };
 
 
-      // Generator; shorthand for event.
-        //Pythia pythia("/home/butter/pythia/pythia8120/xmldoc");
-        //Event& event = pythia.event;
-
-
 #endif  // PYTHIASTARLIGHT_H

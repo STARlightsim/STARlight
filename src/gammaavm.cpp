@@ -46,7 +46,7 @@ using namespace std;
 
 
 //______________________________________________________________________________
-Gammaavectormeson::Gammaavectormeson(const inputParameters& inputParametersInstance, beamBeamSystem& bbsystem):eventChannel(inputParametersInstance, bbsystem), _phaseSpaceGen(0)  //:readLuminosity(input),_bbs(bbsystem)
+Gammaavectormeson::Gammaavectormeson(const inputParameters& inputParametersInstance, beamBeamSystem& bbsystem):eventChannel(inputParametersInstance, bbsystem), _phaseSpaceGen(0)
 {
 	_VMNPT=inputParametersInstance.nmbPtBinsInterference();
 	_VMWmax=inputParametersInstance.maxW();
@@ -144,7 +144,6 @@ void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
 	// taking spin into account
 
 	double pmag;
-	// double anglelep[20001],xtest,ytest=0.,dndtheta;
 	double phi,theta,Ecm;
 	double betax,betay,betaz;
 	double mdec=0.0;
@@ -246,7 +245,6 @@ bool Gammaavectormeson::fourBodyDecay
 double Gammaavectormeson::getDaughterMass(starlightConstants::particleTypeEnum &ipid)
 {
 	//This will return the daughter particles mass, and the final particles outputed id...
-  //	double ytest=0.   unused variable SRK 4/2015
 	  double mdec=0.;
   
 	switch(_VMpidtest){
@@ -287,7 +285,6 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particleTypeEnum &
 	case starlightConstants::UPSILON2S:
 	case starlightConstants::UPSILON3S:
 		//  decays 50% to e+/e-, 50% to mu+/mu-
-	  //		ytest = _randy.Rndom();//random()/(RAND_MAX+1.0); unused variable srk 4/2015
     
 		mdec = starlightConstants::muonMass;
 		ipid = starlightConstants::MUON;
@@ -380,15 +377,11 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	//     given W and Y,   without interference.  Subroutine vmpt.f handles
 	//     production with interference
  
-  //	double dW,dY;  unused variables SRK 4/2015
 	double Egam,Epom,tmin,pt1,pt2,phi1,phi2;
 	double px1,py1,px2,py2;
 	double pt,xt,xtest,ytest;
-	//	double photon_spectrum;
 	double t2;
 
-	//	dW = (_VMWmax-_VMWmin)/double(_VMnumw);  unused variables SRK 4/2015
-	//dY  = (_VMYmax-_VMYmin)/double(_VMnumy);
   
 	//Find Egam,Epom in CM frame
         if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
@@ -523,14 +516,6 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 		pz = -pz;
 	}
 
-        /*
-        else if( (_bbs.beam1().A()==1 && _bbs.beam2().A() != 1) || (_bbs.beam2().A()==1 && _bbs.beam1().A() != 1) ){
-	  // Don't switch      
-        }
-	else{
-		if (_randy.Rndom() >= 0.5) pz = -pz;
-	}
-        */
 }
 
 //______________________________________________________________________________
@@ -650,7 +635,6 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 	double dY=0.,yleft=0.,yfract=0.,xpt=0.,pt1=0.,ptfract=0.,pt=0.,pt2=0.,theta=0.;
 	int IY=0,j=0;
   
-	//	dW = (_VMWmax-_VMWmin)/double(_VMnumw);  // unused variable SRK 4/2015
 	dY  = (_VMYmax-_VMYmin)/double(_VMnumy);
   
 	//  Y is already fixed; choose a pt
@@ -665,7 +649,7 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 	yleft=fabs(Y)-(IY)*dY;
 	yfract=yleft*dY;
   
-	xpt=_randy.Rndom(); //random()/(RAND_MAX+1.0);
+	xpt=_randy.Rndom();
         
 	for(j=0;j<_VMNPT+1;j++){
 		if (xpt < _fptarray[IY][j]) goto L60;
@@ -719,7 +703,7 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
  L120:
 
 	//  we have a pt 
-	theta=2.*starlightConstants::pi*_randy.Rndom();//(random()/(RAND_MAX+1.0))*2.*pi;
+	theta=2.*starlightConstants::pi*_randy.Rndom();
 	px=pt*cos(theta);
 	py=pt*sin(theta);
 
@@ -781,7 +765,6 @@ upcEvent Gammaavectormeson::produceEvent()
 
 		double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
 		bool accepted = false;
-		//  if(_accCut){
 		do{
 			pickwy(comenergy,rapidity);
 
@@ -825,9 +808,6 @@ upcEvent Gammaavectormeson::produceEvent()
 				_nmbAccepted++;
 	      
 		}while((_ptCutEnabled || _etaCutEnabled) && !accepted);
-		/*  }else{
-		    twoBodyDecay(ipid,E,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
-		    }*/
 		if (iFbadevent==0&&tcheck==0) {
 			int q1=0,q2=0;
                         int ipid1,ipid2=0;

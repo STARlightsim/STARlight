@@ -33,9 +33,7 @@ bool spectrumProtonNucleus::generateBreakupProbabilities()
     int nbbins = _nBbins;
 
     double b_min = _bMin;
-    //double b_max = _bMax;
 
-    //    double binc = (log(b_max/b_min))/(double)nbbins;
     double binc = exp((log(_bMax/_bMin))/(double)_nBbins);
 
     double b = b_min;
@@ -44,12 +42,9 @@ bool spectrumProtonNucleus::generateBreakupProbabilities()
 
     for (int i = 0; i < nbbins; i++)
     {
-        //double bimp = b;
-        //double rhad = 0;
 	_beamBeamSystem->beam1().Z() > 1 ? _probOfBreakup[i] = exp(-getNucleonNucleonSigma()*_beamBeamSystem->beam1().thickness(b)) :
 	_beamBeamSystem->beam2().Z() > 1 ? _probOfBreakup[i] = exp(-getNucleonNucleonSigma()*_beamBeamSystem->beam2().thickness(b)) :
 	b < 7.76 ? _probOfBreakup[i] = 0 : _probOfBreakup[i] = 1; // Should always be true though
-	//double hardCutoff = 0;
 	
         b = b*binc;
     }
@@ -61,6 +56,5 @@ double spectrumProtonNucleus::getSigma(double ) const
 {
     return 0.11;
 }
-
 
 

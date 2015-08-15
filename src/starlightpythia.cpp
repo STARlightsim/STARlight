@@ -43,7 +43,6 @@ int starlightPythia::init(std::string pythiaParams, bool fullEventRecord)
 {
    _fullEventRecord = fullEventRecord;
    _spectrum = new spectrumProtonNucleus(&_bbs);
-   //_spectrum = new Spectrum(&bbs);
 
    _spectrum->setMinGammaEnergy(_minGammaEnergy);
    _spectrum->setMaxGammaEnergy(_maxGammaEnergy);
@@ -70,10 +69,6 @@ int starlightPythia::init(std::string pythiaParams, bool fullEventRecord)
         pythiaInterface::pygive(p.c_str());
       }
     }
-    //pythiaInterface::pygive("mstp(12)=0");
-    //pythiaInterface::pygive("mstj(21)=0"); // Disable decays of particles 
-    
-    //pythiaInterface::pygive("parp(2)=1.0"); // Cut off c.m. energy (GeV)
   
     pythiaInterface::pyinit("FIXT", "gamma", "p", _maxGammaEnergy); // Fixed target, beam, target, beam momentum (GeV/c)
 
@@ -88,7 +83,6 @@ upcEvent starlightPythia::produceEvent()
   
     if (!_doDoubleEvent)
     {
-      //int zdirection = (Randy.Rndom()) < 0.5 ? -1 : 1;
       double gammaE = 0;
       do
       {
@@ -100,7 +94,6 @@ upcEvent starlightPythia::produceEvent()
       std::sprintf(opt, "parp(171)=%f", gammaE/_maxGammaEnergy);
       pythiaInterface::pygive(opt); // Set the energy of the photon beam (gammaE/1000 * 1000.0);
       pythiaInterface::pyevnt(); // Generate event
-//      pythiaInterface::pyfram(2); // go to CMS 
       
       int zdirection = (_bbs.beam1().Z()==1 ? 1 : -1);
       double boost = acosh(_bbs.beamLorentzGamma())*zdirection;
@@ -109,7 +102,6 @@ upcEvent starlightPythia::produceEvent()
       
       for(int idx = 0; idx < pyjets_.n; idx++)
       {
-//	if(std::abs(pyjets_.k[1][idx]) <= 6) std::cout << "Quark: " << pyjets_.k[1][idx] << ", status: " <<  pyjets_.k[0][idx] << std::endl;
 	if(pyjets_.k[0][idx] > 10 && _fullEventRecord==false) continue;
 	int pdgCode = pyjets_.k[1][idx];
 	int charge = 0;
@@ -125,7 +117,6 @@ upcEvent starlightPythia::produceEvent()
 	starlightParticle particle(pyjets_.p[0][idx], pyjets_.p[1][idx], -zdirection*pyjets_.p[2][idx], pyjets_.p[3][idx], pyjets_.p[4][idx], pyjets_.k[1][idx], charge);
 	if(_fullEventRecord)
 	{
-// 	  particle.setParent(pyjets_.k[2][idx]);
 	  particle.setFirstDaughter(pyjets_.k[3][idx]);
 	  particle.setLastDaughter(pyjets_.k[4][idx]);
 	  particle.setStatus(pyjets_.k[0][idx]);

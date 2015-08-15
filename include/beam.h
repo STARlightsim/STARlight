@@ -59,7 +59,6 @@ public:
 	void setBeamLorentzGamma(double gamma) {_beamLorentzGamma = gamma;}
 protected:
 
-	//inputParameters inputbeam;
 	double _beamLorentzGamma;  ///< Lorentz gamma factor of beams in collider frame (from inputParameters)
 
 };
