@@ -359,11 +359,11 @@ beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
     
 	for ( int IR1 =1; IR1 <= NR1; IR1++) {
 		RR1 = RR1+DELR;
-		AN1 = AN1+RR1*DEN1[IR1]*DELR*2.*3.141592654;//Swap to starlightconstants::Pi?
+		AN1 = AN1+RR1*DEN1[IR1]*DELR*2.*starlightConstants::pi;
 	}
 	for ( int IR2 =1; IR2 <= NR2; IR2++) {
 		RR2 = RR2+DELR;
-		AN2 = AN2+RR2*DEN2[IR2]*DELR*2.*3.141592654;
+		AN2 = AN2+RR2*DEN2[IR2]*DELR*2.*starlightConstants::pi;
 	}
         
 
@@ -557,7 +557,7 @@ beamBeamSystem::probabilityOfPhotonBreakup(const double impactparameter, const i
 	scon = .1*g1*g1*si1;
 	zcon = zp/(gammatarg*( pi)*( 
 	                                                hbarcmev))*zp/(gammatarg*( pi)*
-		             ( hbarcmev))/137.04;//hbarc?
+		             ( hbarcmev))/137.04;//alpha?
 
 	//single neutron from GDR, Veyssiere et al. Nucl. Phys. A159, 561 (1970)
 	for ( int i = 1; i <= 160; i++) {
