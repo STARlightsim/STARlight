@@ -551,8 +551,8 @@ upcEvent Gammagammasingle::produceEvent()
 	single._charge[1]=-1;//q2=-1;
       }
       else{
-	single._charge[0]=1;//q1=-1;
-	single._charge[1]=-1;//q2=1;
+	single._charge[0]=-1;//q1=-1;
+	single._charge[1]=1;//q2=1;
       }
       if (ztest<0.5){
 	single._charge[2]=1;//q3=1;
@@ -566,22 +566,22 @@ upcEvent Gammagammasingle::produceEvent()
       single.px[0]=px1;
       single.py[0]=py1;
       single.pz[0]=pz1;
-      single._fsParticle[0]=ipid;
+      single._fsParticle[0]=ipid*single._charge[0];
       //Track #2                                                                                                                      
       single.px[1]=px2;
       single.py[1]=py2;
       single.pz[1]=pz2;
-      single._fsParticle[1]=ipid;
+      single._fsParticle[1]=ipid*single._charge[1];
       //Track #3
       single.px[2]=px3;
       single.py[2]=py3;
       single.pz[2]=pz3;
-      single._fsParticle[2]=ipid;
+      single._fsParticle[2]=ipid*single._charge[2];
       //Track #4
       single.px[3]=px4;
       single.py[3]=py4;
       single.pz[3]=pz4;
-      single._fsParticle[3]=ipid;
+      single._fsParticle[3]=ipid*single._charge[3];
       
       ievent=ievent+1;
     }	
