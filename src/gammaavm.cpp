@@ -66,6 +66,10 @@ Gammaavectormeson::Gammaavectormeson(const inputParameters& inputParametersInsta
         _ProductionMode=inputParametersInstance.productionMode();
 
         N1 = 0; N2 = 0; 
+	  if (_VMpidtest == starlightConstants::FOURPRONG){
+		// create n-body phase-spage generator
+		_phaseSpaceGen = new nBodyPhaseSpaceGen(_randy);
+         }
 }
 
 
