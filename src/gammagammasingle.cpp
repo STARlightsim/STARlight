@@ -95,7 +95,7 @@ void Gammagammasingle::singleCrossSection()
     if(getMass()>_Warray[i]) ivalw=i;
   }
 
-  remainw = (getMass()-_Warray[ivalw])/(_Warray[ivalw+1]-_Warray[ivalw+1]-_Warray[ivalw]);
+  remainw = (getMass()-_Warray[ivalw])/(_Warray[ivalw+1]-_Warray[ivalw]);
   _ivalwd = ivalw;
   _remainwd = remainw;
   //if we are interested rho pairs at threshold, the just set sigma to 100nb
