@@ -630,28 +630,28 @@ double Gammagammasingle::getMass()
   double singlemass=0.;
   switch(_GGsingInputpidtest){
   case starlightConstants::ETA:
-    singlemass= etaMass;
+    singlemass = starlightConstants::etaMass;
     break;
   case starlightConstants::ETAPRIME:
-    singlemass=etaPrimeMass;
+    singlemass = starlightConstants::etaPrimeMass;
     break;
   case starlightConstants::ETAC:
-    singlemass=etaCMass;
+    singlemass = starlightConstants::etaCMass;
     break;
   case starlightConstants::F0:
-    singlemass=f0Mass;
+    singlemass = starlightConstants::f0Mass;
     break;
   case starlightConstants::F2:
-    singlemass=f2Mass;
+    singlemass = starlightConstants::f2Mass;
     break;
   case starlightConstants::A2:
-    singlemass=a2Mass;
+    singlemass = starlightConstants::a2Mass;
     break;
   case starlightConstants::F2PRIME:
-    singlemass=f2PrimeMass;
+    singlemass = starlightConstants::f2PrimeMass;
     break;
   case starlightConstants::ZOVERZ03:
-    singlemass=1.540;
+    singlemass = starlightConstants::zoverz03Mass;
     break;
   default:
     cout<<"Not a recognized single particle, Gammagammasingle::getmass(), mass = 0."<<endl;
@@ -668,28 +668,28 @@ double Gammagammasingle::getWidth()
   double singlewidth=0.;
   switch(_GGsingInputpidtest){
   case starlightConstants::ETA:
-    singlewidth=0.516E-6;
+    singlewidth = starlightConstants::etaPartialggWidth;
     break;
   case starlightConstants::ETAPRIME:
-    singlewidth=4.35E-6;
+    singlewidth = starlightConstants::etaPrimePartialggWidth;
     break;
   case starlightConstants::ETAC:
-    singlewidth=5.0E-6;
+    singlewidth = starlightConstants::etaCPartialggWidth;
     break;
   case starlightConstants::F0:
-    singlewidth=0.29E-6;
+    singlewidth = starlightConstants::f0PartialggWidth;
     break;
   case starlightConstants::F2:
-    singlewidth=3.03E-6;
+    singlewidth = starlightConstants::f2PartialggWidth;
     break;
   case starlightConstants::A2:
-    singlewidth=1.0E-6;
+    singlewidth = starlightConstants::a2PartialggWidth;
     break;
   case starlightConstants::F2PRIME:
-    singlewidth=0.081E-6;
+    singlewidth = starlightConstants::f2PrimePartialggWidth;
     break;
   case starlightConstants::ZOVERZ03:
-    singlewidth=0.1E-6;
+    singlewidth = starlightConstants::zoverz03PartialggWidth;
     break;
   default:
     cout<<"Not a recognized single particle, Gammagammasingle::getwidth(), width = 0."<<endl;
@@ -704,28 +704,28 @@ double Gammagammasingle::getSpin()
   double singlespin=0.5;
   switch(_GGsingInputpidtest){
   case starlightConstants::ETA:
-    singlespin=0.0;
+    singlespin = starlightConstants::etaSpin;
     break;
   case starlightConstants::ETAPRIME:
-    singlespin=0.0;
+    singlespin = starlightConstants::etaPrimeSpin;
     break;
   case starlightConstants::ETAC:
-    singlespin=0.0;
+    singlespin = starlightConstants::etaCSpin;
     break;
   case starlightConstants::F0:
-    singlespin=0.0;
+    singlespin = starlightConstants::f0Spin;
     break;
   case starlightConstants::F2:
-    singlespin=2.0;
+    singlespin = starlightConstants::f2Spin;
     break;
   case starlightConstants::A2:
-    singlespin=2.0;
+    singlespin = starlightConstants::a2Spin;
     break;
   case starlightConstants::F2PRIME:
-    singlespin=2.0;
+    singlespin = starlightConstants::f2PrimeSpin;
     break;
   case starlightConstants::ZOVERZ03:
-    singlespin=2.0;
+    singlespin = starlightConstants::zoverz03Spin;
     break;
   default:
     cout<<"Not a recognized single particle, Gammagammasingle::getspin(), spin = 0."<<endl;

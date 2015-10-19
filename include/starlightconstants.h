@@ -74,6 +74,26 @@ namespace starlightConstants
         static const double a2Width = 0.105;                 // [GeV/c^2]
         static const double f2PrimeMass = 1.525;             // [GeV/c^2]
         static const double f2PrimeWidth = 0.073;            // [GeV/c^2]
+        static const double zoverz03Mass = 1.540;            // [GeV/c^2]
+
+
+        static const double f0PartialggWidth = 0.29E-6;                 // [GeV/c^2]
+        static const double etaPartialggWidth = 0.516E-6;           // [GeV/c^2]
+        static const double etaPrimePartialggWidth = 4.35E-6;        // [GeV/c^2]
+        static const double etaCPartialggWidth = 5.0E-6;              // [GeV/c^2]
+        static const double f2PartialggWidth = 3.03E-6;                // [GeV/c^2]
+        static const double a2PartialggWidth = 1.0E-6;                 // [GeV/c^2]
+        static const double f2PrimePartialggWidth = 0.081E-6;            // [GeV/c^2]
+        static const double zoverz03PartialggWidth = 0.1E-6;            // [GeV/c^2]
+
+        static const double f0Spin = 0.0;
+        static const double etaSpin = 0.0;
+        static const double etaPrimeSpin = 0.0;
+        static const double etaCSpin = 0.0;
+        static const double f2Spin = 2.0;
+        static const double a2Spin = 2.0;
+        static const double f2PrimeSpin = 2.0;
+        static const double zoverz03Spin = 2.0;
 
         static const double rho0Mass  = 0.769;               // [GeV/c^2]
 	static const double rho0Width = 0.1517;              // [GeV/c^2]
