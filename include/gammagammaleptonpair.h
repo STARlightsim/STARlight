@@ -64,7 +64,7 @@ class Gammagammaleptonpair : public eventChannel
   double _remainwd;// "
   int _ivalwd;     // "
   double _dgammade[1000];
-  double _tautolangle[100];
+  double _tautolangle[101];
   
   double twoMuonCrossSection(double w);
   void pickw(double &w);
