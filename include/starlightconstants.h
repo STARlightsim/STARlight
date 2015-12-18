@@ -97,8 +97,8 @@ namespace starlightConstants
 
         static const double rho0Mass  = 0.769;               // [GeV/c^2]
 	static const double rho0Width = 0.1517;              // [GeV/c^2]
-        static const double rho0PrimeMass  = 1.450;          // [GeV/c^2]
-	static const double rho0PrimeWidth = 0.400;          // [GeV/c^2]
+        static const double rho0PrimeMass  = 1.540;          // [GeV/c^2]
+	static const double rho0PrimeWidth = 0.570;          // [GeV/c^2]
         static const double OmegaMass  = 0.78265;            // [GeV/c^2]
 	static const double OmegaWidth = 0.00849;            // [GeV/c^2]
         static const double PhiMass  = 1.019461;             // [GeV/c^2]

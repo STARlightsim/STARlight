@@ -213,6 +213,10 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		printWarn << "unknown production mode '" << _productionMode << "'" << endl;
 		return false;
 	}
+	if( (_productionMode.value() ==4) && (_interferenceEnabled.value())) {
+		printWarn << " cannot enable interference for incoherent production " << endl;
+		return false;
+	}
   
 	//Trying to define the proper Wmins and Wmaxs. a TEMPORARY fix....Better solution=??
 	double mass        = 0;

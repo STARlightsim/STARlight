@@ -290,12 +290,13 @@ void photonNucleusLuminosity::pttablegen()
   int beam; 
   
   //  loop over y from 0 (not -ymax) to yma
+  // changed this to go from -ymax to ymax to aid asymmetric collisions
   
   dY=(2.*Ymax)/numy;
-  for(int jy=1;jy<=numy/2;jy++){
-    Yp=(double(jy)-0.5)*dY;
+  for(int jy=1;jy<=numy;jy++){
+    Yp=-Ymax+((double(jy)-0.5)*dY);
     
-    // Find the photon energies.  Yp >= 0, so Egamma2 is smaller
+    // Find the photon energies.  Yp >= 0, so Egamma2 is smaller (no longer true if we integrate over all Y)
     // Use the vector meson mass for W here - neglect the width
     
     Egamma1 = 0.5*mass*exp(Yp);
@@ -362,9 +363,9 @@ void photonNucleusLuminosity::pttablegen()
     
     for(int k=0;k<NGAUSS;k++){
       t     = sqrt(ax*xg[k]+bx);
-      csgA  = csgA + ag[k]*getbbs().beam2().formFactor(t)*getbbs().beam2().formFactor(t);
+      csgA  = csgA + ag[k]*getbbs().beam1().formFactor(t)*getbbs().beam1().formFactor(t);
       t     = sqrt(ax*(-xg[k])+bx);
-      csgA  = csgA + ag[k]*getbbs().beam2().formFactor(t)*getbbs().beam2().formFactor(t);
+      csgA  = csgA + ag[k]*getbbs().beam1().formFactor(t)*getbbs().beam1().formFactor(t);
     }
 	   
     csgA = 0.5*(tmax-tmin)*csgA;
@@ -376,12 +377,16 @@ void photonNucleusLuminosity::pttablegen()
     //  Use the vector meson mass for W here - neglect width in
     //  interference calculation
     
-    ptparam1=vmsigmapt(mass,Egamma1,ptparam1);
-    ptparam2=vmsigmapt(mass,Egamma2,ptparam2);
+    ptparam1=vmsigmapt(mass,Egamma1,ptparam1, 2);
+    ptparam2=vmsigmapt(mass,Egamma2,ptparam2, 1);
     
     //  set  bmax according to the smaller photon energy, following flux.f
-    
+    if (Egamma1 >=Egamma2) {
     bmax=bmin+6.*starlightConstants::hbarc*gamma_em/Egamma2;
+    }
+    else {
+    bmax=bmin+6.*starlightConstants::hbarc*gamma_em/Egamma1;
+    }    
     bmin = getbbs().beam1().nuclearRadius()+getbbs().beam2().nuclearRadius();
     //  if we allow for nuclear breakup, use a slightly smaller bmin
     
@@ -401,8 +406,8 @@ void photonNucleusLuminosity::pttablegen()
 	
 	b = bmin + (float(j)-0.5)*db;
 	//  nofe is the photon flux function
-	A1 = Egamma1*nofe(Egamma1,b)*sig_ga_1*ptparam1[i];
-	A2 = Egamma2*nofe(Egamma2,b)*sig_ga_2*ptparam2[i];
+	A1 = Egamma1*nofe(Egamma1,b, beam)*sig_ga_1*ptparam1[i];
+	A2 = Egamma2*nofe(Egamma2,b, beam)*sig_ga_2*ptparam2[i];
 	sumg=0.0;
 	//  do this as a Gaussian integral, from 0 to pi
 	for(int k=0;k<NGAUSS;k++){
@@ -433,7 +438,7 @@ void photonNucleusLuminosity::pttablegen()
 
 
 //______________________________________________________________________________
-double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGMAPT)
+double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGMAPT, int beam)
 {
   //
   //  This subroutine calculates the effect of the nuclear form factor
@@ -466,9 +471,15 @@ double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGM
   NGAUSS=16;
 
   //     >> Initialize
+  if (beam == 1) {
+  pxmax = 10.*(starlightConstants::hbarc/getbbs().beam2().nuclearRadius());
+  pymax = 10.*(starlightConstants::hbarc/getbbs().beam2().nuclearRadius());
+  }
+  else {
   pxmax = 10.*(starlightConstants::hbarc/getbbs().beam1().nuclearRadius());
   pymax = 10.*(starlightConstants::hbarc/getbbs().beam1().nuclearRadius());
-  
+  }
+
   Nxbin = 500;
   
   dx = 2.*pxmax/double(Nxbin);
@@ -503,10 +514,18 @@ double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGM
 		  
 		  //  photon form factor
 		  // add in phase space factor?
+		  if (beam ==2) {
 		  f1  = (getbbs().beam1().formFactor(q1*q1)*getbbs().beam1().formFactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
 		  
 		  //  Pomeron form factor
+		  f2  = getbbs().beam2().formFactor(q2*q2)*getbbs().beam2().formFactor(q2*q2);
+		  }
+		  else {
+		  f1  = (getbbs().beam2().formFactor(q1*q1)*getbbs().beam2().formFactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
+		  
+		  //  Pomeron form factor
 		  f2  = getbbs().beam1().formFactor(q2*q2)*getbbs().beam1().formFactor(q2*q2);
+		  }
 		  sumy= sumy + ag[j]*f1*f2;
 		  
 		  //  now consider other half of py phase space - why is this split?
@@ -516,8 +535,19 @@ double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGM
 		  q1  = sqrt( ((Egamma/_beamLorentzGamma)*Egamma/_beamLorentzGamma) + pt1*pt1 );
 		  q2  = sqrt( ((Epom/_beamLorentzGamma)*(Epom/_beamLorentzGamma))   + pt2*pt2 );
 		  //  add in phase space factor?
+		  if (beam ==2) {
 		  f1  = (getbbs().beam1().formFactor(q1*q1)*getbbs().beam1().formFactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
+		  
+		  //  Pomeron form factor
+		  f2  = getbbs().beam2().formFactor(q2*q2)*getbbs().beam2().formFactor(q2*q2);
+		  }
+		  else {
+		  f1  = (getbbs().beam2().formFactor(q1*q1)*getbbs().beam2().formFactor(q1*q1)*pt1*pt1)/(q1*q1*q1*q1);
+		  
+		  //  Pomeron form factor
 		  f2  = getbbs().beam1().formFactor(q2*q2)*getbbs().beam1().formFactor(q2*q2);
+		  }
+
 		  sumy= sumy + ag[j]*f1*f2;
       
 		}
@@ -535,7 +565,7 @@ double *photonNucleusLuminosity::vmsigmapt(double W, double Egamma, double *SIGM
 
 
 //______________________________________________________________________________
-double photonNucleusLuminosity::nofe(double Egamma, double bimp)
+double photonNucleusLuminosity::nofe(double Egamma, double bimp, int beam)
 {
   //Function for the calculation of the "photon density".
   //nofe=numberofgammas/(energy*area)
@@ -547,9 +577,15 @@ double photonNucleusLuminosity::nofe(double Egamma, double bimp)
   
   if( X <= 0.0) 
     cout<<"In nofe, X= "<<X<<endl;
-  
+
+  if (beam ==2){
   factor1 = (double(getbbs().beam1().Z()*getbbs().beam1().Z())
 	     *starlightConstants::alpha)/(starlightConstants::pi*starlightConstants::pi);
+  }
+  else{
+  factor1 = (double(getbbs().beam2().Z()*getbbs().beam2().Z())
+	     *starlightConstants::alpha)/(starlightConstants::pi*starlightConstants::pi);
+  }
 
   factor2 = 1./(Egamma*bimp*bimp);
   factor3 = X*X*(bessel::dbesk1(X))*(bessel::dbesk1(X));

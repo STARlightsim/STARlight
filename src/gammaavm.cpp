@@ -123,7 +123,7 @@ void Gammaavectormeson::pickwy(double &W, double &Y)
            }
         } else {
           btest = _randy.Rndom();
-          if ( btest < _Farray1[IW][IY]/_Farray[IW][IY] ){
+	  if ( btest < _Farray1[IW][IY]/_Farray[IW][IY] ){
             _TargetBeam = 2;
             N2++;
           }  else {
@@ -131,7 +131,6 @@ void Gammaavectormeson::pickwy(double &W, double &Y)
             N1++; 
           }
         }
-	// cout<<"N1: "<<N1<<" N2; "<<N2<<endl;
 }         
 
 
@@ -404,15 +403,15 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
     	    Egam = 0.5*W*exp(Y);
   	    Epom = 0.5*W*exp(-Y);
           }  
-        } else if ( _TargetBeam == 1 ) {
+        } else if( _ProductionMode == 2 ){
 	  Egam = 0.5*W*exp(-Y);
 	  Epom = 0.5*W*exp(Y);
         } else { 
           Egam = 0.5*W*exp(Y);
 	  Epom = 0.5*W*exp(-Y);
-	}
+	 }
 
-         //cout<<" Y: "<<Y<<" W: "<<W<<" TargetBeam; "<<_TargetBeam<<" Egam: "<<Egam<<" Epom: "<<Epom<<endl; 
+        // cout<<" Y: "<<Y<<" W: "<<W<<" TargetBeam; "<<_TargetBeam<<" Egam: "<<Egam<<" Epom: "<<Epom<<endl; 
         pt1 = pTgamma(Egam);  
 	phi1 = 2.*starlightConstants::pi*_randy.Rndom();
 
@@ -441,7 +440,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	
 		if(tmin > 0.5){
 			cout<<" WARNING: tmin= "<<tmin<<endl;
-                        cout<< " Y = "<<Y<<" W = "<<W<<" Epom = "<<Epom<<" gamma = "<<_VMgamma_em<<endl; 
+                      cout<< " Y = "<<Y<<" W = "<<W<<" Epom = "<<Epom<<" gamma = "<<_VMgamma_em<<endl; 
 			cout<<" Will pick a new W,Y "<<endl;
 			tcheck = 1;
 			return;
@@ -489,7 +488,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
                       comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2;
                     }  
                   } else if (_TargetBeam==1) {
-                    comp = _bbs.beam2().formFactor(t2)*_bbs.beam1().formFactor(t2)*pt2;
+                    comp = _bbs.beam1().formFactor(t2)*_bbs.beam1().formFactor(t2)*pt2;
                   } else {
                     comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2; 
                   }
@@ -654,7 +653,6 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 	yfract=yleft*dY;
   
 	xpt=_randy.Rndom();
-        
 	for(j=0;j<_VMNPT+1;j++){
 		if (xpt < _fptarray[IY][j]) goto L60;
 	}
@@ -721,7 +719,7 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 //______________________________________________________________________________
 starlightConstants::event Gammaavectormeson::produceEvent(int&)
 {
-	// Not used; return default event
+	//Note used; return default event
 	return starlightConstants::event();
 }
 

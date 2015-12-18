@@ -48,8 +48,8 @@ class photonNucleusLuminosity : public photonNucleusCrossSection
   
  private:
   void photonNucleusDifferentialLuminosity();
-  double *vmsigmapt(double W,double Egamma,double *SIGMAPT);
-  double nofe(double Egamma,double bimp);
+  double *vmsigmapt(double W,double Egamma,double *SIGMAPT, int beam);
+  double nofe(double Egamma,double bimp, int beam);
   void pttablegen();
 
   const double _ptBinWidthInterference;
