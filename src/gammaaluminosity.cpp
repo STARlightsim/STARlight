@@ -406,8 +406,10 @@ void photonNucleusLuminosity::pttablegen()
 	
 	b = bmin + (float(j)-0.5)*db;
 	//  nofe is the photon flux function
-	A1 = Egamma1*nofe(Egamma1,b, beam)*sig_ga_1*ptparam1[i];
-	A2 = Egamma2*nofe(Egamma2,b, beam)*sig_ga_2*ptparam2[i];
+//	A1 = Egamma1*nofe(Egamma1,b, beam)*sig_ga_1*ptparam1[i];
+//	A2 = Egamma2*nofe(Egamma2,b, beam)*sig_ga_2*ptparam2[i];
+	A1 = Egamma1*nofe(Egamma1,b, 2)*sig_ga_1*ptparam1[i];
+	A2 = Egamma2*nofe(Egamma2,b, 1)*sig_ga_2*ptparam2[i];
 	sumg=0.0;
 	//  do this as a Gaussian integral, from 0 to pi
 	for(int k=0;k<NGAUSS;k++){
