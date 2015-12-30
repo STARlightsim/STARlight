@@ -400,7 +400,7 @@ void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,d
   //add switch for rho pairs at threshold and everything else.
   switch(_GGsingInputpidtest){
   case starlightConstants::ZOVERZ03:	//the rho pairs produced at threshold
-    pmag = sqrt(getMass()*getMass()/4. - mdec*mdec);
+    pmag = sqrt(getMass()*getMass()/16. - mdec*mdec);//sqrt(getMass()*getMass()/4. - mdec*mdec);
     break;
   default :
     if(W < 2*mdec){
@@ -536,9 +536,9 @@ upcEvent Gammagammasingle::produceEvent()
     parentmomy=parentmomy/2.;
     parentmomz=parentmomz/2.;
     //Pair #1	
-    twoBodyDecay(ipid,parentE,comenergy,parentmomx,parentmomy,parentmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+    twoBodyDecay(ipid,parentE,comenergy/2.,parentmomx,parentmomy,parentmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
     //Pair #2
-    twoBodyDecay(ipid,parentE,comenergy,parentmomx,parentmomy,parentmomz,px3,py3,pz3,px4,py4,pz4,iFbadevent);
+    twoBodyDecay(ipid,parentE,comenergy/2.,parentmomx,parentmomy,parentmomz,px3,py3,pz3,px4,py4,pz4,iFbadevent);
     //Now add them to vectors to be written out later.
 		
     single._numberOfTracks=4;//number of tracks per event
