@@ -276,7 +276,6 @@ beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
 	//this is what is returned when the function is called
 	double gamma = _beamLorentzGamma; 
 	//input for gamma_em
-	//this will need to be StarlightInputParameters::gamma or whatever
 	double b = impactparameter;
 	int a1 = _beam1.A();  
 	int a2 = _beam2.A();  
@@ -500,7 +499,6 @@ beamBeamSystem::probabilityOfPhotonBreakup(const double impactparameter, const i
 	                   .12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,
 	                   .12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,
 	                   .12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12,.12};
-	//89*.12};
 
 
 
@@ -524,7 +522,7 @@ beamBeamSystem::probabilityOfPhotonBreakup(const double impactparameter, const i
 	IFIRSTP=1;
 
 
-	//This whole thing is dependenant on gold or lead....Might need to expand
+	//This is dependenant on gold or lead....Might need to expand
 	if (zp == 79)
 		{
 
@@ -666,7 +664,6 @@ beamBeamSystem::probabilityOfPhotonBreakup(const double impactparameter, const i
 	}
 
 
-	//This used to be done externally, now it is done internally.
 	if (( mode) == 1) _pPhotonBreakup = 1.;
 	if (( mode) == 2) _pPhotonBreakup = (1-exp(-1*pxn))*(1-exp(-1*pxn));
 	if (( mode) == 3) _pPhotonBreakup = (p1n*exp(-1*pxn))*(p1n*exp(-1*pxn));

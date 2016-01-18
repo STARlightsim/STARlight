@@ -255,7 +255,6 @@ bool inputParser::validateParameters(std::ostream& errOut)
             }
             else
             {
-               //warnOut << "Could not find parameter: " << intIt->second._name << ", but it is not required, using default value: " << *intIt->second._val << std::endl;
                 nNonCriticalMissing++;
             }
         }
@@ -271,7 +270,6 @@ bool inputParser::validateParameters(std::ostream& errOut)
             }
             else
             {
-                //warnOut << "Could not find parameter: " << floatIt->second._name << ", but it is not required, using default value: " << *floatIt->second._val << std::endl;
                 nNonCriticalMissing++;
             }
         }
@@ -287,7 +285,6 @@ bool inputParser::validateParameters(std::ostream& errOut)
             }
             else
             {
-                //warnOut << "Could not find parameter: " << doubleIt->second._name << ", but it is not required, using default value: " << *doubleIt->second._val << std::endl;
                 nNonCriticalMissing++;
             }
         }
@@ -303,7 +300,6 @@ bool inputParser::validateParameters(std::ostream& errOut)
             }
             else
             {
-                //warnOut << "Could not find parameter: " << boolIt->second._name << ", but it is not required, using default value: " << *boolIt->second._val << std::endl;
                 nNonCriticalMissing++;
             }
         }

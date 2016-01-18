@@ -378,7 +378,6 @@ double Gammagammaleptonpair::pp_2(double E)
 
 //______________________________________________________________________________
 void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
-                                    double  ,  // E (unused)
                                     double  W,
                                     double  px0, double  py0, double  pz0,
                                     double& px1, double& py1, double& pz1,
@@ -406,7 +405,7 @@ void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ip
 
     //     pick an orientation, based on the spin
     //      phi has a flat distribution in 2*pi
-    phi = _randy.Rndom()*2.*starlightConstants::pi; //(random()/(RAND_MAX+1.0))* 2.*starlightConstants::pi;
+    phi = _randy.Rndom()*2.*starlightConstants::pi;
 
     //     find theta, the angle between one of the outgoing particles and
     //    the beamline, in the frame of the two photons
@@ -546,7 +545,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
     picky(rapidity);
 
     pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
-    twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+    twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
     if (iFbadevent==0){
 	int q1=0,q2=0; 
 
@@ -607,7 +606,7 @@ upcEvent Gammagammaleptonpair::produceEvent()
    
   
      _nmbAttempts++;
-     twoBodyDecay(ipid,pairE,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+     twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
      double pt1chk = sqrt(px1*px1+py1*py1);
      double pt2chk = sqrt(px2*px2+py2*py2);
     

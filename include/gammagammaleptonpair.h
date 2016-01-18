@@ -55,7 +55,7 @@ class Gammagammaleptonpair : public eventChannel
   upcEvent produceEvent();
 
  private:
-  double _sigmax[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];//=new double[500][500];   //decreased from 1000*1000; too big! causes fault!
+  double _sigmax[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];
   double _sigmaSum;
   double _sigfint[starlightLimits::MAXWBINS];
   double _sigofw[starlightLimits::MAXWBINS];
@@ -73,7 +73,7 @@ class Gammagammaleptonpair : public eventChannel
   void pairMomentum(double w,double y,double &E,double &px,double &py,double&pz);
   double pp_1(double E);
   double pp_2(double E);
-  void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double E,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,/*double &py2,*/double &pz2,int &iFbadevent);
+  void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,double &pz2,int &iFbadevent);
   double thetalep(double W,double theta);
   void tauDecay(double &px1,double &py1,double &pz1,double &E1,double &px2,double &py2,double &pz2,double &E2);
   

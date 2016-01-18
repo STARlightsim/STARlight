@@ -38,7 +38,6 @@ upcEvent pythiaDecayer::execute()
   
   Event &pyEvent = _pythia.event;
   _pythia.forceTimeShower(1, 2, 100000.0);
-//  pyEvent.list();
   if(!_pythia.next())
   {
     printWarn << "Pythia::next() failed" << std::endl;

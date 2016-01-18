@@ -218,7 +218,6 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		return false;
 	}
   
-	//Trying to define the proper Wmins and Wmaxs. a TEMPORARY fix....Better solution=??
 	double mass        = 0;
 	double width       = 0;
 	double defaultMinW = 0;  // default for _minW, unless it is defined later [GeV/c^2]
@@ -315,7 +314,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		_particleType = ZOVERZ03;
 		_decayType    = SINGLEMESON;
                 defaultMinW   = 4*pionChargedMass;
-                defaultMaxW         = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/7; // JES 6.17.2015 to avoid problems with no default
+                defaultMaxW         = 1.6; // JES 6.17.2015 to avoid problems with no default
 		break;
 // 	case 25: // Higgs
 // 		_particleType = HIGGS;

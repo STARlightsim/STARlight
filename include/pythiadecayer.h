@@ -13,14 +13,10 @@ public:
     // Default constructor
     pythiaDecayer();
 
-    // Copy constructor
-//     pythiaDecayer(const pythiaDecayer &obj);
 
     // Destructor
     virtual ~pythiaDecayer();
 
-    // Assignment operator
-//     pythiaDecayer& operator=(const pythiaDecayer& other);
 
     // Initialise
     void init();

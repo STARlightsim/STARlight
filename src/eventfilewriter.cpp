@@ -94,7 +94,6 @@ int eventFileWriter::writeEvent(upcEvent &event, int eventnumber)
 		      
 	  if(_writeFullPythia)
 	  {
-// 	    std::cout << (*part).getFirstDaughter() << std::endl;
 	    lorentzVector vtx = (*part).getVertex();
 	    _fileStream << " " << vtx.GetPx() << " " << vtx.GetPy() << " " << vtx.GetPz() << " " << vtx.GetE();
 	    _fileStream << " " << (*part).getFirstParent() << " " << (*part).getLastParent() << " " << (*part).getFirstDaughter() << " " << (*part).getLastDaughter() << " " << (*part).getStatus();

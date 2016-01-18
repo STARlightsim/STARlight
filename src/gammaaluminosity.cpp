@@ -394,7 +394,6 @@ void photonNucleusLuminosity::pttablegen()
       bmin=0.95*bmin;
     //  set number of bins to a reasonable number to start
     NBIN = 2000;
-    //   NThetaBIN = 1000; unused variable SRK 4/2015
     db   = (bmax-bmin)/float(NBIN);
     // loop over pt
     for(int i=1;i<=NPT;i++){
@@ -406,8 +405,6 @@ void photonNucleusLuminosity::pttablegen()
 	
 	b = bmin + (float(j)-0.5)*db;
 	//  nofe is the photon flux function
-//	A1 = Egamma1*nofe(Egamma1,b, beam)*sig_ga_1*ptparam1[i];
-//	A2 = Egamma2*nofe(Egamma2,b, beam)*sig_ga_2*ptparam2[i];
 	A1 = Egamma1*nofe(Egamma1,b, 2)*sig_ga_1*ptparam1[i];
 	A2 = Egamma2*nofe(Egamma2,b, 1)*sig_ga_2*ptparam2[i];
 	sumg=0.0;
@@ -429,7 +426,6 @@ void photonNucleusLuminosity::pttablegen()
       }
       //  normalization is done in readDiffLum.f
       //  This is d^2sigma/dpt^2; convert to dsigma/dpt
-      //CHECK THIS OUT---->      write(20,*)sum1*pt*dpt
       wylumfile << sum1*pt*_ptBinWidthInterference <<endl;
       //  end of pt loop
     }

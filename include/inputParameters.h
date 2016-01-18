@@ -107,9 +107,6 @@ public:
     // Constructor
     parameter(const std::string &name, T value, bool required = true) :parameterbase(),_name(name), _value(value), _validate(validate), _required(required) {}
 
-//     T operator()() const {
-//         return _value;
-//     }
 
     parameter &operator=(T v) { _value = v; return *this;}
     T* ptr() const {

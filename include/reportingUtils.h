@@ -135,8 +135,6 @@ operator << (std::ostream&         out,
 
 
 //////////////////////////////////////////////////////////////////////////////
-// various stuff
-
 // indicates progess by printing relative or absolute progress in regular intervals
 inline
 std::ostream&

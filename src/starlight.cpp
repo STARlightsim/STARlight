@@ -104,7 +104,6 @@ starlight::init()
 
 	_beamSystem = new beamBeamSystem(*_inputParameters);
 	
-// 	cout << "Created beam system with beam lorentz gamma: " << _beamSystem->beamLorentzGamma() << endl;
 
 	cout.setf(ios_base::fixed,ios_base::floatfield);
 	cout.precision(15);
@@ -214,7 +213,6 @@ starlight::luminosityTableIsValid() const
 	ifstream lumLookUpTableFile(_lumLookUpTableFileName.c_str());
 	lumLookUpTableFile.precision(15);
 	if ((!lumLookUpTableFile) || (!lumLookUpTableFile.good())) {
-		// printWarn << "cannot open file '" << _lumLookUpTableFileName << "'" << endl;
 		return false;
 	}
 
@@ -276,11 +274,11 @@ starlight::createEventChannel()
 				return false;
 			}
 		}
-	case A2:        // jetset
-	case ETA:       // jetset
-	case ETAPRIME:  // jetset
-	case ETAC:      // jetset
-	case F0:        // jetset
+	case A2:        // jetset/pythia
+	case ETA:       // jetset/pythia
+	case ETAPRIME:  // jetset/pythia
+	case ETAC:      // jetset/pythia
+	case F0:        // jetset/pythia
 		{
 #ifdef ENABLE_PYTHIA
 			// PythiaOutput = true;
@@ -305,10 +303,6 @@ starlight::createEventChannel()
 				printWarn << "cannot construct Gammagammasingle event channel." << endl;
 				return false;
 			}
-			// #endif
-			//			printWarn << "Starlight is not compiled against Pythia8; "
-			//          << "Gammagammasingle event channel cannot be used." << endl;
-			// return false;
 		}
 	case RHO:
 	case RHOZEUS:

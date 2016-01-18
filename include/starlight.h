@@ -75,8 +75,6 @@ private:
 	unsigned int       _nmbEventsPerFile;
 	unsigned long long _nmbEventsToGenerate;
 	std::string        _baseFileName;
-//	std::string        _configFileName;
-//	std::string        _eventDataFileName;
 	std::string        _lumLookUpTableFileName;
 	bool               _isInitialised;
 	inputParameters*   _inputParameters;

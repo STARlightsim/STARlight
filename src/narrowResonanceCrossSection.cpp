@@ -98,20 +98,17 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
     
                 if( A_2 == 1 && A_1 != 1 ){
                   // pA, first beam is the nucleus and is in this case the target  
-                  // Egamma = 0.5*W*exp(-Y); 
                   ega1  = 0.5*W*exp(-y1);
                   ega2  = 0.5*W*exp(-y2);
                   ega12 = 0.5*W*exp(-y12);
                   beam = 1; 
                 } else if( A_1 ==1 && A_2 != 1){
                   // pA, second beam is the nucleus and is in this case the target 
-                  // Egamma = 0.5*W*exp(Y); 
                   ega1  = 0.5*W*exp(y1);
                   ega2  = 0.5*W*exp(y2);
                   ega12 = 0.5*W*exp(y12);
                   beam = 2; 
                 } else {
-                  // Egamma = 0.5*W*exp(Y);        
                   ega1  = 0.5*W*exp(y1);
                   ega2  = 0.5*W*exp(y2);
                   ega12 = 0.5*W*exp(y12);

@@ -101,20 +101,17 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
     
                 if( A_2 == 1 && A_1 != 1 ){
                   // pA, first beam is the nucleus and photon emitter
-                  // Egamma = 0.5*W*exp(Y);
  		  ega1  = 0.5*W*exp(y1);
 		  ega2  = 0.5*W*exp(y2);
 		  ega12 = 0.5*W*exp(y12);
                   beam = 2; 
                 } else if( A_1 ==1 && A_2 != 1){
                   // pA, second beam is the nucleus and photon emitter
-                  // Egamma = 0.5*W*exp(-Y); 
 		  ega1  = 0.5*W*exp(-y1);
 		  ega2  = 0.5*W*exp(-y2);
 		  ega12 = 0.5*W*exp(-y12);
                   beam = 1; 
                 } else {
-                  // Egamma = 0.5*W*exp(Y);        
 		  ega1  = 0.5*W*exp(y1);
 		  ega2  = 0.5*W*exp(y2);
 		  ega12 = 0.5*W*exp(y12);

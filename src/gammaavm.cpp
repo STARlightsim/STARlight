@@ -92,17 +92,17 @@ void Gammaavectormeson::pickwy(double &W, double &Y)
   
  L201pwy:
 
-	xw = _randy.Rndom();// random()/(RAND_MAX+1.0);
+	xw = _randy.Rndom();
 	W = _VMWmin + xw*(_VMWmax-_VMWmin);
 
 	if (W < 2 * starlightConstants::pionChargedMass)
 		goto L201pwy;
   
-	IW = int((W-_VMWmin)/dW); //+ 1;
-	xy = _randy.Rndom();//random()/(RAND_MAX+1.0);
+	IW = int((W-_VMWmin)/dW);
+	xy = _randy.Rndom();
 	Y = _VMYmin + xy*(_VMYmax-_VMYmin);
-	IY = int((Y-_VMYmin)/dY); //+ 1;
-	xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+	IY = int((Y-_VMYmin)/dY); 
+	xtest = _randy.Rndom();
 
 	if( xtest > _Farray[IW][IY] )
 		goto L201pwy;
@@ -136,7 +136,6 @@ void Gammaavectormeson::pickwy(double &W, double &Y)
 
 //______________________________________________________________________________                                               
 void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
-                                     double,  // E (unused)
                                      double  W,
                                      double  px0, double  py0, double  pz0,
                                      double& px1, double& py1, double& pz1,
@@ -165,7 +164,7 @@ void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
   
 	//     pick an orientation, based on the spin
 	//      phi has a flat distribution in 2*pi
-	phi = _randy.Rndom()*2.*starlightConstants::pi;//(random()/(RAND_MAX+1.0))* 2.*pi;
+	phi = _randy.Rndom()*2.*starlightConstants::pi;
                                                                                                                 
 	//     find theta, the angle between one of the outgoing particles and
 	//    the beamline, in the frame of the two photons
@@ -321,8 +320,8 @@ double Gammaavectormeson::getTheta(starlightConstants::particleTypeEnum ipid)
 	double dndtheta=0.;
  L200td:
                                                                                                                                                  
-	theta = starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
-	xtest = _randy.Rndom();//random()/(RAND_MAX+1.0);
+	theta = starlightConstants::pi*_randy.Rndom();
+	xtest = _randy.Rndom();
 	//  Follow distribution for helicity +/-1
 	//  Eq. 19 of J. Breitweg et al., Eur. Phys. J. C2, 247 (1998)
 	//  SRK 11/14/2000
@@ -377,7 +376,7 @@ double Gammaavectormeson::getSpin()
 void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &py,double &pz,int &tcheck)
 {
 	//     This subroutine calculates momentum and energy of vector meson
-	//     given W and Y,   without interference.  Subroutine vmpt.f handles
+	//     given W and Y,   without interference.  Subroutine vmpt handles
 	//     production with interference
  
 	double Egam,Epom,tmin,pt1,pt2,phi1,phi2;
@@ -411,7 +410,6 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	  Epom = 0.5*W*exp(-Y);
 	 }
 
-        // cout<<" Y: "<<Y<<" W: "<<W<<" TargetBeam; "<<_TargetBeam<<" Egam: "<<Egam<<" Epom: "<<Epom<<endl; 
         pt1 = pTgamma(Egam);  
 	phi1 = 2.*starlightConstants::pi*_randy.Rndom();
 
@@ -497,7 +495,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
        		}
 
 	}//else end from pp
-	phi2 = 2.*starlightConstants::pi*_randy.Rndom();//random()/(RAND_MAX+1.0);
+	phi2 = 2.*starlightConstants::pi*_randy.Rndom();
 
 	px1 = pt1*cos(phi1);
 	py1 = pt1*sin(phi1);
@@ -512,7 +510,6 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	E  = sqrt(W*W+pt*pt)*cosh(Y);
 	pz = sqrt(W*W+pt*pt)*sinh(Y);
  
-         //cout<< " Y = "<<Y<<" W = "<<W<<" Egam = "<<Egam<<" gamma = "<<_VMgamma_em<<endl; 
 
 	// Keep this special case for d+A 
 	if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
@@ -634,14 +631,13 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 	//    This function calculates momentum and energy of vector meson
 	//    given W and Y, including interference.
 	//    It gets the pt distribution from a lookup table.
-	// double dW=0., unused variable SRK 4/2015
 	double dY=0.,yleft=0.,yfract=0.,xpt=0.,pt1=0.,ptfract=0.,pt=0.,pt2=0.,theta=0.;
 	int IY=0,j=0;
   
 	dY  = (_VMYmax-_VMYmin)/double(_VMnumy);
   
 	//  Y is already fixed; choose a pt
-	//  Follow the approavh in pickwy.f
+	//  Follow the approach in pickwy
 	//  in  _fptarray(IY,pt) IY=1 corresponds to Y=0, IY=numy/2 corresponds to +y
   
 	IY=int(fabs(Y)/dY);//+1;
@@ -776,16 +772,15 @@ upcEvent Gammaavectormeson::produceEvent()
 				vmpt(comenergy,rapidity,E,momx,momy,momz,tcheck);
 			}
 	   
-			// cout << "_ptCutMin: " << _ptCutMin << " _ptCutMax: " << _ptCutMax << " _etaCutMin: " << _etaCutMin << " _etaCutMax: " << _etaCutMax << endl;
 			_nmbAttempts++;
-			//cout << "n tries: " << _nmbAttempts<< endl;
+
                         vmpid = ipid; 
-			twoBodyDecay(ipid,E,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+			twoBodyDecay(ipid,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
 			double pt1chk = sqrt(px1*px1+py1*py1);
 			double pt2chk = sqrt(px2*px2+py2*py2);
 			double eta1 = pseudoRapidity(px1, py1, pz1);
 			double eta2 = pseudoRapidity(px2, py2, pz2);
-			//cout << "eta1: " << eta1 << " eta2: " << eta2 << endl;
+
 			if(_ptCutEnabled && !_etaCutEnabled){
 				if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
 					accepted = true;

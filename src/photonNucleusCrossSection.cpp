@@ -235,11 +235,8 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
 		}
 		csgA = 0.5 * (tmax - tmin) * csgA;
 		csgA = Av * csgA;
-		//	}	else if (!_coherentProduction &&
-		//		         (!((_bbs.beam2().Z() == 1) && (_bbs.beam2().A() == 2)))) {  // incoherent AA interactions
 		// For incoherent AA interactions, since incoherent treating it as gamma-p
 		// Calculate the differential V.M.+proton cross section
-		//		csgA = 1.E-4 * _incoherentFactor * _sigmaNucleus * _slopeParameter * sigmagp(Wgp);
 	}	else {	// coherent AA interactions
 		// For typical AA interactions.
 		// Calculate V.M.+proton cross section

@@ -99,7 +99,7 @@ void readLuminosity::read()
     }
   }
 
-  double dummy[19]; //14//18
+  double dummy[19]; //number of lines used to read in input parameters saved to lookup table[slight.txt].
 
 
   std::string wyFileName;
@@ -117,7 +117,7 @@ void readLuminosity::read()
 
   wylumfile.open(wyFileName.c_str());
 
-  for(int i=0;i < 19;i++){ // was 14; this is to account for sergei's additional parameters ie d-Au//was19
+  for(int i=0;i < 19;i++){ 
     wylumfile >> dummy[i];
   }
   int A_1 = dummy[1];
@@ -147,7 +147,6 @@ void readLuminosity::read()
     for(int i=0;i<_ReadInputnumw;i++){
       for(int j=0;j<_ReadInputnumy;j++){
         wylumfile >> _Farray1[i][j];
-	//        if( _Farray1[i][j] > _f_max ) _f_max=_Farray1[i][j];
       }
     }
     for(int i=0;i<_ReadInputnumw;i++){
