@@ -358,28 +358,15 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 			GammaProfile = exp(-bnn1*bnn1/(2.*hbarc*hbarc*ppslope));  
 			double PofB1 = 1. - (1. - GammaProfile)*(1. - GammaProfile);   
 
-			double Xarg = Egamma*bnn0/(hbarc*_beamLorentzGamma);
-			double loc_nofe0 = (_bbs.beam1().Z()*_bbs.beam1().Z()*alpha)/
-				(pi*pi); 
-			loc_nofe0 *= (1./(Egamma*bnn0*bnn0)); 
-			loc_nofe0 *= Xarg*Xarg*(bessel::dbesk1(Xarg))*(bessel::dbesk1(Xarg)); 
+                        double loc_nofe0 = _bbs.beam1().photonDensity(bnn0,Egamma);
+			double loc_nofe1 = _bbs.beam2().photonDensity(bnn1,Egamma);
 
-			Xarg = Egamma*bnn1/(hbarc*_beamLorentzGamma);
-			double loc_nofe1 = (_bbs.beam1().Z()*_bbs.beam1().Z()*alpha)/
-				(pi*pi); 
-			loc_nofe1 *= (1./(Egamma*bnn1*bnn1)); 
-			loc_nofe1 *= Xarg*Xarg*(bessel::dbesk1(Xarg))*(bessel::dbesk1(Xarg)); 
-
-			local_sum += loc_nofe0*(1. - PofB0)*bnn0*db; 
-			local_sum += loc_nofe1*(1. - PofB1)*bnn1*db; 
+			local_sum += 0.5*loc_nofe0*(1. - PofB0)*2.*starlightConstants::pi*bnn0*db; 
+			local_sum += 0.5*loc_nofe1*(1. - PofB1)*2.*starlightConstants::pi*bnn1*db; 
 
 		}
 		// End Impact parameter loop 
-
-		// Note: 2*pi --> pi because of no factor 2 above 
-		double flux_r=local_sum*pi; 
-		return flux_r;
-
+		return local_sum;
 	}
 
 	//   first call or new beam?  - initialize - calculate photon flux
@@ -387,8 +374,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 	if(Icheck > 1 && beam == Ibeam ) goto L1000f; 
         Ibeam = beam; 
   
-  
-	//  Nuclear breakup is done by PofB
+  	//  Nuclear breakup is done by PofB
 	//  collect number of integration steps here, in one place
   
 	nbstep=1200;
@@ -416,7 +402,6 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 	
 	//cout<<" Calculating flux for photon energies from E= "<<Emin 
 	//    <<" to  "<<Emax<<"  GeV (CM frame) for source nucleus with Z = "<<rZ<<endl;
-
 
 	stepmult= exp(log(Emax/Emin)/double(nstep));
 	energy=Emin;
@@ -446,14 +431,6 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 		}else if( (_bbs.beam1().A() == 1 && _bbs.beam2().A() != 1) || (_bbs.beam2().A() == 1 && _bbs.beam1().A() != 1) ){
 		    // This is pA 
                     if( _productionMode == PHOTONPOMERONINCOHERENT ){
-                      // This is pA incoherent 
-                      double zproj = 0.0;
-                      if( _bbs.beam1().A() == 1 ){
-                        zproj = (_bbs.beam2().Z());
-                      }
-		      else if( _bbs.beam2().A() == 1 ){
-                        zproj = (_bbs.beam1().Z());
-                      }
 
  		      int nbsteps = 400;
 		      double bmin = 0.7*RSum;
@@ -472,25 +449,23 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
                           double PofB0 = _bbs.probabilityOfBreakup(bnn0); 
                           double PofB1 = _bbs.probabilityOfBreakup(bnn1); 
       
-			  double Xarg = energy*bnn0/(hbarc*_beamLorentzGamma);
-			  double loc_nofe0 = (zproj*zproj*alpha)/
-				(pi*pi); 
-			  loc_nofe0 *= (1./(energy*bnn0*bnn0)); 
-			  loc_nofe0 *= Xarg*Xarg*(bessel::dbesk1(Xarg))*(bessel::dbesk1(Xarg)); 
+			  double loc_nofe0 = 0.0;
+			  double loc_nofe1 = 0.0; 
+                          if( _bbs.beam1().A() == 1 ){
+			    loc_nofe0 = _bbs.beam2().photonDensity(bnn0,energy);
+			    loc_nofe1 = _bbs.beam2().photonDensity(bnn1,energy);
+                          }
+		          else if( _bbs.beam2().A() == 1 ){
+			    loc_nofe0 = _bbs.beam1().photonDensity(bnn0,energy);
+			    loc_nofe1 = _bbs.beam1().photonDensity(bnn1,energy);			    
+                          }
 
-			  Xarg = energy*bnn1/(hbarc*_beamLorentzGamma);
-			  double loc_nofe1 = (zproj*zproj*alpha)/
-				(pi*pi); 
-			  loc_nofe1 *= (1./(energy*bnn1*bnn1)); 
-			  loc_nofe1 *= Xarg*Xarg*(bessel::dbesk1(Xarg))*(bessel::dbesk1(Xarg)); 
                           // cout<<" i: "<<i<<" bnn0: "<<bnn0<<" PofB0: "<<PofB0<<" loc_nofe0: "<<loc_nofe0<<endl; 
 
-			  local_sum += loc_nofe0*PofB0*bnn0*db; 
-			  local_sum += loc_nofe1*PofB1*bnn1*db; 
+			  local_sum += 0.5*loc_nofe0*PofB0*2.*starlightConstants::pi*bnn0*db; 
+			  local_sum += 0.5*loc_nofe1*PofB1*2.*starlightConstants::pi*bnn1*db;  
 		      }  // End Impact parameter loop 
-
-		      // Note: 2*pi --> pi because of no factor 2 above 
-	              integratedflux = local_sum*pi; 
+	              integratedflux = local_sum; 
                     } else if ( _productionMode == PHOTONPOMERONNARROW ||  _productionMode == PHOTONPOMERONWIDE ){
                       // cout<<" This is pA coherent "<<" j= "<<j<<endl; 
                       double localbmin = 0.0;   
