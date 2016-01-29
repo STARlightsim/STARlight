@@ -241,10 +241,10 @@ double twoPhotonLuminosity::D2LDMDY(double M, double Y) const
 	    
 	    sum_phi += weights[k] * probabilityOfBreakup(b_rel)*2;
 	}
-	sum_b2 += beam2().photonFlux(b2_cent,w2)*pi*sum_phi*b2_cent*(b2_high-b2_low);
+	sum_b2 += beam2().photonDensity(b2_cent,w2)*pi*sum_phi*b2_cent*(b2_high-b2_low);
       }
       
-      sum += beam1().photonFlux(b1_cent, w1)*sum_b2*b1_cent*(b1_high-b1_low);
+      sum += beam1().photonDensity(b1_cent, w1)*sum_b2*b1_cent*(b1_high-b1_low);
       
   }
   D2LDMDYx = 2.*pi*M/2.*sum;
