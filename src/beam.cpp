@@ -63,7 +63,7 @@ beam::~beam()
 
 
 //______________________________________________________________________________
-double beam::photonFlux(const double impactparameter, 
+double beam::photonDensity(const double impactparameter, 
                         const double photonEnergy) const
 {
   // function for the calculation of the "photon density".
@@ -71,14 +71,15 @@ double beam::photonFlux(const double impactparameter,
   // assume beta = 1 and gamma >> 1, i.e. neglect the (1 / gamma^2) * K_0(x) term
   
   const double X
-	  = (impactparameter * photonEnergy) / (_beamLorentzGamma * hbarc);
+    = (impactparameter * photonEnergy) / (_beamLorentzGamma * starlightConstants::hbarc);
   if (X <= 0) 
 	  printWarn << "X = " << X << endl;
   
-  const double factor1 = (double(Z() * Z()) * alpha) / (pi * pi);  
+  const double factor1 = (double(Z() * Z()) * starlightConstants::alpha) / (starlightConstants::pi * starlightConstants::pi);  
   const double factor2 = 1. / (photonEnergy * impactparameter * impactparameter);
   const double bessel  = bessel::dbesk1(X);
   const double factor3 = X * X * bessel * bessel;
 
   return factor1 * factor2 * factor3;
 }
+
