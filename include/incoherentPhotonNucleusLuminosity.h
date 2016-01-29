@@ -48,7 +48,6 @@ class incoherentPhotonNucleusLuminosity : public photonNucleusCrossSection
   
  private:
   void incoherentPhotonNucleusDifferentialLuminosity();
-  double nofe(double Egamma,double bimp);
   const std::string _baseFileName;
   const double _beamLorentzGamma;
   const double _maxW;
