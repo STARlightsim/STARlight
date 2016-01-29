@@ -242,25 +242,3 @@ void incoherentPhotonNucleusLuminosity::incoherentPhotonNucleusDifferentialLumin
 }
 
 
-//______________________________________________________________________________
-double incoherentPhotonNucleusLuminosity::nofe(double Egamma, double bimp)
-{
-  //Function for the calculation of the "photon density".
-  //nofe=numberofgammas/(energy*area)
-  //Assume beta=1.0 and gamma>>1, i.e. neglect the (1/gamma^2)*K0(x) term
-  
-  double X=0.,nofex=0.,factor1=0.,factor2=0.,factor3=0.;
-  
-  X = (bimp*Egamma)/(_beamLorentzGamma*starlightConstants::hbarc);
-  
-  if( X <= 0.0) 
-    cout<<"In nofe, X= "<<X<<endl;
-  
-  factor1 = (double(getbbs().beam1().Z()*getbbs().beam1().Z())
-	     *starlightConstants::alpha)/(starlightConstants::pi*starlightConstants::pi);
-
-  factor2 = 1./(Egamma*bimp*bimp);
-  factor3 = X*X*(bessel::dbesk1(X))*(bessel::dbesk1(X));
-  nofex    = factor1*factor2*factor3;
-  return nofex;
-}
