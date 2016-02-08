@@ -228,25 +228,25 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		_decayType    = LEPTONPAIR;
 		mass          = starlightConstants::mel;
 		defaultMinW   = 2*mass; // default is 0.01; up to 0.15 is safe for Summer 2000 triggering for e+e- pairs
-                defaultMaxW     = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/7; // JES 6.17.2015 to avoid problems with no default
+                defaultMaxW     = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/(1.2*pow(float(beam1A()),1./6.)*pow(float(beam2A()),1./6.)); // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 13:  // mu+mu- pair
 		_particleType = MUON;
 		_decayType    = LEPTONPAIR;
 		defaultMinW   = 2 * muonMass;
-                defaultMaxW         = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/7; // JES 6.17.2015 to avoid problems with no default
+                defaultMaxW     = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/(1.2*pow(float(beam1A()),1./6.)*pow(float(beam2A()),1./6.)); // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 15:  // tau+tau- pair
 		_particleType = TAUON;
 		_decayType    = LEPTONPAIR;
 		defaultMinW   = 2 * tauMass;
-                defaultMaxW         = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/7; // JES 6.17.2015 to avoid problems with no default
+                defaultMaxW     = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/(1.2*pow(float(beam1A()),1./6.)*pow(float(beam2A()),1./6.)); // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 10015:  // tau+tau- pair
 		_particleType = TAUONDECAY;
 		_decayType    = LEPTONPAIR;
 		defaultMinW   = 2 * tauMass;
-                defaultMaxW         = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/7; // JES 6.17.2015 to avoid problems with no default
+                defaultMaxW     = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/(1.2*pow(float(beam1A()),1./6.)*pow(float(beam2A()),1./6.)); // JES 6.17.2015 to avoid problems with no default
 		break;
 
 // 	case 24:  // W+W- pair
@@ -342,7 +342,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		mass          = starlightConstants::rho0PrimeMass;
 		width         = starlightConstants::rho0PrimeWidth;		
 		defaultMinW   = 4 * pionChargedMass;
-                defaultMaxW         = beam1LorentzGamma()*(starlightConstants::hbarc)/7; // JES 6.17.2015 to avoid problems with no default
+                defaultMaxW     = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/(1.2*pow(float(beam1A()),1./6.)*pow(float(beam2A()),1./6.)); // JES 6.17.2015 to avoid problems with no default
 		break;
 	case 223:  // omega(782)
 		_particleType = OMEGA;
