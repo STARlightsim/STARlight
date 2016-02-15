@@ -370,8 +370,12 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 	}
 
 	//   first call or new beam?  - initialize - calculate photon flux
-	Icheck=Icheck+1; 
-	if(Icheck > 1 && beam == Ibeam ) goto L1000f; 
+	Icheck=Icheck+1;
+
+	// Do the numberical integration only once for symmetric systems. 
+        if( Icheck > 1 && _bbs.beam1().A() == _bbs.beam2().A() && _bbs.beam1().Z() == _bbs.beam2().Z() ) goto L1000f;
+        // For asymmetric systems check if we have another beam 
+	if( Icheck > 1 && beam == Ibeam ) goto L1000f; 
         Ibeam = beam; 
   
   	//  Nuclear breakup is done by PofB
@@ -398,7 +402,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 	lnEmax=log(Emax);
 	dlnE=(lnEmax-lnEmin)/nstep; 
 
-        printf("Calculating photon flux for energies from Emin = %e GeV to Emax = %e GeV (CM frame) for source nucleus with Z = %3.0f \n", Emin, Emax, rZ);
+        printf("Calculating photon flux from Emin = %e GeV to Emax = %e GeV (CM frame) for source with Z = %3.0f \n", Emin, Emax, rZ);
 	
 	//cout<<" Calculating flux for photon energies from E= "<<Emin 
 	//    <<" to  "<<Emax<<"  GeV (CM frame) for source nucleus with Z = "<<rZ<<endl;
@@ -548,8 +552,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
     
 		//  In lookup table, store k*dN/dk because it changes less
 		//  so the interpolation should be better    
-		dide[j]=integratedflux*energy;
-                                     
+		dide[j]=integratedflux*energy;                                     
 	}//end loop over photon energy 
        
 	//  for 2nd and subsequent calls, use lookup table immediately
