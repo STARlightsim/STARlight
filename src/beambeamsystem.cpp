@@ -166,7 +166,8 @@ beamBeamSystem::generateBreakupProbabilities()
     
     double bMin = (_beam1.nuclearRadius()+_beam2.nuclearRadius())/2.;
     
-    
+    // Do this only for nucleus-nucleus collisions.
+    // pp and pA are handled directly in probabilityOfBreakup
     if ((_beam1.Z() != 1) && (_beam1.A() != 1) && (_beam2.Z() != 1) && _beam2.A() != 1) {
 
         if (_beamBreakupMode == 1)
@@ -231,40 +232,6 @@ beamBeamSystem::generateBreakupProbabilities()
             _breakupProbabilities.push_back(pOfB);
         } // End while(1)
     }
-    else if (((_beam1.Z() == 1) && (_beam1.A() == 1)) || ((_beam2.Z() == 1) && (_beam2.A() == 1))) {  
-      
-      double pOfB = 0;
-      double b = bMin;
-      double totRad = _beam1.nuclearRadius()+_beam2.nuclearRadius();
-      
-      while(1)
-	{
-            if(_beamBreakupMode != 5)
-            {
-                if(b > (totRad*1.5))
-                {
-                    if(pOfB<_breakupCutOff)
-                    {
-//                         std::cout << "Break off b: " << b << std::endl;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                if((1-pOfB)<_breakupCutOff)
-                {
-//                         std::cout << "Break off b: " << b << std::endl;
-                        break;
-                }
-            }
-	  _beam1.Z() > 1 ? pOfB = exp(-7.35*_beam1.thickness(b)) :
-	                   pOfB = exp(-7.35*_beam2.thickness(b));
-	  _breakupProbabilities.push_back(pOfB);
-            b *= _breakupImpactParameterStep;
-        }
-    }
-
     
 }
 
