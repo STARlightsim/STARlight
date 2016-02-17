@@ -82,8 +82,8 @@ inputParameters::inputParameters()
 	  _coherentProduction    ("COHERENT",false),
 	  _incoherentFactor      ("INCO_FACTOR",0),
 	  _protonEnergy          ("PROTON_ENERGY",0, NOT_REQUIRED),
-	  _minGammaEnergy	 ("MIN_GAMMA_ENERGY",0, NOT_REQUIRED),
-	  _maxGammaEnergy	 ("MAX_GAMMA_ENERGY",0, NOT_REQUIRED),
+	  _minGammaEnergy	 ("MIN_GAMMA_ENERGY",6.0, NOT_REQUIRED),
+	  _maxGammaEnergy	 ("MAX_GAMMA_ENERGY",600000.0, NOT_REQUIRED),
 	  _pythiaParams          ("PYTHIA_PARAMS","", NOT_REQUIRED),
 	  _pythiaFullEventRecord ("PYTHIA_FULL_EVENTRECORD",false, NOT_REQUIRED),
 	  _xsecCalcMethod	 ("XSEC_METHOD",0, NOT_REQUIRED)
