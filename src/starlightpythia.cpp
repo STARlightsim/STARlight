@@ -42,7 +42,7 @@ starlightPythia::~starlightPythia()
 int starlightPythia::init(std::string pythiaParams, bool fullEventRecord)
 {
    _fullEventRecord = fullEventRecord;
-   _spectrum = new spectrumProtonNucleus(&_bbs);
+   _spectrum = new spectrumProtonNucleus(_randy,&_bbs);
 
    _spectrum->setMinGammaEnergy(_minGammaEnergy);
    _spectrum->setMaxGammaEnergy(_maxGammaEnergy);

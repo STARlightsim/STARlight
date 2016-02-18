@@ -24,7 +24,7 @@ p    This program is free software: you can redistribute it and/or modify
 #include <randomgenerator.h>
 #include <iostream>
 
-spectrum::spectrum(beamBeamSystem *bbs) :
+spectrum::spectrum(const randomGenerator &randy, beamBeamSystem *bbs) :
 	 _bMin(5.0)
         ,_bMax(128000.0)
 	,_nBbins(6400)
@@ -43,6 +43,7 @@ spectrum::spectrum(beamBeamSystem *bbs) :
         ,_zTarget(82)
         ,_aTarget(278)
         ,_hadBreakProbCalculated(false)
+	,_randy(randy)
 {
     _eGamma.resize(_nK+1);
     _probOfBreakup.resize(_nBbins);
@@ -228,7 +229,7 @@ double spectrum::drawKsingle()
     int itest = 0;
     double egamma = 0.0;
 
-    xtest = randyInstance.Rndom();
+    xtest = _randy.Rndom();
     while (xtest > _fnSingleCumulative[itest])
     {
         itest++;
@@ -268,7 +269,7 @@ void spectrum::drawKdouble(float& egamma1, float& egamma2)
     int itest1 = 0;
     int itest2 = 0;
 
-    xtest1 = randyInstance.Rndom();
+    xtest1 = _randy.Rndom();
 
     while (xtest1 > _fnDoubleIntCumulative[itest1])
     {
@@ -315,7 +316,7 @@ void spectrum::drawKdouble(float& egamma1, float& egamma2)
       fn_second_cumulative[i] = norm_factor*fn_second_cumulative[i];
     }
     
-    xtest2 = randyInstance.Rndom();
+    xtest2 = _randy.Rndom();
 
     while (xtest2 > fn_second_cumulative[itest2])
     {
@@ -454,7 +455,7 @@ double spectrum::getFnDouble(double egamma1, double egamma2) const
 double spectrum::getTransformedNofe(double egamma, double b)
 {
    double factor = 1.0/(2.0*_beamBeamSystem->beamLorentzGamma());
-   double res = factor * _beamBeamSystem->beam1().photonFlux(b, egamma*factor);
+   double res = factor * _beamBeamSystem->beam1().photonDensity(b, egamma*factor);
    
    return res;
 }

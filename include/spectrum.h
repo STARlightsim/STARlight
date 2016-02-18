@@ -22,15 +22,16 @@
 #define SPECTRUM_H
 
 #include <vector>
+#include "randomgenerator.h"
 class beamBeamSystem;
-class randomGenerator;
+//class randomGenerator;
 
 class spectrum
 {
 public:
 
     /** Spectrum must be constructed with beam-beam system, default constructor disallowed */
-    spectrum(beamBeamSystem *bbs);
+    spectrum(const randomGenerator &randy, beamBeamSystem *bbs);
 
     /**
     * Generate a table of photon energy probabilities
@@ -145,6 +146,9 @@ private:
 
     /** Hadron breakup probability is calculated */
     bool _hadBreakProbCalculated;
+
+    /** random number generator **/
+    randomGenerator _randy;
 
     /** Default constructed disallowed (not implemented) */
     spectrum();

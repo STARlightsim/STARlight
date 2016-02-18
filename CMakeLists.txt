@@ -300,6 +300,7 @@ if(ENABLE_DPMJET)
   message(STATUS "DPMJet objects: ${DPMJET_OBJECTS}")
   add_library(${DPMJET_LIB} STATIC dpmjet/dpmjetint.f ${DPMJET_OBJECTS})
   set(optionalLibs ${optionalLibs} ${DPMJET_LIB})
+  set(optionalLibs ${optionalLibs} "gfortran")
 
 endif()
 

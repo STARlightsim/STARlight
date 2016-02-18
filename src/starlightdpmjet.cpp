@@ -45,7 +45,7 @@ extern "C"
     void dt_initialise_();
 }
 
-starlightDpmJet::starlightDpmJet(beamBeamSystem& beamsystem ) : eventChannel(beamsystem)
+starlightDpmJet::starlightDpmJet(const inputParameters& inputParametersInstance, beamBeamSystem& beamsystem ) : eventChannel(inputParametersInstance, beamsystem)
         ,_spectrum(0)
         ,_doDoubleEvent(true)
 	,_minGammaEnergy(6.0)
@@ -59,11 +59,11 @@ int starlightDpmJet::init()
 {
    if(_protonMode)
    {
-    _spectrum = new spectrumProtonNucleus(&_bbs);
+    _spectrum = new spectrumProtonNucleus(_randy,&_bbs);
    }
    else
    {
-    _spectrum = new spectrum(&_bbs);
+    _spectrum = new spectrum(_randy,&_bbs);
    }
 
    _spectrum->setMinGammaEnergy(_minGammaEnergy);
@@ -140,7 +140,7 @@ upcEvent starlightDpmJet::produceDoubleEvent()
     //std::cout << "Gamma2 energy: " << gammaE2 << std::endl;
     
     //In which direction do we go?
-    int zdirection = (randyInstance.Rndom()) < 0.5 ? -1 : 1;
+    int zdirection = (_randy.Rndom()) < 0.5 ? -1 : 1;
 
     event = produceSingleEvent(zdirection, gammaE1);
 
