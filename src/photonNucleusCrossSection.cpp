@@ -81,7 +81,7 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_BNORM=1.84;
 		_defaultC=1.0;
 		_channelMass  = starlightConstants::rho0Mass;
-		_width        = starlightConstants::rho0Mass;
+		_width        = starlightConstants::rho0Width;
 		break;
 	case FOURPRONG:
 		_slopeParameter      = 11.0;
