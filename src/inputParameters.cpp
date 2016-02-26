@@ -400,7 +400,6 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Psi2SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
-		_maxW         = mass + 5 * width;
 		break;
 	case 444013:  // psi(2S)
 		_particleType = JPSI2S_mumu;
