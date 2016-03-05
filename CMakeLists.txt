@@ -47,7 +47,7 @@ set (Starlight_VERSION_MINOR_MINOR 0)
 
 # define project
 project(starlight)
-find_package (Threads)
+#find_package (Threads)
 
 # load some common cmake macros
 # set path, where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
@@ -311,7 +311,7 @@ endif()
 # add starlight executable to the build system
 add_executable(starlight src/main.cpp)
 #target_link_libraries(starlight Starlib ${PYTHIA8_LIBRARY} ${LHAPDF_LIBRARIES} ${PYTHIA6_LIBRARY} ${DPMJET_LIB} )
-target_link_libraries(starlight Starlib ${optionalLibs} ${CMAKE_THREAD_LIBS_INIT}) 
+target_link_libraries(starlight Starlib ${optionalLibs})# ${CMAKE_THREAD_LIBS_INIT}) 
 
 #make_executable(starlight src/main.cpp ${THIS_LIB})
 
