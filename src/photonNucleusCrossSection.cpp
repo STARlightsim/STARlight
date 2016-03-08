@@ -423,7 +423,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 		biter=bmin;
 		integratedflux=0.;
     
-		if (_bbs.beam2().Z()==1&&_bbs.beam1().A()==2){
+		if (_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
 		     //This is for deuteron-gold
 		     Xvar = RSum*energy/(hbarc*(_beamLorentzGamma));
       

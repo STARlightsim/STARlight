@@ -102,8 +102,15 @@ void nucleus::init()
 		break;
 	case 1: // _Q0 and _rho0 are not relevant for protons.
 		{
-			_Q0   = -1.0;
-			_rho0 = -1.0;
+		//is this a proton or deuterium(--tritium to be added)
+			if(_A==1){
+				_Q0   = -1.0;
+				_rho0 = -1.0;
+			}//if proton
+			else {
+				_Q0   = 0.0;
+				_rho0 = 0.16;
+			}//else deuterium
 		}
 		break;
 	default:
