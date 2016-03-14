@@ -177,6 +177,18 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 	_ptBinWidthInterference = maxPtInterference() / nmbPtBinsInterference();
 	_protonEnergy           = _beamLorentzGamma * protonMass;
 
+	// check for deuteron or tritium - these must be the second beam
+	if((beam1Z()==1) && (beam1A()==2)){
+		if((beam2Z()==1) && (beam2A()==2)){
+		printWarn << "deuteron-deuteron collisions are not supported" << endl;
+		return false;}
+		printWarn << "deuterium must be listed as the second nucleus" << endl;
+		return false;}
+
+	if( ((beam1Z()==1) && (beam1A()==3)) || ((beam2Z()==1) && (beam2A()==3)) ){
+		printWarn << "tritium is not currently supported" << endl;
+		return false;}
+
 	// define interaction type
 	switch (productionMode()) {
 	case 1:
