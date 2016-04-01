@@ -315,7 +315,6 @@ void photonNucleusLuminosity::pttablegen()
     cs=sqrt(16.*starlightConstants::pi*vmPhotonCoupling()*slopeParameter()*
 	    starlightConstants::hbarc*starlightConstants::hbarc*sigmagp(Wgp)
 	    /starlightConstants::alpha);
-    
     // Calculate V.M.+nucleus cross section
     cvma=sigma_A(cs,beam);
     
@@ -389,7 +388,7 @@ void photonNucleusLuminosity::pttablegen()
     }    
     bmin = getbbs().beam1().nuclearRadius()+getbbs().beam2().nuclearRadius();
     //  if we allow for nuclear breakup, use a slightly smaller bmin
-    
+
     if (ibreakup != 1) 
       bmin=0.95*bmin;
     //  set number of bins to a reasonable number to start
@@ -407,6 +406,7 @@ void photonNucleusLuminosity::pttablegen()
 	A1 = Egamma1*getbbs().beam1().photonDensity(Egamma1,b)*sig_ga_1*ptparam1[i];
 	A2 = Egamma2*getbbs().beam2().photonDensity(Egamma2,b)*sig_ga_2*ptparam2[i];
 	sumg=0.0;
+
 	//  do this as a Gaussian integral, from 0 to pi
 	for(int k=0;k<NGAUSS;k++){
 	  
@@ -422,9 +422,12 @@ void photonNucleusLuminosity::pttablegen()
 	if (ibreakup > 1)
 	  sumint=sumint*getbbs().probabilityOfBreakup(b);
 	sum1 = sum1 + sumint;
+
       }
       //  normalization is done in readDiffLum.f
       //  This is d^2sigma/dpt^2; convert to dsigma/dpt
+
+
       wylumfile << sum1*pt*_ptBinWidthInterference <<endl;
       //  end of pt loop
     }

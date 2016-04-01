@@ -163,12 +163,14 @@ beamBeamSystem::probabilityOfBreakup(const double D) const
 void
 beamBeamSystem::generateBreakupProbabilities()
 {
-    
+
     double bMin = (_beam1.nuclearRadius()+_beam2.nuclearRadius())/2.;
     
     // Do this only for nucleus-nucleus collisions.
     // pp and pA are handled directly in probabilityOfBreakup
-    if ((_beam1.Z() != 1) && (_beam1.A() != 1) && (_beam2.Z() != 1) && _beam2.A() != 1) {
+//    if ((_beam1.Z() != 1) && (_beam1.A() != 1) && (_beam2.Z() != 1) && _beam2.A() != 1) {
+//	this change allows deuterium and tritium to be handled here
+    if ((_beam1.Z() != 1) && (_beam1.A() != 1) && _beam2.A() != 1) {
 
         if (_beamBreakupMode == 1)
             printInfo << "Hard Sphere Break criteria. b > " << 2. * _beam1.nuclearRadius() << endl;
