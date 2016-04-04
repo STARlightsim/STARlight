@@ -271,5 +271,17 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
 
 	  }
         }
-	cout<<" Cross section (mb): " <<10.*int_r<<endl;
+
+	if (0.01*int_r > 1.){
+	  cout<<" Cross section: "<<0.01*int_r<<" barn."<<endl;
+	} else if (10.*int_r > 1.){
+	  cout<<" Cross section: " <<10.*int_r<<" mb."<<endl;
+        } else if (10000.*int_r > 1.){
+	  cout<<" Cross section: " <<10000.*int_r<<" microb."<<endl;
+        } else if (10000000.*int_r > 1.){
+	  cout<<" Cross section: " <<10000000.*int_r<<" nanob."<<endl;
+        } else {
+	  cout<<" Cross section: " <<1.E10*int_r<<" picob."<<endl;
+        }
+
 }
