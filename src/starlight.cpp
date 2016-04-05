@@ -104,9 +104,9 @@ starlight::init()
 
 	_beamSystem = new beamBeamSystem(*_inputParameters);
 	
-
+	// This sets the precision used by cout for printing
 	cout.setf(ios_base::fixed,ios_base::floatfield);
-	cout.precision(15);
+	cout.precision(3);
 
         std::string _baseFileName;
         _baseFileName = _inputParameters->baseFileName();

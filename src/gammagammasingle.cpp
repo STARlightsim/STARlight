@@ -119,10 +119,22 @@ void Gammagammasingle::singleCrossSection()
 						   (_sigmax[ivalw+1][j]+_sigmax[ivalw+1][j+1])/2.);
     }
   }
-  if(_sigmaSum > 0.1) cout <<"The total cross-section is: "<<_sigmaSum<<" barns."<<endl;
-  else if(_sigmaSum > 0.0001)cout <<"The total cross-section is: "<<_sigmaSum*1000<<" mb."<<endl;
-  else cout <<"The total cross-section is: "<<_sigmaSum*1000000<<" ub."<<endl;
-  
+  // if(_sigmaSum > 0.1) cout <<"The total cross-section is: "<<_sigmaSum<<" barns."<<endl;
+  // else if(_sigmaSum > 0.0001)cout <<"The total cross-section is: "<<_sigmaSum*1000<<" mb."<<endl;
+  // else cout <<"The total cross-section is: "<<_sigmaSum*1000000<<" ub."<<endl;
+  if (_sigmaSum > 1.){
+       cout << "The total cross-section is: "<<_sigmaSum<<" barn."<<endl;  
+  } else if (1000.*_sigmaSum > 1.){
+       cout << "The total cross-section is: "<<1000.*_sigmaSum<<" mb."<<endl;  
+  } else if (1000000.*_sigmaSum > 1.){
+       cout << "The total cross-section is: "<<1000000.*_sigmaSum<<" microbarn."<<endl;  
+  } else if (1.E9*_sigmaSum > 1.){
+       cout << "The total cross-section is: "<<1.E9*_sigmaSum<<" nanobarn."<<endl;  
+  } else if (1.E12*_sigmaSum > 1.){
+       cout << "The total cross-section is: "<<1.E12*_sigmaSum<<" picobarn."<<endl;  
+  } else {
+       cout << "The total cross-section is: "<<1.E15*_sigmaSum<<" femtobarn."<<endl;  
+  }
      
   return;
 }

@@ -97,7 +97,20 @@ void Gammagammaleptonpair::twoLeptonCrossSection()
           sigmasum = sigmasum +(_sigmax[i][j]+_sigmax[i+1][j]+_sigmax[i][j+1]+_sigmax[i+1][j+1])/4.*(_Yarray[j+1]-_Yarray[j])*(_Warray[i+1]-_Warray[i]);
 	}
     }
-    cout << "The total "<<_GGlepInputpidtest<<" cross-section is: "<<sigmasum<<" barns."<<endl;
+    //cout << "The total "<<_GGlepInputpidtest<<" cross-section is: "<<sigmasum<<" barns."<<endl;
+    if (sigmasum > 1.){
+       cout << "The total "<<_GGlepInputpidtest<<" cross-section is: "<<sigmasum<<" barn."<<endl;  
+    } else if (1000.*sigmasum > 1.){
+       cout << "The total "<<_GGlepInputpidtest<<" cross-section is: "<<1000.*sigmasum<<" millibarn."<<endl;  
+    } else if (1000000.*sigmasum > 1.){
+       cout << "The total "<<_GGlepInputpidtest<<" cross-section is: "<<1000000.*sigmasum<<" microbarn."<<endl;  
+    } else if (1.E9*sigmasum > 1.){
+       cout << "The total "<<_GGlepInputpidtest<<" cross-section is: "<<1.E9*sigmasum<<" nanobarn."<<endl;  
+    } else if (1.E12*sigmasum > 1.){
+       cout << "The total "<<_GGlepInputpidtest<<" cross-section is: "<<1.E12*sigmasum<<" picobarn."<<endl;  
+    } else {
+       cout << "The total "<<_GGlepInputpidtest<<" cross-section is: "<<1.E15*sigmasum<<" femtobarn."<<endl;  
+    }
 
     // Do this integration here, once per run rather than once per event (JN 220710) 
     //integrate sigma down to a function of just w
