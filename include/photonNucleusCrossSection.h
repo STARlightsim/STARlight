@@ -49,7 +49,6 @@ public:
 	double         slopeParameter  () const { return _slopeParameter;   }  ///< returns slope of t-distribution [(GeV/c)^{-2}]
 	double         getChannelMass  () const { return _channelMass;      }  ///< returns mass of the produced system [GeV/c^2]
 	double         getBNORM        () const { return _BNORM;            }
-	double         luminosity      () const { return _luminosity;       }  ///< returns luminosity [10^{26} cm^{-2} sec^{-1}]
 	beamBeamSystem getbbs          () const { return _bbs;              }  ///< returns beamBeamSystem
 	double         vmPhotonCoupling() const { return _vmPhotonCoupling; }  ///< vectormeson-photon coupling constant f_v / 4 pi (cf. Eq. 10 in KN PRC 60 (1999) 014903)
 	double         getDefaultC     () const { return _defaultC;         }
@@ -101,7 +100,6 @@ private:
 	double _ANORM;
 	double _BNORM;
 	double _defaultC;
-	double _luminosity;       ///< luminosity [10^{26} cm^{-2} sec^{-1}]
 	double _maxPhotonEnergy;  ///< max photon energy in lab frame [GeV] (for vectormesons only)
 	double _width;            ///< width of the produced system  [GeV/c^2]
 	double _channelMass;      ///< mass of the produced system  [GeV/c^2]

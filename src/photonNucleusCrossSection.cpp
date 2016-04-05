@@ -61,9 +61,6 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
           _productionMode    (inputParametersInstance.productionMode()    ),
 	  _sigmaNucleus      (_bbs.beam2().A()          )
 {
-	// The _luminosity variable should note be used. Set it to 1.0 here. 
-        _luminosity = 1.0; 
-
 	switch(_particleType) {
 	case RHO:
 		_slopeParameter = 11.0;  // [(GeV/c)^{-2}]
