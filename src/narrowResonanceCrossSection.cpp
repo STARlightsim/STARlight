@@ -189,4 +189,5 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
         } else {
 	  cout<<" Cross section: " <<1.E10*int_r<<" picob."<<endl;
         }
+	setPhotonNucleusSigma(0.01*int_r);
 }

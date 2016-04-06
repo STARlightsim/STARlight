@@ -74,6 +74,9 @@ public:
 	                             const double py,
 	                             const double pz);  ///< calculates pseudorapidity for given 3-momentum
 
+	double getTotalChannelCrossSection () const {return _totalChannelCrossSection;}
+	void   setTotalChannelCrossSection (double sigma) {_totalChannelCrossSection = sigma;}
+
 protected:
 
 	unsigned long _nmbAttempts;  ///< number of attempted events
@@ -85,6 +88,8 @@ protected:
 	bool   _etaCutEnabled;  ///< en/disables cut in eta
 	double _etaCutMin;      ///< minimum eta, if cut is enabled
 	double _etaCutMax;      ///< maximum eta, if cut is enabled
+
+	double _totalChannelCrossSection; 
 		
 };
 

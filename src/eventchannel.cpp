@@ -46,7 +46,8 @@ eventChannel::eventChannel(const inputParameters& inputParametersInstance, beamB
 	: readLuminosity(inputParametersInstance),
 	  _bbs(bbsystem),
 	  _nmbAttempts(0),
-	  _nmbAccepted(0)
+	  _nmbAccepted(0),
+	  _totalChannelCrossSection(0)
 {
   _ptCutEnabled  = inputParametersInstance.ptCutEnabled();
   _ptCutMin      = inputParametersInstance.ptCutMin();

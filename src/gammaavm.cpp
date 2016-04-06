@@ -860,6 +860,7 @@ Gammaanarrowvm::Gammaanarrowvm(const inputParameters& input, beamBeamSystem& bbs
 	cout<<"Creating and calculating crosssection. Gammaanarrowvm()"<<endl;
 	narrowResonanceCrossSection sigma(input, bbsystem);
 	sigma.crossSectionCalculation(_bwnormsave);
+	setTotalChannelCrossSection(sigma.getPhotonNucleusSigma());
 	_VMbslope=sigma.slopeParameter(); 
 }
 
@@ -877,6 +878,7 @@ Gammaaincoherentvm::Gammaaincoherentvm(const inputParameters& input, beamBeamSys
         cout<<"Creating and calculating crosssection. Gammaaincoherentvm()"<<endl;
         incoherentVMCrossSection sigma(input, bbsystem);
 	sigma.crossSectionCalculation(_bwnormsave);
+	setTotalChannelCrossSection(sigma.getPhotonNucleusSigma());
         _VMbslope=sigma.slopeParameter(); 
 }
 
@@ -894,6 +896,7 @@ Gammaawidevm::Gammaawidevm(const inputParameters& input, beamBeamSystem& bbsyste
 	cout<<"Creating and calculating crosssection. Gammaawidevm()"<<endl;
 	wideResonanceCrossSection sigma(input, bbsystem);
 	sigma.crossSectionCalculation(_bwnormsave);
+	setTotalChannelCrossSection(sigma.getPhotonNucleusSigma());
 	_VMbslope=sigma.slopeParameter();
 }
 
