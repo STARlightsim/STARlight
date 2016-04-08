@@ -57,7 +57,7 @@ Gammagammaleptonpair::Gammagammaleptonpair(const inputParameters& inputParameter
 , _GGlepInputGamma_em(inputParametersInstance.beamLorentzGamma())
 {
     //Initialize randomgenerator with our seed.
-    cout<<"Randy in leptonpair construction: "<<_randy.Rndom()<<endl;
+    _randy.Rndom();
     //Let us read in the luminosity tables
     read();
     //Now we will calculate the crosssection
@@ -98,7 +98,7 @@ void Gammagammaleptonpair::twoLeptonCrossSection()
 	}
     }
     //cout << "The total "<<_GGlepInputpidtest<<" cross-section is: "<<sigmasum<<" barns."<<endl;
-    cout<<endl;
+    cout<<endl<<endl;
     if (sigmasum > 1.){
        cout << "Total cross section: "<<sigmasum<<" barn."<<endl;  
     } else if (1000.*sigmasum > 1.){
