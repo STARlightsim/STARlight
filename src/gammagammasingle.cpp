@@ -122,19 +122,22 @@ void Gammagammasingle::singleCrossSection()
   // if(_sigmaSum > 0.1) cout <<"The total cross-section is: "<<_sigmaSum<<" barns."<<endl;
   // else if(_sigmaSum > 0.0001)cout <<"The total cross-section is: "<<_sigmaSum*1000<<" mb."<<endl;
   // else cout <<"The total cross-section is: "<<_sigmaSum*1000000<<" ub."<<endl;
+  cout<<endl;
   if (_sigmaSum > 1.){
-       cout << "The total cross-section is: "<<_sigmaSum<<" barn."<<endl;  
+     cout << "Total cross section: "<<_sigmaSum<<" barn."<<endl;  
   } else if (1000.*_sigmaSum > 1.){
-       cout << "The total cross-section is: "<<1000.*_sigmaSum<<" mb."<<endl;  
+     cout << "Total cross section: "<<1000.*_sigmaSum<<" mb."<<endl;  
   } else if (1000000.*_sigmaSum > 1.){
-       cout << "The total cross-section is: "<<1000000.*_sigmaSum<<" microbarn."<<endl;  
+    cout << "Total cross section: "<<1000000.*_sigmaSum<<" microbarn."<<endl;  
   } else if (1.E9*_sigmaSum > 1.){
-       cout << "The total cross-section is: "<<1.E9*_sigmaSum<<" nanobarn."<<endl;  
+    cout << "Total cross section: "<<1.E9*_sigmaSum<<" nanobarn."<<endl;  
   } else if (1.E12*_sigmaSum > 1.){
-       cout << "The total cross-section is: "<<1.E12*_sigmaSum<<" picobarn."<<endl;  
+    cout << "Total cross section: "<<1.E12*_sigmaSum<<" picobarn."<<endl;  
   } else {
-       cout << "The total cross-section is: "<<1.E15*_sigmaSum<<" femtobarn."<<endl;  
+    cout << "Total cross section: "<<1.E15*_sigmaSum<<" femtobarn."<<endl;  
   }
+  cout<<endl; 
+  setTotalChannelCrossSection(_sigmaSum);
      
   return;
 }

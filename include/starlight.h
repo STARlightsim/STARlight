@@ -60,6 +60,7 @@ public:
         std::string   baseFileName  () const { return _baseFileName;		  }
 	unsigned long nmbAttempts   () const { return _eventChannel->nmbAttempts(); }
 	unsigned long nmbAccepted   () const { return _eventChannel->nmbAccepted(); } 
+	double getTotalCrossSection () const { return _eventChannel->getTotalChannelCrossSection(); } 
 	void setInputParameters(inputParameters* inputParams) { _inputParameters = inputParams; }   
 
 private:

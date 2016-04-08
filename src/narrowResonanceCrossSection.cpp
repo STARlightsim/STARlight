@@ -82,12 +82,14 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
 	Eth=0.5*(((W+protonMass)*(W+protonMass)-
 	          protonMass*protonMass)/(_Ep+sqrt(_Ep*_Ep-protonMass*protonMass)));
   
-	cout<<" gamma+nucleon  Threshold: "<<Eth<<endl;
-	int_r=0.;
+	// cout<<" gamma+nucleon  Threshold: "<<Eth<<endl;
+        printf(" gamma+nucleon threshold: %e GeV \n", Eth);
 
         int A_1 = getbbs().beam1().A(); 
         int A_2 = getbbs().beam2().A();
   
+ 	int_r=0.;
+
         // Do this first for the case when the first beam is the photon emitter 
         // Treat pA separately with defined beams 
         // The variable beam (=1,2) defines which nucleus is the target 
@@ -178,16 +180,20 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
 		int_r = int_r+dR;
 	  }
         }
+	cout<<endl;
 	if (0.01*int_r > 1.){
-	  cout<< " Cross section: "<<0.01*int_r<<" barn."<<endl;
+	  cout<< " Total cross section: "<<0.01*int_r<<" barn."<<endl;
 	} else if (10.*int_r > 1.){
-	  cout<< " Cross section: " <<10.*int_r<<" mb."<<endl;
+	  cout<< " Total cross section: " <<10.*int_r<<" mb."<<endl;
         } else if (10000.*int_r > 1.){
-	  cout<<" Cross section: " <<10000.*int_r<<" microb."<<endl;
+	  cout<< " Total cross section: " <<10000.*int_r<<" microb."<<endl;
         } else if (10000000.*int_r > 1.){
-	  cout<<" Cross section: " <<10000000.*int_r<<" nanob."<<endl;
+	  cout<< " Total cross section: " <<10000000.*int_r<<" nanob."<<endl;
+        } else if (1.E10*int_r > 1.){
+	  cout<< " Total cross section: "<<1.E10*int_r<<" picob."<<endl;
         } else {
-	  cout<<" Cross section: " <<1.E10*int_r<<" picob."<<endl;
+	  cout<< " Total cross section: " <<1.E13*int_r<<" femtob."<<endl;
         }
+	cout<<endl;
 	setPhotonNucleusSigma(0.01*int_r);
 }

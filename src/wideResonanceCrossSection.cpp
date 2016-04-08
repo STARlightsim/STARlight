@@ -208,17 +208,21 @@ wideResonanceCrossSection::crossSectionCalculation(const double bwnormsave)
 	  }
         }
 
+	cout<<endl;
 	if (0.01*int_r > 1.){
-	  cout<<" Cross section: "<<0.01*int_r<<" barn."<<endl;
+	  cout<< " Total cross section: "<<0.01*int_r<<" barn."<<endl;
 	} else if (10.*int_r > 1.){
-	  cout<<" Cross section: " <<10.*int_r<<" mb."<<endl;
+	  cout<< " Total cross section: " <<10.*int_r<<" mb."<<endl;
         } else if (10000.*int_r > 1.){
-	  cout<<" Cross section: " <<10000.*int_r<<" microb."<<endl;
+	  cout<< " Total cross section: " <<10000.*int_r<<" microb."<<endl;
         } else if (10000000.*int_r > 1.){
-	  cout<<" Cross section: " <<10000000.*int_r<<" nanob."<<endl;
+	  cout<< " Total cross section: " <<10000000.*int_r<<" nanob."<<endl;
+        } else if (1.E10*int_r > 1.){
+	  cout<< " Total cross section: "<<1.E10*int_r<<" picob."<<endl;
         } else {
-	  cout<<" Cross section: " <<1.E10*int_r<<" picob."<<endl;
+	  cout<< " Total cross section: " <<1.E13*int_r<<" femtob."<<endl;
         }
+	cout<<endl;
 	setPhotonNucleusSigma(0.01*int_r);
 
 }

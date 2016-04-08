@@ -134,16 +134,33 @@ starlightStandalone::run()
 			fileWriter.writeEvent(event, iEvent);
 		}
 	}
+	fileWriter.close();
+
+	if( _starlight->nmbAttempts() == 0 )return true; 
+
 	printInfo << "number of attempts = " << _starlight->nmbAttempts() << ", "
 	          << "number of accepted events = " << _starlight->nmbAccepted() << endl;
-	fileWriter.close();
+        double selectedCrossSection =
+	  ((double)_starlight->nmbAccepted()/_starlight->nmbAttempts())*_starlight->getTotalCrossSection(); 
+	if (selectedCrossSection > 1.){
+	  cout<< " The cross section of the generated sample is "<<selectedCrossSection<<" barn."<<endl;
+	} else if (1.E3*selectedCrossSection > 1.){
+	  cout<< " The cross section of the generated sample is "<<1.E3*selectedCrossSection<<" mb."<<endl;
+        } else if (1.E6*selectedCrossSection > 1.){
+	  cout<< " The cross section of the generated sample is "<<1.E6*selectedCrossSection<<" micorbarn."<<endl;
+        } else if (1.E9*selectedCrossSection > 1.){
+	  cout<< " The cross section of the generated sample is "<<1.E9*selectedCrossSection<<" nanobarn."<<endl;
+        } else if (1.E12*selectedCrossSection > 1.){
+	  cout<< " The cross section of the generated sample is "<<1.E12*selectedCrossSection<<" picobarn."<<endl;
+        } else {
+	  cout<< " The cross section of the generated sample is " <<1.E15*selectedCrossSection<<" femtob."<<endl;
+        }  
 
 	return true;
 }
 void starlightStandalone::boostEvent(upcEvent &event)
 {
   
-  // Should probably move this calculation to inputParameters (and remove from bbs)
    // Calculate CMS boost 
    double rap1 = acosh(_inputParameters->beam1LorentzGamma());
    double rap2 = -acosh(_inputParameters->beam2LorentzGamma());
