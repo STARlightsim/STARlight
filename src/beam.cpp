@@ -47,11 +47,11 @@ using namespace starlightConstants;
 //______________________________________________________________________________
 beam::beam(const int              Z,
            const int              A,
-           const bool             dAuCoherentProduction,
+	   const int		  productionMode,
 	   const double		  beamLorentzGamma)
 	: nucleus(Z,
 	          A,
-	          dAuCoherentProduction)
+		  productionMode)
 	,_beamLorentzGamma(beamLorentzGamma)
 {
 }

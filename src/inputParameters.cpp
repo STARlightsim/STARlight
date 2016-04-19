@@ -79,8 +79,6 @@ inputParameters::inputParameters()
 	  _maxPtInterference     ("INT_PT_MAX",0),
 	  _nmbPtBinsInterference ("INT_PT_N_BINS",0),
 	  _ptBinWidthInterference("INT_PT_WIDTH",0),
-	  _coherentProduction    ("COHERENT",false),
-	  _incoherentFactor      ("INCO_FACTOR",0),
 	  _protonEnergy          ("PROTON_ENERGY",0, NOT_REQUIRED),
 	  _minGammaEnergy	 ("MIN_GAMMA_ENERGY",6.0, NOT_REQUIRED),
 	  _maxGammaEnergy	 ("MAX_GAMMA_ENERGY",600000.0, NOT_REQUIRED),
@@ -127,8 +125,6 @@ inputParameters::inputParameters()
 	_ip.addParameter(_interferenceStrength);
 	_ip.addParameter(_maxPtInterference);
 	_ip.addParameter(_nmbPtBinsInterference);
-	_ip.addParameter(_coherentProduction);
-	_ip.addParameter(_incoherentFactor);
 	_ip.addParameter(_minGammaEnergy);
 	_ip.addParameter(_maxGammaEnergy);
 	_ip.addParameter(_pythiaParams);
@@ -547,9 +543,11 @@ inputParameters::print(ostream& out) const
 	    << "    maximum p_T for interference calc. ..... " << _maxPtInterference.value() << " GeV/c" << endl
 	    << "    # of p_T bins for interference calc. ... " << _nmbPtBinsInterference.value() << endl;}
     if (_productionMode.value()!=1) {
-	out  << "    coherent scattering off nucleus ........ " << yesNo(_coherentProduction.value()) << endl;
-    	if (!_coherentProduction.value()) {
-	 out << "    scaling factor for incoh. VM prod. ..... " << _incoherentFactor.value() << endl;}
+		if (_productionMode.value()==4) {
+	 	  out  << "    coherent scattering off nucleus ........ no" << endl;}
+		else {
+	 	  out  << "    coherent scattering off nucleus ........ yes" << endl;
+		}
 	}
 	return out;
 }
@@ -585,9 +583,7 @@ inputParameters::write(ostream& out) const
 	    << "INTERFERENCE"  << interferenceEnabled  () <<endl
 	    << "IF_STRENGTH"   << interferenceStrength () <<endl
 	    << "INT_PT_MAX"    << maxPtInterference    () <<endl
-	    << "INT_PT_N_BINS" << nmbPtBinsInterference() <<endl
-	    << "COHERENT"      << coherentProduction   () <<endl
-	    << "INCO_FACTOR"   << incoherentFactor     () <<endl;
+	    << "INT_PT_N_BINS" << nmbPtBinsInterference() <<endl;
 
 	return out;
 }

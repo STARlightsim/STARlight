@@ -30,7 +30,5 @@ INTERFERENCE = 0     #Interference (0 = off, 1 = on)
 IF_STRENGTH = 1.    #% of interference (0.0 - 0.1)
 INT_PT_MAX = 0.24  #Maximum pt considered, when interference is turned on
 INT_PT_N_BINS =120   #Number of pt bins when interference is turned on
-COHERENT = 1     #Coherent=1,Incoherent=0
-INCO_FACTOR = 1.    #percentage of incoherence
 XSEC_METHOD = 1 # Set to 0 to use old method for calculating gamma-gamma luminosity
 PYTHIA_FULL_EVENTRECORD = 0 # (0 = off, 1 = on) Writes full pythia information to output (vertex, parents, daughter etc).

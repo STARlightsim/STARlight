@@ -56,8 +56,6 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 	  _protonEnergy      (inputParametersInstance.protonEnergy()      ),
 	  _particleType      (inputParametersInstance.prodParticleType()  ),
 	  _beamBreakupMode   (inputParametersInstance.beamBreakupMode()   ),
-	  _coherentProduction(inputParametersInstance.coherentProduction()),
-	  _incoherentFactor  (inputParametersInstance.incoherentFactor()  ),
           _productionMode    (inputParametersInstance.productionMode()    ),
 	  _sigmaNucleus      (_bbs.beam2().A()          )
 {

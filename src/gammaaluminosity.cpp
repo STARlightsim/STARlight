@@ -64,8 +64,6 @@ photonNucleusLuminosity::photonNucleusLuminosity(const inputParameters& inputPar
   ,_productionMode(inputParametersInstance.productionMode())
   ,_beamBreakupMode(inputParametersInstance.beamBreakupMode())
   ,_interferenceEnabled(inputParametersInstance.interferenceEnabled())
-  ,_coherentProduction(inputParametersInstance.coherentProduction())
-  ,_incoherentFactor(inputParametersInstance.incoherentFactor())
   ,_maxPtInterference(inputParametersInstance.maxPtInterference())
   ,_nmbPtBinsInterference(inputParametersInstance.nmbPtBinsInterference())
 {
@@ -117,8 +115,6 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   wylumfile << _beamBreakupMode <<endl;
   wylumfile << _interferenceEnabled <<endl;
   wylumfile << _interferenceStrength <<endl;
-  wylumfile << _coherentProduction <<endl;
-  wylumfile << _incoherentFactor <<endl;
   wylumfile << starlightConstants::deuteronSlopePar <<endl;
   wylumfile << _maxPtInterference <<endl;
   wylumfile << _nmbPtBinsInterference <<endl;

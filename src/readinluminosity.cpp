@@ -99,7 +99,7 @@ void readLuminosity::read()
     }
   }
 
-  double dummy[19]; //number of lines used to read in input parameters saved to lookup table[slight.txt].
+  double dummy[17]; //number of lines used to read in input parameters saved to lookup table[slight.txt].
 
 
   std::string wyFileName;
@@ -117,7 +117,7 @@ void readLuminosity::read()
 
   wylumfile.open(wyFileName.c_str());
 
-  for(int i=0;i < 19;i++){ 
+  for(int i=0;i < 17;i++){ 
     wylumfile >> dummy[i];
   }
   int A_1 = dummy[1];

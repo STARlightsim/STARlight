@@ -83,8 +83,6 @@ private:
     const int _beamBreakupMode;
     const int _interferenceEnabled;
     const double _interferenceStrength;
-    const int _coherentProduction;
-    const double _incoherentFactor;
     const double _maxPtInterference;
     const int _nmbPtBinsInterference;
     const int _xsecCalcMethod;

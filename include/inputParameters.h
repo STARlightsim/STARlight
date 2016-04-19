@@ -206,8 +206,6 @@ public:
 	double       maxPtInterference     () const { return _maxPtInterference.value();      }  ///< returns maximum p_T for interference calculation [GeV/c]
 	int          nmbPtBinsInterference () const { return _nmbPtBinsInterference.value();  }  ///< returns number of p_T bins for interference calculation
 	double       ptBinWidthInterference() const { return _ptBinWidthInterference.value(); }  ///< returns width of p_T bins for interference calculation [GeV/c]
-	bool         coherentProduction    () const { return _coherentProduction.value();     }  ///< returns whether production is coherent or incoherent
-	double       incoherentFactor      () const { return _incoherentFactor.value();       }  ///< returns incoherent contribution in vector meson production
 	double 	     minGammaEnergy        () const { return _minGammaEnergy.value();         }  ///< returns minimum gamma energy in case of photo nuclear processes [GeV]
 	double       maxGammaEnergy        () const { return _maxGammaEnergy.value();         }  ///< returns maximum gamma energy in case of photo nuclear processes [GeV]
 	std::string  pythiaParams          () const { return _pythiaParams.value();           }  ///< returns parameters to be passed to pythia
@@ -247,8 +245,6 @@ public:
 	void setMaxPtInterference     (double v)  {  _maxPtInterference = v;      }  ///< returns maximum p_T for voiderference calculation [GeV/c]
 	void setNmbPtBinsInterference (int v)  {  _nmbPtBinsInterference = v;  }  ///< returns number of p_T bins for interference calculation
 	void setPtBinWidthInterference(double v)  {  _ptBinWidthInterference = v; }  ///< returns width of p_T bins for voiderference calculation [GeV/c]
-	void setCoherentProduction    (bool v)  {  _coherentProduction = v;     }  ///< returns whether production is coherent or incoherent
-	void setIncoherentFactor      (double v)  {  _incoherentFactor = v;       }  ///< returns incoherent contribution in vector meson production
 	void setMinGammaEnergy        (double v)  {  _minGammaEnergy = v;         }  ///< returns minimum gamma energy in case of photo nuclear processes [GeV]
 	void setMaxGammaEnergy        (double v)  {  _maxGammaEnergy = v;         }  ///< returns maximum gamma energy in case of photo nuclear processes [GeV]
 	void setPythiaParams          (std::string v)  {  _pythiaParams = v;           }  ///< returns parameters to be passed to pythia
@@ -322,8 +318,6 @@ private:
 	parameter<double, VALIDITY_CHECK>          _maxPtInterference;       ///< maximum p_T for interference calculation [GeV/c]
 	parameter<unsigned int, VALIDITY_CHECK>    _nmbPtBinsInterference;   ///< number of p_T bins for interference calculation
 	parameter<double, VALIDITY_CHECK>          _ptBinWidthInterference;  ///< width of p_T bins for interference calculation [GeV/c]
-	parameter<bool, VALIDITY_CHECK>            _coherentProduction;      ///< if VALIDITY_CHECK, production is coherent, else incoherent
-	parameter<double, VALIDITY_CHECK>          _incoherentFactor;        ///< allows to scale the incoherent contribution in vector meson production
 	parameter<double, VALIDITY_CHECK>          _protonEnergy;
 	parameter<double, VALIDITY_CHECK>          _minGammaEnergy;          ///< minimum gamma energy in case of photo nuclear processes [GeV]
 	parameter<double, VALIDITY_CHECK>          _maxGammaEnergy;          ///< maximum gamma energy in case of photo nuclear processes [GeV]

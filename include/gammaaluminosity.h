@@ -64,8 +64,6 @@ class photonNucleusLuminosity : public photonNucleusCrossSection
   const int _productionMode;
   const int _beamBreakupMode;
   const bool _interferenceEnabled;
-  const bool _coherentProduction;
-  const double _incoherentFactor;
   const double _maxPtInterference;
   const int _nmbPtBinsInterference;
 };

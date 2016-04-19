@@ -94,8 +94,6 @@ private:
 	double                               _protonEnergy;
 	starlightConstants::particleTypeEnum _particleType;
 	int                                  _beamBreakupMode;     ///< breakup mode for beam particles
-	bool                                 _coherentProduction;  ///< if true, production is coherent, else incoherent
-	double                               _incoherentFactor;    ///< allows to scale the incoherent contribution in vector meson production
         int                                  _productionMode; 
 	int                                  _sigmaNucleus; 
 

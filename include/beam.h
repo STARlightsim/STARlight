@@ -46,7 +46,7 @@ public:
 
 	beam(const int              Z,
 	     const int              A,
-	     const bool             dAuCoherentProduction,
+	     const int		    productionMode,
 	     const double	    beamLorentzGamma);
 	
 	~beam();
