@@ -271,7 +271,7 @@ beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
 	energy=2*gamma*0.938;   // center of mass energy, in GeV
 	  // This equation is from section 50 of the particle data book, the subsection on "Total Hadronic Cross-Sections, using the parameterization for sqrt{s} > 7 GeV.
 	  // only the first and second terms contribute significantly, but leave them all here for good measure
-	  sigmainmb = 0.2838*pow(log(energy),2)+33.73+pow(energy,-0.412)-pow(energy,-0.5626);
+	  sigmainmb = 0.2838*pow(log(energy),2)+33.73+13.67*pow(energy,-0.412)-7.77*pow(energy,-0.5626);
 	  SIGNN=sigmainmb/10.;
 
 	//use parameter from Constants
