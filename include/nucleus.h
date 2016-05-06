@@ -54,13 +54,12 @@ public:
 	int    Z              () const { return _Z;                     }  ///< returns atomic number of nucleus
 	int    A              () const { return _A;                     }  ///< returns nucleon number of nucleus
         int    productionMode () const { return _productionMode;        }
-	double nuclearRadius  () const; ///< returns nuclear radius [fm]; except for some special nuclei this is the Wood-Saxon radius (Fermi model)
 
 	double formFactor(const double t) const;  ///< computes form factor for given squared 4-momentum transfer
 	double dipoleFormFactor(const double t, const double t0) const;  // Dipole form factor with t0 as parameter 
-	double thickness (const double b) const;  ///< calculates nuclear thickness function for given distance b in impact parameter space (Eq. 4 in KN, PRC 60)
+	double thickness (const double b) const;  ///< calculates nuclear thickness function 
 
-	double Q0  () const { return _Q0;   }
+	double nuclearRadius() const { return _Radius; }
 	double rho0() const { return _rho0; }
 
 	
@@ -77,8 +76,8 @@ private:
         int    _productionMode;
 
 	double _r0;
+	double _Radius;
 	double _rho0;
-	double _Q0;
 
 };
 

@@ -57,66 +57,41 @@ nucleus::nucleus(const int    Z,
 void nucleus::init()
 {
   switch (_Z) {
-	case 79:
+	case 82:
 		{
-			_Q0   = 0.060;
-			_rho0 = 0.159407;
+		  _Radius = 6.624;
+		  _rho0 = 0.160696;
 		}
 		break;
-	case 53:
-	case 49:
+	case 79:
 		{
-			_Q0   = 0.069;
-			_rho0 = 0.161626;
+		  _Radius = 6.38;
+		  _rho0 = 0.169551;
 		}
 		break;
 	case 29:
 		{
-			_Q0   = 0.087;
-			_rho0 = 0.166878;
+                  _Radius = 4.214;
+		  _rho0 = 0.173845;
 		}
 		break;
-	case 14:
+	case 1: 
 		{
-			_Q0   = 0.115;
-			_rho0 = 0.177128;
-		}
-		break;
-	case 8:
-		{
-			_Q0   = 0.138;
-			_rho0 = 0.188459;
-		}
-		break;
-	case 82:
-		{
-			_Q0   = 0.059;
-			_rho0 = 0.159176;
-		}
-		break;
-	case 20:
-		{
-			_Q0   =	0.102;
-			_rho0 =	0.171907;
-		}
-		break;
-	case 1: // _Q0 and _rho0 are not relevant for protons.
-		{
-		//is this a proton or deuterium(--tritium to be added)
-			if(_A==1){
-				_Q0   = -1.0;
-				_rho0 = -1.0;
-			}//if proton
-			else {
-				_Q0   = 0.0;
-				_rho0 = 0.16;
-			}//else deuterium
+		  //is this a proton or deuteron
+		  if(_A==1){
+		    _Radius = 0.7;
+		    _rho0 = -1.0; //Not relevant for protons
+		  }
+		  else {
+		    _Radius = 2.1;
+		    _rho0 = 0.0316203;
+		  }
 		}
 		break;
 	default:
 		printWarn << "density not defined for projectile with Z = " << _Z << ". using defaults." << endl;
-		_rho0 = 0.16;  //'typical' density
-		_Q0   = 0.0;   // not used.
+                _Radius = 1.2*pow(_A, 1. / 3.);
+		_rho0 = 0.198;  //This matches the radius above 
 	}
 	_r0 = 1.16 * (1. - 1.16 * pow(_A, -2. / 3.));  // for FRITIOF and FormFactor.
 }
@@ -124,24 +99,6 @@ void nucleus::init()
 //______________________________________________________________________________
 nucleus::~nucleus()
 { }
-
-
-//______________________________________________________________________________
-double
-nucleus::nuclearRadius() const
-{
-	// we use this for specific nuclei, Au, Pb, protons...
-	if (_Z == 79)                // Au
-		return 6.38;  // [fm]
-	if (_Z == 82)                // Pb
-		return 6.62;  // [fm]
-	if ((_Z == 1) && (_A == 1))  // proton
-		return 0.7;   // [fm]
-	if ((_Z == 1) && (_A == 2))  // deuteron
-		return 1.9;   // [fm]
-	return 1.2 * pow(_A, 1. / 3.); 
-}
-
 
 //______________________________________________________________________________
 double
