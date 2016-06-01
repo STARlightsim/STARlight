@@ -206,87 +206,66 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
 	                          + sqrt(_protonEnergy * _protonEnergy - protonMass * protonMass))
 	           + protonMass * protonMass);
 	
-	//Used for d-A and A-A
+	//Used for A-A
 	tmin = (W * W / (4. * Egamma * _beamLorentzGamma)) * (W * W / (4. * Egamma * _beamLorentzGamma));
   
-	if ((_bbs.beam1().A() == 1) && (_bbs.beam2().A() == 1))  // proton-proton, no scaling needed
-		csgA = sigmagp(Wgp);
-	else if ((_bbs.beam2().Z() == 1) && (_bbs.beam2().A() == 2)) {  // deuteron-A interaction
-		Av = _slopeParameter * sigmagp(Wgp);
-      
-		tmax   = tmin + 0.64;   //0.64
-		ax     = 0.5 * (tmax - tmin);
-		bx     = 0.5 * (tmax + tmin);
-		csgA   = 0.;
-      
-		for (int k = 1; k < NGAUSS; ++k) { 
-			t    = ax * xg[k] + bx;
-			// We use beam2 here since the input stores the deuteron as nucleus 2
-			// and nucleus 2 is the pomeron field source
-			// Also this is the way sergey formatted the formfactor.
-			csgA = csgA + ag[k] * _bbs.beam2().formFactor(t); 
-			t    = ax * (-xg[k]) + bx;
-			csgA = csgA + ag[k] * _bbs.beam2().formFactor(t);
-		}
-		csgA = 0.5 * (tmax - tmin) * csgA;
-		csgA = Av * csgA;
-		// For incoherent AA interactions, since incoherent treating it as gamma-p
-		// Calculate the differential V.M.+proton cross section
-	}	else {	// coherent AA interactions
-		// For typical AA interactions.
-		// Calculate V.M.+proton cross section
-		cs = sqrt(16. * pi * _vmPhotonCoupling * _slopeParameter * hbarc * hbarc * sigmagp(Wgp) / alpha); 
+	if ((_bbs.beam1().A() == 1) && (_bbs.beam2().A() == 1)){
+	   // proton-proton, no scaling needed
+	   csgA = sigmagp(Wgp);
+	} else {
+	   // coherent AA interactions
+	   // Calculate V.M.+proton cross section
+	   cs = sqrt(16. * pi * _vmPhotonCoupling * _slopeParameter * hbarc * hbarc * sigmagp(Wgp) / alpha); 
     
-		// Calculate V.M.+nucleus cross section
-		cvma = sigma_A(cs,beam); 
+	   // Calculate V.M.+nucleus cross section
+	   cvma = sigma_A(cs,beam); 
 
-		// Calculate Av = dsigma/dt(t=0) Note Units: fm**s/Gev**2
-		Av = (alpha * cvma * cvma) / (16. * pi * _vmPhotonCoupling * hbarc * hbarc);
+	   // Calculate Av = dsigma/dt(t=0) Note Units: fm**s/Gev**2
+	   Av = (alpha * cvma * cvma) / (16. * pi * _vmPhotonCoupling * hbarc * hbarc);
 
-                // Check if one or both beams are nuclei 
-                int A_1 = _bbs.beam1().A(); 
-                int A_2 = _bbs.beam2().A(); 
+           // Check if one or both beams are nuclei 
+           int A_1 = _bbs.beam1().A(); 
+           int A_2 = _bbs.beam2().A(); 
    
-		tmax   = tmin + 0.25;
-		ax     = 0.5 * (tmax - tmin);
-		bx     = 0.5 * (tmax + tmin);
-		csgA   = 0.;
-		for (int k = 1; k < NGAUSS; ++k) { 
+	   tmax   = tmin + 0.25;
+	   ax     = 0.5 * (tmax - tmin);
+	   bx     = 0.5 * (tmax + tmin);
+	   csgA   = 0.;
+	   for (int k = 1; k < NGAUSS; ++k) { 
 
-			t    = ax * xg[k] + bx;
-                        if( A_1 == 1 && A_2 != 1){ 
-			  csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
-                        }else if(A_2 ==1 && A_1 != 1){
-			  csgA = csgA + ag[k] * _bbs.beam1().formFactor(t) * _bbs.beam1().formFactor(t);
-                        }else{     
-                          if( beam==1 ){
- 			    csgA = csgA + ag[k] * _bbs.beam1().formFactor(t) * _bbs.beam1().formFactor(t);
-                          }else if(beam==2){
- 			    csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);	
-  		          }else{
-			    cout<<"Something went wrong here, beam= "<<beam<<endl; 
-                          }
-                        }
+	       t    = ax * xg[k] + bx;
+               if( A_1 == 1 && A_2 != 1){ 
+		  csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
+               }else if(A_2 ==1 && A_1 != 1){
+		  csgA = csgA + ag[k] * _bbs.beam1().formFactor(t) * _bbs.beam1().formFactor(t);
+               }else{     
+                  if( beam==1 ){
+ 		     csgA = csgA + ag[k] * _bbs.beam1().formFactor(t) * _bbs.beam1().formFactor(t);
+                  }else if(beam==2){
+ 		     csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);	
+  		  }else{
+		     cout<<"Something went wrong here, beam= "<<beam<<endl; 
+                  }
+               }
 
-			t    = ax * (-xg[k]) + bx;
-                        if( A_1 == 1 && A_2 != 1){ 
+	       t    = ax * (-xg[k]) + bx;
+               if( A_1 == 1 && A_2 != 1){ 
 			  csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);
-                        }else if(A_2 ==1 && A_1 != 1){
+               }else if(A_2 ==1 && A_1 != 1){
 			  csgA = csgA + ag[k] * _bbs.beam1().formFactor(t) * _bbs.beam1().formFactor(t);
-                        }else{     
-                          if( beam==1 ){
+               }else{     
+                  if( beam==1 ){
  			    csgA = csgA + ag[k] * _bbs.beam1().formFactor(t) * _bbs.beam1().formFactor(t);
-                          }else if(beam==2){
+                  }else if(beam==2){
  			    csgA = csgA + ag[k] * _bbs.beam2().formFactor(t) * _bbs.beam2().formFactor(t);	
-  		          }else{
+  		  }else{
 			    cout<<"Something went wrong here, beam= "<<beam<<endl; 
-                          }
-                        }
-		}
-		csgA = 0.5 * (tmax - tmin) * csgA;
-		csgA = Av * csgA;
+                  }
+	       }
+	   }
+	   csgA = 0.5 * (tmax - tmin) * csgA;
+	   csgA = Av * csgA;
 	}
-
 	return csgA;	
 }
 
@@ -367,7 +346,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 	//   first call or new beam?  - initialize - calculate photon flux
 	Icheck=Icheck+1;
 
-	// Do the numberical integration only once for symmetric systems. 
+	// Do the numerical integration only once for symmetric systems. 
         if( Icheck > 1 && _bbs.beam1().A() == _bbs.beam2().A() && _bbs.beam1().Z() == _bbs.beam2().Z() ) goto L1000f;
         // For asymmetric systems check if we have another beam 
 	if( Icheck > 1 && beam == Ibeam ) goto L1000f; 
@@ -399,9 +378,6 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 
         printf("Calculating photon flux from Emin = %e GeV to Emax = %e GeV (CM frame) for source with Z = %3.0f \n", Emin, Emax, rZ);
 	
-	//cout<<" Calculating flux for photon energies from E= "<<Emin 
-	//    <<" to  "<<Emax<<"  GeV (CM frame) for source nucleus with Z = "<<rZ<<endl;
-
 	stepmult= exp(log(Emax/Emin)/double(nstep));
 	energy=Emin;
   
@@ -417,21 +393,14 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 		bmult=exp(log(bmax/bmin)/double(nbstep));
 		biter=bmin;
 		integratedflux=0.;
-    
-		if (_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
-		     //This is for deuteron-gold
-		     Xvar = RSum*energy/(hbarc*(_beamLorentzGamma));
-      
-		     fluxelement = (2.0/pi)*rZ*rZ*alpha/
-		      	 energy*(Xvar*bessel::dbesk0(Xvar)*bessel::dbesk1(Xvar)-(1/2)*Xvar*Xvar*
-		       	        (bessel::dbesk1(Xvar)*bessel::dbesk1(Xvar)-bessel::dbesk0(Xvar)*bessel::dbesk0(Xvar)));
-      
-		     integratedflux=integratedflux+fluxelement; 
-		}else if( (_bbs.beam1().A() == 1 && _bbs.beam2().A() != 1) || (_bbs.beam2().A() == 1 && _bbs.beam1().A() != 1) ){
-		    // This is pA 
-                    if( _productionMode == PHOTONPOMERONINCOHERENT ){
 
- 		      int nbsteps = 400;
+		if( (_bbs.beam1().A() == 1 && _bbs.beam2().A() != 1) || (_bbs.beam2().A() == 1 && _bbs.beam1().A() != 1) ){
+		    // This is pA 
+
+		  if( _productionMode == PHOTONPOMERONINCOHERENT ){
+		      // This pA incoherent, proton is the target
+
+		      int nbsteps = 400;
 		      double bmin = 0.7*RSum;
 		      double bmax = 2.0*RSum + (8.0*_beamLorentzGamma*hbarc/energy);
 		      double dlnb = (log(bmax)-log(bmin))/(1.*nbsteps);
@@ -466,7 +435,7 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 		      }  // End Impact parameter loop 
 	              integratedflux = local_sum; 
                     } else if ( _productionMode == PHOTONPOMERONNARROW ||  _productionMode == PHOTONPOMERONWIDE ){
-                      // cout<<" This is pA coherent "<<" j= "<<j<<endl; 
+                      // This is pA coherent, nucleus is the target 
                       double localbmin = 0.0;   
                       if( _bbs.beam1().A() == 1 ){
 			localbmin = _bbs.beam2().nuclearRadius() + 0.7; 
@@ -477,77 +446,76 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
                       integratedflux = nepoint(energy,localbmin); 
 		    }
 		}else{ 
-			for (int jb = 1; jb<=nbstep;jb++){
-				bold=biter;
-				biter=biter*bmult;
-				// When we get to b>20R_A change methods - just take the photon flux
-				//  at the center of the nucleus.
-				if (biter > (10.*RNuc))
-					{
-						// if there is no nuclear breakup or only hadronic breakup, which only
-						// occurs at smaller b, we can analytically integrate the flux from b~20R_A
-						// to infinity, following Jackson (2nd edition), Eq. 15.54
-						Xvar=energy*biter/(hbarc*_beamLorentzGamma);
-						// Here, there is nuclear breakup.  So, we can't use the integrated flux
-						// However, we can do a single flux calculation, at the center of the nucleus
-						// Eq. 41 of Vidovic, Greiner and Soff, Phys.Rev.C47,2308(1993), among other places
-						// this is the flux per unit area
-						fluxelement  = (rZ*rZ*alpha*energy)*
-							(bessel::dbesk1(Xvar))*(bessel::dbesk1(Xvar))/
-							((pi*_beamLorentzGamma*hbarc)*
-							 (pi*_beamLorentzGamma*hbarc));
+		// This is AA
+		for (int jb = 1; jb<=nbstep;jb++){
+		    bold=biter;
+		    biter=biter*bmult;
+		    // When we get to b>20R_A change methods - just take the photon flux
+		    //  at the center of the nucleus.
+		    if (biter > (10.*RNuc)){
+		       // if there is no nuclear breakup or only hadronic breakup, which only
+		       // occurs at smaller b, we can analytically integrate the flux from b~20R_A
+		       // to infinity, following Jackson (2nd edition), Eq. 15.54
+		       Xvar=energy*biter/(hbarc*_beamLorentzGamma);
+		       // Here, there is nuclear breakup.  So, we can't use the integrated flux
+		       // However, we can do a single flux calculation, at the center of the nucleus
+		       // Eq. 41 of Vidovic, Greiner and Soff, Phys.Rev.C47,2308(1993), among other places
+		       // this is the flux per unit area
+		       fluxelement  = (rZ*rZ*alpha*energy)*
+				       (bessel::dbesk1(Xvar))*(bessel::dbesk1(Xvar))/
+				       ((pi*_beamLorentzGamma*hbarc)*
+				       (pi*_beamLorentzGamma*hbarc));
 	    
-					}//if biter>10
-				else{
-					// integrate over nuclear surface. n.b. this assumes total shadowing -
-					// treat photons hitting the nucleus the same no matter where they strike
-					fluxelement=0.;
-					deltar=RNuc/double(nrstep);
-					riter=-deltar/2.;
+                   } else {
+		       // integrate over nuclear surface. n.b. this assumes total shadowing -
+		       // treat photons hitting the nucleus the same no matter where they strike
+		       fluxelement=0.;
+		       deltar=RNuc/double(nrstep);
+		       riter=-deltar/2.;
           
-					for (int jr =1; jr<=nrstep;jr++){
-						riter=riter+deltar;
-						// use symmetry;  only integrate from 0 to pi (half circle)
-						deltaphi=pi/double(nphistep);
-						phiiter=0.;
+		       for (int jr =1; jr<=nrstep;jr++){
+			   riter=riter+deltar;
+			   // use symmetry;  only integrate from 0 to pi (half circle)
+			   deltaphi=pi/double(nphistep);
+			   phiiter=0.;
             
-						for( int jphi=1;jphi<= nphistep;jphi++){
-							phiiter=(double(jphi)-0.5)*deltaphi;
-							// dist is the distance from the center of the emitting nucleus 
-							// to the point in question
-							dist=sqrt((biter+riter*cos(phiiter))*(biter+riter*
-							           cos(phiiter))+(riter*sin(phiiter))*(riter*sin(phiiter)));
-							Xvar=energy*dist/(hbarc*_beamLorentzGamma);  
-							flux_r = (rZ*rZ*alpha*energy)*
-								(bessel::dbesk1(Xvar)*bessel::dbesk1(Xvar))/
-								((pi*_beamLorentzGamma*hbarc)*
-								 (pi*_beamLorentzGamma*hbarc));
+			   for( int jphi=1;jphi<= nphistep;jphi++){
+			       phiiter=(double(jphi)-0.5)*deltaphi;
+			       // dist is the distance from the center of the emitting nucleus 
+			       // to the point in question
+			       dist=sqrt((biter+riter*cos(phiiter))*(biter+riter*
+				     cos(phiiter))+(riter*sin(phiiter))*(riter*sin(phiiter)));
+			       Xvar=energy*dist/(hbarc*_beamLorentzGamma);  
+			       flux_r = (rZ*rZ*alpha*energy)*
+				     (bessel::dbesk1(Xvar)*bessel::dbesk1(Xvar))/
+				     ((pi*_beamLorentzGamma*hbarc)*
+				     (pi*_beamLorentzGamma*hbarc));
 	      
-							//  The surface  element is 2.* delta phi* r * delta r
-							//  The '2' is because the phi integral only goes from 0 to pi
-							fluxelement=fluxelement+flux_r*2.*deltaphi*riter*deltar;
-							//  end phi and r integrations
-						}//for(jphi)
-					}//for(jr)
-					//  average fluxelement over the nuclear surface
-					fluxelement=fluxelement/(pi*RNuc*RNuc);
-				}//else
-				//  multiply by volume element to get total flux in the volume element
-				fluxelement=fluxelement*2.*pi*biter*(biter-bold);
-				//  modulate by the probability of nuclear breakup as f(biter)
-                                // cout<<" jb: "<<jb<<" biter: "<<biter<<" fluxelement: "<<fluxelement<<endl; 
-				if (_beamBreakupMode > 1){
-					fluxelement=fluxelement*_bbs.probabilityOfBreakup(biter);
-				}
-                                // cout<<" jb: "<<jb<<" biter: "<<biter<<" fluxelement: "<<fluxelement<<endl; 
-				integratedflux=integratedflux+fluxelement;
-	
-			} //end loop over impact parameter 
-		}  //end of else (pp, pA, AA) 
+				     //  The surface  element is 2.* delta phi* r * delta r
+				     //  The '2' is because the phi integral only goes from 0 to pi
+				     fluxelement=fluxelement+flux_r*2.*deltaphi*riter*deltar;
+				     //  end phi and r integrations
+			   }//for(jphi)
+		       }//for(jr)
+			  //  average fluxelement over the nuclear surface
+			  fluxelement=fluxelement/(pi*RNuc*RNuc);
+		   }//else
+			  //  multiply by volume element to get total flux in the volume element
+			  fluxelement=fluxelement*2.*pi*biter*(biter-bold);
+			  //  modulate by the probability of nuclear breakup as f(biter)
+                          // cout<<" jb: "<<jb<<" biter: "<<biter<<" fluxelement: "<<fluxelement<<endl; 
+			  if (_beamBreakupMode > 1){
+			      fluxelement=fluxelement*_bbs.probabilityOfBreakup(biter);
+			  }
+                          // cout<<" jb: "<<jb<<" biter: "<<biter<<" fluxelement: "<<fluxelement<<endl; 
+			  integratedflux=integratedflux+fluxelement;
+      
+		} //end loop over impact parameter 
+	    }  //end of else (pp, pA, AA) 
     
-		//  In lookup table, store k*dN/dk because it changes less
-		//  so the interpolation should be better    
-		dide[j]=integratedflux*energy;                                     
+	    //  In lookup table, store k*dN/dk because it changes less
+	    //  so the interpolation should be better    
+	    dide[j]=integratedflux*energy;                                     
 	}//end loop over photon energy 
        
 	//  for 2nd and subsequent calls, use lookup table immediately

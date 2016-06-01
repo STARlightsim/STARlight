@@ -152,7 +152,7 @@ void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
 	//    set the mass of the daughter particles
 	mdec=getDaughterMass(ipid);
 
-	//     calculate the magnitude of the momenta
+	//  calculate the magnitude of the momenta
 	if(W < 2*mdec){
 		cout<<" ERROR: W="<<W<<endl;
 		iFbadevent = 1;
@@ -160,16 +160,16 @@ void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
 	}
 	pmag = sqrt(W*W/4. - mdec*mdec);
   
-	//     pick an orientation, based on the spin
-	//      phi has a flat distribution in 2*pi
+	//  pick an orientation, based on the spin
+	//  phi has a flat distribution in 2*pi
 	phi = _randy.Rndom()*2.*starlightConstants::pi;
                                                                                                                 
-	//     find theta, the angle between one of the outgoing particles and
-	//    the beamline, in the frame of the two photons
+	//  find theta, the angle between one of the outgoing particles and
+	//  the beamline, in the frame of the two photons
 
 	theta=getTheta(ipid);
  
-	//     compute unboosted momenta
+	//  compute unboosted momenta
 	px1 = sin(theta)*cos(phi)*pmag;
 	py1 = sin(theta)*sin(phi)*pmag;
 	pz1 = cos(theta)*pmag;
@@ -189,7 +189,7 @@ void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
 	transform (betax,betay,betaz,E2,px2,py2,pz2,iFbadevent);
 
 	if(iFbadevent == 1)
-		return;
+	   return;
 
 }
 
@@ -245,7 +245,7 @@ bool Gammaavectormeson::fourBodyDecay
 double Gammaavectormeson::getDaughterMass(starlightConstants::particleTypeEnum &ipid)
 {
 	//This will return the daughter particles mass, and the final particles outputed id...
-	  double mdec=0.;
+	double mdec=0.;
   
 	switch(_VMpidtest){
 	case starlightConstants::RHO:
@@ -284,8 +284,6 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particleTypeEnum &
 	case starlightConstants::UPSILON:
 	case starlightConstants::UPSILON2S:
 	case starlightConstants::UPSILON3S:
-		//  decays 50% to e+/e-, 50% to mu+/mu-
-    
 		mdec = starlightConstants::muonMass;
 		ipid = starlightConstants::MUON;
 		break;
@@ -316,8 +314,9 @@ double Gammaavectormeson::getTheta(starlightConstants::particleTypeEnum ipid)
 	double theta=0.;
 	double xtest=0.;
 	double dndtheta=0.;
+
  L200td:
-                                                                                                                                                 
+    
 	theta = starlightConstants::pi*_randy.Rndom();
 	xtest = _randy.Rndom();
 	//  Follow distribution for helicity +/-1
@@ -431,68 +430,61 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 		pt2 = sqrt(1.*t2);
 	    }
 	} else {
-		//       >> Check tmin
-		tmin = ((Epom/_VMgamma_em)*(Epom/_VMgamma_em));
+	    // >> Check tmin
+	    tmin = ((Epom/_VMgamma_em)*(Epom/_VMgamma_em));
 	
-		if(tmin > 0.5){
-			cout<<" WARNING: tmin= "<<tmin<<endl;
-                      cout<< " Y = "<<Y<<" W = "<<W<<" Epom = "<<Epom<<" gamma = "<<_VMgamma_em<<endl; 
-			cout<<" Will pick a new W,Y "<<endl;
-			tcheck = 1;
-			return;
-		}
+	    if(tmin > 0.5){
+		cout<<" WARNING: tmin= "<<tmin<<endl;
+                cout<< " Y = "<<Y<<" W = "<<W<<" Epom = "<<Epom<<" gamma = "<<_VMgamma_em<<endl; 
+		cout<<" Will pick a new W,Y "<<endl;
+		tcheck = 1;
+		return;
+	    }
  L203vm:
-		xt = _randy.Rndom(); 
-                if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
-                  if( _ProductionMode == 2 || _ProductionMode ==3){
-                    pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
-                  }else{
-                    pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
-                  }   
-                } else if( _bbs.beam2().A()==1 && _bbs.beam1().A() != 1 ){
-                  if( _ProductionMode == 2 || _ProductionMode ==3){
-                    pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
-                  }else{
-                    pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
-                  }  
-                } else if (_TargetBeam==1) {
-                    pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
-                } else {
-                    pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
-                }
+	    xt = _randy.Rndom(); 
+            if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
+              if( _ProductionMode == 2 || _ProductionMode ==3){
+                pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
+              }else{
+                pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
+              }   
+            } else if( _bbs.beam2().A()==1 && _bbs.beam1().A() != 1 ){
+              if( _ProductionMode == 2 || _ProductionMode ==3){
+                pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
+              }else{
+                pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
+              }  
+            } else if (_TargetBeam==1) {
+                pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
+            } else {
+                pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
+            }
 
-		xtest = _randy.Rndom();
-		t2 = tmin + pt2*pt2;
-    
-		if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
-			if(1.0 < _bbs.beam2().formFactor(t2)*pt2)  cout <<"POMERON"<<endl;
-			if( xtest > _bbs.beam2().formFactor(t2)*pt2) goto L203vm;
-		}
-		else{
+	    xtest = _randy.Rndom();
+	    t2 = tmin + pt2*pt2;
 
-		  double comp=0.0; 
-                  if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
-                    if( _ProductionMode == 2 || _ProductionMode ==3){
-                      comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2;
-                    }else{
-                      comp = _bbs.beam1().formFactor(t2)*_bbs.beam1().formFactor(t2)*pt2;
-                    }   
-                  } else if( _bbs.beam2().A()==1 && _bbs.beam1().A() != 1 ){
-                    if( _ProductionMode == 2 || _ProductionMode ==3){
-                      comp = _bbs.beam1().formFactor(t2)*_bbs.beam1().formFactor(t2)*pt2;
-                    }else{
-                      comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2;
-                    }  
-                  } else if (_TargetBeam==1) {
-                    comp = _bbs.beam1().formFactor(t2)*_bbs.beam1().formFactor(t2)*pt2;
-                  } else {
-                    comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2; 
-                  }
-	      
-                  if( xtest > comp ) goto L203vm;
-       		}
-
+	    double comp=0.0; 
+            if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
+              if( _ProductionMode == 2 || _ProductionMode ==3){
+                comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2;
+              }else{
+                comp = _bbs.beam1().formFactor(t2)*_bbs.beam1().formFactor(t2)*pt2;
+              }   
+            } else if( _bbs.beam2().A()==1 && _bbs.beam1().A() != 1 ){
+              if( _ProductionMode == 2 || _ProductionMode ==3){
+                comp = _bbs.beam1().formFactor(t2)*_bbs.beam1().formFactor(t2)*pt2;
+              }else{
+                comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2;
+              }  
+            } else if (_TargetBeam==1) {
+              comp = _bbs.beam1().formFactor(t2)*_bbs.beam1().formFactor(t2)*pt2;
+            } else {
+              comp = _bbs.beam2().formFactor(t2)*_bbs.beam2().formFactor(t2)*pt2; 
+            }	      
+            if( xtest > comp ) goto L203vm;
+       		
 	}//else end from pp
+
 	phi2 = 2.*starlightConstants::pi*_randy.Rndom();
 
 	px1 = pt1*cos(phi1);
@@ -507,12 +499,6 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
        
 	E  = sqrt(W*W+pt*pt)*cosh(Y);
 	pz = sqrt(W*W+pt*pt)*sinh(Y);
- 
-
-	// Keep this special case for d+A 
-	if(_bbs.beam2().Z()==1&&_bbs.beam2().A()==2){
-		pz = -pz;
-	}
 
 }
 
@@ -826,7 +812,7 @@ upcEvent Gammaavectormeson::produceEvent()
                           ipid1 = q1*ipid;
                           ipid2 = q2*ipid;
                         }
-			//     The new stuff
+
 			double md = getDaughterMass(vmpid); 
                         double Ed1 = sqrt(md*md+px1*px1+py1*py1+pz1*pz1); 
 			starlightParticle particle1(px1, py1, pz1, Ed1, starlightConstants::UNKNOWN, ipid1, q1);
@@ -835,7 +821,7 @@ upcEvent Gammaavectormeson::produceEvent()
                         double Ed2 = sqrt(md*md+px2*px2+py2*py2+pz2*pz2); 
 			starlightParticle particle2(px2, py2, pz2, Ed2, starlightConstants::UNKNOWN, ipid2, q2);
 			event.addParticle(particle2);
-			//     End of the new stuff
+
 
 		}
 	}
@@ -903,5 +889,3 @@ Gammaawidevm::Gammaawidevm(const inputParameters& input, beamBeamSystem& bbsyste
 //______________________________________________________________________________
 Gammaawidevm::~Gammaawidevm()
 { }
-
-

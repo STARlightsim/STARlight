@@ -84,21 +84,39 @@ void nucleus::init()
 		  }
 		  else {
 		    _Radius = 2.1;
-		    _rho0 = 0.0316203;
+		    _rho0 = _A;
 		  }
 		}
 		break;
 	default:
 		printWarn << "density not defined for projectile with Z = " << _Z << ". using defaults." << endl;
                 _Radius = 1.2*pow(_A, 1. / 3.);
-		_rho0 = 0.198;  //This matches the radius above 
+		_rho0 = 0.138;  //This matches the radius above
+		if( _Z < 7 ){
+		  // This is for Gaussian form factors/densities 
+		  _rho0 = _A;
+		}
 	}
-	_r0 = 1.16 * (1. - 1.16 * pow(_A, -2. / 3.));  // for FRITIOF and FormFactor.
 }
 
 //______________________________________________________________________________
 nucleus::~nucleus()
 { }
+
+//______________________________________________________________________________
+double
+nucleus::rws(const double r) const
+{
+  if( _Z < 7 ){
+    // Gaussian density distribution for light nuclei 
+    double norm = (3./(2.*starlightConstants::pi))*sqrt( (3./(2.*starlightConstants::pi)) );
+    norm = norm/(nuclearRadius()*nuclearRadius()*nuclearRadius());
+    return norm*exp(-((3./2.)*r*r)/(nuclearRadius()*nuclearRadius()));
+  }else{
+    // Fermi density distribution for heavy nuclei 
+    return 1.0 / (1. + exp((r - nuclearRadius()) / woodSaxonSkinDepth())); 
+  }
+}
 
 //______________________________________________________________________________
 double
@@ -109,31 +127,21 @@ nucleus::formFactor(const double t) const
 		const double rec = 1. / (1. + t / 0.71);
 		return rec * rec;
 	}
-	// deuteron form factor
-	if ((_Z == 1) && (_A == 2)) {   // careful with this line on dAu
-		// this is for dAu//Sergey
-		// sergey's stuff, also replaced b with _deuteronSlopePar and dropped t02 since it wasnt used
-		// incoherent form factor F(t) = 0.34 e(141.5 t) + 0.58 e(26.1 t) + 0.08 e(15.5 t)
-		const double st  = 0.34 * exp(-141.5 * t    ) + 0.58 * exp(-26.1 * t    ) + 0.08 * exp(-15.5 * t    );
-		const double st4 = 0.34 * exp(-141.5 * t / 4) + 0.58 * exp(-26.1 * t / 4) + 0.08 * exp(-15.5 * t / 4);
-		// st paramters from Franco and Varma for st eqn PRL33 ...
-		// form factor from Eisenberg, nuclear physics B 104
-		const double arg = starlightConstants::deuteronSlopePar * t;
-		if (_productionMode==2 || _productionMode==3)
-			return (st4 * st4 * exp(-arg) - 0.068 * st4 * exp(-arg * 3. / 4.));
-		return exp(-arg) * 0.5 * (1 + st) - 0.068 * exp(-arg * 3. / 4.)
-			- st4 * st4 * exp(-arg) + 0.068 * st4 * exp(-arg * 3. / 4.);
-	}
-	// nuclear form factor
-	// use parameterization from FRITIOF
-	// R = r0 * A^{1/3} with r0 = 1.16 * (1 - 1.16 * A^{-2/3})
-	const double R    = fritiofR0();
-	const double q    = sqrt(t);
-	const double arg1 = q * R / hbarc;
-	const double arg2 = hbarc / (q * _r0);
-	const double sph  = (sin(arg1) - arg1 * cos(arg1)) * 3. * arg2 * arg2 * arg2 / double(_A);
-	const double a0   = 0.70;  // [fm]
-	return sph / (1. + (a0 * a0 * t) / (hbarc * hbarc));
+
+        if( _Z < 7 ){
+	  // Gaussian form factor for light nuclei
+          const double R_G    = nuclearRadius();
+          return exp(-R_G*R_G*t/(6.*starlightConstants::hbarc*starlightConstants::hbarc));
+        } else {
+          // nuclear form factor, from Klein Nystrand PRC 60 (1999) 014903, Eq. 14
+          const double R    = nuclearRadius();
+          const double q    = sqrt(t);
+          const double arg1 = q * R / hbarc;
+          const double arg2 = hbarc / (q * R);
+          const double sph  = (sin(arg1) - arg1 * cos(arg1)) * 3. * arg2 * arg2 * arg2;
+          const double a0   = 0.70;  // [fm]
+          return sph / (1. + (a0 * a0 * t) / (hbarc * hbarc));
+        }
 }
 
 //______________________________________________________________________________

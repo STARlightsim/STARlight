@@ -55,21 +55,22 @@ public:
 	int    A              () const { return _A;                     }  ///< returns nucleon number of nucleus
         int    productionMode () const { return _productionMode;        }
 
-	double formFactor(const double t) const;  ///< computes form factor for given squared 4-momentum transfer
-	double dipoleFormFactor(const double t, const double t0) const;  // Dipole form factor with t0 as parameter 
-	double thickness (const double b) const;  ///< calculates nuclear thickness function 
+	double formFactor(const double t) const;
+	// Calculates form factor for given squared 4-momentum transfer
+
+	double dipoleFormFactor(const double t, const double t0) const;
+	// Calculates dipole form factor with t0 as parameter 
+
+	double thickness (const double b) const;
+	// Calculates nuclear thickness function 
 
 	double nuclearRadius() const { return _Radius; }
 	double rho0() const { return _rho0; }
-
 	
 private:
 
-	double woodSaxonSkinDepth() const { return 0.53;                   }  ///< returns surface (0.53 fm for Au)
-	double fritiofR0         () const { return _r0 * pow(_A, (1./3.)); }  ///< Fritiof _r0 (rws)/formfactor
-
-	double rws(const double r) const
-	{ return 1.0 / (1. + exp((r - nuclearRadius()) / woodSaxonSkinDepth())); } ///< Wood-Saxon nuclear density
+	double woodSaxonSkinDepth() const { return 0.53; } // 0.53 fm skin depth
+	double rws(const double r) const;
 
 	int    _Z;                      ///< atomic number of nucleus
 	int    _A;                      ///< nucleon number of nucleus
