@@ -56,7 +56,6 @@ class Gammagammaleptonpair : public eventChannel
 
  private:
   double _sigmax[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];
-  double _sigmaSum;
   double _sigfint[starlightLimits::MAXWBINS];
   double _sigofw[starlightLimits::MAXWBINS];
   double _signormw;

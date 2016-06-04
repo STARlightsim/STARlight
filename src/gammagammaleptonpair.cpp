@@ -405,7 +405,7 @@ void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ip
 
     double mdec=0.,E1=0.,E2=0.;
     double pmag, anglelep[20001];
-    double phi,theta,xtest,Ecm;
+    double phi,theta=0.,xtest,Ecm;
     double betax,betay,betaz;
     double hirestheta;
     double hiresw;  //added from JN->needed precision

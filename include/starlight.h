@@ -69,12 +69,9 @@ private:
 
 	bool createEventChannel();
       
-	beam*              _beam0;
-	beam*              _beam1;
 	beamBeamSystem*    _beamSystem;
 	eventChannel*      _eventChannel;
 	unsigned int       _nmbEventsPerFile;
-	unsigned long long _nmbEventsToGenerate;
 	std::string        _baseFileName;
 	std::string        _lumLookUpTableFileName;
 	bool               _isInitialised;

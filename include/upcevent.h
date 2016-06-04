@@ -63,7 +63,6 @@ class upcEvent
       void boost(double rapidity);
    private:
       
-      int _NTracks;
       std::vector<starlightParticle> _particles;
       std::vector<vector3> _vertices;
       std::vector<float> _gammaEnergies;

@@ -46,7 +46,6 @@ using namespace std;
 starlightStandalone::starlightStandalone()
 	:	_configFileName   ("slight.in"),
 		_starlight        (0),
-		_inputParameters  (0),
 		_nmbEventsTot     (1),
 		_nmbEventsPerFile (_nmbEventsTot)
 { }

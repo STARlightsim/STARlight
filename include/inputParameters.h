@@ -147,7 +147,7 @@ private:
 };
 
 template<typename S, bool v>
-std::ostream& operator<<(std::ostream& os, const parameter<S,v>& par)
+inline std::ostream& operator<<(std::ostream& os, const parameter<S,v>& par)
 {
     os << par._value;
     return os;

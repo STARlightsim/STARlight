@@ -35,14 +35,12 @@
 
 
 upcEvent::upcEvent() :
-        _NTracks(0)
-        ,_particles(0)
+        _particles(0)
         ,_vertices(0)
 { }
 
 upcEvent::upcEvent(starlightConstants::event &ev) :
-        _NTracks(0)
-        ,_particles(0)
+        _particles(0)
         ,_vertices(0)
 {
   for(int i = 0; i < ev._numberOfTracks; i++)

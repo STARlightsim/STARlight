@@ -68,12 +68,9 @@ using namespace starlightConstants;
 
 
 starlight::starlight() :
-		_beam0                 (0),
-		_beam1                 (0),
 		_beamSystem            (0),
 		_eventChannel          (0),
 		_nmbEventsPerFile      (100),
-		_nmbEventsToGenerate   (10),
 		_isInitialised         (false),
 		_inputParameters       (0)
 { }

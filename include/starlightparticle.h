@@ -53,6 +53,9 @@ class starlightParticle : public lorentzVector
       
       void setCharge(short charge) { _charge = charge; }
       short getCharge() const { return _charge; }
+
+      void setMass(short mass) { _mass = mass; }
+      short getMass() const { return _mass; }
       
       void setFirstParent(int parent) { _firstParent = parent; }
       void setLastParent(int parent) { _lastParent = parent; }

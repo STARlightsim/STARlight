@@ -70,7 +70,7 @@ private:
 	std::string      _eventDataFileName;  ///< path to output file
 
 	starlight*       _starlight;         ///< pointer to starlight instance
-	inputParameters* _inputParameters;   ///< pointer to parameter instance
+        inputParameters* _inputParameters;   ///< pointer to parameter instance
 	unsigned int     _nmbEventsTot;      ///< total number of events to generate (taken from configuration file)
 	unsigned int     _nmbEventsPerFile;  ///< maximum number of events written to a single file (not yet implemented)
 

@@ -61,7 +61,6 @@ class Gammagammasingle : public eventChannel
 
  private:
   double _sigmax[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];
-  double _sigmaSum;
   double _wdelta;  //Added 7/26/07 for passing sigmadelta to pickw
   double _remainwd;// "
   int _ivalwd;     // "
