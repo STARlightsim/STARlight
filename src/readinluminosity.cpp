@@ -170,7 +170,7 @@ void readLuminosity::read()
         // only numy/2 y bins here, from 0 (not -ymax) to ymax
         double **finterm  = new double*[starlightLimits::MAXWBINS];
         for (int i = 0; i < starlightLimits::MAXWBINS; i++) finterm[i] = new double[starlightLimits::MAXYBINS];
-        for (int i=0;i<_ReadInputnumy/2;i++) {
+        for (int i=0;i<_ReadInputnumy;i++) {
             //fmax=0;
             //we want to convert _fptarray to an integral array where fpt(i,j) is near 0, and fpt(j,NPT) ~1. This will facilitate a simple table loookup
             fptsum=0.;
@@ -183,7 +183,7 @@ void readLuminosity::read()
             //convert array to integral
             _fptarray[i][0]=finterm[i][0]/fptsum;
             for (int j=1;j<_ReadInputNPT;j++) {
-                for (int k=0;k<=j;k++) {
+                for (int k=0;k<j;k++) {
                     _fptarray[i][j]=_fptarray[i][j]+finterm[i][k];
                 }
                 _fptarray[i][j]=_fptarray[i][j]/fptsum;

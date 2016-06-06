@@ -623,13 +623,14 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 	//  Y is already fixed; choose a pt
 	//  Follow the approach in pickwy
 	//  in  _fptarray(IY,pt) IY=1 corresponds to Y=0, IY=numy/2 corresponds to +y
-  
-	IY=int(fabs(Y)/dY);//+1;
-	if (IY > (_VMnumy/2)-1){
-		IY=(_VMnumy/2)-1;
+ 	// Changed,  now works -y to +y.
+	IY=int((Y-_VMYmin)/dY);
+	if (IY > (_VMnumy)-1){
+        	IY=(_VMnumy)-1;
 	}
-  
-	yleft=fabs(Y)-(IY)*dY;
+
+	yleft=(Y-_VMYmin)-(IY)*dY;
+
 	yfract=yleft*dY;
   
 	xpt=_randy.Rndom();
