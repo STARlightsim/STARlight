@@ -184,6 +184,10 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 	if( ((beam1Z()==1) && (beam1A()==3)) || ((beam2Z()==1) && (beam2A()==3)) ){
 		printWarn << "tritium is not currently supported" << endl;
 		return false;}
+	// check that rho production uses wide resonance option
+	if(_prodParticleId.value()==113 && _productionMode.value()==2){
+		printWarn << endl<< "For rho meson production, you should choose the wide resonance option (production mode = 3)" << endl;
+		return false;}
 
 	// define interaction type
 	switch (productionMode()) {

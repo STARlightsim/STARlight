@@ -135,7 +135,7 @@ wideResonanceCrossSection::crossSectionCalculation(const double bwnormsave)
                         }
       
       
-			if(ega1 < Eth) continue;
+			if(ega1 < Eth || ega2 < Eth) continue;
 			if(ega2 > maxPhotonEnergy()) continue;
           
 			csgA1=getcsgA(ega1,W,beam);
@@ -180,7 +180,7 @@ wideResonanceCrossSection::crossSectionCalculation(const double bwnormsave)
 			ega2  = 0.5*W*exp(-y2);
 			ega12 = 0.5*W*exp(-y12);
       
-			if(ega2 < Eth) continue;
+			if(ega1< Eth || ega2 < Eth) continue;
 			if(ega1 > maxPhotonEnergy()) continue;
           
 			csgA1=getcsgA(ega1,W,beam);

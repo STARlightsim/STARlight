@@ -375,6 +375,11 @@ void photonNucleusLuminosity::pttablegen()
     ptparam1=vmsigmapt(mass,Egamma1,ptparam1, 2);
     ptparam2=vmsigmapt(mass,Egamma2,ptparam2, 1);
     
+    bmin = getbbs().beam1().nuclearRadius()+getbbs().beam2().nuclearRadius();
+    //  if we allow for nuclear breakup, use a slightly smaller bmin
+    if (ibreakup != 1) 
+      bmin=0.95*bmin;
+
     //  set  bmax according to the smaller photon energy, following flux.f
     if (Egamma1 >=Egamma2) {
     bmax=bmin+6.*starlightConstants::hbarc*gamma_em/Egamma2;
@@ -382,11 +387,6 @@ void photonNucleusLuminosity::pttablegen()
     else {
     bmax=bmin+6.*starlightConstants::hbarc*gamma_em/Egamma1;
     }    
-    bmin = getbbs().beam1().nuclearRadius()+getbbs().beam2().nuclearRadius();
-    //  if we allow for nuclear breakup, use a slightly smaller bmin
-
-    if (ibreakup != 1) 
-      bmin=0.95*bmin;
     //  set number of bins to a reasonable number to start
     NBIN = 2000;
     db   = (bmax-bmin)/float(NBIN);
