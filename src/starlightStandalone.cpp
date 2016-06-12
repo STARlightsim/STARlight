@@ -69,6 +69,7 @@ starlightStandalone::init()
 	// copy input file to one with baseFileName naming scheme
         std::string inputCopyName, _baseFileName;
         _baseFileName = _inputParameters->baseFileName();
+	if (_baseFileName != "slight") {
          inputCopyName = _baseFileName +".in";
 
         ofstream inputCopyFile;
@@ -88,6 +89,7 @@ starlightStandalone::init()
          inputCopyFile << tmp << endl;
          }
         inputCopyFile.close();
+	}
 
 	// get the number of events
 	// for now we write everything to one file
