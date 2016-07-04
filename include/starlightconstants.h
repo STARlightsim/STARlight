@@ -62,6 +62,7 @@ namespace starlightConstants
 	
 	static const double f0Mass = 0.990;                  // [GeV/c^2]
 	static const double f0Width = 0.100;                 // [GeV/c^2]
+	static const double f0BrPiPi = 1.0;                  // Branching ratio for pipi (set to 100%)
         static const double etaMass = 0.547862;              // [GeV/c^2]
         static const double etaWidth = 0.00000131;           // [GeV/c^2]
         static const double etaPrimeMass = 0.95778;          // [GeV/c^2]
@@ -70,10 +71,12 @@ namespace starlightConstants
         static const double etaCWidth = 0.0322;              // [GeV/c^2]
         static const double f2Mass = 1.2751;                 // [GeV/c^2]
         static const double f2Width = 0.1851;                // [GeV/c^2]
+        static const double f2BrPiPi = 0.561;                // Branching ratio for pi+pi-
         static const double a2Mass = 1.3183;                 // [GeV/c^2]
         static const double a2Width = 0.105;                 // [GeV/c^2]
         static const double f2PrimeMass = 1.525;             // [GeV/c^2]
         static const double f2PrimeWidth = 0.073;            // [GeV/c^2]
+        static const double f2PrimeBrKK = 0.887;             // Branching ratio for KKbar
         static const double zoverz03Mass = 1.540;            // [GeV/c^2]
 
 
@@ -97,22 +100,36 @@ namespace starlightConstants
 
         static const double rho0Mass  = 0.769;               // [GeV/c^2]
 	static const double rho0Width = 0.1517;              // [GeV/c^2]
+	static const double rho0BrPiPi = 1.0;                // Branching ratio pi+pi-
         static const double rho0PrimeMass  = 1.540;          // [GeV/c^2]
 	static const double rho0PrimeWidth = 0.570;          // [GeV/c^2]
+	static const double rho0PrimeBrPiPi = 1.0;           // Branching ratio pi+pi- (set to 100%)
         static const double OmegaMass  = 0.78265;            // [GeV/c^2]
 	static const double OmegaWidth = 0.00849;            // [GeV/c^2]
+	static const double OmegaBrPiPi = 0.0153;            // Branching ratio pi+pi-
         static const double PhiMass  = 1.019461;             // [GeV/c^2]
 	static const double PhiWidth = 0.004266;             // [GeV/c^2]
+	static const double PhiBrKK = 0.489;                 // Branching ratio K+K-
         static const double JpsiMass = 3.096916;             // [GeV/c^2]
         static const double JpsiWidth = 0.0000929;           // [GeV/c^2]
+	static const double JpsiBree = 0.05971;              // Branching ratio e+e-
+	static const double JpsiBrmumu = 0.05961;            // Branching ratio mu+mu-
         static const double Psi2SMass = 3.686109;            // [GeV/c^2]
         static const double Psi2SWidth = 0.000299;           // [GeV/c^2]
+	static const double Psi2SBree = 0.00789;             // Branching ratio e+e-
+	static const double Psi2SBrmumu = 0.0079;            // Branching ratio mu+mu-
         static const double Upsilon1SMass = 9.46030;         // [GeV/c^2]
         static const double Upsilon1SWidth = 0.00005402;     // [GeV/c^2]
+	static const double Upsilon1SSBree = 0.0238;         // Branching ratio e+e-
+	static const double Upsilon1SBrmumu = 0.0248;        // Branching ratio mu+mu-
         static const double Upsilon2SMass = 10.02326;        // [GeV/c^2]
         static const double Upsilon2SWidth = 0.00003198;     // [GeV/c^2]
+	static const double Upsilon2SSBree = 0.0191;         // Branching ratio e+e-
+	static const double Upsilon2SBrmumu = 0.0193;        // Branching ratio mu+mu-
         static const double Upsilon3SMass = 10.3552;         // [GeV/c^2]
         static const double Upsilon3SWidth = 0.00002032;     // [GeV/c^2]	
+	static const double Upsilon3SSBree = 0.0218;         // Branching ratio e+e- (set to same as mu+mu-)
+	static const double Upsilon3SBrmumu = 0.0218;        // Branching ratio mu+mu-
 	
 	enum particleTypeEnum {
 		UNKNOWN        = 0,
