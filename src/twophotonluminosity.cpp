@@ -159,12 +159,11 @@ double twoPhotonLuminosity::D2LDMDY(double M,double Y,double &Normalize)
 
   _W1    =  M/2.0*exp(Y);
   _W2    =  M/2.0*exp(-Y);
-  int Zin=beam1().Z();
-  D2LDMDYx = 2.0/M*Zin*Zin*Zin*Zin*(starlightConstants::alpha*starlightConstants::alpha)*integral(Normalize);  //treats it as a symmetric collision
-  Normalize = D2LDMDYx*M/(2.0*beam1().Z()*beam1().Z()*
-                          beam1().Z()*beam1().Z()*
+  int Zin1=beam1().Z();
+  int Zin2=beam2().Z();
+  D2LDMDYx = 2.0/M*Zin1*Zin1*Zin2*Zin2*(starlightConstants::alpha*starlightConstants::alpha)*integral(Normalize); 
+  Normalize = D2LDMDYx*M/(2.0*Zin1*Zin1*Zin2*Zin2*
                           starlightConstants::alpha*starlightConstants::alpha);
-  //Normalization also treats it as symmetric
   return D2LDMDYx;
 }
 
@@ -265,7 +264,9 @@ double twoPhotonLuminosity::integral(double Normalize)
   int NIter = 0;
   int NIterMin = 0;
   double EPS = 0.;
-  double RM = 0.;
+  // double RM = 0.;
+  double RM1 = 0.;
+  double RM2 = 0.;
   double u1 = 0.;
   double u2 = 0.;
   double B1 = 0.;
@@ -280,7 +281,8 @@ double twoPhotonLuminosity::integral(double Normalize)
 
   EPS = .01*Normalize;   //This is EPS for integration, 1% of previous integral value.
   // Change this to the Woods-Saxon radius to be consistent with the older calculations (JN 230710) 
-  RM  = beam1().nuclearRadius()/starlightConstants::hbarcmev;  //Assumes symmetry?
+  RM1  = beam1().nuclearRadius()/starlightConstants::hbarcmev;  
+  RM2  = beam2().nuclearRadius()/starlightConstants::hbarcmev;  
   // RM  = beam1().woodSaxonRadius()/starlightConstants::hbarcmev;  
 
   NIter = 10000 + (int)1000000*(int)Normalize; //if integral value is very small, we don't do too many intertions to get precision down to 1%
@@ -291,23 +293,23 @@ double twoPhotonLuminosity::integral(double Normalize)
   B2 = .4*_gamma/_W2; //intermediate boundary in B2
   //The trick is that u1,2 and b1,2 could be less than RM-the lower integration boundary, thus integration area splits into 4,2 or 1 pieces
   
-  if (u1 < RM){
+  if (u1 < RM1){
     Integrala = 0;
     totsummary = 0;
     NEval      = 0;
   }
-  else if (B1 > RM){
-    if (u2 < RM){
+  else if (B1 > RM1){
+    if (u2 < RM2){
       Integrala = 0;
       totsummary = 0;
       NEval      = 0;
     }
-    else if (B2 > RM){            //integral has 4 parts
+    else if (B2 > RM2){            //integral has 4 parts
       Integrala = 0;
       totsummary = 40000;
       NEval      = 0;
-      Lower[0]   = RM;       //1
-      Lower[1]   = RM;       //2
+      Lower[0]   = RM1;       //1
+      Lower[1]   = RM2;       //2
       Lower[2]   = 0.;       //3
       Upper[2]   = 2.*starlightConstants::pi;    //3
       Upper[0]   = B1;       //1
@@ -319,14 +321,14 @@ double twoPhotonLuminosity::integral(double Normalize)
       Upper[0]   = u1;       //1
       Upper[1]   = B2;       //2
       Lower[0]   = B1;       //1
-      Lower[1]   = RM;       //2
+      Lower[1]   = RM2;       //2
       radmul(3,Lower,Upper,NIterMin,NIter,EPS,WK,NIter,Result,ResErr,NFNEVL,Summary);
       Integrala   = Integrala + Result;
       totsummary = totsummary + 100*Summary;
       NEval      = NEval + NFNEVL;
       Upper[0]   = B1;       //1
       Upper[1]   = u2;       //2
-      Lower[0]   = RM;       //1
+      Lower[0]   = RM1;       //1
       Lower[1]   = B2;       //2
       radmul(3,Lower,Upper,NIterMin,NIter,EPS,WK,NIter,Result,ResErr,NFNEVL,Summary);
       Integrala   = Integrala + Result;
@@ -346,8 +348,8 @@ double twoPhotonLuminosity::integral(double Normalize)
       Integrala   = 0;
       totsummary = 20000;
       NEval      = 0;
-      Lower[0]   = RM;       //1
-      Lower[1]   = RM;       //2
+      Lower[0]   = RM1;       //1
+      Lower[1]   = RM2;       //2
       Lower[2]   = 0.;       //3
       Upper[2]   = 2.*starlightConstants::pi;    //3
       Upper[0]   = B1;       //1
@@ -365,18 +367,18 @@ double twoPhotonLuminosity::integral(double Normalize)
     }
   }
   else{
-    if (u2 < RM ){
+    if (u2 < RM2 ){
       Integrala   = 0;
       totsummary = 0;
       NEval      = 0;
     }
-    else if (B2 > RM){
+    else if (B2 > RM2){
       //integral has 2 parts, b1 integral has only 1 component
       Integrala   = 0;
       totsummary = 20000;
       NEval      = 0;
-      Lower[0]   = RM;       //1
-      Lower[1]   = RM;       //2
+      Lower[0]   = RM1;       //1
+      Lower[1]   = RM2;       //2
       Lower[2]   = 0.;       //2
       Upper[2]   = 2.*starlightConstants::pi;    //3
       Upper[0]   = u1;       //1
@@ -396,8 +398,8 @@ double twoPhotonLuminosity::integral(double Normalize)
       Integrala   = 0;
       totsummary = 10000;
       NEval      = 0;
-      Lower[0]   = RM;       //1
-      Lower[1]   = RM;       //2
+      Lower[0]   = RM1;       //1
+      Lower[1]   = RM2;       //2
       Lower[2]   = 0.;       //3
       Upper[2]   = 2.*starlightConstants::pi;    //3
       Upper[0]   = u1;       //1
