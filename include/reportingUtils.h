@@ -61,9 +61,9 @@ getClassMethod__(std::string prettyFunction)
 	return prettyFunction;
 }
 
-#define printErr  std::cerr << "!!! " << __PRETTY_FUNCTION__ << " [" << __FILE__ << ":" << __LINE__ << "]: error: "   << std::flush
-#define printWarn std::cerr << "??? " << __PRETTY_FUNCTION__ << " [" << __FILE__ << ":" << __LINE__ << "]: warning: " << std::flush
-#define printInfo std::cout << ">>> " << getClassMethod__(__PRETTY_FUNCTION__) << "(): info: "  << std::flush
+#define printErr  std::cerr << "!!! " << __PRETTY_FUNCTION__ << " [" << __FILE__ << ":" << __LINE__ << "]: ERROR: "   << std::flush
+#define printWarn std::cerr << ">>> " << __PRETTY_FUNCTION__ << " [" << __FILE__ << ":" << __LINE__ << "]: "<<std::endl<<"Warning: " << std::flush 
+#define printInfo std::cout << ">>> " << getClassMethod__(__PRETTY_FUNCTION__) << "(): Info: "  << std::flush
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ printSvnVersion()
 	if (ver == "")
 		printInfo << "subversion repository revision is unknown." << std::endl;
 	else
-		printInfo << "subversion repository revision is '" << ver << "'" << std::endl;
+	  printInfo << "subversion repository revision is '" << ver << "'" << std::endl;
 }
 
 
