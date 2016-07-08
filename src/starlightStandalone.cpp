@@ -140,7 +140,6 @@ starlightStandalone::run()
 	if( _starlight->nmbAttempts() == 0 )return true; 
 
 	double _branchingRatio = _inputParameters->inputBranchingRatio();
-	cout<<" Branching ratio: "<<_branchingRatio<<endl; 
 	printInfo << "number of attempts = " << _starlight->nmbAttempts() << ", "
 	          << "number of accepted events = " << _starlight->nmbAccepted() << endl;
         double selectedCrossSection =
@@ -150,7 +149,7 @@ starlightStandalone::run()
 	} else if (1.E3*selectedCrossSection > 1.){
 	  cout<< " The cross section of the generated sample is "<<1.E3*selectedCrossSection<<" mb."<<endl;
         } else if (1.E6*selectedCrossSection > 1.){
-	  cout<< " The cross section of the generated sample is "<<1.E6*selectedCrossSection<<" micorbarn."<<endl;
+	  cout<< " The cross section of the generated sample is "<<1.E6*selectedCrossSection<<" microbarn."<<endl;
         } else if (1.E9*selectedCrossSection > 1.){
 	  cout<< " The cross section of the generated sample is "<<1.E9*selectedCrossSection<<" nanobarn."<<endl;
         } else if (1.E12*selectedCrossSection > 1.){
