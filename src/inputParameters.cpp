@@ -241,24 +241,28 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		mass          = starlightConstants::mel;
 		defaultMinW   = 2*mass; // default is 0.01; up to 0.15 is safe for Summer 2000 triggering for e+e- pairs
                 defaultMaxW     = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/(1.2*pow(float(beam1A()),1./6.)*pow(float(beam2A()),1./6.)); // JES 6.17.2015 to avoid problems with no default
+                _inputBranchingRatio = 1.0; 
 		break;
 	case 13:  // mu+mu- pair
 		_particleType = MUON;
 		_decayType    = LEPTONPAIR;
 		defaultMinW   = 2 * muonMass;
                 defaultMaxW     = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/(1.2*pow(float(beam1A()),1./6.)*pow(float(beam2A()),1./6.)); // JES 6.17.2015 to avoid problems with no default
+                _inputBranchingRatio = 1.0; 
 		break;
 	case 15:  // tau+tau- pair
 		_particleType = TAUON;
 		_decayType    = LEPTONPAIR;
 		defaultMinW   = 2 * tauMass;
                 defaultMaxW     = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/(1.2*pow(float(beam1A()),1./6.)*pow(float(beam2A()),1./6.)); // JES 6.17.2015 to avoid problems with no default
+                _inputBranchingRatio = 1.0; 
 		break;
 	case 10015:  // tau+tau- pair
 		_particleType = TAUONDECAY;
 		_decayType    = LEPTONPAIR;
 		defaultMinW   = 2 * tauMass;
-                defaultMaxW     = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/(1.2*pow(float(beam1A()),1./6.)*pow(float(beam2A()),1./6.)); // JES 6.17.2015 to avoid problems with no default
+                defaultMaxW   = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/(1.2*pow(float(beam1A()),1./6.)*pow(float(beam2A()),1./6.)); // JES 6.17.2015 to avoid problems with no default
+                _inputBranchingRatio = 1.0; 
 		break;
 
 // 	case 24:  // W+W- pair
@@ -272,7 +276,8 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		mass          = starlightConstants::a2Mass;
 		width         = starlightConstants::a2Width;
                 defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
-                defaultMaxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
+                defaultMaxW   = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
+                _inputBranchingRatio = 1.0; 
 		break;
 	case 221:  // eta
 		_particleType = ETA;
@@ -280,7 +285,8 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		mass          = starlightConstants::etaMass;
 		width         = starlightConstants::etaWidth;
                 defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
-                defaultMaxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
+                defaultMaxW   = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
+                _inputBranchingRatio = 1.0; 
 		break;
 	case 225:  // f_2(1270)
 		_particleType = F2;
@@ -289,6 +295,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::f2Width;
                 defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
                 defaultMaxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
+                _inputBranchingRatio = starlightConstants::f2BrPiPi; 
 		break;
 	case 331:  // eta'(958)
 		_particleType = ETAPRIME;
@@ -297,6 +304,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::etaPrimeWidth;
                 defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
                 defaultMaxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
+                _inputBranchingRatio = 1.0; 
 		break;
 	case 335:  // f_2'(1525)
 		_particleType = F2PRIME;
@@ -305,6 +313,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::f2PrimeWidth;
                 defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
                 defaultMaxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
+                _inputBranchingRatio = starlightConstants::f2PrimeBrKK; 
 		break;
 	case 441:  // eta_c(1s)
 		_particleType = ETAC;
@@ -313,6 +322,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::etaCWidth;
                 defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
                 defaultMaxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
+                _inputBranchingRatio = 1.0; 
 		break;
 	case 9010221:  // f_0(980), was orginally called 10221? updated to standard number
 		_particleType = F0;
@@ -321,12 +331,14 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::f0Width;
                 defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
                 defaultMaxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
+               _inputBranchingRatio = starlightConstants::f0BrPiPi; 
 		break;
 	case 33:  // Z"/Z0  This is the rho^0 rho^0 final state SRK
 		_particleType = ZOVERZ03;
 		_decayType    = SINGLEMESON;
                 defaultMinW   = 4*pionChargedMass;
                 defaultMaxW         = 1.6; // JES 6.17.2015 to avoid problems with no default
+                _inputBranchingRatio = 1.0; 
 		break;
 // 	case 25: // Higgs
 // 		_particleType = HIGGS;
@@ -339,6 +351,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::rho0Width;
 		defaultMinW   = 2 * pionChargedMass;
 		defaultMaxW         = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::rho0BrPiPi; 
 		break;
 	case 913:  // rho(770) with direct pi+pi- decay, interference given by ZEUS data
 		_particleType = RHOZEUS;
@@ -347,6 +360,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::rho0Width;
 		defaultMinW   = 2 * pionChargedMass;
 		defaultMaxW         = mass + 5 * width;  // use the same 1.5GeV max mass as ZEUS
+		_inputBranchingRatio = starlightConstants::rho0BrPiPi; 
 		break;
 	case 999:  // pi+pi-pi+pi- phase space decay
 		_particleType = FOURPRONG;
@@ -355,14 +369,16 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::rho0PrimeWidth;		
 		defaultMinW   = 4 * pionChargedMass;
                 defaultMaxW     = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/(1.2*pow(float(beam1A()),1./6.)*pow(float(beam2A()),1./6.)); // JES 6.17.2015 to avoid problems with no default
+		_inputBranchingRatio = 1.0; 
 		break;
 	case 223:  // omega(782)
 		_particleType = OMEGA;
-		_decayType    = NARROWVMDEFAULT;  // will probably be moved to 3-body decay
+		_decayType    = NARROWVMDEFAULT;  
 		mass          = starlightConstants::OmegaMass;
 		width         = starlightConstants::OmegaWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW         = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::OmegaBrPiPi; 
 		break;
 	case 333:  // phi(1020)
 		_particleType = PHI;
@@ -371,6 +387,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::PhiWidth;
 		defaultMinW   = 2 * kaonChargedMass;
 		defaultMaxW         = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::PhiBrKK; 
 		break;
 	case 443:  // J/psi
 		_particleType = JPSI;
@@ -379,6 +396,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::JpsiWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW         = mass + 5 * width;
+		_inputBranchingRatio = (starlightConstants::JpsiBree + starlightConstants::JpsiBrmumu)/2.; 
 		break;
    	case 443011:  // J/psi
 		_particleType = JPSI_ee;
@@ -387,6 +405,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::JpsiWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW         = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::JpsiBree; 
 		break;
 	case 443013:  // J/psi
 	        cout<<"In inputParameters setting J/psi mass!"<<endl; 
@@ -396,6 +415,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::JpsiWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW         = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::JpsiBrmumu; 
 		break;
 	case 444:  // psi(2S) 
 		_particleType = JPSI2S;
@@ -404,6 +424,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Psi2SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW         = mass + 5 * width;
+		_inputBranchingRatio = (starlightConstants::Psi2SBree + starlightConstants::Psi2SBrmumu)/2.; 
 		break;
 	case 444011: // psi(2S)
 		_particleType = JPSI2S_ee;
@@ -412,6 +433,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Psi2SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::Psi2SBree; 
 		break;
 	case 444013:  // psi(2S)
 		_particleType = JPSI2S_mumu;
@@ -420,6 +442,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Psi2SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::Psi2SBrmumu; 
 		break;
 	case 553:  // Upsilon(1S) 
 		_particleType = UPSILON;
@@ -428,6 +451,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Upsilon1SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
+		_inputBranchingRatio = (starlightConstants::Upsilon1SBree + starlightConstants::Upsilon1SBrmumu)/2.; 
 		break;
 	case 553011:  // Upsilon
 		_particleType = UPSILON_ee;
@@ -436,6 +460,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Upsilon1SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::Upsilon1SBree; 
 		break;
 	case 553013:  // Upsilon
 		_particleType = UPSILON_mumu;
@@ -444,6 +469,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Upsilon1SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::Upsilon1SBrmumu; 
 		break;
 	case 554:  // Upsilon(2S)
 		_particleType = UPSILON2S;
@@ -452,6 +478,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Upsilon2SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
+		_inputBranchingRatio = (starlightConstants::Upsilon2SBree + starlightConstants::Upsilon2SBrmumu)/2.; 
 		break;
 	case 554011:  // Upsilon(2S)
 		_particleType = UPSILON2S_ee;
@@ -460,6 +487,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Upsilon2SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::Upsilon2SBree; 
 		break;
 	case 554013:  // Upsilon(2S)
 		_particleType = UPSILON2S_mumu;
@@ -468,6 +496,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Upsilon2SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::Upsilon2SBrmumu; 
 		break;
 	case 555:  // Upsilon(3S)
 		_particleType = UPSILON3S;
@@ -476,6 +505,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Upsilon3SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
+		_inputBranchingRatio = (starlightConstants::Upsilon3SBree + starlightConstants::Upsilon3SBrmumu)/2.; 
 		break;
 	case 555011:  // Upsilon(3S)
 		_particleType = UPSILON3S_ee;
@@ -484,6 +514,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Upsilon3SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::Upsilon3SBree; 
 		break;
 	case 555013:  // Upsilon(3S)
 		_particleType = UPSILON3S_mumu;
@@ -492,6 +523,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = starlightConstants::Upsilon3SWidth;
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW   = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::Upsilon3SBrmumu; 
 		break;
 	default:
 		printWarn << "unknown particle ID " << _prodParticleId << endl;

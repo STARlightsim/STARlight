@@ -120,15 +120,15 @@ namespace starlightConstants
 	static const double Psi2SBrmumu = 0.0079;            // Branching ratio mu+mu-
         static const double Upsilon1SMass = 9.46030;         // [GeV/c^2]
         static const double Upsilon1SWidth = 0.00005402;     // [GeV/c^2]
-	static const double Upsilon1SSBree = 0.0238;         // Branching ratio e+e-
+	static const double Upsilon1SBree = 0.0238;          // Branching ratio e+e-
 	static const double Upsilon1SBrmumu = 0.0248;        // Branching ratio mu+mu-
         static const double Upsilon2SMass = 10.02326;        // [GeV/c^2]
         static const double Upsilon2SWidth = 0.00003198;     // [GeV/c^2]
-	static const double Upsilon2SSBree = 0.0191;         // Branching ratio e+e-
+	static const double Upsilon2SBree = 0.0191;          // Branching ratio e+e-
 	static const double Upsilon2SBrmumu = 0.0193;        // Branching ratio mu+mu-
         static const double Upsilon3SMass = 10.3552;         // [GeV/c^2]
         static const double Upsilon3SWidth = 0.00002032;     // [GeV/c^2]	
-	static const double Upsilon3SSBree = 0.0218;         // Branching ratio e+e- (set to same as mu+mu-)
+	static const double Upsilon3SBree = 0.0218;          // Branching ratio e+e- (set to same as mu+mu-)
 	static const double Upsilon3SBrmumu = 0.0218;        // Branching ratio mu+mu-
 	
 	enum particleTypeEnum {

@@ -215,7 +215,8 @@ public:
 	starlightConstants::decayTypeEnum       prodParticleDecayType() const { return _decayType;       }  ///< returns decay type of produced particle
 	starlightConstants::interactionTypeEnum interactionType      () const { return _interactionType; }  ///< returns interaction type
 	double protonEnergy                () const { return _protonEnergy.value(); }
-
+        double inputBranchingRatio         () const { return _inputBranchingRatio; }
+	
         void setBaseFileName          (std::string v )  {  _baseFileName = v;           }
 	void setBeam1Z                (unsigned int v)  {  _beam1Z = v;                 }  ///< returns atomic number of beam particle 1
 	void setBeam1A                (unsigned int v)  {  _beam1A = v;                 }  ///< returns atomic mass number of beam particle 1
@@ -329,7 +330,8 @@ private:
 	starlightConstants::decayTypeEnum          _decayType;
 	starlightConstants::interactionTypeEnum    _interactionType;
 
-	double                         _beamLorentzGamma;                    ///< Lorentz gamma factor of the beams in CMS frame, not an input parameter
+	double                         _beamLorentzGamma;         ///< Lorentz gamma factor of the beams in CMS frame, not an input parameter
+	double                         _inputBranchingRatio;      ///< Branching ratio defined for each channel
 	
 	inputParser _ip;
 	

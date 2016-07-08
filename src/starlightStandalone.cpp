@@ -1,4 +1,4 @@
-	///////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //
 //    Copyright 2010
 //
@@ -139,10 +139,12 @@ starlightStandalone::run()
 
 	if( _starlight->nmbAttempts() == 0 )return true; 
 
+	double _branchingRatio = _inputParameters->inputBranchingRatio();
+	cout<<" Branching ratio: "<<_branchingRatio<<endl; 
 	printInfo << "number of attempts = " << _starlight->nmbAttempts() << ", "
 	          << "number of accepted events = " << _starlight->nmbAccepted() << endl;
         double selectedCrossSection =
-	  ((double)_starlight->nmbAccepted()/_starlight->nmbAttempts())*_starlight->getTotalCrossSection(); 
+	  ((double)_starlight->nmbAccepted()/_starlight->nmbAttempts())*_branchingRatio*_starlight->getTotalCrossSection(); 
 	if (selectedCrossSection > 1.){
 	  cout<< " The cross section of the generated sample is "<<selectedCrossSection<<" barn."<<endl;
 	} else if (1.E3*selectedCrossSection > 1.){
