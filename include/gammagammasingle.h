@@ -82,6 +82,8 @@ class Gammagammasingle : public eventChannel
   int _GGsingInputnumw;
   int _GGsingInputnumy;
   double _GGsingInputGamma_em;
+  double _axionMass; // AXION HACK
+//  double _axionWidth;// AXION HACK--unused
 #ifdef ENABLE_PYTHIA 
   pythiaDecayer _pyDecayer;
 #endif

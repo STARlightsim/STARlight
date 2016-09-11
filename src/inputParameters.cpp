@@ -84,7 +84,8 @@ inputParameters::inputParameters()
 	  _maxGammaEnergy	 ("MAX_GAMMA_ENERGY",600000.0, NOT_REQUIRED),
 	  _pythiaParams          ("PYTHIA_PARAMS","", NOT_REQUIRED),
 	  _pythiaFullEventRecord ("PYTHIA_FULL_EVENTRECORD",false, NOT_REQUIRED),
-	  _xsecCalcMethod	 ("XSEC_METHOD",0, NOT_REQUIRED)
+	  _xsecCalcMethod	 ("XSEC_METHOD",0, NOT_REQUIRED),
+          _axionMass         ("AXION_MASS",50, NOT_REQUIRED)  // AXION HACK
 {
   // All parameters must be initialised in initialisation list! 
   // If not: error: 'parameter<T, validate>::parameter() [with T = unsigned int, bool validate = true]' is private
@@ -130,6 +131,7 @@ inputParameters::inputParameters()
 	_ip.addParameter(_pythiaParams);
 	_ip.addParameter(_pythiaFullEventRecord);
 	_ip.addParameter(_xsecCalcMethod);
+        _ip.addParameter(_axionMass);     // AXION HACK
 }
 
 
@@ -340,6 +342,14 @@ inputParameters::configureFromFile(const std::string &_configFileName)
                 defaultMaxW         = 1.6; // JES 6.17.2015 to avoid problems with no default
                 _inputBranchingRatio = 1.0; 
 		break;
+        case 88:  // axion// AXION HACK, till break statement
+                _particleType = AXION;
+                _decayType    = SINGLEMESON;
+                mass          = _axionMass.value();
+                width         = 1/(64*starlightConstants::pi)*mass*mass*mass/(1000*1000);//Fix Lambda=1000 GeV, rescaling is trivial.
+                defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
+                defaultMaxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
+                break;    // AXION HACK, end
 // 	case 25: // Higgs
 // 		_particleType = HIGGS;
 // 		_decayType    = SINGLEMESON;

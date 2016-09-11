@@ -60,6 +60,7 @@ Gammagammasingle::Gammagammasingle(const inputParameters& inputParametersInstanc
   _GGsingInputnumy=inputParametersInstance.nmbRapidityBins();
   _GGsingInputpidtest=inputParametersInstance.prodParticleType();
   _GGsingInputGamma_em=inputParametersInstance.beamLorentzGamma();
+  _axionMass=inputParametersInstance.axionMass(); // AXION HACK
   cout<<"SINGLE MESON pid test: "<<_GGsingInputpidtest<<endl;
   //reading in luminosity tables
   read();
@@ -81,6 +82,8 @@ void Gammagammasingle::singleCrossSection()
   double _sigmaSum=0.,remainw=0.;//_remainwd=0.;
   int ivalw =0;//_ivalwd;
   //calculate the differential cross section and place in the sigma table
+  cout << "MASS  " << getMass() << "\n"; // AXION HACK, optional
+  cout << "WIDTH  " << getWidth() << "\n";// AXION HACK, optional
   _wdelta=getMass();
   for(int i=0;i<_GGsingInputnumw;i++){
     for(int j=0;j<_GGsingInputnumy;j++){
@@ -397,6 +400,9 @@ void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,d
   case starlightConstants::F2:	
     mdec = starlightConstants::pionChargedMass;
     break;
+  case starlightConstants::AXION:       // AXION HACK
+    mdec = 0;//axion decays to two photons, set mass of decay products to zero
+    break;
   case starlightConstants::F2PRIME:
     //  decays 50% to K+/K-, 50% to K_0's
     ytest = _randy.Rndom();
@@ -468,6 +474,9 @@ void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,d
   case starlightConstants::F2:
     ipid=starlightConstants::PION;
     break;
+  case starlightConstants::AXION:// AXION HACK
+    ipid=starlightConstants::PHOTON;  // AXION HACK
+    break;      // AXION HACK
   case starlightConstants::F2PRIME:
     if( ytest >= 0.5 )
       {
@@ -520,7 +529,7 @@ upcEvent Gammagammasingle::produceEvent()
   parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
   
   
-  if(_GGsingInputpidtest != starlightConstants::F2 && _GGsingInputpidtest != starlightConstants::F2PRIME)
+  if(_GGsingInputpidtest != starlightConstants::F2 && _GGsingInputpidtest != starlightConstants::F2PRIME && _GGsingInputpidtest != starlightConstants::AXION)
   {
 #ifdef ENABLE_PYTHIA
     starlightParticle particle(parentmomx,parentmomy,parentmomz, parentE, getMass(),_GGsingInputpidtest , 0);
@@ -624,6 +633,32 @@ upcEvent Gammagammasingle::produceEvent()
       ievent=ievent+1;
     }
     break;
+
+  case starlightConstants::AXION:      // AXION HACK, start
+    twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+
+    single._numberOfTracks=2;
+    if (iFbadevent==0){
+
+        single._charge[0]=0;//q1=0;
+        single._charge[1]=0;//q2=0;
+
+      //Track #1
+      single.px[0]=px1;
+      single.py[0]=py1;
+      single.pz[0]=pz1;
+      single._fsParticle[0]=ipid;
+      //Track #2
+      single.px[1]=px2;
+      single.py[1]=py2;
+      single.pz[1]=pz2;
+      single._fsParticle[1]=ipid;
+      ievent=ievent+1;
+
+    }
+    break;  // AXION HACK, end
+
+
   default:
     break;
   }
@@ -662,6 +697,9 @@ double Gammagammasingle::getMass()
   case starlightConstants::ZOVERZ03:
     singlemass = starlightConstants::zoverz03Mass;
     break;
+  case starlightConstants::AXION: // AXION HACK
+    singlemass = _axionMass;      // AXION HACK
+    break; // AXION HACK
   default:
     cout<<"Not a recognized single particle, Gammagammasingle::getmass(), mass = 0."<<endl;
   }
@@ -700,6 +738,9 @@ double Gammagammasingle::getWidth()
   case starlightConstants::ZOVERZ03:
     singlewidth = starlightConstants::zoverz03PartialggWidth;
     break;
+  case starlightConstants::AXION: // AXION HACK
+    singlewidth = 1/(64*starlightConstants::pi)*_axionMass*_axionMass*_axionMass/(1000*1000);//Fix Lambda=1000 GeV,rescaling is trivial.    // AXION HACK
+    break;
   default:
     cout<<"Not a recognized single particle, Gammagammasingle::getwidth(), width = 0."<<endl;
   }
@@ -736,6 +777,9 @@ double Gammagammasingle::getSpin()
   case starlightConstants::ZOVERZ03:
     singlespin = starlightConstants::zoverz03Spin;
     break;
+  case starlightConstants::AXION:// AXION HACK
+    singlespin = starlightConstants::axionSpin;// AXION HACK
+    break;// AXION HACK
   default:
     cout<<"Not a recognized single particle, Gammagammasingle::getspin(), spin = 0."<<endl;
   }

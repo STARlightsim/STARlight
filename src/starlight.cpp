@@ -306,9 +306,10 @@ starlight::createEventChannel()
 	case F2:
 	case F2PRIME:
 	case ZOVERZ03:
+    case AXION: // AXION HACK
 		{
 		  //  #ifdef ENABLE_PYTHIA
-	 	        cout<<" This is f2, f2prim or rho^0 rho^0 "<<endl; 
+	 	        cout<<" This is f2, f2prim, rho^0 rho^0, or axion "<<endl; 
 			_eventChannel= new Gammagammasingle(*_inputParameters, *_beamSystem);
 			if (_eventChannel)
 				return true;

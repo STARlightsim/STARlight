@@ -211,6 +211,7 @@ public:
 	std::string  pythiaParams          () const { return _pythiaParams.value();           }  ///< returns parameters to be passed to pythia
 	bool         pythiaFullEventRecord () const { return _pythiaFullEventRecord.value();  }  ///< returns if the full pythia event record should be printed
 	int	     xsecCalcMethod        () const { return _xsecCalcMethod.value();         }  ///< returns the method used for the x-sec calculation
+    double           axionMass        () const { return _axionMass.value();         }  ///< returns axion mass //AXION HACK
 	starlightConstants::particleTypeEnum    prodParticleType     () const { return _particleType;    }  ///< returns type of produced particle
 	starlightConstants::decayTypeEnum       prodParticleDecayType() const { return _decayType;       }  ///< returns decay type of produced particle
 	starlightConstants::interactionTypeEnum interactionType      () const { return _interactionType; }  ///< returns interaction type
@@ -251,7 +252,8 @@ public:
 	void setPythiaParams          (std::string v)  {  _pythiaParams = v;           }  ///< returns parameters to be passed to pythia
 	void setPythiaFullEventRecord (bool v)  {  _pythiaFullEventRecord = v;  }  ///< returns if the full pythia event record should be prvoided
 	void setXsecCalcMethod        (int v)  {  _xsecCalcMethod = v;         }  ///< returns the method used for the x-sec calculation
-        
+        void setAxionMass        (double v)  {  _axionMass = v;         }  ///< returns axion mass    //AXION HACK
+
 	void setProdParticleType      (starlightConstants::particleTypeEnum v)   { _particleType = v;    }  ///< returns type of produced particle
 	void setProdParticleDecayType (starlightConstants::decayTypeEnum v)        { _decayType = v;       }  ///< returns decay type of produced particle
 	void setInteractionType       (starlightConstants::interactionTypeEnum v)  { _interactionType = v; }  ///< returns interaction type
@@ -325,6 +327,7 @@ private:
 	parameter<std::string,NO_VALIDITY_CHECK>   _pythiaParams;            ///< semi-colon separated parameters to pass to pythia, e.g. "mstj(1)=0;paru(13)=0.1" 
 	parameter<bool, NO_VALIDITY_CHECK>         _pythiaFullEventRecord;   ///< if the full pythia event record should be in the output
 	parameter<unsigned int, VALIDITY_CHECK>    _xsecCalcMethod;	     ///< Select x-sec calc method. (0 is standard starlight method, 1 must be used for assym. collisions (e.g. p-A), but is slow)	
+        parameter<double, VALIDITY_CHECK>          _axionMass;          ///Axion mass//AXION HACK
 
 	starlightConstants::particleTypeEnum       _particleType;
 	starlightConstants::decayTypeEnum          _decayType;

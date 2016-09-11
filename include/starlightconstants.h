@@ -97,6 +97,7 @@ namespace starlightConstants
         static const double a2Spin = 2.0;
         static const double f2PrimeSpin = 2.0;
         static const double zoverz03Spin = 2.0;
+        static const double axionSpin = 0.0;  // AXION HACK
 
         static const double rho0Mass  = 0.769;               // [GeV/c^2]
 	static const double rho0Width = 0.1517;              // [GeV/c^2]
@@ -168,7 +169,9 @@ namespace starlightConstants
 		UPSILON2S_mumu = 554013,
 		UPSILON3S      = 555,
 		UPSILON3S_ee   = 555011,
-		UPSILON3S_mumu = 555013
+		UPSILON3S_mumu = 555013,
+	        AXION          = 88,  //AXION HACK
+        	PHOTON         = 22
 	};
 
 	enum decayTypeEnum {
