@@ -85,7 +85,9 @@ inputParameters::inputParameters()
 	  _pythiaParams          ("PYTHIA_PARAMS","", NOT_REQUIRED),
 	  _pythiaFullEventRecord ("PYTHIA_FULL_EVENTRECORD",false, NOT_REQUIRED),
 	  _xsecCalcMethod	 ("XSEC_METHOD",0, NOT_REQUIRED),
-          _axionMass         ("AXION_MASS",50, NOT_REQUIRED)  // AXION HACK
+          _axionMass             ("AXION_MASS",50, NOT_REQUIRED),  // AXION HACK
+          _bslopeDefinition      ("BSLOPE_DEFINITION",0, NOT_REQUIRED),
+	  _bslopeValue           ("BSLOPE_VALUE",4.0,NOT_REQUIRED)
 {
   // All parameters must be initialised in initialisation list! 
   // If not: error: 'parameter<T, validate>::parameter() [with T = unsigned int, bool validate = true]' is private
@@ -132,6 +134,8 @@ inputParameters::inputParameters()
 	_ip.addParameter(_pythiaFullEventRecord);
 	_ip.addParameter(_xsecCalcMethod);
         _ip.addParameter(_axionMass);     // AXION HACK
+        _ip.addParameter(_bslopeDefinition); 
+        _ip.addParameter(_bslopeValue); 
 }
 
 

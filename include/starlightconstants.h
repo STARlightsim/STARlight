@@ -195,6 +195,20 @@ namespace starlightConstants
 		PHOTONUCLEARSINGLEPAPY = 8
 		
 	};
+
+        enum systemTypeEnum{
+		NONSTANDARD         = 0,
+		PP                  = 1,
+		PA                  = 2,
+		AA                  = 3
+        };
+		
+        enum targetTypeEnum {
+                NOTHADRON           = 0,
+                NUCLEUS             = 1, //coherent gamma+A
+                NUCLEON             = 2  //gamma+p or incoherent gamma+A
+        };        
+	
 	//Structure for each event's set of tracks.
 	struct event{
  

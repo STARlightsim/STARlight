@@ -77,6 +77,7 @@ class Gammaavectormeson : public eventChannel
   int _VMinterferencemode;
   int _ProductionMode;
   int _TargetBeam; 
+  int N0;
   int N1;
   int N2; 
   double _VMgamma_em;
@@ -89,6 +90,9 @@ class Gammaavectormeson : public eventChannel
   double _width;
   double _VMptmax;
   double _VMdpt;
+  int    _bslopeDef;
+  double _bslopeVal;
+  double _pEnergy;
   nBodyPhaseSpaceGen* _phaseSpaceGen;
   
 };

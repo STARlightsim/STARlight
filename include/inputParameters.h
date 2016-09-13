@@ -211,54 +211,58 @@ public:
 	std::string  pythiaParams          () const { return _pythiaParams.value();           }  ///< returns parameters to be passed to pythia
 	bool         pythiaFullEventRecord () const { return _pythiaFullEventRecord.value();  }  ///< returns if the full pythia event record should be printed
 	int	     xsecCalcMethod        () const { return _xsecCalcMethod.value();         }  ///< returns the method used for the x-sec calculation
-    double           axionMass        () const { return _axionMass.value();         }  ///< returns axion mass //AXION HACK
+        double       axionMass             () const { return _axionMass.value();              }  ///< returns axion mass //AXION HACK
+	int          bslopeDefinition      () const { return _bslopeDefinition.value();       }  ///< returns the definition of b-slope
+	double       bslopeValue           () const { return _bslopeValue.value();            }  ///< returns the value of b-slope
 	starlightConstants::particleTypeEnum    prodParticleType     () const { return _particleType;    }  ///< returns type of produced particle
 	starlightConstants::decayTypeEnum       prodParticleDecayType() const { return _decayType;       }  ///< returns decay type of produced particle
 	starlightConstants::interactionTypeEnum interactionType      () const { return _interactionType; }  ///< returns interaction type
 	double protonEnergy                () const { return _protonEnergy.value(); }
         double inputBranchingRatio         () const { return _inputBranchingRatio; }
 	
-        void setBaseFileName          (std::string v )  {  _baseFileName = v;           }
-	void setBeam1Z                (unsigned int v)  {  _beam1Z = v;                 }  ///< returns atomic number of beam particle 1
-	void setBeam1A                (unsigned int v)  {  _beam1A = v;                 }  ///< returns atomic mass number of beam particle 1
-	void setBeam2Z                (unsigned int v)  {  _beam2Z = v;                 }  ///< returns atomic number of beam particle 2
-	void setBeam2A                (unsigned int v)  {  _beam2A = v;                 }  ///< returns atomic mass number of beam particle 2
-	void setBeamLorentzGamma      (double v)  {  _beamLorentzGamma = v;       }  ///< returns Lorentz gamma factor of both beams in beam CMS frame
-	void setBeam1LorentzGamma     (double v)  {  _beam1LorentzGamma = v;      }  ///< returns Lorentz gamma factor of beam 1 in collider frame
-	void setBeam2LorentzGamma     (double v)  {  _beam2LorentzGamma = v;      }  ///< returns Lorentz gamma factor of beam 2 in collider frame
-	void setMaxW                  (double v)  {  _maxW = v;                   }  ///< returns maximum mass W of produced hadronic system [GeV/c^2]
-	void setMinW                  (double v)  {  _minW = v;                   }  ///< returns minimum mass W of produced hadronic system [GeV/c^2]
-	void setNmbWBins              (unsigned int v)  {  _nmbWBins = v;               }  ///< returns number of W bins in lookup table
-	void setMaxRapidity           (double v)  {  _maxRapidity = v;            }  ///< returns maximum absolute value of rapidity
-	void setNmbRapidityBins       (unsigned int v)  {  _nmbRapidityBins = v;        }  ///< returns number of rapidity bins in lookup table
-	void setPtCutEnabled          (bool v)  {  _ptCutEnabled = v;           }  ///< returns cut in pt
-	void setPtCutMin              (double v)  {  _ptCutMin = v;               }  ///< returns minimum pt
-	void setPtCutMax              (double v)  {  _ptCutMax = v;               }  ///< returns maximum pt
-	void setEtaCutEnabled         (bool v)  {  _etaCutEnabled = v;          }  ///< returns cut in eta
-	void setEtaCutMin             (double v)  {  _etaCutMin = v;              }  ///< returns minimum eta
-	void setEtaCutMax             (double v)  {  _etaCutMax = v;              }  ///< returns maximum eta
-	void setProductionMode        (int v)  {  _productionMode = v;         }  ///< returns production mode
-	void setNmbEvents             (unsigned int v)  {  _nmbEventsTot = v;           }  ///< returns total number of events to generate
-	void setProdParticleId        (int v)  {  _prodParticleId = v;         }  ///< returns PDG particle ID of produced particle
-	void setRandomSeed            (int v)  {  _randomSeed = v;             }  ///< returns seed for random number generator
-	void setBeamBreakupMode       (int v)  {  _beamBreakupMode = v;        }  ///< returns breakup mode for beam particles
-	void setInterferenceEnabled   (bool v)  {  _interferenceEnabled = v;    }  ///< returns whether interference is taken into account
-	void setInterferenceStrength  (double v)  {  _interferenceStrength = v;   }  ///< returns percentage of interference
-	void setMaxPtInterference     (double v)  {  _maxPtInterference = v;      }  ///< returns maximum p_T for voiderference calculation [GeV/c]
-	void setNmbPtBinsInterference (int v)  {  _nmbPtBinsInterference = v;  }  ///< returns number of p_T bins for interference calculation
-	void setPtBinWidthInterference(double v)  {  _ptBinWidthInterference = v; }  ///< returns width of p_T bins for voiderference calculation [GeV/c]
-	void setMinGammaEnergy        (double v)  {  _minGammaEnergy = v;         }  ///< returns minimum gamma energy in case of photo nuclear processes [GeV]
-	void setMaxGammaEnergy        (double v)  {  _maxGammaEnergy = v;         }  ///< returns maximum gamma energy in case of photo nuclear processes [GeV]
-	void setPythiaParams          (std::string v)  {  _pythiaParams = v;           }  ///< returns parameters to be passed to pythia
-	void setPythiaFullEventRecord (bool v)  {  _pythiaFullEventRecord = v;  }  ///< returns if the full pythia event record should be prvoided
-	void setXsecCalcMethod        (int v)  {  _xsecCalcMethod = v;         }  ///< returns the method used for the x-sec calculation
-        void setAxionMass        (double v)  {  _axionMass = v;         }  ///< returns axion mass    //AXION HACK
+        void setBaseFileName          (std::string v )  {  _baseFileName = v;     }
+	void setBeam1Z                (unsigned int v)  {  _beam1Z = v;           }  ///< sets atomic number of beam particle 1
+	void setBeam1A                (unsigned int v)  {  _beam1A = v;           }  ///< sets atomic mass number of beam particle 1
+	void setBeam2Z                (unsigned int v)  {  _beam2Z = v;           }  ///< sets atomic number of beam particle 2
+	void setBeam2A                (unsigned int v)  {  _beam2A = v;           }  ///< sets atomic mass number of beam particle 2
+	void setBeamLorentzGamma      (double v)  {  _beamLorentzGamma = v;       }  ///< sets Lorentz gamma factor of both beams in beam CMS frame
+	void setBeam1LorentzGamma     (double v)  {  _beam1LorentzGamma = v;      }  ///< sets Lorentz gamma factor of beam 1 in collider frame
+	void setBeam2LorentzGamma     (double v)  {  _beam2LorentzGamma = v;      }  ///< sets Lorentz gamma factor of beam 2 in collider frame
+	void setMaxW                  (double v)  {  _maxW = v;                   }  ///< sets maximum mass W of produced hadronic system [GeV/c^2]
+	void setMinW                  (double v)  {  _minW = v;                   }  ///< sets minimum mass W of produced hadronic system [GeV/c^2]
+	void setNmbWBins              (unsigned int v)  {  _nmbWBins = v;         }  ///< sets number of W bins in lookup table
+	void setMaxRapidity           (double v)  {  _maxRapidity = v;            }  ///< sets maximum absolute value of rapidity
+	void setNmbRapidityBins       (unsigned int v)  {  _nmbRapidityBins = v;  }  ///< sets number of rapidity bins in lookup table
+	void setPtCutEnabled          (bool v)  {  _ptCutEnabled = v;             }  ///< sets cut in pt
+	void setPtCutMin              (double v)  {  _ptCutMin = v;               }  ///< sets minimum pt
+	void setPtCutMax              (double v)  {  _ptCutMax = v;               }  ///< sets maximum pt
+	void setEtaCutEnabled         (bool v)  {  _etaCutEnabled = v;            }  ///< sets cut in eta
+	void setEtaCutMin             (double v)  {  _etaCutMin = v;              }  ///< sets minimum eta
+	void setEtaCutMax             (double v)  {  _etaCutMax = v;              }  ///< sets maximum eta
+	void setProductionMode        (int v)  {  _productionMode = v;            }  ///< sets production mode
+	void setNmbEvents             (unsigned int v)  {  _nmbEventsTot = v;     }  ///< sets total number of events to generate
+	void setProdParticleId        (int v)  {  _prodParticleId = v;            }  ///< sets PDG particle ID of produced particle
+	void setRandomSeed            (int v)  {  _randomSeed = v;                }  ///< sets seed for random number generator
+	void setBeamBreakupMode       (int v)  {  _beamBreakupMode = v;           }  ///< sets breakup mode for beam particles
+	void setInterferenceEnabled   (bool v)  {  _interferenceEnabled = v;      }  ///< sets whether interference is taken into account
+	void setInterferenceStrength  (double v)  {  _interferenceStrength = v;   }  ///< sets percentage of interference
+	void setMaxPtInterference     (double v)  {  _maxPtInterference = v;      }  ///< sets maximum p_T for voiderference calculation [GeV/c]
+	void setNmbPtBinsInterference (int v)  {  _nmbPtBinsInterference = v;     }  ///< sets number of p_T bins for interference calculation
+	void setPtBinWidthInterference(double v)  {  _ptBinWidthInterference = v; }  ///< sets width of p_T bins for voiderference calculation [GeV/c]
+	void setMinGammaEnergy        (double v)  {  _minGammaEnergy = v;         }  ///< sets minimum gamma energy in case of photo nuclear processes [GeV]
+	void setMaxGammaEnergy        (double v)  {  _maxGammaEnergy = v;         }  ///< sets maximum gamma energy in case of photo nuclear processes [GeV]
+	void setPythiaParams          (std::string v)  {  _pythiaParams = v;      }  ///< sets parameters to be passed to pythia
+	void setPythiaFullEventRecord (bool v)  {  _pythiaFullEventRecord = v;    }  ///< sets if the full pythia event record should be prvoided
+	void setXsecCalcMethod        (int v)  {  _xsecCalcMethod = v;            }  ///< sets the method used for the x-sec calculation
+	void setAxionMass        (double v)  {  _axionMass = v;                   }  ///< sets axion mass    //AXION HACK
+	void setbslopeDefinition      (int v)  {  _bslopeDefinition = v;          }  ///< sets the definition of b slope
+        void setbslopeValue           (double v)  {  _bslopeValue = v;            }  ///< sets the value of b slope
 
-	void setProdParticleType      (starlightConstants::particleTypeEnum v)   { _particleType = v;    }  ///< returns type of produced particle
-	void setProdParticleDecayType (starlightConstants::decayTypeEnum v)        { _decayType = v;       }  ///< returns decay type of produced particle
-	void setInteractionType       (starlightConstants::interactionTypeEnum v)  { _interactionType = v; }  ///< returns interaction type
+	void setProdParticleType      (starlightConstants::particleTypeEnum v)    { _particleType = v;    }  ///< sets type of produced particle
+	void setProdParticleDecayType (starlightConstants::decayTypeEnum v)       { _decayType = v;       }  ///< sets decay type of produced particle
+	void setInteractionType       (starlightConstants::interactionTypeEnum v) { _interactionType = v; }  ///< sets interaction type
 	 
-	void setProtonEnergy        (double v)  { _protonEnergy = v; }
+	void setProtonEnergy        (double v)    { _protonEnergy = v;            }  ///< sets proton energy 
 	
 	template<typename T>
 	inline bool setParameter(std::string expression);
@@ -327,7 +331,9 @@ private:
 	parameter<std::string,NO_VALIDITY_CHECK>   _pythiaParams;            ///< semi-colon separated parameters to pass to pythia, e.g. "mstj(1)=0;paru(13)=0.1" 
 	parameter<bool, NO_VALIDITY_CHECK>         _pythiaFullEventRecord;   ///< if the full pythia event record should be in the output
 	parameter<unsigned int, VALIDITY_CHECK>    _xsecCalcMethod;	     ///< Select x-sec calc method. (0 is standard starlight method, 1 must be used for assym. collisions (e.g. p-A), but is slow)	
-        parameter<double, VALIDITY_CHECK>          _axionMass;          ///Axion mass//AXION HACK
+        parameter<double, VALIDITY_CHECK>          _axionMass;               ///Axion mass//AXION HACK
+        parameter<unsigned int, VALIDITY_CHECK>    _bslopeDefinition;        ///< Optional parameter to set different values of slope parameter
+        parameter<double, VALIDITY_CHECK>          _bslopeValue;             ///< Value of slope parameter when _bslopeDefinition is set to 1
 
 	starlightConstants::particleTypeEnum       _particleType;
 	starlightConstants::decayTypeEnum          _decayType;

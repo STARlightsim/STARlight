@@ -215,7 +215,8 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
 	} else {
 	   // coherent AA interactions
 	   // Calculate V.M.+proton cross section
-	   cs = sqrt(16. * pi * _vmPhotonCoupling * _slopeParameter * hbarc * hbarc * sigmagp(Wgp) / alpha); 
+           // cs = sqrt(16. * pi * _vmPhotonCoupling * _slopeParameter * hbarc * hbarc * sigmagp(Wgp) / alpha); 
+           cs = sigma_N(Wgp); //Use member function instead 
     
 	   // Calculate V.M.+nucleus cross section
 	   cvma = sigma_A(cs,beam); 

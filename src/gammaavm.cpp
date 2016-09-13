@@ -58,12 +58,15 @@ Gammaavectormeson::Gammaavectormeson(const inputParameters& inputParametersInsta
 	_VMgamma_em=inputParametersInstance.beamLorentzGamma();
 	_VMinterferencemode=inputParametersInstance.interferenceEnabled();
 	_VMbslope=0.;//Will define in wide/narrow constructor
+        _bslopeDef=inputParametersInstance.bslopeDefinition();
+	_bslopeVal=inputParametersInstance.bslopeValue();
+	_pEnergy= inputParametersInstance.protonEnergy();
 	_VMpidtest=inputParametersInstance.prodParticleType();
 	_VMptmax=inputParametersInstance.maxPtInterference();
 	_VMdpt=inputParametersInstance.ptBinWidthInterference();
         _ProductionMode=inputParametersInstance.productionMode();
 
-        N1 = 0; N2 = 0; 
+        N0 = 0; N1 = 0; N2 = 0; 
 	  if (_VMpidtest == starlightConstants::FOURPRONG){
 		// create n-body phase-spage generator
 		_phaseSpaceGen = new nBodyPhaseSpaceGen(_randy);
@@ -105,6 +108,7 @@ void Gammaavectormeson::pickwy(double &W, double &Y)
 	if( xtest > _Farray[IW][IY] )
 		goto L201pwy;
 
+        N0++; 
 	// Determine the target nucleus 
 	// For pA this is given, for all other cases use the relative probabilities in _Farray1 and _Farray2 
         if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
@@ -425,8 +429,31 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
               pt2 = xtest;              
 	    }else{
 		//Use dsig/dt= exp(-_VMbslope*t) for heavy VM
-		xtest = _randy.Rndom(); 
-		t2 = (-1./_VMbslope)*log(xtest);
+                double bslope_tdist = _VMbslope; 
+		double Wgammap = 0.0; 
+                switch(_bslopeDef){
+		  case 0:
+		    //This is the default, as before
+		    bslope_tdist = _VMbslope;
+		    break;
+		  case 1:
+		    //User defined value of bslope. BSLOPE_VALUE default is 4.0 if not set. 
+                    bslope_tdist = _bslopeVal;
+		    if( N0 <= 1 )cout<<" ATTENTION: Using user defined value of bslope = "<<_bslopeVal<<endl;
+                    break; 
+		  case 2:
+                    //This is Wgammap dependence of b from H1 (Eur. Phys. J. C 46 (2006) 585)
+		    Wgammap = sqrt(4.*Egam*_pEnergy); 
+		    bslope_tdist = 4.63 + 4.*0.164*log(Wgammap/90.0);
+		    if( N0 <= 1 )cout<<" ATTENTION: Using energy dependent value of bslope!"<<endl; 
+		    break;
+		  default:
+		    cout<<" Undefined setting for BSLOPE_DEFINITION "<<endl;
+		}
+
+	        xtest = _randy.Rndom(); 
+		// t2 = (-1./_VMbslope)*log(xtest);
+		t2 = (-1./bslope_tdist)*log(xtest);
 		pt2 = sqrt(1.*t2);
 	    }
 	} else {
