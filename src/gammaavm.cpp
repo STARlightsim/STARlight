@@ -388,6 +388,7 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
   
 	//Find Egam,Epom in CM frame
         if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
+          // This is pA
           if( _ProductionMode == 2 || _ProductionMode ==3 ){
     	    Egam = 0.5*W*exp(Y);
   	    Epom = 0.5*W*exp(-Y);
@@ -396,20 +397,33 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
   	    Epom = 0.5*W*exp(Y);
           }  
         } else if( _bbs.beam2().A()==1 && _bbs.beam1().A() != 1 ){
+          // This is Ap
           if( _ProductionMode == 2 || _ProductionMode == 3 ){
   	    Egam = 0.5*W*exp(-Y);
   	    Epom = 0.5*W*exp(Y);
           }else{
     	    Egam = 0.5*W*exp(Y);
   	    Epom = 0.5*W*exp(-Y);
-          }  
-        } else if( _ProductionMode == 2 || _ProductionMode==3){
-	  Egam = 0.5*W*exp(-Y);
-	  Epom = 0.5*W*exp(Y);
-        } else { 
-          Egam = 0.5*W*exp(Y);
-	  Epom = 0.5*W*exp(-Y);
-	 }
+          }
+	} else {
+          // This is pp or AA 
+          if( _TargetBeam == 1 ){
+            Egam = 0.5*W*exp(-Y);
+	    Epom = 0.5*W*exp(Y);
+	  }
+          else {
+            Egam = 0.5*W*exp(Y);
+	    Epom = 0.5*W*exp(-Y);
+	  }
+	}
+
+	//        } else if( _ProductionMode == 2 || _ProductionMode==3){
+	//	  Egam = 0.5*W*exp(-Y);
+	//	  Epom = 0.5*W*exp(Y);
+	//        } else { 
+	//          Egam = 0.5*W*exp(Y);
+	//	  Epom = 0.5*W*exp(-Y);
+	//	 }
 
         pt1 = pTgamma(Egam);  
 	phi1 = 2.*starlightConstants::pi*_randy.Rndom();
