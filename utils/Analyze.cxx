@@ -45,7 +45,7 @@ Analyze::Analyze() :
   fRap2 = new TH1F("fRap2", "Rapidity track 2", 200, -10, 10);
 }
 
-Analyze::Analyze(char* infile, Int_t nEvents) :
+Analyze::Analyze(TString infile, Int_t nEvents) :
   fInfile(infile),
   fNEvents(nEvents)
 {
@@ -100,7 +100,7 @@ Int_t Analyze::Init()
   
   
   cout << "Opening textfile " << fInfile << endl;
-  if( !(filelist=fopen(fInfile,"r")) ){
+  if( !(filelist=fopen(fInfile.Data(),"r")) ){
     cout<<"Couldn't open input file: "<<fInfile<<endl;
     return -1;
   }
@@ -179,6 +179,7 @@ void Analyze::doAnalysis()
     const Int_t ntracks = NextEvent();
     //Array of TLorentzVectors. One vector for each track
     TLorentzVector* vecArr[ntracks];
+      Int_t idpart = 0;
     //Looping over the tracks of the event
     for(Int_t tr = 0; tr < ntracks; tr++){
       //Getting the TParticle for the track
