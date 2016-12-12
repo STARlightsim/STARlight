@@ -85,6 +85,8 @@ protected:
 	const double _beamLorentzGamma;
 
 	double _photonNucleusSigma; 
+
+        int    _printDef; 
 	
 private:
 

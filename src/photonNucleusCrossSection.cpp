@@ -526,8 +526,8 @@ photonNucleusCrossSection::photonFlux(const double Egamma, const int beam)
 	lEgamma=log(Egamma);
 	if (lEgamma < (lnEmin+dlnE) ||  lEgamma  > lnEmax){
 		flux_r=0.0;
-		cout<<"  ERROR: Egamma outside defined range. Egamma= "<<Egamma
-		    <<"   "<<lnEmax<<" "<<(lnEmin+dlnE)<<endl;
+		// cout<<"  WARNING: Egamma outside defined range. Egamma= "<<Egamma
+		//    <<"   "<<lnEmax<<" "<<(lnEmin+dlnE)<<endl;
 	}
 	else{
 		//       >> Egamma between Ilt and Ilt+1

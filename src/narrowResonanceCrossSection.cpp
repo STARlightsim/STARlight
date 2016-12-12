@@ -52,6 +52,7 @@ narrowResonanceCrossSection::narrowResonanceCrossSection(const inputParameters& 
 	_narrowYmin = -1.0*_narrowYmax;
 	_narrowNumY = inputParametersInstance.nmbRapidityBins();
 	_Ep         = inputParametersInstance.protonEnergy();	
+	_printDef   = inputParametersInstance.printVM();	
 }
 
 
@@ -71,8 +72,18 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
 	double y1,y2,y12,ega1,ega2,ega12;
 	double csgA1,csgA2,csgA12,int_r,dR;
 	double Eth;
-	int    J,NY,beam;
-  
+	int    I,J,NY,beam;
+        std::vector<double> yVal(_narrowNumY);
+        std::vector<double> dsigdyVal(_narrowNumY);
+        std::vector<double> Egamma1Val(_narrowNumY);
+        std::vector<double> ngamma1Val(_narrowNumY);
+        std::vector<double> sigGA1Val(_narrowNumY);
+        std::vector<double> dsigdy1Val(_narrowNumY);
+        std::vector<double> Egamma2Val(_narrowNumY);
+        std::vector<double> ngamma2Val(_narrowNumY);
+        std::vector<double> sigGA2Val(_narrowNumY);
+        std::vector<double> dsigdy2Val(_narrowNumY);
+
 	NY   =  _narrowNumY;
 	dY   = (_narrowYmax-_narrowYmin)/double(NY);
   
@@ -98,7 +109,8 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
 		y1  = _narrowYmin + double(J)*dY;
 		y2  = _narrowYmin + double(J+1)*dY;
 		y12 = 0.5*(y1+y2);
-    
+                yVal[J] = y12; 
+		
                 if( A_2 == 1 && A_1 != 1 ){
                   // pA, first beam is the nucleus and is in this case the target  
                   ega1  = 0.5*W*exp(-y1);
@@ -136,7 +148,13 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
 		dR  = dR + 4.*ega12*photonFlux(ega12,beam)*csgA12;
 		dR  = dR + ega2*photonFlux(ega2,beam)*csgA2;
 		dR  = dR*(dY/6.);
-
+                
+                dsigdyVal[J] = 10.*dR/dY; //This is dsig/dy in millibarn
+                Egamma1Val[J] = ega12;
+		ngamma1Val[J] = ega12*photonFlux(ega12,beam);
+		sigGA1Val[J] = 10.*csgA12; //This is sigma(gamma+A) in millibarn 
+		dsigdy1Val[J] = 10.*dR/dY; 
+		
 		// cout<<" y: "<<y12<<" egamma: "<<ega12<<" flux: "<<photonFlux(ega12,beam)<<" sigma_gA: "<<10000000.*csgA12<<" dsig/dy (microb): "<<10000.*dR/dY<<endl;
 
 		int_r = int_r+dR;
@@ -175,6 +193,12 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
 		dR  = dR + ega2*photonFlux(ega2,beam)*csgA2;
 		dR  = dR*(dY/6.);
 
+		dsigdyVal[J] += 10.*dR/dY; //This is dsig/dy in millibarn
+                Egamma2Val[J] = ega12;
+		ngamma2Val[J] = ega12*photonFlux(ega12,beam);
+		sigGA2Val[J] = 10.*csgA12; //This is sigma(gamma+A) in millibarn 
+		dsigdy2Val[J] = 10.*dR/dY; 
+
 		// cout<<" y: "<<y12<<" egamma: "<<ega12<<" flux: "<<photonFlux(ega12,beam)<<" sigma_gA: "<<10000000.*csgA12<<" dsig/dy (microb): "<<10000.*dR/dY<<endl;
 
 		int_r = int_r+dR;
@@ -196,4 +220,74 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
         }
 	cout<<endl;
 	setPhotonNucleusSigma(0.01*int_r);
+
+	//Print detailed cross section (dsig/dy), if requested  
+        if( _printDef == 1 ||  _printDef == 2 ){
+
+	  if(  _printDef == 2 ){
+            printf("Printing detailed information from the vector meson cross section calculation.  \n \n");
+	    printf("First column gives the rapidity. Second and third column give the photon energy \n");
+	    printf("and photon flux (k*(dn/dk)) from the first beam (defined by BEAM_1_Z, BEAM_1_A  \n");
+	    printf("etc.). Photon energies are given in GeV in the center of mass frame. The fourth \n"); 
+            printf("column gives the gamma+A cross section with the second beam as target. The      \n");
+	    printf("fifth column gives the contribution to the cross section (dsig/dy) for this     \n");
+	    printf("combination. The 6th - 9th columns give the corresponding information for the   \n");
+	    printf("other configuration (the beam defined by BEAM_2_Z etc. emits the photon). The   \n");
+	    printf("last (10th) column gives the total dsig/dy. \n");
+	  }
+	  double maxVal = 0.0; for(I=0;I<=(NY-1);I++){if(dsigdyVal[I] > maxVal)maxVal=dsigdyVal[I];}
+          double scaleFactor = 0.0; 
+          if( maxVal > 1.0 ){
+	    scaleFactor = 1.0;//Default is millibarn 
+            if( _printDef == 1){
+              printf("Rapidity          dsig/dy (millibarn) \n");
+	    } else if ( _printDef == 2 ){
+              printf("Cross sections are in millibarn. \n \n");
+	    }
+	  } else if ( maxVal > 0.001 ){
+	    scaleFactor = 1000.0; //This is for microbarn
+            if( _printDef == 1){
+              printf("Rapidity          dsig/dy (microbarn) \n");
+	    } else if ( _printDef == 2 ){
+              printf("Cross sections are in microbarn. \n \n");
+	    }
+	  } else if ( maxVal > 0.000001 ){
+	    scaleFactor = 1000000.0; //This is for nanobarn
+            if( _printDef == 1){
+              printf("Rapidity          dsig/dy (nanobarn) \n");
+            } else if ( _printDef == 2 ){
+              printf("Cross sections are in nanobarn. \n \n");
+	    }
+	  } else if ( maxVal > 1.E-9 ){
+	    scaleFactor = 1.E9;//This is for picobarn
+            if( _printDef == 1){
+              printf("Rapidity          dsig/dy (picobarn) \n");
+            } else if ( _printDef == 2 ){
+              printf("Cross sections are in picobarn. \n \n");
+	    }
+	  } else {
+	    scaleFactor = 1.E12;//This is for femtobarn
+            if( _printDef == 1){
+              printf("Rapidity          dsig/dy (femtobarn) \n");
+            } else if ( _printDef == 2 ){
+              printf("Cross sections are in femtobarn. \n \n");
+	    }
+	  }
+  	  // cout<<" Scale Factor: "<<scaleFactor<<endl;	  
+
+          if( _printDef == 2 ){
+            printf(" y      Egamma1     k*(dn_1/dk) sigma_2(gam+A) dsig_1/dy  Egamma2     k*(dn_2/dk) sigma_1(gam+A) dsig_2/dy    dsig/dy \n");
+	  }
+	  
+	  for(J=0;J<=(NY-1);J++){
+            if( _printDef == 1){ 
+              printf("%+6.2f          %10.4f \n",yVal[J],scaleFactor*dsigdyVal[J]);
+	    } else if ( _printDef == 2 ){
+              printf("%+5.1f   %.4E  %.4E  %.4E    %9.4f   ",yVal[J],Egamma1Val[J],ngamma1Val[J],scaleFactor*sigGA1Val[J],scaleFactor*dsigdy1Val[J]); 
+              printf("%.4E  %.4E  %.4E    %9.4f    %9.4f \n",Egamma2Val[J],ngamma2Val[J],scaleFactor*sigGA2Val[J],scaleFactor*dsigdy2Val[J],scaleFactor*dsigdyVal[J]); 
+	    }
+	  }
+          printf("\n");
+	}
+
 }

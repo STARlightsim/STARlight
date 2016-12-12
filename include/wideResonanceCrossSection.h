@@ -54,6 +54,7 @@ private:
 	double _wideWmin;
 	double _wideYmax;
 	double _wideYmin;		
+        int    _wideNumY;
 
 };
 
