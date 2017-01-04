@@ -113,12 +113,12 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity()
   wylumfile << starlightConstants::deuteronSlopePar <<endl;
   wylumfile << _maxPtInterference <<endl;
   wylumfile << _nmbPtBinsInterference <<endl;
-  for (unsigned int i = 0; i < _nWbins; ++i) {
-    w[i] = _wMin + (_wMax-_wMin)/_nWbins*i;
+  for (unsigned int i = 0; i < _nWbins; i++) {
+    w[i] = _wMin + (_wMax-_wMin)/(_nWbins-1)*i;
     wylumfile << w[i] <<endl;
   }
-  for (unsigned int i = 0; i < _nYbins; ++i) {
-    y[i] = -_yMax + 2.*_yMax*i/(_nYbins);
+  for (unsigned int i = 0; i < _nYbins; i++) {
+    y[i] = -_yMax + 2.*_yMax*i/(_nYbins-1);
     wylumfile << y[i] <<endl;
   }
 
