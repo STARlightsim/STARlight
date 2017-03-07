@@ -324,11 +324,12 @@ starlight::createEventChannel()
 	case OMEGA:  
 	case PHI:
 	case JPSI:
+	case JPSI_ee:
+	case JPSI_mumu:
+	case JPSI_ppbar:
 	case JPSI2S:
 	case JPSI2S_ee:
 	case JPSI2S_mumu:
-	case JPSI_ee:
-	case JPSI_mumu:
 	case UPSILON:
 	case UPSILON_ee:
 	case UPSILON_mumu:

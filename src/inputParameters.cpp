@@ -433,6 +433,16 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		defaultMaxW         = mass + 5 * width;
 		_inputBranchingRatio = starlightConstants::JpsiBrmumu; 
 		break;
+	case 4432212:  // J/psi
+	        cout<<"In inputParameters setting J/psi mass!"<<endl; 
+		_particleType = JPSI_ppbar;
+		_decayType    = NARROWVMDEFAULT;
+		mass          = starlightConstants::JpsiMass;
+		width         = starlightConstants::JpsiWidth;
+		defaultMinW   = mass - 5 * width;
+		defaultMaxW         = mass + 5 * width;
+		_inputBranchingRatio = starlightConstants::JpsiBrppbar; 
+		break;
 	case 444:  // psi(2S) 
 		_particleType = JPSI2S;
 		_decayType    = NARROWVMDEFAULT;

@@ -115,6 +115,7 @@ namespace starlightConstants
         static const double JpsiWidth = 0.0000929;           // [GeV/c^2]
 	static const double JpsiBree = 0.05971;              // Branching ratio e+e-
 	static const double JpsiBrmumu = 0.05961;            // Branching ratio mu+mu-
+	static const double JpsiBrppbar = 0.002120;          // Branching ratio ppbar
         static const double Psi2SMass = 3.686109;            // [GeV/c^2]
         static const double Psi2SWidth = 0.000299;           // [GeV/c^2]
 	static const double Psi2SBree = 0.00789;             // Branching ratio e+e-
@@ -138,7 +139,7 @@ namespace starlightConstants
 		MUON           = 13,
 		TAUON          = 15,
 		TAUONDECAY     = 10015,
-		PROTON         = 212,
+		PROTON         = 2212,
 		PION           = 211,
 		KAONCHARGE     = 321,
 		KAONNEUTRAL    = 310,
@@ -158,6 +159,7 @@ namespace starlightConstants
 		JPSI           = 443,
 		JPSI_ee        = 443011,
 		JPSI_mumu      = 443013,
+		JPSI_ppbar     = 4432212,
 		JPSI2S         = 444,
 		JPSI2S_ee      = 444011,
 		JPSI2S_mumu    = 444013,

@@ -108,6 +108,7 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 	case JPSI:
 	case JPSI_ee:
 	case JPSI_mumu:
+	case JPSI_ppbar:
 		_slopeParameter=4.0;
 		_vmPhotonCoupling=10.45;
 		_ANORM=-2.75; 
@@ -601,6 +602,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 		case JPSI:
 		case JPSI_ee:
 		case JPSI_mumu:
+		case JPSI_ppbar:
 			sigmagp_r=(1.0-((_channelMass+protonMass)*(_channelMass+protonMass))/(Wgp*Wgp));
 			sigmagp_r*=sigmagp_r;
 			sigmagp_r*=1.E-4*0.00406*exp(0.65*log(Wgp));
@@ -826,6 +828,14 @@ photonNucleusCrossSection::breitWigner(const double W,
 		}
 		ppi=sqrt(((W/2.)*(W/2.))-muonMass*muonMass);
 		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-muonMass*muonMass);
+	}
+	if (_particleType==JPSI_ppbar){
+		if(W<2.*protonMass){
+			nrbw_r=0.;
+			return nrbw_r;
+		}
+		ppi=sqrt(((W/2.)*(W/2.))-protonMass*protonMass);
+		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-protonMass*protonMass);
 	}
 	if (_particleType==JPSI2S_ee){
 		if(W<2.*mel){
