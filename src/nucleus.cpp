@@ -113,8 +113,11 @@ nucleus::rws(const double r) const
     norm = norm/(nuclearRadius()*nuclearRadius()*nuclearRadius());
     return norm*exp(-((3./2.)*r*r)/(nuclearRadius()*nuclearRadius()));
   }else{
-    // Fermi density distribution for heavy nuclei 
-    return 1.0 / (1. + exp((r - nuclearRadius()) / woodSaxonSkinDepth())); 
+    // Fermi density distribution for heavy nuclei
+    const double x=exp(-(r - nuclearRadius()) / woodSaxonSkinDepth());
+    return x/(1.+x);
+    // Below can give problems on some machines if r is too large 
+    // return 1.0 / (1. + exp((r - nuclearRadius()) / woodSaxonSkinDepth())); 
   }
 }
 
