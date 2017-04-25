@@ -73,6 +73,7 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
         double Wgp,csVN,csVA; 
 	double Eth;
 	int    I,J,NY,beam;
+	// double y1lab,y2lab,y12lab;
         std::vector<double> yVal(_narrowNumY);
         std::vector<double> dsigdyVal(_narrowNumY);
         std::vector<double> Egamma1Val(_narrowNumY);
@@ -298,6 +299,7 @@ incoherentVMCrossSection::crossSectionCalculation(const double)  // _bwnormsave 
         }
 
 	cout<<endl;
+	if( _impulseSelected == 1 )cout<<" Using impulse approximation. Nuclear effects removed."<<endl; 
 	if (0.01*int_r > 1.){
 	  cout<< " Total cross section: "<<0.01*int_r<<" barn."<<endl;
 	} else if (10.*int_r > 1.){

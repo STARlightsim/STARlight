@@ -88,7 +88,8 @@ inputParameters::inputParameters()
           _axionMass             ("AXION_MASS",50, NOT_REQUIRED),  // AXION HACK
           _bslopeDefinition      ("BSLOPE_DEFINITION",0, NOT_REQUIRED),
 	  _bslopeValue           ("BSLOPE_VALUE",4.0,NOT_REQUIRED),
-	  _printVM               ("PRINT_VM",0,NOT_REQUIRED)
+	  _printVM               ("PRINT_VM",0,NOT_REQUIRED),
+	  _impulseVM             ("SELECT_IMPULSE_VM",0,NOT_REQUIRED)
 {
   // All parameters must be initialised in initialisation list! 
   // If not: error: 'parameter<T, validate>::parameter() [with T = unsigned int, bool validate = true]' is private
@@ -138,6 +139,7 @@ inputParameters::inputParameters()
         _ip.addParameter(_bslopeDefinition); 
         _ip.addParameter(_bslopeValue); 
         _ip.addParameter(_printVM); 
+        _ip.addParameter(_impulseVM); 
 }
 
 

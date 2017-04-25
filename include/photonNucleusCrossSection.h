@@ -87,6 +87,7 @@ protected:
 	double _photonNucleusSigma; 
 
         int    _printDef; 
+        int    _impulseSelected;
 	
 private:
 
