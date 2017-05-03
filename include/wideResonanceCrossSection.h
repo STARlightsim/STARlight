@@ -50,6 +50,8 @@ public:
 private:
 
 	double _Ep;  // Proton Energy
+        double _gamma1;
+        double _gamma2;
 	double _wideWmax;
 	double _wideWmin;
 	double _wideYmax;
