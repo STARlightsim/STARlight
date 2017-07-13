@@ -59,7 +59,9 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
           _productionMode    (inputParametersInstance.productionMode()    ),
 	  _sigmaNucleus      (_bbs.beam2().A()          )
 {
+  // new options - impulse aproximation (per Joakim) and Quantum Glauber (per SK) SKQG
          _impulseSelected = inputParametersInstance.impulseVM();
+	 _quantumGlauber = inputParametersInstance.quantumGlauber();
 	switch(_particleType) {
 	case RHO:
 		_slopeParameter = 11.0;  // [(GeV/c)^{-2}]
@@ -723,6 +725,9 @@ photonNucleusCrossSection::sigma_A(const double sig_N, const int beam)
                 }
     
 		Pint=1.0-exp(arg);
+		// If this is a quantum Glauber calculation, use the quantum Glauber formula
+		if (_quantumGlauber == 1){Pint=2.0*(1.0-exp(arg/2.0));}
+						    
 		sum=sum+2.*pi*b*Pint*ag[IB];
     
 		b = 0.5*bmax*(-xg[IB])+0.5*bmax;
@@ -743,6 +748,8 @@ photonNucleusCrossSection::sigma_A(const double sig_N, const int beam)
                 }
 
 		Pint=1.0-exp(arg);
+		// If this is a quantum Glauber calculation, use the quantum Glauber formula
+		if (_quantumGlauber == 1){Pint=2.0*(1.0-exp(arg/2.0));}
 		sum=sum+2.*pi*b*Pint*ag[IB];
 
 	}

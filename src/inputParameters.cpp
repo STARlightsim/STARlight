@@ -24,8 +24,6 @@
 // $Date::                            $: date of last commit // 
 // Description: 
 // 
-// 
-// 
 ///////////////////////////////////////////////////////////////////////////
 
 
@@ -89,7 +87,8 @@ inputParameters::inputParameters()
           _bslopeDefinition      ("BSLOPE_DEFINITION",0, NOT_REQUIRED),
 	  _bslopeValue           ("BSLOPE_VALUE",4.0,NOT_REQUIRED),
 	  _printVM               ("PRINT_VM",0,NOT_REQUIRED),
-	  _impulseVM             ("SELECT_IMPULSE_VM",0,NOT_REQUIRED)
+	  _impulseVM             ("SELECT_IMPULSE_VM",0,NOT_REQUIRED),
+	  _quantumGlauber        ("QUANTUM_GLAUBER",0,NOT_REQUIRED)
 {
   // All parameters must be initialised in initialisation list! 
   // If not: error: 'parameter<T, validate>::parameter() [with T = unsigned int, bool validate = true]' is private
@@ -139,7 +138,8 @@ inputParameters::inputParameters()
         _ip.addParameter(_bslopeDefinition); 
         _ip.addParameter(_bslopeValue); 
         _ip.addParameter(_printVM); 
-        _ip.addParameter(_impulseVM); 
+        _ip.addParameter(_impulseVM);
+	_ip.addParameter(_quantumGlauber);
 }
 
 
@@ -169,7 +169,10 @@ inputParameters::configureFromFile(const std::string &_configFileName)
  		          << *this;
  		return false;
  	}
- 	return true;
+
+	/// temporary output test
+	printWarn<< * this<<endl;
+	return true;
 }
  bool inputParameters::init()
  {
@@ -613,6 +616,10 @@ inputParameters::print(ostream& out) const
 	 	  out  << "    coherent scattering off nucleus ........ yes" << endl;
 		}
 	}
+    out     <<"    Quantum Glauber parameter...............  "<<_quantumGlauber.value()<<endl;
+    out     <<"    Impulse VM parameter....................  "<<_impulseVM.value()<<endl;
+    //   if (_quantumGlauber.value()==1) {out << "    Quantum Glauber calculation being used"<< endl;}
+    //if (_quantumGlauber.value()!=1) {out << "    Classical Glauber calculation being used"<< endl;}
 	return out;
 }
 
@@ -647,7 +654,8 @@ inputParameters::write(ostream& out) const
 	    << "INTERFERENCE"  << interferenceEnabled  () <<endl
 	    << "IF_STRENGTH"   << interferenceStrength () <<endl
 	    << "INT_PT_MAX"    << maxPtInterference    () <<endl
-	    << "INT_PT_N_BINS" << nmbPtBinsInterference() <<endl;
+	    << "INT_PT_N_BINS" << nmbPtBinsInterference() <<endl
+	    << "QUANTUM_GLAUBER"<<quantumGlauber       () <<endl;
 
 	return out;
 }

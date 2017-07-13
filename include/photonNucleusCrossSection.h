@@ -88,6 +88,7 @@ protected:
 
         int    _printDef; 
         int    _impulseSelected;
+	int    _quantumGlauber;  // from input parameter; 1 for Quantum Glauber, 0 for classical Glauber
 	
 private:
 
