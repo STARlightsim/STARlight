@@ -88,7 +88,9 @@ inputParameters::inputParameters()
 	  _bslopeValue           ("BSLOPE_VALUE",4.0,NOT_REQUIRED),
 	  _printVM               ("PRINT_VM",0,NOT_REQUIRED),
 	  _impulseVM             ("SELECT_IMPULSE_VM",0,NOT_REQUIRED),
-	  _quantumGlauber        ("QUANTUM_GLAUBER",0,NOT_REQUIRED)
+	  _quantumGlauber        ("QUANTUM_GLAUBER",0,NOT_REQUIRED),
+	  _bmin                  ("BMIN",0,NOT_REQUIRED),
+          _bmax                  ("BMAX",0,NOT_REQUIRED)   
 {
   // All parameters must be initialised in initialisation list! 
   // If not: error: 'parameter<T, validate>::parameter() [with T = unsigned int, bool validate = true]' is private
@@ -140,6 +142,8 @@ inputParameters::inputParameters()
         _ip.addParameter(_printVM); 
         _ip.addParameter(_impulseVM);
 	_ip.addParameter(_quantumGlauber);
+	_ip.addParameter(_bmin);
+	_ip.addParameter(_bmax);
 }
 
 
@@ -620,6 +624,20 @@ inputParameters::print(ostream& out) const
     out     <<"    Impulse VM parameter....................  "<<_impulseVM.value()<<endl;
     //   if (_quantumGlauber.value()==1) {out << "    Quantum Glauber calculation being used"<< endl;}
     //if (_quantumGlauber.value()!=1) {out << "    Classical Glauber calculation being used"<< endl;}
+    if (_beamBreakupMode.value()==8) {
+      out <<"    Minimum impact parameter.................."<<_bmin.value()<<" fm"<<endl;
+      out <<"    Maximum impact parameter.................."<<_bmax.value()<<" fm"<<endl;
+    }
+
+    // Add some checks here  SRK September, 2017
+    if (_beamBreakupMode.value()==8 && _bmin.value() > _bmax.value()) {
+      out <<"****Error bmin > bmax"<<endl;
+      exit(-1);
+    }
+    if (_beamBreakupMode.value() == 8 && _productionMode.value() !=1) {
+	out <<"****Error.  Cannot use beam breakup mode 8 (with bmin and bmax) with photonuclear interactions"<<endl;
+	exit(-1);
+    }
 	return out;
 }
 
@@ -655,7 +673,9 @@ inputParameters::write(ostream& out) const
 	    << "IF_STRENGTH"   << interferenceStrength () <<endl
 	    << "INT_PT_MAX"    << maxPtInterference    () <<endl
 	    << "INT_PT_N_BINS" << nmbPtBinsInterference() <<endl
-	    << "QUANTUM_GLAUBER"<<quantumGlauber       () <<endl;
+	    << "QUANTUM_GLAUBER"<<quantumGlauber       () <<endl
+	    << "BMIN"          <<bmin                  ()<<endl
+	    << "BMAX"          <<bmax                  ()<<endl;
 
 	return out;
 }

@@ -217,6 +217,9 @@ public:
 	int          printVM               () const { return _printVM.value();                }  ///< returns the printVM value
 	int          impulseVM             () const { return _impulseVM.value();              }  ///< returns the impulseVM value
 	int          quantumGlauber        () const { return _quantumGlauber.value();         }  ///< returns the quantum glauber value
+	double       bmin                  () const { return _bmin.value();                   }  // returns the minimum impact parameter for BREAKUP_MODE==6
+	double       bmax                  () const { return _bmax.value();                   }  // returns the maximum impact parameter for BREAKUP_MODE==6
+		
 	starlightConstants::particleTypeEnum    prodParticleType     () const { return _particleType;    }  ///< returns type of produced particle
 	starlightConstants::decayTypeEnum       prodParticleDecayType() const { return _decayType;       }  ///< returns decay type of produced particle
 	starlightConstants::interactionTypeEnum interactionType      () const { return _interactionType; }  ///< returns interaction type
@@ -262,7 +265,9 @@ public:
         void setbslopeValue           (double v)  {  _bslopeValue = v;            }  ///< sets the value of b slope
 	void setprintVM               (int v)  {  _printVM = v;                   }  ///< sets the value of _printVM
         void setimpulseVM             (int v)  {  _impulseVM = v;                 }  ///< sets the value of _impulseVM
-	void setquantumGlauber        (int v)  {  _quantumGlauber = v;             }  ///< sets the value of quantum_glauber
+	void setquantumGlauber        (int v)  {  _quantumGlauber = v;            }  ///< sets the value of quantum_glauber
+	void setbmin             (double v)    {  _bmin=v;                        }  ///< sets the minimum impact parameter (for BREAKUP_MODE==6
+	void setbmax             (double v)    {  _bmax=v;                        }  ///< sets the minimum impact parameter (for BREAKUP_MODE==6
 
 	void setProdParticleType      (starlightConstants::particleTypeEnum v)    { _particleType = v;    }  ///< sets type of produced particle
 	void setProdParticleDecayType (starlightConstants::decayTypeEnum v)       { _decayType = v;       }  ///< sets decay type of produced particle
@@ -324,6 +329,7 @@ private:
 	                                                                     ///< 3 = a single neutron from each nucleus (1n1n),
 	                                                                     ///< 4 = neither nucleon breaks up (with b > 2R),
 	                                                                     ///< 5 = no hadronic break up (similar to option 1, but with the actual hadronic interaction)
+	                                                                     ///  6 = set impact parameter range via bmax and bmin
 	parameter<bool, VALIDITY_CHECK>            _interferenceEnabled;     ///< if VALIDITY_CHECK, interference is taken into account
 	parameter<double, VALIDITY_CHECK>          _interferenceStrength;    ///< percentage of interference: from 0 = none to 1 = full
 	parameter<double, VALIDITY_CHECK>          _maxPtInterference;       ///< maximum p_T for interference calculation [GeV/c]
@@ -340,7 +346,9 @@ private:
         parameter<double, VALIDITY_CHECK>          _bslopeValue;             ///< Value of slope parameter when _bslopeDefinition is set to 1
         parameter<unsigned int, VALIDITY_CHECK>    _printVM;                 ///< Optional parameter to set printing options for VM cross section
         parameter<unsigned int, VALIDITY_CHECK>    _impulseVM;               ///< Optional parameter to use impulse approximation (no nuclear effects) for VM cross section.
-	parameter<unsigned int, VALIDITY_CHECK>    _quantumGlauber;         ///< Optional parameter.  Set = 1 to use Quantum Glauber calculation, rather than Classical Glauber
+	parameter<unsigned int, VALIDITY_CHECK>    _quantumGlauber;          ///< Optional parameter.  Set = 1 to use Quantum Glauber calculation, rather than Classical Glauber
+	parameter<double, VALIDITY_CHECK>          _bmin;                    ///< Optional parameter minimum impact parameter for b-range calculation
+	parameter<double, VALIDITY_CHECK>          _bmax;                    /// < Optional parameter maximum impact parameter for b-range calculation
 
 	starlightConstants::particleTypeEnum       _particleType;
 	starlightConstants::decayTypeEnum          _decayType;
