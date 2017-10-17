@@ -673,7 +673,7 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 	//  Y is already fixed; choose a pt
 	//  Follow the approach in pickwy
 	//  in  _fptarray(IY,pt) IY=1 corresponds to Y=0, IY=numy/2 corresponds to +y
- 	// Changed,  now works -y to +y.
+ 	//  Changed,  now works -y to +y.
 	IY=int((Y-_VMYmin)/dY);
 	if (IY > (_VMnumy)-1){
         	IY=(_VMnumy)-1;
@@ -684,9 +684,10 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 	yfract=yleft*dY;
   
 	xpt=_randy.Rndom();
-	for(j=0;j<_VMNPT+1;j++){
+	for(j=0;j<_VMNPT;j++){
 		if (xpt < _fptarray[IY][j]) goto L60;
 	}
+	if(j == _VMNPT) j = _VMNPT-1;
  L60:
   
 	//  now do linear interpolation - start with extremes
@@ -694,7 +695,7 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 		pt1=xpt/_fptarray[IY][j]*_VMdpt/2.;
 		goto L80;
 	}
-	if (j == _VMNPT){
+	if (j == _VMNPT-1){
 		pt1=(_VMptmax-_VMdpt/2.) + _VMdpt/2.*(xpt-_fptarray[IY][j])/(1.-_fptarray[IY][j]);
 		goto L80;
 	}
@@ -704,16 +705,17 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 	pt1=(j+1)*_VMdpt+ptfract*_VMdpt;
   
 	//  at an extreme in y?
-	if (IY == (_VMnumy/2)-1){
+	if (IY == (_VMnumy)-1){
 		pt=pt1;
 		goto L120;
 	}
  L80:
 
 	//  interpolate in y repeat for next fractional y bin      
-	for(j=0;j<_VMNPT+1;j++){
+	for(j=0;j<_VMNPT;j++){
 		if (xpt < _fptarray[IY+1][j]) goto L90;
 	}
+        if(j == _VMNPT) j = _VMNPT-1;
  L90:
   
 	//  now do linear interpolation - start with extremes
@@ -721,7 +723,7 @@ void Gammaavectormeson::vmpt(double W,double Y,double &E,double &px,double &py, 
 		pt2=xpt/_fptarray[IY+1][j]*_VMdpt/2.;
 		goto L100;
 	}
-	if (j == _VMNPT){
+	if (j == _VMNPT-1){
 		pt2=(_VMptmax-_VMdpt/2.) + _VMdpt/2.*(xpt-_fptarray[IY+1][j])/(1.-_fptarray[IY+1][j]);
 		goto L100;
 	}

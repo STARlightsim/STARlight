@@ -80,8 +80,8 @@ class Gammaavectormeson : public eventChannel
   int N0;
   int N1;
   int N2; 
+  int _VMNPT;
   double _VMgamma_em;
-  double _VMNPT;
   double _VMWmax;
   double _VMWmin;
   double _VMYmax;

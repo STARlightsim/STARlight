@@ -39,6 +39,7 @@ namespace starlightLimits
 {
     static const int MAXWBINS = 3000;
     static const int MAXYBINS = 3000;
+    static const int MAXPTBINS = 3000;
 }
 
 

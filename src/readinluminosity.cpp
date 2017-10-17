@@ -167,9 +167,9 @@ void readLuminosity::read()
   wylumfile >> _bwnormsave;
 
   if (_ReadInputgg_or_gP != 1 && _ReadInputinterferencemode != 0) {
-        // only numy/2 y bins here, from 0 (not -ymax) to ymax
-        double **finterm  = new double*[starlightLimits::MAXWBINS];
-        for (int i = 0; i < starlightLimits::MAXWBINS; i++) finterm[i] = new double[starlightLimits::MAXYBINS];
+        // only numy y bins here, from ymin to ymax
+        double **finterm  = new double*[starlightLimits::MAXYBINS];
+        for (int i = 0; i < starlightLimits::MAXYBINS; i++) finterm[i] = new double[starlightLimits::MAXPTBINS];
         for (int i=0;i<_ReadInputnumy;i++) {
             //fmax=0;
             //we want to convert _fptarray to an integral array where fpt(i,j) is near 0, and fpt(j,NPT) ~1. This will facilitate a simple table loookup
