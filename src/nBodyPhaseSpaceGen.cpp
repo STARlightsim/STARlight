@@ -40,7 +40,7 @@ using namespace std;
 using namespace starlightConstants;
 
 
-nBodyPhaseSpaceGen::nBodyPhaseSpaceGen(const randomGenerator& randy)
+nBodyPhaseSpaceGen::nBodyPhaseSpaceGen(randomGenerator* randy)
 	: _n                (0),
 	  _norm             (0),
 	  _weight           (0),

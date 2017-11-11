@@ -46,6 +46,7 @@ using namespace std;
 //______________________________________________________________________________
 readLuminosity::readLuminosity(const inputParameters& inputParametersInstance)
   : _Warray(0), _Yarray(0), _Farray(0), _Farray1(0), _Farray2(0)
+, _ip(&inputParametersInstance)
 , _ReadInputNPT(inputParametersInstance.nmbPtBinsInterference())
 , _ReadInputnumy(inputParametersInstance.nmbRapidityBins())
 , _ReadInputnumw(inputParametersInstance.nmbWBins())

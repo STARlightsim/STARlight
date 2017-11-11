@@ -72,7 +72,8 @@ starlight::starlight() :
 		_eventChannel          (0),
 		_nmbEventsPerFile      (100),
 		_isInitialised         (false),
-		_inputParameters       (0)
+		_inputParameters       (0),
+		_randomGenerator       (0)
 { }
 
 
@@ -279,7 +280,7 @@ starlight::createEventChannel()
 	case TAUON:
         case TAUONDECAY:
 		{
-			_eventChannel = new Gammagammaleptonpair(*_inputParameters, *_beamSystem);
+			_eventChannel = new Gammagammaleptonpair(*_inputParameters, _randomGenerator, *_beamSystem);
 			if (_eventChannel)
 				return true;
 			else {
@@ -310,7 +311,7 @@ starlight::createEventChannel()
 		{
 		  //  #ifdef ENABLE_PYTHIA
 	 	        cout<<" This is f2, f2prim, rho^0 rho^0, or axion "<<endl; 
-			_eventChannel= new Gammagammasingle(*_inputParameters, *_beamSystem);
+			_eventChannel= new Gammagammasingle(*_inputParameters, _randomGenerator, *_beamSystem);
 			if (_eventChannel)
 				return true;
 			else {
@@ -341,7 +342,7 @@ starlight::createEventChannel()
 	case UPSILON3S_mumu:
 		{
 			if (_inputParameters->interactionType() == PHOTONPOMERONNARROW) {
-				_eventChannel = new Gammaanarrowvm(*_inputParameters, *_beamSystem);
+				_eventChannel = new Gammaanarrowvm(*_inputParameters, _randomGenerator, *_beamSystem);
 				if (_eventChannel)
 					return true;
 				else {
@@ -351,7 +352,7 @@ starlight::createEventChannel()
 			}
 
 			if (_inputParameters->interactionType() == PHOTONPOMERONWIDE) {
-				_eventChannel = new Gammaawidevm(*_inputParameters, *_beamSystem);
+				_eventChannel = new Gammaawidevm(*_inputParameters, _randomGenerator, *_beamSystem);
 				if (_eventChannel)
 					return true;
 				else {
@@ -361,7 +362,7 @@ starlight::createEventChannel()
 			}
 
                         if (_inputParameters->interactionType() == PHOTONPOMERONINCOHERENT) {
-                                _eventChannel = new Gammaaincoherentvm(*_inputParameters, *_beamSystem);
+                                _eventChannel = new Gammaaincoherentvm(*_inputParameters, _randomGenerator, *_beamSystem);
                                 if (_eventChannel)
                                         return true;
                                 else {

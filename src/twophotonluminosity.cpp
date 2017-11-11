@@ -115,7 +115,7 @@ void twoPhotonLuminosity::twoPhotonDifferentialLuminosity(const double _bmin, co
   wylumfile << _beamBreakupMode <<endl;
   wylumfile << _interferenceEnabled <<endl;
   wylumfile << _interferenceStrength <<endl;
-  wylumfile << starlightConstants::deuteronSlopePar <<endl;
+  wylumfile << _ip->deuteronSlopePar() <<endl;
   wylumfile << _maxPtInterference <<endl;
   wylumfile << _nmbPtBinsInterference <<endl;
   for (unsigned int i = 0; i < _nWbins; i++) {

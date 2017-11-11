@@ -45,7 +45,7 @@
 class Gammagammaleptonpair : public eventChannel
 {
  public:
-  Gammagammaleptonpair(const inputParameters& input, beamBeamSystem& bbsystem);
+  Gammagammaleptonpair(const inputParameters& input, randomGenerator* randy, beamBeamSystem& bbsystem);
   ~Gammagammaleptonpair();
   
   void twoLeptonCrossSection();

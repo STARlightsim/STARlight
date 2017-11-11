@@ -63,6 +63,9 @@ public:
 	
 	void init();
 
+protected:
+	const inputParameters* _ip;
+
 private:
 	void generateBreakupProbabilities();
 	double probabilityOfHadronBreakup(const double impactparameter);

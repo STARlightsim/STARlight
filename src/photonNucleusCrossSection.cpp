@@ -46,7 +46,8 @@ using namespace starlightConstants;
 
 //______________________________________________________________________________
 photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inputParametersInstance, const beamBeamSystem& bbsystem)
-	: _nWbins            (inputParametersInstance.nmbWBins()          ),
+        : _ip(&inputParametersInstance),
+          _nWbins            (inputParametersInstance.nmbWBins()          ),
 	  _nYbins            (inputParametersInstance.nmbRapidityBins()   ),
 	  _wMin              (inputParametersInstance.minW()              ),
 	  _wMax              (inputParametersInstance.maxW()              ),
@@ -69,8 +70,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_ANORM       = -2.75;
 		_BNORM       = 0.0;
 		_defaultC    = 1.0;
-		_channelMass = starlightConstants::rho0Mass; 
-		_width       = starlightConstants::rho0Width; 
+		_channelMass = _ip->rho0Mass(); 
+		_width       = _ip->rho0Width(); 
 		break;
 	case RHOZEUS:
 		_slopeParameter =11.0;
@@ -78,8 +79,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_ANORM=-2.75;
 		_BNORM=1.84;
 		_defaultC=1.0;
-		_channelMass  = starlightConstants::rho0Mass;
-		_width        = starlightConstants::rho0Width;
+		_channelMass  = _ip->rho0Mass();
+		_width        = _ip->rho0Width();
 		break;
 	case FOURPRONG:
 		_slopeParameter      = 11.0;
@@ -87,8 +88,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_ANORM       = -2.75;
 		_BNORM       = 0;  
 		_defaultC    = 11.0;
-		_channelMass  = starlightConstants::rho0PrimeMass;
-		_width        = starlightConstants::rho0PrimeWidth;
+		_channelMass  = _ip->rho0PrimeMass();
+		_width        = _ip->rho0PrimeWidth();
 		break;
 	case OMEGA:
 		_slopeParameter=10.0;
@@ -96,8 +97,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_ANORM=-2.75;
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass  = starlightConstants::OmegaMass;
-		_width        = starlightConstants::OmegaWidth;
+		_channelMass  = _ip->OmegaMass();
+		_width        = _ip->OmegaWidth();
 		break;
 	case PHI:
 		_slopeParameter=7.0;
@@ -105,8 +106,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_ANORM=-2.75;
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass  = starlightConstants::PhiMass;
-		_width        = starlightConstants::PhiWidth;
+		_channelMass  = _ip->PhiMass();
+		_width        = _ip->PhiWidth();
 		break;
 	case JPSI:
 	case JPSI_ee:
@@ -117,8 +118,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_ANORM=-2.75; 
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass  = starlightConstants::JpsiMass; 
-		_width        = starlightConstants::JpsiWidth; 
+		_channelMass  = _ip->JpsiMass(); 
+		_width        = _ip->JpsiWidth(); 
 		break;
 	case JPSI2S:
 	case JPSI2S_ee:
@@ -128,8 +129,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_ANORM=-2.75; 
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass  = starlightConstants::Psi2SMass;
-		_width        = starlightConstants::Psi2SWidth;
+		_channelMass  = _ip->Psi2SMass();
+		_width        = _ip->Psi2SWidth();
 		break;
 	case UPSILON:
 	case UPSILON_ee:
@@ -139,8 +140,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_ANORM=-2.75; 
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass  = starlightConstants::Upsilon1SMass;
-		_width        = starlightConstants::Upsilon1SWidth;
+		_channelMass  = _ip->Upsilon1SMass();
+		_width        = _ip->Upsilon1SWidth();
 		break;
 	case UPSILON2S:
 	case UPSILON2S_ee:
@@ -150,8 +151,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_ANORM=-2.75;
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass  = starlightConstants::Upsilon2SMass;
-		_width        = starlightConstants::Upsilon2SWidth;		
+		_channelMass  = _ip->Upsilon2SMass();
+		_width        = _ip->Upsilon2SWidth();		
 		break;
 	case UPSILON3S:
 	case UPSILON3S_ee:
@@ -161,8 +162,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_ANORM=-2.75;
 		_BNORM=0.0;
 		_defaultC=1.0;
-		_channelMass  = starlightConstants::Upsilon3SMass;
-		_width        = starlightConstants::Upsilon3SWidth;
+		_channelMass  = _ip->Upsilon3SMass();
+		_width        = _ip->Upsilon3SWidth();
 		break;
 	default:
 		cout <<"No sigma constants parameterized for pid: "<<_particleType
@@ -207,8 +208,8 @@ photonNucleusCrossSection::getcsgA(const double Egamma,
   
 	//       Find gamma-proton CM energy
 	Wgp = sqrt(2. * Egamma * (_protonEnergy
-	                          + sqrt(_protonEnergy * _protonEnergy - protonMass * protonMass))
-	           + protonMass * protonMass);
+	                          + sqrt(_protonEnergy * _protonEnergy - _ip->protonMass() * _ip->protonMass()))
+	           + _ip->protonMass() * _ip->protonMass());
 	
 	//Used for A-A
 	tmin = (W * W / (4. * Egamma * _beamLorentzGamma)) * (W * W / (4. * Egamma * _beamLorentzGamma));
@@ -614,7 +615,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 		case JPSI_ee:
 		case JPSI_mumu:
 		case JPSI_ppbar:
-			sigmagp_r=(1.0-((_channelMass+protonMass)*(_channelMass+protonMass))/(Wgp*Wgp));
+			sigmagp_r=(1.0-((_channelMass+_ip->protonMass())*(_channelMass+_ip->protonMass()))/(Wgp*Wgp));
 			sigmagp_r*=sigmagp_r;
 			sigmagp_r*=1.E-4*0.00406*exp(0.65*log(Wgp));
 			// sigmagp_r=1.E-4*0.0015*exp(0.80*log(Wgp));
@@ -622,7 +623,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 		case JPSI2S:
 		case JPSI2S_ee:
 		case JPSI2S_mumu:
-			sigmagp_r=(1.0-((_channelMass+protonMass)*(_channelMass+protonMass))/(Wgp*Wgp));
+			sigmagp_r=(1.0-((_channelMass+_ip->protonMass())*(_channelMass+_ip->protonMass()))/(Wgp*Wgp));
 			sigmagp_r*=sigmagp_r;
 			sigmagp_r*=1.E-4*0.00406*exp(0.65*log(Wgp));
 			sigmagp_r*=0.166;  
@@ -633,7 +634,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 		case UPSILON_mumu:
 			//       >> This is W**1.7 dependence from QCD calculations
 			//  sigmagp_r=1.E-10*(0.060)*exp(1.70*log(Wgp));
-			sigmagp_r=(1.0-((_channelMass+protonMass)*(_channelMass+protonMass))/(Wgp*Wgp));
+			sigmagp_r=(1.0-((_channelMass+_ip->protonMass())*(_channelMass+_ip->protonMass()))/(Wgp*Wgp));
 			sigmagp_r*=sigmagp_r;
 			sigmagp_r*=1.E-10*6.4*exp(0.74*log(Wgp));
 			break;
@@ -641,7 +642,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 		case UPSILON2S_ee:
 		case UPSILON2S_mumu:
 		        // sigmagp_r=1.E-10*(0.0259)*exp(1.70*log(Wgp));
-		        sigmagp_r=(1.0-((_channelMass+protonMass)*(_channelMass+protonMass))/(Wgp*Wgp));
+		        sigmagp_r=(1.0-((_channelMass+_ip->protonMass())*(_channelMass+_ip->protonMass()))/(Wgp*Wgp));
 			sigmagp_r*=sigmagp_r;
 			sigmagp_r*=1.E-10*2.9*exp(0.74*log(Wgp)); 
 			break;
@@ -649,7 +650,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 		case UPSILON3S_ee:
 		case UPSILON3S_mumu:
 		        // sigmagp_r=1.E-10*(0.0181)*exp(1.70*log(Wgp));
-		        sigmagp_r=(1.0-((_channelMass+protonMass)*(_channelMass+protonMass))/(Wgp*Wgp));
+		        sigmagp_r=(1.0-((_channelMass+_ip->protonMass())*(_channelMass+_ip->protonMass()))/(Wgp*Wgp));
 			sigmagp_r*=sigmagp_r;
 			sigmagp_r*=1.E-10*2.1*exp(0.74*log(Wgp)); 
 			break;
@@ -779,7 +780,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 	// use simple fixed-width s-wave Breit-Wigner without coherent backgorund for rho'
 	// (PDG '08 eq. 38.56)
 	if(_particleType==FOURPRONG) {
-		if (W < 4.01 * pionChargedMass)
+		if (W < 4.01 * _ip->pionChargedMass())
 			return 0;
 		const double termA  = _channelMass * _width;
 		const double termA2 = termA * termA;
@@ -802,99 +803,99 @@ photonNucleusCrossSection::breitWigner(const double W,
 	// 0.5% extra added for safety margin
         // omega added here 10/26/2014 SRK
 	if( _particleType==RHO ||_particleType==RHOZEUS || _particleType==OMEGA){  
-		if (W < 2.01*pionChargedMass){
+		if (W < 2.01*_ip->pionChargedMass()){
 			nrbw_r=0.;
 			return nrbw_r;
 		}
-		ppi=sqrt( ((W/2.)*(W/2.)) - pionChargedMass * pionChargedMass);
+		ppi=sqrt( ((W/2.)*(W/2.)) - _ip->pionChargedMass() * _ip->pionChargedMass());
 		ppi0=0.358;
 	}
   
 	// handle phi-->K+K- properly
 	if (_particleType  ==  PHI){
-		if (W < 2.*kaonChargedMass){
+		if (W < 2.*_ip->kaonChargedMass()){
 			nrbw_r=0.;
 			return nrbw_r;
 		}
-		ppi=sqrt( ((W/2.)*(W/2.))- kaonChargedMass*kaonChargedMass);
-		ppi0=sqrt( ((_channelMass/2.)*(_channelMass/2.))-kaonChargedMass*kaonChargedMass);
+		ppi=sqrt( ((W/2.)*(W/2.))- _ip->kaonChargedMass()*_ip->kaonChargedMass());
+		ppi0=sqrt( ((_channelMass/2.)*(_channelMass/2.))-_ip->kaonChargedMass()*_ip->kaonChargedMass());
 	}
 
 	//handle J/Psi-->e+e- properly
 	if (_particleType==JPSI || _particleType==JPSI2S){
-		if(W<2.*mel){
+		if(W<2.*_ip->mel()){
 			nrbw_r=0.;
 			return nrbw_r;
 		}
-		ppi=sqrt(((W/2.)*(W/2.))-mel*mel);
-		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-mel*mel);
+		ppi=sqrt(((W/2.)*(W/2.))-_ip->mel()*_ip->mel());
+		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->mel()*_ip->mel());
 	}
 	if (_particleType==JPSI_ee){
-		if(W<2.*mel){
+		if(W<2.*_ip->mel()){
 			nrbw_r=0.;
 			return nrbw_r;
 		}
-		ppi=sqrt(((W/2.)*(W/2.))-mel*mel);
-		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-mel*mel);   
+		ppi=sqrt(((W/2.)*(W/2.))-_ip->mel()*_ip->mel());
+		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->mel()*_ip->mel());   
 	}
 	if (_particleType==JPSI_mumu){
-		if(W<2.*muonMass){
+		if(W<2.*_ip->muonMass()){
 			nrbw_r=0.;
 			return nrbw_r;
 		}
-		ppi=sqrt(((W/2.)*(W/2.))-muonMass*muonMass);
-		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-muonMass*muonMass);
+		ppi=sqrt(((W/2.)*(W/2.))-_ip->muonMass()*_ip->muonMass());
+		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->muonMass()*_ip->muonMass());
 	}
 	if (_particleType==JPSI_ppbar){
-		if(W<2.*protonMass){
+		if(W<2.*_ip->protonMass()){
 			nrbw_r=0.;
 			return nrbw_r;
 		}
-		ppi=sqrt(((W/2.)*(W/2.))-protonMass*protonMass);
-		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-protonMass*protonMass);
+		ppi=sqrt(((W/2.)*(W/2.))-_ip->protonMass()*_ip->protonMass());
+		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->protonMass()*_ip->protonMass());
 	}
 	if (_particleType==JPSI2S_ee){
-		if(W<2.*mel){
+		if(W<2.*_ip->mel()){
 			nrbw_r=0.;
 			return nrbw_r;
 		}
-		ppi=sqrt(((W/2.)*(W/2.))-mel*mel);
-		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-mel*mel);   
+		ppi=sqrt(((W/2.)*(W/2.))-_ip->mel()*_ip->mel());
+		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->mel()*_ip->mel());   
 	}
 	if (_particleType==JPSI2S_mumu){
-		if(W<2.*muonMass){
+		if(W<2.*_ip->muonMass()){
 			nrbw_r=0.;
 			return nrbw_r;
 		}
-		ppi=sqrt(((W/2.)*(W/2.))-muonMass*muonMass);
-		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-muonMass*muonMass);
+		ppi=sqrt(((W/2.)*(W/2.))-_ip->muonMass()*_ip->muonMass());
+		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->muonMass()*_ip->muonMass());
 	}
 
 	if(_particleType==UPSILON || _particleType==UPSILON2S ||_particleType==UPSILON3S ){ 
-		if (W<2.*muonMass){
+		if (W<2.*_ip->muonMass()){
 			nrbw_r=0.;
 			return nrbw_r;
 		}
-		ppi=sqrt(((W/2.)*(W/2.))-muonMass*muonMass);
-		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-muonMass*muonMass);
+		ppi=sqrt(((W/2.)*(W/2.))-_ip->muonMass()*_ip->muonMass());
+		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->muonMass()*_ip->muonMass());
 	}
   
 	if(_particleType==UPSILON_mumu || _particleType==UPSILON2S_mumu ||_particleType==UPSILON3S_mumu ){ 
-		if (W<2.*muonMass){
+		if (W<2.*_ip->muonMass()){
 			nrbw_r=0.;
 			return nrbw_r;
 		}
-		ppi=sqrt(((W/2.)*(W/2.))-muonMass*muonMass);
-		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-muonMass*muonMass);
+		ppi=sqrt(((W/2.)*(W/2.))-_ip->muonMass()*_ip->muonMass());
+		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->muonMass()*_ip->muonMass());
 	}
   
 	if(_particleType==UPSILON_ee || _particleType==UPSILON2S_ee ||_particleType==UPSILON3S_ee ){ 
-		if (W<2.*mel){
+		if (W<2.*_ip->mel()){
 			nrbw_r=0.;
 			return nrbw_r;
 		}
-		ppi=sqrt(((W/2.)*(W/2.))-mel*mel);
-		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-mel*mel);
+		ppi=sqrt(((W/2.)*(W/2.))-_ip->mel()*_ip->mel());
+		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->mel()*_ip->mel());
 	}
   
 	if(ppi==0.&&ppi0==0.) 

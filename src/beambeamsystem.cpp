@@ -50,7 +50,8 @@ using namespace starlightConstants;
 beamBeamSystem::beamBeamSystem(const inputParameters& inputParametersInstance,
 			       const beam&            beam1,
                                const beam&            beam2)
-  : _beamLorentzGamma(inputParametersInstance.beamLorentzGamma()),
+  : _ip(&inputParametersInstance),
+    _beamLorentzGamma(inputParametersInstance.beamLorentzGamma()),
     _beamLorentzGamma1(inputParametersInstance.beam1LorentzGamma()),
     _beamLorentzGamma2(inputParametersInstance.beam2LorentzGamma()),
     _beamBreakupMode (inputParametersInstance.beamBreakupMode()),

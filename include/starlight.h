@@ -42,6 +42,7 @@
 
 
 class inputParameters;
+class randomGenerator;
 class beam;
 class beamBeamSystem;
 
@@ -62,6 +63,7 @@ public:
 	unsigned long nmbAccepted   () const { return _eventChannel->nmbAccepted(); } 
 	double getTotalCrossSection () const { return _eventChannel->getTotalChannelCrossSection(); } 
 	void setInputParameters(inputParameters* inputParams) { _inputParameters = inputParams; }   
+	void setRandomGenerator(randomGenerator* randomGenerator) { _randomGenerator = randomGenerator; }
 
 private:
       
@@ -76,6 +78,7 @@ private:
 	std::string        _lumLookUpTableFileName;
 	bool               _isInitialised;
 	inputParameters*   _inputParameters;
+	randomGenerator*   _randomGenerator;
 };
 
 

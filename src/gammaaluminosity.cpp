@@ -115,7 +115,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
   wylumfile << _beamBreakupMode <<endl;
   wylumfile << _interferenceEnabled <<endl;
   wylumfile << _interferenceStrength <<endl;
-  wylumfile << starlightConstants::deuteronSlopePar <<endl;
+  wylumfile << _ip->deuteronSlopePar() <<endl;
   wylumfile << _maxPtInterference <<endl;
   wylumfile << _nmbPtBinsInterference <<endl;
   
@@ -136,7 +136,7 @@ void photonNucleusLuminosity::photonNucleusDifferentialLuminosity()
     wylumfile << Y << endl;
   }
     
-  Eth=0.5*(((_wMin+starlightConstants::protonMass)*(_wMin +starlightConstants::protonMass)-starlightConstants::protonMass*starlightConstants::protonMass)/(_protonEnergy+sqrt(_protonEnergy*_protonEnergy-starlightConstants::protonMass*starlightConstants::protonMass))); 
+  Eth=0.5*(((_wMin+_ip->protonMass())*(_wMin +_ip->protonMass())-_ip->protonMass()*_ip->protonMass())/(_protonEnergy+sqrt(_protonEnergy*_protonEnergy-_ip->protonMass()*_ip->protonMass()))); 
 
   int A_1 = getbbs().beam1().A(); 
   int A_2 = getbbs().beam2().A();
@@ -303,8 +303,8 @@ void photonNucleusLuminosity::pttablegen()
     //  Gamma-proton CM energy
     beam=2; 
     
-    Wgp=sqrt(2.*Egamma1*(Ep+sqrt(Ep*Ep-starlightConstants::protonMass*
-				 starlightConstants::protonMass))+starlightConstants::protonMass*starlightConstants::protonMass);
+    Wgp=sqrt(2.*Egamma1*(Ep+sqrt(Ep*Ep-_ip->protonMass()*
+				 _ip->protonMass()))+_ip->protonMass()*_ip->protonMass());
     
     // Calculate V.M.+proton cross section
     
@@ -339,8 +339,8 @@ void photonNucleusLuminosity::pttablegen()
     // Photonuclear Cross Section 2
     beam=1; 
     
-    Wgp=sqrt(2.*Egamma2*(Ep+sqrt(Ep*Ep-starlightConstants::protonMass*
-				 starlightConstants::protonMass))+starlightConstants::protonMass*starlightConstants::protonMass);
+    Wgp=sqrt(2.*Egamma2*(Ep+sqrt(Ep*Ep-_ip->protonMass()*
+				 _ip->protonMass()))+_ip->protonMass()*_ip->protonMass());
     
     cs=sqrt(16.*starlightConstants::pi*vmPhotonCoupling()*slopeParameter()*
 	    starlightConstants::hbarc*starlightConstants::hbarc*sigmagp(Wgp)/starlightConstants::alpha);

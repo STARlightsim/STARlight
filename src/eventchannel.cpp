@@ -42,9 +42,10 @@ using namespace std;
 
 
 //______________________________________________________________________________
-eventChannel::eventChannel(const inputParameters& inputParametersInstance, beamBeamSystem& bbsystem)
+eventChannel::eventChannel(const inputParameters& inputParametersInstance, randomGenerator* randy, beamBeamSystem& bbsystem)
 	: readLuminosity(inputParametersInstance),
 	  _bbs(bbsystem),
+	  _randy(randy),
 	  _nmbAttempts(0),
 	  _nmbAccepted(0),
 	  _totalChannelCrossSection(0)
@@ -55,7 +56,6 @@ eventChannel::eventChannel(const inputParameters& inputParametersInstance, beamB
   _etaCutEnabled = inputParametersInstance.etaCutEnabled();
   _etaCutMin     = inputParametersInstance.etaCutMin();
   _etaCutMax     = inputParametersInstance.etaCutMax();
-  _randy.SetSeed(inputParametersInstance.randomSeed());
 }
 
 

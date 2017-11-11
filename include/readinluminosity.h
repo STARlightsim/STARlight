@@ -61,6 +61,7 @@ class readLuminosity
   double _bwnormsave;
 
  protected:
+  const inputParameters* _ip;
   const int _ReadInputNPT;
   const int _ReadInputnumy;
   const int _ReadInputnumw;

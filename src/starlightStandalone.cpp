@@ -59,6 +59,7 @@ bool
 starlightStandalone::init()
 {
 	_inputParameters = new inputParameters();
+	_randomGenerator = new randomGenerator();
 	// read input parameters from config file
 	_inputParameters->configureFromFile(_configFileName);
 	if (!_inputParameters->init()) {
@@ -100,8 +101,10 @@ starlightStandalone::init()
 	_starlight = new starlight();
 
         // give starlight the input parameters
+	_randomGenerator->SetSeed(_inputParameters->randomSeed());
         _starlight->setInputParameters(_inputParameters);
-	
+	_starlight->setRandomGenerator(_randomGenerator);
+
 	// initialize starlight
 	return _starlight->init();
 }

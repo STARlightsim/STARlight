@@ -31,7 +31,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 
-#include "../include/inputParser.h"
+#include "inputParser.h"
 #include <fstream>
 #include <cstdlib>
 #include <algorithm>

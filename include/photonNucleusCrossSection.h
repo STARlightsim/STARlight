@@ -75,6 +75,7 @@ public:
 	void   setPhotonNucleusSigma (double sigma) {_photonNucleusSigma = sigma;}
 	
 protected:
+	const inputParameters* _ip;
 	const unsigned int _nWbins;
 	const unsigned int _nYbins;
 	

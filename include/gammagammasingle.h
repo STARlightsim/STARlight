@@ -51,7 +51,7 @@
 class Gammagammasingle : public eventChannel
 {
  public:
-  Gammagammasingle(const inputParameters& input, beamBeamSystem& bbsystem);
+  Gammagammasingle(const inputParameters& input, randomGenerator* randy, beamBeamSystem& bbsystem);
   ~Gammagammasingle();
   
   void singleCrossSection();
