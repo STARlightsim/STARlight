@@ -151,7 +151,7 @@ starlight::init()
 #ifdef ENABLE_DPMJET
 	case PHOTONUCLEARSINGLE:
 		createChannel = false;
-		_eventChannel = new starlightDpmJet(*_inputParameters, *_beamSystem);
+		_eventChannel = new starlightDpmJet(*_inputParameters,_randomGenerator,*_beamSystem);
 		std::cout << "CREATING PHOTONUCLEAR/DPMJET SINGLE" << std::endl;
 		dynamic_cast<starlightDpmJet*>(_eventChannel)->setSingleMode();
 		dynamic_cast<starlightDpmJet*>(_eventChannel)->setMinGammaEnergy(_inputParameters->minGammaEnergy());
@@ -160,7 +160,7 @@ starlight::init()
 		break;
 	case PHOTONUCLEARDOUBLE:
 		createChannel = false;
-		_eventChannel = new starlightDpmJet(*_inputParameters, *_beamSystem);
+		_eventChannel = new starlightDpmJet(*_inputParameters,_randomGenerator,*_beamSystem);
 		std::cout << "CREATING PHOTONUCLEAR/DPMJET DOUBLE" << std::endl;
 		dynamic_cast<starlightDpmJet*>(_eventChannel)->setDoubleMode();
 		dynamic_cast<starlightDpmJet*>(_eventChannel)->setMinGammaEnergy(_inputParameters->minGammaEnergy());
@@ -169,7 +169,7 @@ starlight::init()
 		break;
 	case PHOTONUCLEARSINGLEPA:
 		createChannel = false;
-		_eventChannel = new starlightDpmJet(*_inputParameters, *_beamSystem);
+		_eventChannel = new starlightDpmJet(*_inputParameters,_randomGenerator,*_beamSystem);
 		std::cout << "CREATING PHOTONUCLEAR/DPMJET SINGLE" << std::endl;
 		dynamic_cast<starlightDpmJet*>(_eventChannel)->setSingleMode();
 		dynamic_cast<starlightDpmJet*>(_eventChannel)->setProtonMode();
@@ -181,7 +181,7 @@ starlight::init()
 #ifdef ENABLE_PYTHIA6
 	case PHOTONUCLEARSINGLEPAPY:
 		createChannel = false;
-		_eventChannel = new starlightPythia(*_inputParameters, *_beamSystem);
+		_eventChannel = new starlightPythia(*_inputParameters,randomGenerator,*_beamSystem);
 		std::cout << "CREATING PHOTONUCLEAR/PYTHIA SINGLE" << std::endl;
 		dynamic_cast<starlightPythia*>(_eventChannel)->setSingleMode();
 		dynamic_cast<starlightPythia*>(_eventChannel)->setMinGammaEnergy(_inputParameters->minGammaEnergy());
