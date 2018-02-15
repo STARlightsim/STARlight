@@ -75,6 +75,12 @@ void nucleus::init()
 		  _rho0 = 0.173845;
 		}
 		break;
+         case 54:   // Added by SRK 2/2018
+                {
+		  _Radius=5.36;   // value used by ALICE
+		  _rho0=0.18406;  // calculate by me, to give normalization \intd^3r rho(r)=129
+		}
+		break;
 	case 1: 
 		{
 		  //is this a proton or deuteron
