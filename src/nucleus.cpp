@@ -56,6 +56,7 @@ nucleus::nucleus(const int    Z,
 
 void nucleus::init()
 {
+  _woodSaxonSkinDepth=0.53;
   switch (_Z) {
 	case 82:
 		{
@@ -78,9 +79,23 @@ void nucleus::init()
          case 54:   // Added by SRK 2/2018
                 {
 		  _Radius=5.36;   // value used by ALICE
-		  _rho0=0.18406;  // calculate by me, to give normalization \intd^3r rho(r)=129
+		  _rho0=0.18406;  // calculated by me, to give normalization \intd^3r rho(r)=129
 		}
 		break;
+        case 44:  // Ruthenium, added by SRK 2/2018 from parameters in arXiv:1607.04697.  _rho0 is calculated by me
+	       {
+		 _Radius=5.085;
+		 _rho0=0.1624;
+		 _woodSaxonSkinDepth=0.46;
+	       }
+	       break;
+        case 40:
+	      {
+	        _Radius=5.020;
+		_rho0=0.1684;
+		_woodSaxonSkinDepth=0.46;
+	      }
+	      break;
 	case 1: 
 		{
 		  //is this a proton or deuteron
@@ -122,7 +137,7 @@ nucleus::rws(const double r) const
     return norm*exp(-((3./2.)*r*r)/(nuclearRadius()*nuclearRadius()));
   }else{
     // Fermi density distribution for heavy nuclei
-    const double x=exp(-(r - nuclearRadius()) / woodSaxonSkinDepth());
+    double x=exp(-(r - nuclearRadius()) / woodSaxonSkinDepth());
     return x/(1.+x);
     // Below can give problems on some machines if r is too large 
     // return 1.0 / (1. + exp((r - nuclearRadius()) / woodSaxonSkinDepth())); 
