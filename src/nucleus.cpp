@@ -97,7 +97,9 @@ void nucleus::init()
 	default:
 		printWarn << "density not defined for projectile with Z = " << _Z << ". using defaults." << endl;
                 _Radius = 1.2*pow(_A, 1. / 3.);
-		_rho0 = 0.138;  //This matches the radius above
+		// _rho0 = 0.138;  This matches the radius above for a hard-sphere nucleus
+		// add empircal correction to match to the Woods-Saxon nucleus that STARlight uses   S. Klein 2/2018
+		_rho0=0.138/(1.13505-0.0004283*_A);
 		if( _Z < 7 ){
 		  // This is for Gaussian form factors/densities 
 		  _rho0 = _A;
