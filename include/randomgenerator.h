@@ -39,7 +39,7 @@ class randomGenerator
 {
 	public:
 	void SetSeed(unsigned int seed);
-	double Rndom(int i=0);
+	virtual double Rndom(int i=0);
 	
 	private:
 	unsigned int _Mt[624];
