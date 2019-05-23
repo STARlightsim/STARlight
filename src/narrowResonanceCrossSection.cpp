@@ -255,7 +255,7 @@ narrowResonanceCrossSection::crossSectionCalculation(const double)  // _bwnormsa
 	  double maxVal = 0.0; for(I=0;I<=(NY-1);I++){if(dsigdyVal[I] > maxVal)maxVal=dsigdyVal[I];}
           double scaleFactor = 0.0; 
           if( maxVal > 1.0 ){
-	    scaleFactor = 1.0;//Default is millibarn 
+	    scaleFactor = 1.0; //Default is millibarn 
             if( _printDef == 1){
               printf("Rapidity          dsig/dy (millibarn) \n");
 	    } else if ( _printDef == 2 ){
