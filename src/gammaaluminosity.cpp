@@ -399,8 +399,15 @@ void photonNucleusLuminosity::pttablegen()
       for(int j=1;j<=NBIN;j++){
 	
 	b = bmin + (float(j)-0.5)*db;
-	A1 = Egamma1*getbbs().beam1().photonDensity(Egamma1,b)*sig_ga_1*ptparam1[i];
-	A2 = Egamma2*getbbs().beam2().photonDensity(Egamma2,b)*sig_ga_2*ptparam2[i];
+	
+ //******* Bug fix SRK May 28, 2019.  Swapped order of b,Egamma in calls to Photondensity to function itself.
+ //***  This is a huge fix, although the impact is smaller than expected.
+
+	  A1 = Egamma1*getbbs().beam1().photonDensity(b,Egamma1)*sig_ga_1*ptparam1[i];
+	  A2 = Egamma2*getbbs().beam2().photonDensity(b,Egamma2)*sig_ga_2*ptparam2[i];
+	//  old, wrong code
+	// 	A1 = Egamma1*getbbs().beam1().photonDensity(Egamma1,b)*sig_ga_1*ptparam1[i];
+	//      A2 = Egamma2*getbbs().beam2().photonDensity(Egamma2,b)*sig_ga_2*ptparam2[i];
 	sumg=0.0;
 
 	//  do this as a Gaussian integral, from 0 to pi
