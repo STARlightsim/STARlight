@@ -494,20 +494,26 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
 	    xt = _randy->Rndom(); 
             if( _bbs.beam1().A()==1 && _bbs.beam2().A() != 1){ 
               if( _ProductionMode == 2 || _ProductionMode ==3){
-                pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
+		
+ // Changed '8' to '32' 6 times below to extend the region of the p_T calculation up to 1 GeV.c  SRK May 28, 2019
+//  'pt2' is the maximum vector meson momentum.  For heavy nuclei, the '32'coefficient corresonds to about 1 GeV/c
+//  The downside of the larger coefficient is that the sampling runs more slowly.  This could be made into a parameter		
+		
+
+		pt2 = 32.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
               }else{
-                pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
+                pt2 = 32.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
               }   
             } else if( _bbs.beam2().A()==1 && _bbs.beam1().A() != 1 ){
               if( _ProductionMode == 2 || _ProductionMode ==3){
-                pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
+                pt2 = 32.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
               }else{
-                pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
+                pt2 = 32.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
               }  
             } else if (_TargetBeam==1) {
-                pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
+                pt2 = 32.*xt*starlightConstants::hbarc/_bbs.beam1().nuclearRadius();  
             } else {
-                pt2 = 8.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
+                pt2 = 32.*xt*starlightConstants::hbarc/_bbs.beam2().nuclearRadius();  
             }
 
 	    xtest = _randy->Rndom();
