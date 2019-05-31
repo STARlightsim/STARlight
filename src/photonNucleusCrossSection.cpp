@@ -87,7 +87,7 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_vmPhotonCoupling      = 2.02;
 		_ANORM       = -2.75;
 		_BNORM       = 0;  
-		_defaultC    = 11.0;
+		_defaultC    = 1.0;
 		_channelMass  = _ip->rho0PrimeMass();
 		_width        = _ip->rho0PrimeWidth();
 		break;
@@ -777,7 +777,7 @@ double
 photonNucleusCrossSection::breitWigner(const double W,
                                        const double C)
 {
-	// use simple fixed-width s-wave Breit-Wigner without coherent backgorund for rho'
+	// use simple fixed-width s-wave Breit-Wigner without coherent background for rho'
 	// (PDG '08 eq. 38.56)
 	if(_particleType==FOURPRONG) {
 		if (W < 4.01 * _ip->pionChargedMass())

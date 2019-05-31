@@ -548,6 +548,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		width         = rho0PrimeWidth();		
 		defaultMinW   = 4 * pionChargedMass();
                 defaultMaxW     = sqrt(beam1LorentzGamma()*beam2LorentzGamma())*2*(starlightConstants::hbarc)/(1.2*pow(float(beam1A()),1./6.)*pow(float(beam2A()),1./6.)); // JES 6.17.2015 to avoid problems with no default
+		if (defaultMaxW>10.){defaultMaxW=10.;}  //SRK May 29, 2019, to avoid an unduly high defaultMaxW
 		_inputBranchingRatio = 1.0; 
 		break;
 	case 223:  // omega(782)

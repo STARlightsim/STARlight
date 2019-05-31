@@ -792,10 +792,10 @@ upcEvent Gammaavectormeson::produceEvent()
 				starlightParticle daughter(decayVecs[i].GetPx(),
 				                           decayVecs[i].GetPy(),
 				                           decayVecs[i].GetPz(),
-				                           starlightConstants::UNKNOWN,  // energy 
-				                           starlightConstants::UNKNOWN,  // _mass
-				                           ipid,
-				                           (i < 2) ? -1 : +1);
+							   sqrt(decayVecs[i].GetPx()*decayVecs[i].GetPx()+decayVecs[i].GetPy()*decayVecs[i].GetPy()+decayVecs[i].GetPz()*decayVecs[i].GetPz()+0.139*0.139),//energy 
+							   starlightConstants::UNKNOWN,  // _mass
+							   ipid*(2*(i/2)-1),   // make half of the particles pi^+, half pi^-
+							   i/2);
 				event.addParticle(daughter);
 			}
 	} else {
