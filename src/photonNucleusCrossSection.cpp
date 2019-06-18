@@ -785,7 +785,8 @@ photonNucleusCrossSection::breitWigner(const double W,
 		const double termA  = _channelMass * _width;
 		const double termA2 = termA * termA;
 		const double termB  = W * W - _channelMass * _channelMass;
-		return C * _ANORM * _ANORM * termA2 / (termB * termB + termA2);
+		double C = _ANORM * _ANORM * termA2 / (termB * termB + termA2);
+		return C/W;  // this is dsigma/dW, not dsigma/ds need to convert?
 	}
 
 	// Relativistic Breit-Wigner according to J.D. Jackson,
