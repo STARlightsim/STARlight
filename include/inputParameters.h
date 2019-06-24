@@ -219,6 +219,7 @@ public:
 	int          quantumGlauber        () const { return _quantumGlauber.value();         }  ///< returns the quantum glauber value
 	double       bmin                  () const { return _bmin.value();                   }  // returns the minimum impact parameter for BREAKUP_MODE==6
 	double       bmax                  () const { return _bmax.value();                   }  // returns the maximum impact parameter for BREAKUP_MODE==6
+    bool         outputHeader          () const { return _outputHeader.value();           }  // returns whether the output should have parameters at the start
 		
 	starlightConstants::particleTypeEnum    prodParticleType     () const { return _particleType;    }  ///< returns type of produced particle
 	starlightConstants::decayTypeEnum       prodParticleDecayType() const { return _decayType;       }  ///< returns decay type of produced particle
@@ -345,6 +346,7 @@ public:
 	void setquantumGlauber        (int v)  {  _quantumGlauber = v;            }  ///< sets the value of quantum_glauber
 	void setbmin             (double v)    {  _bmin=v;                        }  ///< sets the minimum impact parameter (for BREAKUP_MODE==6
 	void setbmax             (double v)    {  _bmax=v;                        }  ///< sets the minimum impact parameter (for BREAKUP_MODE==6
+    void setoutputHeader     (bool v)      {  _outputHeader = v;              }  ///< sets whether the output should have parameters at the start
 
 	void setProdParticleType      (starlightConstants::particleTypeEnum v)    { _particleType = v;    }  ///< sets type of produced particle
 	void setProdParticleDecayType (starlightConstants::decayTypeEnum v)       { _decayType = v;       }  ///< sets decay type of produced particle
@@ -425,6 +427,7 @@ private:
 	parameter<unsigned int, VALIDITY_CHECK>    _quantumGlauber;          ///< Optional parameter.  Set = 1 to use Quantum Glauber calculation, rather than Classical Glauber
 	parameter<double, VALIDITY_CHECK>          _bmin;                    ///< Optional parameter minimum impact parameter for b-range calculation
 	parameter<double, VALIDITY_CHECK>          _bmax;                    /// < Optional parameter maximum impact parameter for b-range calculation
+    parameter<bool, NO_VALIDITY_CHECK>          _outputHeader;           /// < Optional parameter puts parameter information at the top of the output file
 
         parameter<double, VALIDITY_CHECK> _deuteronSlopePar      ;           ///< deuteron slope parameter (effective temperature) [(GeV/c)^-2]
         parameter<double, VALIDITY_CHECK> _protonMass            ;           ///< mass of the proton [GeV/c^2]

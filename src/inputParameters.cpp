@@ -90,7 +90,8 @@ inputParameters::inputParameters()
 	  _impulseVM             ("SELECT_IMPULSE_VM",0,NOT_REQUIRED),
 	  _quantumGlauber        ("QUANTUM_GLAUBER",0,NOT_REQUIRED),
 	  _bmin                  ("BMIN",0,NOT_REQUIRED),
-          _bmax                  ("BMAX",0,NOT_REQUIRED),   
+          _bmax                  ("BMAX",0,NOT_REQUIRED),
+		  _outputHeader          ("OUTPUT_HEADER", false, NOT_REQUIRED),
 
           _deuteronSlopePar      ("deuteronSlopePar"      , 9.5           , NOT_REQUIRED),
           _protonMass            ("protonMass"            , 0.938272046   , NOT_REQUIRED),
@@ -221,6 +222,7 @@ inputParameters::inputParameters()
 	_ip.addParameter(_quantumGlauber);
 	_ip.addParameter(_bmin);
 	_ip.addParameter(_bmax);
+	_ip.addParameter(_outputHeader);
 
         _ip.addParameter(_deuteronSlopePar      );
         _ip.addParameter(_protonMass            );

@@ -38,7 +38,7 @@
 #include <string>
 
 #include "filewriter.h"
-
+#include "inputParameters.h"
 
 class eventFileWriter : public fileWriter
 {
@@ -49,6 +49,9 @@ class eventFileWriter : public fileWriter
       
       /** Constructor with name */
       eventFileWriter(std::string filename);
+
+      /** Write out simulation set up */
+      int writeInit(inputParameters &param );
 
       /** Write an UPC event to file */
       int writeEvent(upcEvent &event, int eventnumber);

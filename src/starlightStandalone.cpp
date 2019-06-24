@@ -125,7 +125,12 @@ starlightStandalone::run()
         _baseFileName = _inputParameters->baseFileName();
         _eventDataFileName = _baseFileName +".out";
 	fileWriter.open(_eventDataFileName);
-
+	//
+	// add a header if the user requests a header
+	if (_inputParameters->outputHeader()) {
+		fileWriter.writeInit(*_inputParameters);
+	}
+	//
 	printInfo << "generating events:" << endl;
 	unsigned int nmbEvents = 0;
 	while (nmbEvents < _nmbEventsTot) {
