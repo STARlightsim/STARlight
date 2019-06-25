@@ -65,6 +65,8 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 	 _quantumGlauber = inputParametersInstance.quantumGlauber();
 	switch(_particleType) {
 	case RHO:
+	case RHO_ee:
+	case RHO_mumu:
 		_slopeParameter = 11.0;  // [(GeV/c)^{-2}]
 		_vmPhotonCoupling = 2.02;
 		_ANORM       = -2.75;
@@ -601,6 +603,8 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 	switch(_particleType)
 		{ 
 		case RHO:
+		case RHO_ee:
+		case RHO_mumu:
 		case RHOZEUS:
 		case FOURPRONG:
 			sigmagp_r=1.E-4*(5.0*exp(0.22*log(Wgp))+26.0*exp(-1.23*log(Wgp)));
@@ -810,6 +814,26 @@ photonNucleusCrossSection::breitWigner(const double W,
 		}
 		ppi=sqrt( ((W/2.)*(W/2.)) - _ip->pionChargedMass() * _ip->pionChargedMass());
 		ppi0=0.358;
+	}
+
+	// handle rho-->e+e- properly
+	if (_particleType==RHO_ee){
+		if(W<2.*_ip->mel()){
+			nrbw_r=0.;
+			return nrbw_r;
+		}
+		ppi=sqrt(((W/2.)*(W/2.))-_ip->mel()*_ip->mel());
+		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->mel()*_ip->mel());   
+	}
+
+	// handle rho-->mu+mu- properly
+	if (_particleType==RHO_mumu){
+		if(W<2.*_ip->muonMass()){
+			nrbw_r=0.;
+			return nrbw_r;
+		}
+		ppi=sqrt(((W/2.)*(W/2.))-_ip->muonMass()*_ip->muonMass());
+		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->muonMass()*_ip->muonMass());
 	}
   
 	// handle phi-->K+K- properly

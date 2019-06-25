@@ -273,6 +273,8 @@ public:
         double rho0Mass              () const {return _rho0Mass              .value();}
         double rho0Width             () const {return _rho0Width             .value();}
         double rho0BrPiPi            () const {return _rho0BrPiPi            .value();}
+        double rho0Bree              () const {return _rho0Bree              .value();}
+        double rho0Brmumu            () const {return _rho0Brmumu            .value();}
         double rho0PrimeMass         () const {return _rho0PrimeMass         .value();}
         double rho0PrimeWidth        () const {return _rho0PrimeWidth        .value();}
         double rho0PrimeBrPiPi       () const {return _rho0PrimeBrPiPi       .value();}
@@ -475,6 +477,8 @@ private:
         parameter<double, VALIDITY_CHECK> _rho0Mass              ;           ///< mass of the rho^0 [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _rho0Width             ;           ///< width of the rho^0 [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _rho0BrPiPi            ;           ///< branching ratio rho^0 -> pi^+ pi^-
+        parameter<double, VALIDITY_CHECK> _rho0Bree              ;           ///< branching ratio rho^0 -> e^+ e^-
+        parameter<double, VALIDITY_CHECK> _rho0Brmumu            ;           ///< branching ratio rho^0 -> mu^+ mu^-
         parameter<double, VALIDITY_CHECK> _rho0PrimeMass         ;           ///< mass of the rho'^0 (4 pi^+/- final state) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _rho0PrimeWidth        ;           ///< width of the rho'^0 (4 pi^+/- final state) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _rho0PrimeBrPiPi       ;           ///< branching ratio rho'^0 -> pi^+ pi^-

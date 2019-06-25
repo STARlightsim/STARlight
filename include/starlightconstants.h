@@ -68,6 +68,8 @@ namespace starlightConstants
 		F0             = 9010221,
 		ZOVERZ03       = 33,
 		RHO            = 113,
+		RHO_ee         = 113011,
+		RHO_mumu       = 113013,
 		RHOZEUS        = 913,
 		FOURPRONG      = 999,
 		OMEGA          = 223,

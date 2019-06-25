@@ -139,6 +139,8 @@ inputParameters::inputParameters()
           _rho0Mass              ("rho0Mass"              , 0.769         , NOT_REQUIRED),
           _rho0Width             ("rho0Width"             , 0.1517        , NOT_REQUIRED),
           _rho0BrPiPi            ("rho0BrPiPi"            , 1.0           , NOT_REQUIRED),
+		  _rho0Bree              ("rho0Bree"              , 0.0000472     , NOT_REQUIRED), // added from PDGlive (25 Jun 2019)
+		  _rho0Brmumu            ("rho0Brmumu"            , 0.0000455     , NOT_REQUIRED), // added from PDGlive (25 Jun 2019)
           _rho0PrimeMass         ("rho0PrimeMass"         , 1.540         , NOT_REQUIRED),
           _rho0PrimeWidth        ("rho0PrimeWidth"        , 0.570         , NOT_REQUIRED),
           _rho0PrimeBrPiPi       ("rho0PrimeBrPiPi"       , 1.0           , NOT_REQUIRED),
@@ -270,6 +272,8 @@ inputParameters::inputParameters()
         _ip.addParameter(_rho0Mass              );
         _ip.addParameter(_rho0Width             );
         _ip.addParameter(_rho0BrPiPi            );
+		_ip.addParameter(_rho0Bree              );
+		_ip.addParameter(_rho0Brmumu            );
         _ip.addParameter(_rho0PrimeMass         );
         _ip.addParameter(_rho0PrimeWidth        );
         _ip.addParameter(_rho0PrimeBrPiPi       );
@@ -358,9 +362,17 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		printWarn << "tritium is not currently supported" << endl;
 		return false;}
 	// check that rho production uses wide resonance option
-	if(_prodParticleId.value()==113 && _productionMode.value()==2){
-		printWarn << endl<< "For rho meson production, you should choose the wide resonance option (production mode = 3)" << endl;
-		return false;}
+	switch(_prodParticleId.value()) {
+		case 113:
+		case 113011:
+		case 113013:
+			if(_productionMode.value()==2){
+				printWarn << endl<< "For rho meson production, you should choose the wide resonance option (production mode = 3)" << endl;
+				return false;
+			}
+		default:
+			break;
+	}
 
 	// define interaction type
 	switch (productionMode()) {
@@ -533,6 +545,24 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		defaultMinW   = 2 * pionChargedMass();
 		defaultMaxW         = mass + 5 * width;
 		_inputBranchingRatio = rho0BrPiPi(); 
+		break;
+	case 113011:  // rho(770) -> e+ e-
+		_particleType = RHO_ee;
+		_decayType    = WIDEVMDEFAULT;
+		mass          = rho0Mass();
+		width         = rho0Width();
+		defaultMinW   = 2 * pionChargedMass();
+		defaultMaxW         = mass + 5 * width;
+		_inputBranchingRatio = rho0Bree(); 
+		break;
+	case 113013:  // rho(770) -> mu+ mu -
+		_particleType = RHO_mumu;
+		_decayType    = WIDEVMDEFAULT;
+		mass          = rho0Mass();
+		width         = rho0Width();
+		defaultMinW   = 2 * pionChargedMass();
+		defaultMaxW         = mass + 5 * width;
+		_inputBranchingRatio = rho0Brmumu(); 
 		break;
 	case 913:  // rho(770) with direct pi+pi- decay, interference given by ZEUS data
 		_particleType = RHOZEUS;

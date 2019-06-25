@@ -267,10 +267,12 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particleTypeEnum &
 		mdec = _ip->mel();
 		ipid = starlightConstants::ELECTRON;
 		break; 
+	case starlightConstants::RHO_ee:
 	case starlightConstants::JPSI_ee:
 		mdec = _ip->mel();
 		ipid = starlightConstants::ELECTRON;
 		break; 
+	case starlightConstants::RHO_mumu:
 	case starlightConstants::JPSI_mumu:
 		mdec = _ip->muonMass();
 		ipid = starlightConstants::MUON;

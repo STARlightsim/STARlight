@@ -320,6 +320,8 @@ starlight::createEventChannel()
 			}
 		}
 	case RHO:
+	case RHO_ee:
+	case RHO_mumu:
 	case RHOZEUS:
 	case FOURPRONG:
 	case OMEGA:  
