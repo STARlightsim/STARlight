@@ -61,6 +61,7 @@ class Gammaavectormeson : public eventChannel
   double pTgamma(double E); 
   void vmpt(double W,double Y,double &E,double &px,double &py, double &pz,int &tcheck);
   void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,double &pz2,int &iFbadevent);
+  bool threeBodyDecay(starlightConstants::particleTypeEnum& ipid, const double E, const double W, const double* p, lorentzVector* decayMoms, int& iFbadevent);
   bool fourBodyDecay(starlightConstants::particleTypeEnum& ipid, const double E, const double W, const double* p, lorentzVector* decayMoms, int& iFbadevent);
   double getMass();
   double getWidth();

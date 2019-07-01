@@ -281,6 +281,7 @@ public:
         double OmegaMass             () const {return _OmegaMass             .value();}
         double OmegaWidth            () const {return _OmegaWidth            .value();}
         double OmegaBrPiPi           () const {return _OmegaBrPiPi           .value();}
+        double OmegaBrPiPiPi         () const {return _OmegaBrPiPiPi         .value();}
         double PhiMass               () const {return _PhiMass               .value();}
         double PhiWidth              () const {return _PhiWidth              .value();}
         double PhiBrKK               () const {return _PhiBrKK               .value();}
@@ -485,6 +486,7 @@ private:
         parameter<double, VALIDITY_CHECK> _OmegaMass             ;           ///< mass of the omega [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _OmegaWidth            ;           ///< width of the omega [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _OmegaBrPiPi           ;           ///< branching ratio omega -> pi^+ pi^-
+        parameter<double, VALIDITY_CHECK> _OmegaBrPiPiPi         ;           ///< branching ratio omega -> pi^0 pi^+ pi^-
         parameter<double, VALIDITY_CHECK> _PhiMass               ;           ///< mass of the phi [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _PhiWidth              ;           ///< width of the phi [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _PhiBrKK               ;           ///< branching ratio phi -> K^+ K^-

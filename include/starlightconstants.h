@@ -73,6 +73,7 @@ namespace starlightConstants
 		RHOZEUS        = 913,
 		FOURPRONG      = 999,
 		OMEGA          = 223,
+		OMEGA_pipipi   = 223211111,
 		PHI            = 333,
 		JPSI           = 443,
 		JPSI_ee        = 443011,

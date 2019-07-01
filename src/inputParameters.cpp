@@ -147,6 +147,7 @@ inputParameters::inputParameters()
           _OmegaMass             ("OmegaMass"             , 0.78265       , NOT_REQUIRED),
           _OmegaWidth            ("OmegaWidth"            , 0.00849       , NOT_REQUIRED),
           _OmegaBrPiPi           ("OmegaBrPiPi"           , 0.0153        , NOT_REQUIRED),
+		  _OmegaBrPiPiPi         ("OmegaBrPiPiPi"         , 0.893         , NOT_REQUIRED), // added from PDGlive (26 Jun 2019)
           _PhiMass               ("PhiMass"               , 1.019461      , NOT_REQUIRED),
           _PhiWidth              ("PhiWidth"              , 0.004266      , NOT_REQUIRED),
           _PhiBrKK               ("PhiBrKK"               , 0.489         , NOT_REQUIRED),
@@ -280,6 +281,7 @@ inputParameters::inputParameters()
         _ip.addParameter(_OmegaMass             );
         _ip.addParameter(_OmegaWidth            );
         _ip.addParameter(_OmegaBrPiPi           );
+		_ip.addParameter(_OmegaBrPiPiPi         );
         _ip.addParameter(_PhiMass               );
         _ip.addParameter(_PhiWidth              );
         _ip.addParameter(_PhiBrKK               );
@@ -551,7 +553,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		_decayType    = WIDEVMDEFAULT;
 		mass          = rho0Mass();
 		width         = rho0Width();
-		defaultMinW   = 2 * pionChargedMass();
+		defaultMinW   = 2 * mel();
 		defaultMaxW         = mass + 5 * width;
 		_inputBranchingRatio = rho0Bree(); 
 		break;
@@ -560,7 +562,7 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		_decayType    = WIDEVMDEFAULT;
 		mass          = rho0Mass();
 		width         = rho0Width();
-		defaultMinW   = 2 * pionChargedMass();
+		defaultMinW   = 2 * muonMass();
 		defaultMaxW         = mass + 5 * width;
 		_inputBranchingRatio = rho0Brmumu(); 
 		break;
@@ -591,6 +593,15 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		defaultMinW   = mass - 5 * width;
 		defaultMaxW         = mass + 5 * width;
 		_inputBranchingRatio = OmegaBrPiPi(); 
+		break;
+	case 223211111:  // omega(782) -> pi0 pi+ pi-
+		_particleType = OMEGA_pipipi;
+		_decayType    = NARROWVMDEFAULT;  
+		mass          = OmegaMass();
+		width         = OmegaWidth();
+		defaultMinW   = mass - 5 * width;
+		defaultMaxW         = mass + 5 * width;
+		_inputBranchingRatio = OmegaBrPiPiPi();
 		break;
 	case 333:  // phi(1020)
 		_particleType = PHI;

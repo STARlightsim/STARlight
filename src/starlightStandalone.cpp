@@ -145,7 +145,10 @@ starlightStandalone::run()
 	}
 	fileWriter.close();
 
-	if( _starlight->nmbAttempts() == 0 )return true; 
+	if( _starlight->nmbAttempts() == 0 ) {
+		cout << "No attempts" << endl;
+		return true; 
+	}
 
 	double _branchingRatio = _inputParameters->inputBranchingRatio();
 	printInfo << "number of attempts = " << _starlight->nmbAttempts() << ", "

@@ -324,7 +324,8 @@ starlight::createEventChannel()
 	case RHO_mumu:
 	case RHOZEUS:
 	case FOURPRONG:
-	case OMEGA:  
+	case OMEGA:
+	case OMEGA_pipipi:  
 	case PHI:
 	case JPSI:
 	case JPSI_ee:

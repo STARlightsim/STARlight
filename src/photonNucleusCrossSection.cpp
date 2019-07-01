@@ -94,6 +94,7 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_width        = _ip->rho0PrimeWidth();
 		break;
 	case OMEGA:
+	case OMEGA_pipipi:
 		_slopeParameter=10.0;
 		_vmPhotonCoupling=23.13;
 		_ANORM=-2.75;
@@ -610,6 +611,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 			sigmagp_r=1.E-4*(5.0*exp(0.22*log(Wgp))+26.0*exp(-1.23*log(Wgp)));
 			break;
 		case OMEGA:
+		case OMEGA_pipipi:
 			sigmagp_r=1.E-4*(0.55*exp(0.22*log(Wgp))+18.0*exp(-1.92*log(Wgp)));
 			break;                                                      
 		case PHI:
@@ -807,7 +809,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 	// if below threshold, then return 0.  Added 5/3/2001 SRK
 	// 0.5% extra added for safety margin
         // omega added here 10/26/2014 SRK
-	if( _particleType==RHO ||_particleType==RHOZEUS || _particleType==OMEGA){  
+	if( _particleType==RHO ||_particleType==RHOZEUS || _particleType==OMEGA || _particleType==OMEGA_pipipi){  
 		if (W < 2.01*_ip->pionChargedMass()){
 			nrbw_r=0.;
 			return nrbw_r;
