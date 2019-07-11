@@ -199,7 +199,7 @@ void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
 
 //______________________________________________________________________________                                               
 // decays a particle into three particles with isotropic angular distribution
-bool Gammaavectormeson::threeBodyDecay
+bool Gammaavectormeson::omega3piDecay
 (starlightConstants::particleTypeEnum& ipid,
  const double                  ,           // E (unused)
  const double                  W,          // mass of produced particle
@@ -226,7 +226,7 @@ bool Gammaavectormeson::threeBodyDecay
 	assert(_phaseSpaceGen);
 	static bool firstCall = true;
 	if (firstCall) {
-		const double m[3] = {daughterMass, daughterMass, daughterMass};
+		const double m[3] = {_ip->pionChargedMass(), _ip->pionChargedMass(), _ip->pionNeutralMass()};
 		_phaseSpaceGen->setDecay(3, m);
 		// estimate maximum phase-space weight
 		_phaseSpaceGen->setMaxWeight(1.01 * _phaseSpaceGen->estimateMaxWeight(_VMWmax));
@@ -890,7 +890,7 @@ upcEvent Gammaavectormeson::produceEvent()
 			if (accepted) {
 				_nmbAccepted++;
 			}
-		} while (!threeBodyDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent));
+		} while (!omega3piDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent));
 		if ((iFbadevent == 0) and (tcheck == 0))
 			for (unsigned int i = 0; i < 3; ++i) {
 				starlightParticle daughter(decayVecs[i].GetPx(),
