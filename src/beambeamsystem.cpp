@@ -258,6 +258,7 @@ beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
 	double IRUT=0.,T1=0.,T2=0.;
 	static double DEN1[20002], DEN2[20002];
 	double energy,sigmainmb;
+	double mconst, energyx;
 	if (IFIRSTH != 0) goto L100;
 	//Initialize
 	//Integration delta x, delta z
@@ -272,7 +273,12 @@ beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
 	energy=2*gamma*0.938;   // center of mass energy, in GeV
 	  // This equation is from section 50 of the particle data book, the subsection on "Total Hadronic Cross-Sections, using the parameterization for sqrt{s} > 7 GeV.
 	  // only the first and second terms contribute significantly, but leave them all here for good measure
-	  sigmainmb = 0.2838*pow(log(energy),2)+33.73+13.67*pow(energy,-0.412)-7.77*pow(energy,-0.5626);
+	// These formulae were tweaked in July 2020 to rfeflect what is actually in the 2014 PDG - previously there was a small bug
+	// begin cross-section fix SRK July 2020
+	mconst=2.076;
+	energyx=energy*energy/pow((2*0.938+mconst),2);
+	  sigmainmb = 0.2838*pow(log(energyx),2)+33.73+13.67*pow(energyx,-0.412)-7.77*pow(energyx,-0.5626);
+	  // end cross-section fix SRK July 2020.  Previously the above equation just used 'energy' from the earlier line
 	  SIGNN=sigmainmb/10.;
 
 	//use parameter from Constants
