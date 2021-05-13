@@ -72,6 +72,7 @@ class parameterbase
 public:
 
     // Add this to parameter list
+    virtual ~parameterbase(){}
     parameterbase()
     {
         _parameters.add(this);

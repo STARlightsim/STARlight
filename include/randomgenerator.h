@@ -38,6 +38,7 @@
 class randomGenerator
 {
 	public:
+        virtual ~randomGenerator(){}
 	void SetSeed(unsigned int seed);
 	virtual double Rndom(int i=0);
 	
