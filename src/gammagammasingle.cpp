@@ -503,7 +503,7 @@ starlightConstants::event Gammagammasingle::produceEvent(int &/*ievent*/)
 
 
 //______________________________________________________________________________
-upcEvent Gammagammasingle::produceEvent()
+upcEvent Gammagammasingle::produceEvent(vector3 beta)
 {
 
   //    returns the vector with the decay particles inside.
@@ -527,7 +527,10 @@ upcEvent Gammagammasingle::produceEvent()
   pickw(comenergy);
   picky(rapidity);
   parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
-  
+  //--------------------------------------------------------------
+  //-----------------------------------------------------------------
+  //------------------------------------------------------------------------
+  if (beta.X() < 0) exp(10);// to be re-written to implement pseudorapidityLab(px1,py1,pz1,E,beta.)
   
   if(_GGsingInputpidtest != starlightConstants::F2 && _GGsingInputpidtest != starlightConstants::F2PRIME && _GGsingInputpidtest != starlightConstants::AXION)
   {

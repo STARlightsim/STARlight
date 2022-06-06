@@ -52,7 +52,7 @@ class Gammagammaleptonpair : public eventChannel
   void calculateTable();
 
   starlightConstants::event produceEvent(int &ievent);
-  upcEvent produceEvent();
+  upcEvent produceEvent(vector3 beta);
 
  private:
   double _sigmax[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];
@@ -70,7 +70,6 @@ class Gammagammaleptonpair : public eventChannel
   void picky(double &y);
   
   void pairMomentum(double w,double y,double &E,double &px,double &py,double&pz);
-  double pp_1(double E);
   double pp_2(double E);
   void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,double &pz2,int &iFbadevent);
   double thetalep(double W,double theta);

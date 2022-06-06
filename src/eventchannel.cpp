@@ -111,3 +111,14 @@ eventChannel::pseudoRapidity(const double px,
   return eta;
 }
 
+
+double eventChannel::pseudoRapidityLab(const double px,
+								                       const double py,
+								                       const double pz,
+			                        				 const double E,
+      								                 const vector3 beta)
+{
+  lorentzVector vecme(px,py,pz,E);
+  vecme.Boost(beta);
+  return pseudoRapidity(vecme.GetPx(),vecme.GetPy(),vecme.GetPz());
+}

@@ -596,7 +596,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
 
 
 //______________________________________________________________________________
-upcEvent Gammagammaleptonpair::produceEvent()
+upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
 {
 //returns the vector with the decay particles inside.
 
@@ -625,7 +625,7 @@ upcEvent Gammagammaleptonpair::produceEvent()
      twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
      double pt1chk = sqrt(px1*px1+py1*py1);
      double pt2chk = sqrt(px2*px2+py2*py2);
-    
+    if(beta.X() < 0 ) pseudoRapidity(px1,py1,pz1);// to be re-written to implement pseudorapidityLab(px1,py1,pz1,E,beta.)
      double eta1 = pseudoRapidity(px1, py1, pz1);
      double eta2 = pseudoRapidity(px2, py2, pz2);
     

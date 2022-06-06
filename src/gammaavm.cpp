@@ -136,12 +136,13 @@ void Gammaavectormeson::pickwy(double &W, double &Y)
 }         
 
 
-//______________________________________________________________________________                                               
+//______________________________________________________________________________
+//Added E1 and E2 in order to facilitate transformation of the particle to different frames for different eta cuts.                                               
 void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
                                      double  W,
                                      double  px0, double  py0, double  pz0,
-                                     double& px1, double& py1, double& pz1,
-                                     double& px2, double& py2, double& pz2,
+                                     double &E1, double& px1, double& py1, double& pz1,
+                                     double &E2, double& px2, double& py2, double& pz2,
                                      int&    iFbadevent)
 {
 	// This routine decays a particle into two particles of mass mdec,
@@ -151,7 +152,7 @@ void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
 	double phi,theta,Ecm;
 	double betax,betay,betaz;
 	double mdec=0.0;
-	double E1=0.0,E2=0.0;
+	//double E1=0.0,E2=0.0; not needed any more as references to these variables are now provided by caller.
 
 	//    set the mass of the daughter particles
 	mdec=getDaughterMass(ipid);
@@ -812,7 +813,7 @@ starlightConstants::event Gammaavectormeson::produceEvent(int&)
 
 
 //______________________________________________________________________________
-upcEvent Gammaavectormeson::produceEvent()
+upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 {
 	// The new event type
 	upcEvent event;
@@ -908,7 +909,7 @@ upcEvent Gammaavectormeson::produceEvent()
 		double E = 0.;
 		double momx=0.,momy=0.,momz=0.;
 
-		double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
+		double E2=0.,E1=0., px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
 		bool accepted = false;
 		do{
 			pickwy(comenergy,rapidity);
@@ -923,11 +924,11 @@ upcEvent Gammaavectormeson::produceEvent()
 			_nmbAttempts++;
 
                         vmpid = ipid;
-			twoBodyDecay(ipid,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+			twoBodyDecay(ipid,comenergy,momx,momy,momz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
 			double pt1chk = sqrt(px1*px1+py1*py1);
 			double pt2chk = sqrt(px2*px2+py2*py2);
-			double eta1 = pseudoRapidity(px1, py1, pz1);
-			double eta2 = pseudoRapidity(px2, py2, pz2);
+			double eta1 = pseudoRapidityLab(px1, py1, pz1,E1,beta);
+			double eta2 = pseudoRapidityLab(px2, py2, pz2,E2,beta);
 
 			if(_ptCutEnabled && !_etaCutEnabled){
 				if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
