@@ -396,14 +396,14 @@ double Gammagammaleptonpair::pp_2(double E)
 void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
                                     double  W,
                                     double  px0, double  py0, double  pz0,
-                                    double& px1, double& py1, double& pz1,
-                                    double& px2, double& py2, double& pz2,
+                                    double& E1, double& px1, double& py1, double& pz1,
+                                    double& E2, double& px2, double& py2, double& pz2,
                                     int&    iFbadevent)
 {
     //     This routine decays a particle into two particles of mass mdec,
     //     taking spin into account
 
-    double mdec=0.,E1=0.,E2=0.;
+    double mdec=0.;
     double pmag, anglelep[20001];
     double phi,theta=0.,xtest,Ecm;
     double betax,betay,betaz;
@@ -543,7 +543,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
     int iFbadevent=0;
     starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
 	
-    double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
+    double E1=0.,E2=0., px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
     //this function decays particles and writes events to a file
     //zero out the event structure
     leptonpair._numberOfTracks=0;
@@ -561,7 +561,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
     picky(rapidity);
 
     pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
-    twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+    twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
     if (iFbadevent==0){
 	int q1=0,q2=0; 
 
@@ -622,12 +622,12 @@ upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
    
   
      _nmbAttempts++;
-     twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+     twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
      double pt1chk = sqrt(px1*px1+py1*py1);
      double pt2chk = sqrt(px2*px2+py2*py2);
-    if(beta.X() < 0 ) pseudoRapidity(px1,py1,pz1);// to be re-written to implement pseudorapidityLab(px1,py1,pz1,E,beta.)
-     double eta1 = pseudoRapidity(px1, py1, pz1);
-     double eta2 = pseudoRapidity(px2, py2, pz2);
+
+     double eta1 = pseudoRapidityLab(px1,py1,pz1,E1,beta);//pseudoRapidity(px1, py1, pz1);
+     double eta2 = pseudoRapidityLab(px2,py2,pz2,E2,beta);//pseudoRapidity(px2, py2, pz2);
     
      if(_ptCutEnabled && !_etaCutEnabled){
        if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){

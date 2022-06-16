@@ -877,10 +877,17 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 			}
 			if (_etaCutEnabled) {
 				for (short i = 0; i < 3; i++) {
-					double eta_chk = pseudoRapidity(
+					/*double eta_cghk = pseudoRapidity(
 						decayVecs[i].GetPx(),
 						decayVecs[i].GetPy(),
 						decayVecs[i].GetPz()
+					);*/
+					double eta_chk = pseudoRapidityLab(
+						decayVecs[i].GetPx(),
+						decayVecs[i].GetPy(),
+						decayVecs[i].GetPz(),
+						decayVecs[i].GetE(),
+						beta
 					);
 					if (eta_chk < _etaCutMin || eta_chk > _etaCutMax) {
 						accepted = false;
