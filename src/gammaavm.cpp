@@ -829,6 +829,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 		double        mom[3]    = {0, 0, 0};
 		double        E         = 0;
 		lorentzVector decayVecs[4];
+		bool accepted = true;
 		do {
 			double rapidity = 0;
 			pickwy(comenergy, rapidity);
@@ -836,7 +837,41 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			else if (_VMinterferencemode==1)
 				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
-		} while (!fourBodyDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent));
+			_nmbAttempts++;
+			accepted = fourBodyDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent);
+
+			if (_ptCutEnabled) {
+				for (short i = 0; i < 3; i++) {
+					double pt_chk = 0;
+					pt_chk += pow( decayVecs[i].GetPx() , 2);
+					pt_chk += pow( decayVecs[i].GetPy() , 2);					
+					pt_chk = sqrt(pt_chk);
+					if (pt_chk < _ptCutMin || pt_chk > _ptCutMax) {
+						accepted = false;
+						continue;
+					}
+				}
+			}
+			if (_etaCutEnabled) {
+				for (short i = 0; i < 3; i++) {
+					double eta_chk = pseudoRapidityLab(
+						decayVecs[i].GetPx(),
+						decayVecs[i].GetPy(),
+						decayVecs[i].GetPz(),
+						decayVecs[i].GetE(),
+						beta
+					);
+					if (eta_chk < _etaCutMin || eta_chk > _etaCutMax) {
+						accepted = false;
+						continue;
+					}
+				}
+			}
+			if (accepted and (tcheck == 0)) {
+				_nmbAccepted++;
+			}
+
+		} while (!accepted || tcheck != 0);
 		if ((iFbadevent == 0) and (tcheck == 0))
 			for (unsigned int i = 0; i < 4; ++i) {
 				starlightParticle daughter(decayVecs[i].GetPx(),
@@ -853,6 +888,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 		double        mom[3]    = {0, 0, 0};
 		double        E         = 0;
 		lorentzVector decayVecs[3];
+		bool accepted;
 		do {
 			double rapidity = 0;
 			pickwy(comenergy, rapidity);
@@ -861,17 +897,17 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 			else if (_VMinterferencemode==1)
 				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			_nmbAttempts++;
-			bool accepted = true;
+			accepted = omega3piDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent);
 			if (_ptCutEnabled) {
 				for (short i = 0; i < 3; i++) {
 					double pt_chk = 0;
 					pt_chk += pow( decayVecs[i].GetPx() , 2);
 					pt_chk += pow( decayVecs[i].GetPy() , 2);
-					pt_chk += pow( decayVecs[i].GetPz() , 2);
+					//pt_chk += pow( decayVecs[i].GetPz() , 2); //The z- component shouldn't be part of transverse momentum
 					pt_chk = sqrt(pt_chk);
 					if (pt_chk < _ptCutMin || pt_chk > _ptCutMax) {
 						accepted = false;
-						break;
+						continue;
 					}
 				}
 			}
@@ -891,14 +927,14 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 					);
 					if (eta_chk < _etaCutMin || eta_chk > _etaCutMax) {
 						accepted = false;
-						break;
+						continue;
 					}
 				}
 			}
-			if (accepted) {
+			if (accepted and (tcheck == 0)) {
 				_nmbAccepted++;
 			}
-		} while (!omega3piDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent));
+		} while (!accepted || tcheck != 0);
 		if ((iFbadevent == 0) and (tcheck == 0))
 			for (unsigned int i = 0; i < 3; ++i) {
 				starlightParticle daughter(decayVecs[i].GetPx(),

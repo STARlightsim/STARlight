@@ -384,12 +384,12 @@ double Gammagammasingle::pp2(double E)
 
 
 //______________________________________________________________________________
-void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &px1,double &py1,double &pz1,double &px2,double &py2,double &pz2,int &iFbadevent)
+void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &E1,double &px1,double &py1,double &pz1,double& E2,double &px2,double &py2,double &pz2,int &iFbadevent)
 {
   //     This routine decays a particle into two particles of mass mdec,
   //     taking spin into account
   
-  double mdec=0.,E1=0.,E2=0.;
+  double mdec=0.;
   double pmag,ytest=0.;
   double phi,theta,xtest,dndtheta,Ecm;
   double  betax,betay,betaz;
@@ -547,21 +547,50 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
   int ievent = 0;
   int iFbadevent=0;
   starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
-  double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
-  double px3=0.,px4=0.,py3=0.,py4=0.,pz3=0.,pz4=0.;
+  double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.,E2=0.,E1=0.;
+  double px3=0.,px4=0.,py3=0.,py4=0.,pz3=0.,pz4=0.,E3=0.,E4=0.;
   double xtest=0.,ztest=0.;
+  bool accepted;
   switch(_GGsingInputpidtest){
   case starlightConstants::ZOVERZ03:
+
+    do{
     //Decays into two pairs.
     parentmomx=parentmomx/2.;
     parentmomy=parentmomy/2.;
     parentmomz=parentmomz/2.;
+    accepted = true;
+    _nmbAttempts++;
     //Pair #1	
-    twoBodyDecay(ipid,comenergy/2.,parentmomx,parentmomy,parentmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+    twoBodyDecay(ipid,comenergy/2.,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
     //Pair #2
-    twoBodyDecay(ipid,comenergy/2.,parentmomx,parentmomy,parentmomz,px3,py3,pz3,px4,py4,pz4,iFbadevent);
+    twoBodyDecay(ipid,comenergy/2.,parentmomx,parentmomy,parentmomz,E3,px3,py3,pz3,E4,px4,py4,pz4,iFbadevent);
     //Now add them to vectors to be written out later.
-		
+    
+    if(_ptCutEnabled){
+      double pt1chk = sqrt(px1*px1 + py1*py1);
+      double pt2chk = sqrt(px2*px2 + py2*py2);
+      double pt3chk = sqrt(px3*px3 + py3*py3);
+      double pt4chk = sqrt(px4*px4 + py4*py4);
+      if(pt1chk < _ptCutMin || pt1chk >_ptCutMax || pt2chk < _ptCutMin || pt2chk >_ptCutMax || pt3chk < _ptCutMin || pt3chk >_ptCutMax || pt4chk < _ptCutMin || pt4chk >_ptCutMax){
+        accepted = false;
+        continue;
+      }
+    }
+    if(_etaCutEnabled){
+      double eta1chk = pseudoRapidityLab(px1,py1,pz1,E1,beta);
+      double eta2chk = pseudoRapidityLab(px2,py2,pz2,E2,beta);
+      double eta3chk = pseudoRapidityLab(px3,py3,pz3,E3,beta);
+      double eta4chk = pseudoRapidityLab(px4,py4,pz4,E4,beta);
+      if(eta1chk < _etaCutMin || eta1chk >_etaCutMax || eta2chk < _etaCutMin || eta2chk >_etaCutMax || eta3chk < _etaCutMin || eta3chk >_etaCutMax || eta4chk < _etaCutMin || eta4chk >_etaCutMax){
+        accepted = false;
+        continue;
+      }
+    }
+    if(accepted and (iFbadevent==0)){
+      _nmbAccepted++;
+    }
+    }while(!accepted || iFbadevent !=0);
     single._numberOfTracks=4;//number of tracks per event
     if (iFbadevent==0){
       xtest = _randy->Rndom();
@@ -610,8 +639,34 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
     break;
   case starlightConstants::F2:
   case starlightConstants::F2PRIME:
-    twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
-    
+    do{
+      accepted = true;
+      _nmbAttempts++;
+      twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
+
+      if(_ptCutEnabled){
+        double pt1chk = sqrt(px1*px1 + py1*py1);
+        double pt2chk = sqrt(px2*px2 + py2*py2);
+        
+        if(pt1chk < _ptCutMin || pt1chk >_ptCutMax || pt2chk < _ptCutMin || pt2chk >_ptCutMax ){
+          accepted = false;
+          continue;
+        }
+      }
+      if(_etaCutEnabled){
+        double eta1chk = pseudoRapidityLab(px1,py1,pz1,E1,beta);
+        double eta2chk = pseudoRapidityLab(px2,py2,pz2,E2,beta);
+        
+        if(eta1chk < _etaCutMin || eta1chk >_etaCutMax || eta2chk < _etaCutMin || eta2chk >_etaCutMax ){
+          accepted = false;
+          continue;
+        }
+      }
+      if(accepted and (iFbadevent == 0)){
+        _nmbAccepted++;
+      }
+    }while(!accepted || iFbadevent != 0);
+
     single._numberOfTracks=2;
     if (iFbadevent==0){
       xtest = _randy->Rndom();
@@ -638,7 +693,34 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
     break;
 
   case starlightConstants::AXION:      // AXION HACK, start
-    twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+      do{
+      accepted = true;
+      _nmbAttempts++;
+      twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
+
+      if(_ptCutEnabled){
+        double pt1chk = sqrt(px1*px1 + py1*py1);
+        double pt2chk = sqrt(px2*px2 + py2*py2);
+        
+        if(pt1chk < _ptCutMin || pt1chk >_ptCutMax || pt2chk < _ptCutMin || pt2chk >_ptCutMax ){
+          accepted = false;
+          continue;
+        }
+      }
+      if(_etaCutEnabled){
+        double eta1chk = pseudoRapidityLab(px1,py1,pz1,E1,beta);
+        double eta2chk = pseudoRapidityLab(px2,py2,pz2,E2,beta);
+        
+        if(eta1chk < _etaCutMin || eta1chk >_etaCutMax || eta2chk < _etaCutMin || eta2chk >_etaCutMax ){
+          accepted = false;
+          continue;
+        }
+      }
+      if(accepted and (iFbadevent == 0)){
+        _nmbAccepted++;
+      }
+    }while(!accepted || iFbadevent != 0);
+    
 
     single._numberOfTracks=2;
     if (iFbadevent==0){
