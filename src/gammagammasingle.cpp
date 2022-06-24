@@ -520,6 +520,7 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
     single.px[i]=0.;
     single.py[i]=0.;
     single.pz[i]=0.;
+    single.E[i] =0.;
     single._fsParticle[i]=starlightConstants::UNKNOWN;
     single._charge[i]=0;
   }
@@ -527,10 +528,7 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
   pickw(comenergy);
   picky(rapidity);
   parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
-  //--------------------------------------------------------------
-  //-----------------------------------------------------------------
-  //------------------------------------------------------------------------
-  if (beta.X() < 0) exp(10);// to be re-written to implement pseudorapidityLab(px1,py1,pz1,E,beta.)
+  
   
   if(_GGsingInputpidtest != starlightConstants::F2 && _GGsingInputpidtest != starlightConstants::F2PRIME && _GGsingInputpidtest != starlightConstants::AXION)
   {
@@ -616,21 +614,25 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
       single.px[0]=px1;
       single.py[0]=py1;
       single.pz[0]=pz1;
+      single.E[0] =E1;
       single._fsParticle[0]=ipid*single._charge[0];
       //Track #2                                                                                                                      
       single.px[1]=px2;
       single.py[1]=py2;
       single.pz[1]=pz2;
+      single.E[1] =E2;
       single._fsParticle[1]=ipid*single._charge[1];
       //Track #3
       single.px[2]=px3;
       single.py[2]=py3;
       single.pz[2]=pz3;
+      single.E[2] =E3;
       single._fsParticle[2]=ipid*single._charge[2];
       //Track #4
       single.px[3]=px4;
       single.py[3]=py4;
       single.pz[3]=pz4;
+      single.E[3] =E4;
       single._fsParticle[3]=ipid*single._charge[3];
       
       ievent=ievent+1;
@@ -682,11 +684,13 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
       single.px[0]=px1;
       single.py[0]=py1;
       single.pz[0]=pz1;
+      single.E[0] =E1;
       single._fsParticle[0]=ipid*single._charge[0]; 
       //Track #2
       single.px[1]=px2;
       single.py[1]=py2;
       single.pz[1]=pz2;
+      single.E[1] =E2;
       single._fsParticle[1]=ipid*single._charge[1];
       ievent=ievent+1;
     }
@@ -732,11 +736,13 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
       single.px[0]=px1;
       single.py[0]=py1;
       single.pz[0]=pz1;
+      single.E[0] =E1;
       single._fsParticle[0]=ipid;
       //Track #2
       single.px[1]=px2;
       single.py[1]=py2;
       single.pz[1]=pz2;
+      single.E[1] =E2;
       single._fsParticle[1]=ipid;
       ievent=ievent+1;
 

@@ -49,7 +49,7 @@ upcEvent::upcEvent(starlightConstants::event &ev) :
 			  ev.px[i], 
 			  ev.py[i], 
 			  ev.pz[i], 
-			  starlightConstants::UNKNOWN, 
+			  ev.E[i], 
 			  starlightConstants::UNKNOWN, 
 			  ev._fsParticle[i],
 			  ev._charge[i]

@@ -136,7 +136,7 @@ namespace starlightConstants
 	public:
 
 		int _numberOfTracks;
-		double px[30],py[30],pz[30];
+		double px[30],py[30],pz[30],E[30];//momentum and energy
 		int _fsParticle[30];
 		int _charge[30];
 		//To help track mothers and daughters produced through pythia.

@@ -552,6 +552,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
 	leptonpair.px[i]=0.;
 	leptonpair.py[i]=0.;
 	leptonpair.pz[i]=0.;
+    leptonpair.E[i] =0.;
 	leptonpair._fsParticle[i]=starlightConstants::UNKNOWN;
 	leptonpair._charge[i]=0;
     }
@@ -579,12 +580,14 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
 	leptonpair.px[0]=px1;
 	leptonpair.py[0]=py1;
 	leptonpair.pz[0]=pz1;
+    leptonpair.E[0] = E1;
 	leptonpair._fsParticle[0]=ipid; 
 	leptonpair._charge[0]=q1;
 
 	leptonpair.px[1]=px2;
 	leptonpair.py[1]=py2;
 	leptonpair.pz[1]=pz2;
+    leptonpair.E[1] =E2;
 	leptonpair._fsParticle[1]=ipid;
 	leptonpair._charge[1]=q2;
 
