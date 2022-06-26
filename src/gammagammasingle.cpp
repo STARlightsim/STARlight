@@ -525,13 +525,14 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
     single._charge[i]=0;
   }
   
-  pickw(comenergy);
-  picky(rapidity);
-  parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
+  
   
   
   if(_GGsingInputpidtest != starlightConstants::F2 && _GGsingInputpidtest != starlightConstants::F2PRIME && _GGsingInputpidtest != starlightConstants::AXION)
   {
+    pickw(comenergy);
+    picky(rapidity);
+    parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
 #ifdef ENABLE_PYTHIA
     starlightParticle particle(parentmomx,parentmomy,parentmomz, parentE, getMass(),_GGsingInputpidtest , 0);
   
@@ -553,6 +554,10 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
   case starlightConstants::ZOVERZ03:
 
     do{
+      pickw(comenergy);
+      picky(rapidity);
+      parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
+  
     //Decays into two pairs.
     parentmomx=parentmomx/2.;
     parentmomy=parentmomy/2.;
@@ -642,6 +647,9 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
   case starlightConstants::F2:
   case starlightConstants::F2PRIME:
     do{
+      pickw(comenergy);
+      picky(rapidity);
+      parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
       accepted = true;
       _nmbAttempts++;
       twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
@@ -697,7 +705,10 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
     break;
 
   case starlightConstants::AXION:      // AXION HACK, start
-      do{
+    do{
+      pickw(comenergy);
+      picky(rapidity);
+      parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
       accepted = true;
       _nmbAttempts++;
       twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
