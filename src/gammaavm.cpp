@@ -829,16 +829,21 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 		double        mom[3]    = {0, 0, 0};
 		double        E         = 0;
 		lorentzVector decayVecs[4];
-		bool accepted = true;
-		do {
-			double rapidity = 0;
+		bool accepted;
+		double rapidity = 0;
+		do {			
 			pickwy(comenergy, rapidity);
 			if (_VMinterferencemode == 0)
 				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			else if (_VMinterferencemode==1)
 				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			_nmbAttempts++;
-			accepted = fourBodyDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent);
+			accepted = true;
+			if(!fourBodyDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent))
+			{
+				accepted = false;
+				continue;
+			}
 
 			if (_ptCutEnabled) {
 				for (short i = 0; i < 3; i++) {
@@ -889,15 +894,19 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 		double        E         = 0;
 		lorentzVector decayVecs[3];
 		bool accepted;
-		do {
-			double rapidity = 0;
+		double rapidity = 0;
+		do {			
 			pickwy(comenergy, rapidity);
 			if (_VMinterferencemode == 0)
 				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			else if (_VMinterferencemode==1)
 				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			_nmbAttempts++;
-			accepted = omega3piDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent);
+			accepted = true;
+			if(!omega3piDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent)){
+				accepted = false;
+				continue;
+			}
 			if (_ptCutEnabled) {
 				for (short i = 0; i < 3; i++) {
 					double pt_chk = 0;
