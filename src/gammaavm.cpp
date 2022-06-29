@@ -831,7 +831,9 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 		lorentzVector decayVecs[4];
 		bool accepted;
 		double rapidity = 0;
-		do {			
+		do {
+			tcheck = 0;
+			iFbadevent = 0;			
 			pickwy(comenergy, rapidity);
 			if (_VMinterferencemode == 0)
 				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
@@ -839,7 +841,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			_nmbAttempts++;
 			accepted = true;
-			if(!fourBodyDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent))
+			if(tcheck != 0 || !fourBodyDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent))
 			{
 				accepted = false;
 				continue;
@@ -853,7 +855,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 					pt_chk = sqrt(pt_chk);
 					if (pt_chk < _ptCutMin || pt_chk > _ptCutMax) {
 						accepted = false;
-						continue;
+						break;
 					}
 				}
 			}
@@ -868,7 +870,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 					);
 					if (eta_chk < _etaCutMin || eta_chk > _etaCutMax) {
 						accepted = false;
-						continue;
+						break;
 					}
 				}
 			}
@@ -895,7 +897,9 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 		lorentzVector decayVecs[3];
 		bool accepted;
 		double rapidity = 0;
-		do {			
+		do {
+			tcheck = 0;
+			iFbadevent = 0;			
 			pickwy(comenergy, rapidity);
 			if (_VMinterferencemode == 0)
 				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
@@ -903,7 +907,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			_nmbAttempts++;
 			accepted = true;
-			if(!omega3piDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent)){
+			if(tcheck != 0 || !omega3piDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent)){
 				accepted = false;
 				continue;
 			}
@@ -916,7 +920,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 					pt_chk = sqrt(pt_chk);
 					if (pt_chk < _ptCutMin || pt_chk > _ptCutMax) {
 						accepted = false;
-						continue;
+						break;
 					}
 				}
 			}
@@ -936,7 +940,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 					);
 					if (eta_chk < _etaCutMin || eta_chk > _etaCutMax) {
 						accepted = false;
-						continue;
+						break;
 					}
 				}
 			}
@@ -964,6 +968,9 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 		double E2=0.,E1=0., px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
 		bool accepted = false;
 		do{
+			tcheck = 0;
+			iFbadevent = 0;
+
 			pickwy(comenergy,rapidity);
 
 			if (_VMinterferencemode==0){
@@ -977,6 +984,10 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 
                         vmpid = ipid;
 			twoBodyDecay(ipid,comenergy,momx,momy,momz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
+			if(tcheck !=  0 || iFbadevent != 0){
+				accepted = false;
+				continue;
+			}
 			double pt1chk = sqrt(px1*px1+py1*py1);
 			double pt2chk = sqrt(px2*px2+py2*py2);
 			double eta1 = pseudoRapidityLab(px1, py1, pz1,E1,beta);
