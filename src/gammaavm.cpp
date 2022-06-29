@@ -985,7 +985,6 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
                         vmpid = ipid;
 			twoBodyDecay(ipid,comenergy,momx,momy,momz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
 			if(tcheck !=  0 || iFbadevent != 0){
-				accepted = false;
 				continue;
 			}
 			double pt1chk = sqrt(px1*px1+py1*py1);
@@ -1015,7 +1014,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 			}
 			else if(!_ptCutEnabled && !_etaCutEnabled)
 				_nmbAccepted++;
-		}while((_ptCutEnabled || _etaCutEnabled) && !accepted);
+		}while(tcheck !=  0 || iFbadevent != 0 || ((_ptCutEnabled || _etaCutEnabled) && !accepted));
 		if (iFbadevent==0&&tcheck==0) {
 			int q1=0,q2=0;
                         int ipid1,ipid2=0;

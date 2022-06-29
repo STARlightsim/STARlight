@@ -625,13 +625,16 @@ upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
    
   
      _nmbAttempts++;
+     iFbadevent =0;
      twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
      double pt1chk = sqrt(px1*px1+py1*py1);
      double pt2chk = sqrt(px2*px2+py2*py2);
 
      double eta1 = pseudoRapidityLab(px1,py1,pz1,E1,beta);//pseudoRapidity(px1, py1, pz1);
      double eta2 = pseudoRapidityLab(px2,py2,pz2,E2,beta);//pseudoRapidity(px2, py2, pz2);
-    
+    if(iFbadevent != 0){
+        continue;
+    }
      if(_ptCutEnabled && !_etaCutEnabled){
        if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
 	 accepted = true;
@@ -655,7 +658,7 @@ upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
      else if(!_ptCutEnabled && !_etaCutEnabled) 
 	_nmbAccepted++;
     
-   }while((_ptCutEnabled || _etaCutEnabled) && !accepted);
+   }while((iFbadevent != 0) || ((_ptCutEnabled || _etaCutEnabled) && !accepted));
    
    if (iFbadevent==0){
      int q1=0,q2=0; 

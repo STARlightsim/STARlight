@@ -554,6 +554,7 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
   case starlightConstants::ZOVERZ03:
 
     do{
+      iFbadevent = 0;
       pickw(comenergy);
       picky(rapidity);
       parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
@@ -647,6 +648,7 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
   case starlightConstants::F2:
   case starlightConstants::F2PRIME:
     do{
+      iFbadevent = 0;
       pickw(comenergy);
       picky(rapidity);
       parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
@@ -706,6 +708,7 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
 
   case starlightConstants::AXION:      // AXION HACK, start
     do{
+      iFbadevent =0;
       pickw(comenergy);
       picky(rapidity);
       parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
