@@ -848,7 +848,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 			}
 
 			if (_ptCutEnabled) {
-				for (short i = 0; i < 3; i++) {
+				for (int i = 0; i < 4; i++) {
 					double pt_chk = 0;
 					pt_chk += pow( decayVecs[i].GetPx() , 2);
 					pt_chk += pow( decayVecs[i].GetPy() , 2);					
@@ -860,7 +860,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 				}
 			}
 			if (_etaCutEnabled) {
-				for (short i = 0; i < 3; i++) {
+				for (int i = 0; i < 4; i++) {
 					double eta_chk = pseudoRapidityLab(
 						decayVecs[i].GetPx(),
 						decayVecs[i].GetPy(),
@@ -912,7 +912,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 				continue;
 			}
 			if (_ptCutEnabled) {
-				for (short i = 0; i < 3; i++) {
+				for (int i = 0; i < 3; i++) {
 					double pt_chk = 0;
 					pt_chk += pow( decayVecs[i].GetPx() , 2);
 					pt_chk += pow( decayVecs[i].GetPy() , 2);
@@ -925,7 +925,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 				}
 			}
 			if (_etaCutEnabled) {
-				for (short i = 0; i < 3; i++) {
+				for (int i = 0; i < 3; i++) {
 					/*double eta_cghk = pseudoRapidity(
 						decayVecs[i].GetPx(),
 						decayVecs[i].GetPy(),
