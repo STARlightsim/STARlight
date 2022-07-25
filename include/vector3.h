@@ -45,6 +45,7 @@ class vector3
       vector3();
       vector3(double *vec);
       vector3(double x, double y, double z);
+	  vector3(const vector3& vec);
       virtual ~vector3();
       
       const double* GetVector() const { return _vec; }

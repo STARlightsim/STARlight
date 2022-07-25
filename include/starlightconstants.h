@@ -56,6 +56,7 @@ namespace starlightConstants
 		TAUON          = 15,
 		TAUONDECAY     = 10015,
 		PROTON         = 2212,
+		PIONNEUTRAL    = 111,
 		PION           = 211,
 		KAONCHARGE     = 321,
 		KAONNEUTRAL    = 310,
@@ -136,7 +137,7 @@ namespace starlightConstants
 	public:
 
 		int _numberOfTracks;
-		double px[30],py[30],pz[30],E[30];//momentum and energy
+		double px[30],py[30],pz[30],E[30],mass[30];//momentum and energy
 		int _fsParticle[30];
 		int _charge[30];
 		//To help track mothers and daughters produced through pythia.

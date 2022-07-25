@@ -201,7 +201,8 @@ void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
 //______________________________________________________________________________                                               
 // decays a particle into three particles with isotropic angular distribution
 bool Gammaavectormeson::omega3piDecay
-(starlightConstants::particleTypeEnum& ipid,
+(starlightConstants::particleTypeEnum& ipid,//This holds the ipid of the charged pion
+starlightConstants::particleTypeEnum& ipid2,// This holds the ipid of the uncharged pion
  const double                  ,           // E (unused)
  const double                  W,          // mass of produced particle
  const double*                 p,          // momentum of produced particle; expected to have size 3
@@ -212,7 +213,8 @@ bool Gammaavectormeson::omega3piDecay
 
 	// set the mass of the daughter particles
 	const double daughterMass = getDaughterMass(ipid);
-	if (parentMass < 3 * daughterMass){
+	const double _2ndDaughterMass = get2ndDaughterMass(ipid2);
+	if (parentMass < (2 * daughterMass + _2ndDaughterMass) ){
 		cout << " ERROR: W=" << parentMass << " GeV too small" << endl;
 		iFbadevent = 1;
 		return false;
@@ -290,7 +292,20 @@ bool Gammaavectormeson::fourBodyDecay
 	return true;
 }
 
-
+double Gammaavectormeson::get2ndDaughterMass(starlightConstants::particleTypeEnum &ipid2)
+{
+	// This is used only for channels producing more than one daughter type. Notably: Omega-3-pions
+	double mdec=0.;
+  
+	switch(_VMpidtest){
+	case starlightConstants::OMEGA_pipipi:
+		mdec = _ip->pionNeutralMass();
+		ipid2 = starlightConstants::PIONNEUTRAL;
+		break;
+	default: cout<<"No 2nddaughtermass defined, gammaavectormeson::getdaughtermass"<<endl;
+	}
+	return mdec;
+}
 //______________________________________________________________________________
 double Gammaavectormeson::getDaughterMass(starlightConstants::particleTypeEnum &ipid)
 {
@@ -821,8 +836,11 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 	int iFbadevent=0;
 	int tcheck=0;
 	starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
+	starlightConstants::particleTypeEnum ipid2 = starlightConstants::UNKNOWN;
         starlightConstants::particleTypeEnum vmpid = starlightConstants::UNKNOWN; 
 
+	double ptCutMin2 = _ptCutMin*_ptCutMin;
+	double ptCutMax2 = _ptCutMax*_ptCutMax;
 	
 	if (_VMpidtest == starlightConstants::FOURPRONG) {
 		double        comenergy = 0;
@@ -849,11 +867,11 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 
 			if (_ptCutEnabled) {
 				for (int i = 0; i < 4; i++) {
-					double pt_chk = 0;
-					pt_chk += pow( decayVecs[i].GetPx() , 2);
-					pt_chk += pow( decayVecs[i].GetPy() , 2);					
-					pt_chk = sqrt(pt_chk);
-					if (pt_chk < _ptCutMin || pt_chk > _ptCutMax) {
+					double pt_chk2 = 0;
+					pt_chk2 += pow( decayVecs[i].GetPx() , 2);
+					pt_chk2 += pow( decayVecs[i].GetPy() , 2);
+
+					if (pt_chk2 < ptCutMin2 || pt_chk2 > ptCutMax2) {
 						accepted = false;
 						break;
 					}
@@ -879,15 +897,16 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 			}
 
 		} while (!accepted || tcheck != 0);
+		double md = getDaughterMass(ipid);
 		if ((iFbadevent == 0) and (tcheck == 0))
 			for (unsigned int i = 0; i < 4; ++i) {
 				starlightParticle daughter(decayVecs[i].GetPx(),
 				                           decayVecs[i].GetPy(),
 				                           decayVecs[i].GetPz(),
-							   sqrt(decayVecs[i].GetPx()*decayVecs[i].GetPx()+decayVecs[i].GetPy()*decayVecs[i].GetPy()+decayVecs[i].GetPz()*decayVecs[i].GetPz()+0.139*0.139),//energy 
-							   starlightConstants::UNKNOWN,  // _mass
+							   sqrt(decayVecs[i].GetPx()*decayVecs[i].GetPx()+decayVecs[i].GetPy()*decayVecs[i].GetPy()+decayVecs[i].GetPz()*decayVecs[i].GetPz()+md*md),//energy 
+							   md,  // _mass
 							   ipid*(2*(i/2)-1),   // make half of the particles pi^+, half pi^-
-							   i/2);
+							   (2*(i/2)-1));
 				event.addParticle(daughter);
 			}
 	} else if (_VMpidtest == starlightConstants::OMEGA_pipipi) {
@@ -896,7 +915,8 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 		double        E         = 0;
 		lorentzVector decayVecs[3];
 		bool accepted;
-		double rapidity = 0;
+		double mass,rapidity = 0;
+		int charge;
 		do {
 			tcheck = 0;
 			iFbadevent = 0;			
@@ -907,30 +927,25 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			_nmbAttempts++;
 			accepted = true;
-			if(tcheck != 0 || !omega3piDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent)){
+			if(tcheck != 0 || !omega3piDecay(ipid, ipid2, E, comenergy, mom, decayVecs, iFbadevent)){
 				accepted = false;
 				continue;
 			}
 			if (_ptCutEnabled) {
-				for (int i = 0; i < 3; i++) {
-					double pt_chk = 0;
-					pt_chk += pow( decayVecs[i].GetPx() , 2);
-					pt_chk += pow( decayVecs[i].GetPy() , 2);
-					//pt_chk += pow( decayVecs[i].GetPz() , 2); //The z- component shouldn't be part of transverse momentum
-					pt_chk = sqrt(pt_chk);
-					if (pt_chk < _ptCutMin || pt_chk > _ptCutMax) {
+				for (int i = 0; i < 2/*//only the first two particles are charged particles*/; i++) {
+					double pt_chk2 = 0;
+					pt_chk2 += pow( decayVecs[i].GetPx() , 2);
+					pt_chk2 += pow( decayVecs[i].GetPy() , 2);
+					
+					if (pt_chk2 < ptCutMin2 || pt_chk2 > ptCutMax2) {
 						accepted = false;
 						break;
 					}
 				}
 			}
 			if (_etaCutEnabled) {
-				for (int i = 0; i < 3; i++) {
-					/*double eta_cghk = pseudoRapidity(
-						decayVecs[i].GetPx(),
-						decayVecs[i].GetPy(),
-						decayVecs[i].GetPz()
-					);*/
+				for (int i = 0; i < 2/*//only the first two particles are charged particles*/; i++) {
+					
 					double eta_chk = pseudoRapidityLab(
 						decayVecs[i].GetPx(),
 						decayVecs[i].GetPy(),
@@ -950,13 +965,21 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 		} while (!accepted || tcheck != 0);
 		if ((iFbadevent == 0) and (tcheck == 0))
 			for (unsigned int i = 0; i < 3; ++i) {
+				if(i<2){
+					mass = getDaughterMass(ipid);
+					charge = 2*i - 1;//make the first negative and the second positive.
+				}else{
+					ipid = ipid2;
+					charge = 0; // the last particle is neutral. A neutral pion
+					mass = get2ndDaughterMass(ipid2);
+				}
 				starlightParticle daughter(decayVecs[i].GetPx(),
 				                           decayVecs[i].GetPy(),
 				                           decayVecs[i].GetPz(),
-							   sqrt(decayVecs[i].GetPx()*decayVecs[i].GetPx()+decayVecs[i].GetPy()*decayVecs[i].GetPy()+decayVecs[i].GetPz()*decayVecs[i].GetPz()+0.139*0.139),//energy 
-							   starlightConstants::UNKNOWN,  // _mass
-							   ipid*(2*(i/2)-1),   // make half of the particles pi^+, half pi^-
-							   i/2);
+							   sqrt(decayVecs[i].GetPx()*decayVecs[i].GetPx()+decayVecs[i].GetPy()*decayVecs[i].GetPy()+decayVecs[i].GetPz()*decayVecs[i].GetPz()+mass*mass),//energy 
+							   mass,  // _mass
+							   ipid*(charge==0? 1: charge),   // make first two particles pi^-, pi^+ and last uncharged
+							   charge);
 				event.addParticle(daughter);
 			}
 	} else {
@@ -987,13 +1010,13 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 			if(tcheck !=  0 || iFbadevent != 0){
 				continue;
 			}
-			double pt1chk = sqrt(px1*px1+py1*py1);
-			double pt2chk = sqrt(px2*px2+py2*py2);
+			double pt1chk2 = px1*px1+py1*py1;
+			double pt2chk2 = px2*px2+py2*py2;
 			double eta1 = pseudoRapidityLab(px1, py1, pz1,E1,beta);
 			double eta2 = pseudoRapidityLab(px2, py2, pz2,E2,beta);
 
 			if(_ptCutEnabled && !_etaCutEnabled){
-				if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
+				if(pt1chk2 > ptCutMin2 && pt1chk2 < ptCutMax2 &&  pt2chk2 > ptCutMin2 && pt2chk2 < ptCutMax2){
 					accepted = true;
 					_nmbAccepted++;
 				}
@@ -1005,7 +1028,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 				}
 			}
 			else if(_ptCutEnabled && _etaCutEnabled){
-				if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
+				if(pt1chk2 > ptCutMin2 && pt1chk2 < ptCutMax2 &&  pt2chk2 > ptCutMin2 && pt2chk2 < ptCutMax2){
 					if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){
 						accepted = true;
 						_nmbAccepted++;
@@ -1040,11 +1063,11 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 
 			double md = getDaughterMass(vmpid);
                         double Ed1 = sqrt(md*md+px1*px1+py1*py1+pz1*pz1); 
-			starlightParticle particle1(px1, py1, pz1, Ed1, starlightConstants::UNKNOWN, ipid1, q1);
+			starlightParticle particle1(px1, py1, pz1, Ed1,md, ipid1, q1);
 			event.addParticle(particle1);
 
                         double Ed2 = sqrt(md*md+px2*px2+py2*py2+pz2*pz2); 
-			starlightParticle particle2(px2, py2, pz2, Ed2, starlightConstants::UNKNOWN, ipid2, q2);
+			starlightParticle particle2(px2, py2, pz2, Ed2, md, ipid2, q2);
 			event.addParticle(particle2);
 
 
@@ -1054,13 +1077,7 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 	return event;
 
 }
-double Gammaavectormeson::pseudoRapidity(double px, double py, double pz)
-{
-	double pT = sqrt(px*px + py*py);
-	double p = sqrt(pz*pz + pT*pT);
-	double eta = -99.9; if((p-pz) != 0){eta = 0.5*log((p+pz)/(p-pz));}
-	return eta;
-}
+
 
 //______________________________________________________________________________
 Gammaanarrowvm::Gammaanarrowvm(const inputParameters& input, randomGenerator* randy, beamBeamSystem& bbsystem):Gammaavectormeson(input, randy, bbsystem)

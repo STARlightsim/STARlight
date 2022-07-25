@@ -384,7 +384,7 @@ double Gammagammasingle::pp2(double E)
 
 
 //______________________________________________________________________________
-void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &E1,double &px1,double &py1,double &pz1,double& E2,double &px2,double &py2,double &pz2,int &iFbadevent)
+void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &E1,double &px1,double &py1,double &pz1,double& E2,double &px2,double &py2,double &pz2,double &mass,int &iFbadevent)
 {
   //     This routine decays a particle into two particles of mass mdec,
   //     taking spin into account
@@ -416,7 +416,7 @@ void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,d
   default :
     cout<<"No default mass selected for single photon-photon particle, expect errant results"<<endl;
   }
-  
+  mass = mdec;
   //Calculating the momentum's magnitude
     if(W < 2*mdec){
       cout<<" ERROR: W="<<W<<endl;
@@ -521,6 +521,7 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
     single.py[i]=0.;
     single.pz[i]=0.;
     single.E[i] =0.;
+    single.mass[i] = 0.;
     single._fsParticle[i]=starlightConstants::UNKNOWN;
     single._charge[i]=0;
   }
@@ -545,6 +546,10 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
 
   int ievent = 0;
   int iFbadevent=0;
+  double mass = 0.;
+  double mass2 =0;
+  double ptCutMin2 = _ptCutMin*_ptCutMin;
+  double ptCutMax2 = _ptCutMax*_ptCutMax;
   starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
   double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.,E2=0.,E1=0.;
   double px3=0.,px4=0.,py3=0.,py4=0.,pz3=0.,pz4=0.,E3=0.,E4=0.;
@@ -566,17 +571,18 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
     accepted = true;
     _nmbAttempts++;
     //Pair #1	
-    twoBodyDecay(ipid,comenergy/2.,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
+    twoBodyDecay(ipid,comenergy/2.,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,mass,iFbadevent);
     //Pair #2
-    twoBodyDecay(ipid,comenergy/2.,parentmomx,parentmomy,parentmomz,E3,px3,py3,pz3,E4,px4,py4,pz4,iFbadevent);
+    
+    twoBodyDecay(ipid,comenergy/2.,parentmomx,parentmomy,parentmomz,E3,px3,py3,pz3,E4,px4,py4,pz4,mass2,iFbadevent);
     //Now add them to vectors to be written out later.
     
     if(_ptCutEnabled){
-      double pt1chk = sqrt(px1*px1 + py1*py1);
-      double pt2chk = sqrt(px2*px2 + py2*py2);
-      double pt3chk = sqrt(px3*px3 + py3*py3);
-      double pt4chk = sqrt(px4*px4 + py4*py4);
-      if(pt1chk < _ptCutMin || pt1chk >_ptCutMax || pt2chk < _ptCutMin || pt2chk >_ptCutMax || pt3chk < _ptCutMin || pt3chk >_ptCutMax || pt4chk < _ptCutMin || pt4chk >_ptCutMax){
+      double pt1chk2 = px1*px1 + py1*py1;
+      double pt2chk2 = px2*px2 + py2*py2;
+      double pt3chk2 = px3*px3 + py3*py3;
+      double pt4chk2 = px4*px4 + py4*py4;
+      if(pt1chk2 < ptCutMin2 || pt1chk2 > ptCutMax2 || pt2chk2 < ptCutMin2 || pt2chk2 > ptCutMax2 || pt3chk2 < ptCutMin2 || pt3chk2 > ptCutMax2 || pt4chk2 < ptCutMin2 || pt4chk2 > ptCutMax2){
         accepted = false;
         continue;
       }
@@ -621,24 +627,28 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
       single.py[0]=py1;
       single.pz[0]=pz1;
       single.E[0] =E1;
+      single.mass[0] = mass;
       single._fsParticle[0]=ipid*single._charge[0];
       //Track #2                                                                                                                      
       single.px[1]=px2;
       single.py[1]=py2;
       single.pz[1]=pz2;
       single.E[1] =E2;
+      single.mass[1] = mass;
       single._fsParticle[1]=ipid*single._charge[1];
       //Track #3
       single.px[2]=px3;
       single.py[2]=py3;
       single.pz[2]=pz3;
       single.E[2] =E3;
+      single.mass[2] = mass2;
       single._fsParticle[2]=ipid*single._charge[2];
       //Track #4
       single.px[3]=px4;
       single.py[3]=py4;
       single.pz[3]=pz4;
       single.E[3] =E4;
+      single.mass[3] = mass2;
       single._fsParticle[3]=ipid*single._charge[3];
       
       ievent=ievent+1;
@@ -654,13 +664,13 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
       parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
       accepted = true;
       _nmbAttempts++;
-      twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
+      twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,mass,iFbadevent);
 
       if(_ptCutEnabled){
-        double pt1chk = sqrt(px1*px1 + py1*py1);
-        double pt2chk = sqrt(px2*px2 + py2*py2);
+        double pt1chk2 = px1*px1 + py1*py1;
+        double pt2chk2 = px2*px2 + py2*py2;
         
-        if(pt1chk < _ptCutMin || pt1chk >_ptCutMax || pt2chk < _ptCutMin || pt2chk >_ptCutMax ){
+        if(pt1chk2 < ptCutMin2 || pt1chk2 > ptCutMax2 || pt2chk2 < ptCutMin2 || pt2chk2 > ptCutMax2 ){
           accepted = false;
           continue;
         }
@@ -695,12 +705,14 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
       single.py[0]=py1;
       single.pz[0]=pz1;
       single.E[0] =E1;
+      single.mass[0] = mass;
       single._fsParticle[0]=ipid*single._charge[0]; 
       //Track #2
       single.px[1]=px2;
       single.py[1]=py2;
       single.pz[1]=pz2;
       single.E[1] =E2;
+      single.mass[1] = mass;
       single._fsParticle[1]=ipid*single._charge[1];
       ievent=ievent+1;
     }
@@ -714,13 +726,13 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
       parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
       accepted = true;
       _nmbAttempts++;
-      twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
+      twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,mass,iFbadevent);
 
       if(_ptCutEnabled){
-        double pt1chk = sqrt(px1*px1 + py1*py1);
-        double pt2chk = sqrt(px2*px2 + py2*py2);
+        double pt1chk2 = px1*px1 + py1*py1;
+        double pt2chk2 = px2*px2 + py2*py2;
         
-        if(pt1chk < _ptCutMin || pt1chk >_ptCutMax || pt2chk < _ptCutMin || pt2chk >_ptCutMax ){
+        if(pt1chk2 < ptCutMin2 || pt1chk2 > ptCutMax2 || pt2chk2 < ptCutMin2 || pt2chk2 > ptCutMax2 ){
           accepted = false;
           continue;
         }
@@ -751,12 +763,14 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
       single.py[0]=py1;
       single.pz[0]=pz1;
       single.E[0] =E1;
+      single.mass[0] = mass;
       single._fsParticle[0]=ipid;
       //Track #2
       single.px[1]=px2;
       single.py[1]=py2;
       single.pz[1]=pz2;
       single.E[1] =E2;
+      single.mass[1] = mass;
       single._fsParticle[1]=ipid;
       ievent=ievent+1;
 

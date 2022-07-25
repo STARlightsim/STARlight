@@ -47,6 +47,7 @@ class upcEvent
 
       upcEvent();
       upcEvent(starlightConstants::event &ev);
+      upcEvent(const upcEvent& event);
       ~upcEvent();
 
       void addParticle(starlightParticle &part) { _particles.push_back(part); }

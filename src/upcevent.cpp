@@ -50,12 +50,17 @@ upcEvent::upcEvent(starlightConstants::event &ev) :
 			  ev.py[i], 
 			  ev.pz[i], 
 			  ev.E[i], 
-			  starlightConstants::UNKNOWN, 
+			  ev.mass[i], 
 			  ev._fsParticle[i],
 			  ev._charge[i]
 			  );
       addParticle(p);
     }
+}
+upcEvent::upcEvent(const upcEvent& event){
+  _particles = event._particles;
+  _vertices = event._vertices;
+  _gammaEnergies = event._gammaEnergies;
 }
 
 upcEvent::~upcEvent()

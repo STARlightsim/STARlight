@@ -553,6 +553,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
 	leptonpair.py[i]=0.;
 	leptonpair.pz[i]=0.;
     leptonpair.E[i] =0.;
+    leptonpair.mass[i] = 0.;
 	leptonpair._fsParticle[i]=starlightConstants::UNKNOWN;
 	leptonpair._charge[i]=0;
     }
@@ -575,12 +576,14 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
 	else{
 	    q1=-1;
 	    q2=1;
-	}	
+	}
+    double mlepton = getMass();	
 	leptonpair._numberOfTracks=2;//leptonpairs are two tracks...
 	leptonpair.px[0]=px1;
 	leptonpair.py[0]=py1;
 	leptonpair.pz[0]=pz1;
     leptonpair.E[0] = E1;
+    leptonpair.mass[0] = mlepton;
 	leptonpair._fsParticle[0]=ipid; 
 	leptonpair._charge[0]=q1;
 
@@ -588,6 +591,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
 	leptonpair.py[1]=py2;
 	leptonpair.pz[1]=pz2;
     leptonpair.E[1] =E2;
+    leptonpair.mass[1] =mlepton;
 	leptonpair._fsParticle[1]=ipid;
 	leptonpair._charge[1]=q2;
 
@@ -614,6 +618,8 @@ upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
    
    double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.,E2=0.,E1=0.;
    bool accepted = false;
+   double ptCutMin2 = _ptCutMin*_ptCutMin;
+   double ptCutMax2 = _ptCutMax*_ptCutMax;
    do{ 
      //this function decays particles and writes events to a file
      //zero out the event structure
@@ -627,8 +633,9 @@ upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
      _nmbAttempts++;
      iFbadevent =0;
      twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);
-     double pt1chk = sqrt(px1*px1+py1*py1);
-     double pt2chk = sqrt(px2*px2+py2*py2);
+     double pt1chk2 = px1*px1+py1*py1;
+     double pt2chk2 = px2*px2+py2*py2;
+     
 
      double eta1 = pseudoRapidityLab(px1,py1,pz1,E1,beta);//pseudoRapidity(px1, py1, pz1);
      double eta2 = pseudoRapidityLab(px2,py2,pz2,E2,beta);//pseudoRapidity(px2, py2, pz2);
@@ -636,9 +643,9 @@ upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
         continue;
     }
      if(_ptCutEnabled && !_etaCutEnabled){
-       if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
-	 accepted = true;
-	 _nmbAccepted++;
+       if(pt1chk2 > ptCutMin2 && pt1chk2 < ptCutMax2 &&  pt2chk2 > ptCutMin2 && pt2chk2 < ptCutMax2){
+	    accepted = true;
+	    _nmbAccepted++;
        }
      }
      else if(!_ptCutEnabled && _etaCutEnabled){
@@ -648,7 +655,7 @@ upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
        }
      }
      else if(_ptCutEnabled && _etaCutEnabled){
-       if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
+       if(pt1chk2 > ptCutMin2 && pt1chk2 < ptCutMax2 &&  pt2chk2 > ptCutMin2 && pt2chk2 < ptCutMax2){
 	 if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){
 	   accepted = true;
 	    _nmbAccepted++;
@@ -679,10 +686,10 @@ upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
      E1 = sqrt( mlepton*mlepton + px1*px1 + py1*py1 + pz1*pz1 ); 
      E2 = sqrt( mlepton*mlepton + px2*px2 + py2*py2 + pz2*pz2 ); 
 
-     starlightParticle particle1(px1, py1, pz1, E1, starlightConstants::UNKNOWN, -q1*ipid, q1);
+     starlightParticle particle1(px1, py1, pz1, E1, mlepton, -q1*ipid, q1);
      event.addParticle(particle1);
      
-     starlightParticle particle2(px2, py2, pz2, E2, starlightConstants::UNKNOWN, -q2*ipid, q2);
+     starlightParticle particle2(px2, py2, pz2, E2, mlepton, -q2*ipid, q2);
      event.addParticle(particle2);
      
     }

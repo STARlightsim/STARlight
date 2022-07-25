@@ -105,9 +105,14 @@ eventChannel::pseudoRapidity(const double px,
 {
   const double pT= sqrt(px * px + py * py);
   const double p = sqrt(pz * pz + pT * pT);
-  double eta = -99.9;  // instead of special value, std::numeric_limits<double>::quiet_NaN() should be used
+  double eta = 1.0 * pow(10.0,20);  // instead of special value, std::numeric_limits<double>::quiet_NaN() should be used
   if ((p - pz) != 0)
 	  eta = 0.5 * log((p + pz)/(p - pz));
+  else
+  {
+    if (pz<0)
+      eta = eta*-1.0;
+  }
   return eta;
 }
 
