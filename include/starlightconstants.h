@@ -131,7 +131,10 @@ namespace starlightConstants
                 NUCLEON             = 2  //gamma+p or incoherent gamma+A
         };        
 	
-	//Structure for each event's set of tracks.
+	/**
+	 * @brief Structure for each event's set of tracks.
+	 * Energy and Mass was added to ensure correct conversion of the struct to a upcEvent, and to fix the incorrect Lorentz transformation bug caused by this improper conversion
+	 */
 	struct event{
  
 	public:

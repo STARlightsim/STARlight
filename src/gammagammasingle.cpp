@@ -382,8 +382,25 @@ double Gammagammasingle::pp2(double E)
   return pp;
 }
 
-
-//______________________________________________________________________________
+/**
+ * @brief determines the decay products for a decay of this channel.
+ * 
+ * @param ipid [output reference] - The correct ipid of the daughter particles is outputed
+ * @param W [input] - CM energy of collision
+ * @param px0 [input] - CM x-momentum
+ * @param py0  [input] - CM y-momentum
+ * @param pz0 [input] - CM z-momentum
+ * @param E1 [output reference] 1st daughter CM energy
+ * @param px1 [output reference] 1st daughter CM x-momentum
+ * @param py1 [output reference] 1st daughter CM y-momentum
+ * @param pz1 [output reference] 1st daughter CM z-momentum
+ * @param E2 [output reference] 2nd daughter CM Energy
+ * @param px2 [output reference] 2nd daughter CM x-momentum
+ * @param py2 [output reference] 2nd daughter CM y-momentum
+ * @param pz2 [output reference] 2nd daughter CM z-momentum
+ * @param mass [output reference] returns the correct mass of the decay products.
+ * @param iFbadevent [output reference] - Sets to 1 if the decay is unsuccessful ONLY. N.B. It only sets, It never resets (but remains in its initial value) if decay is successful.
+ */
 void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &E1,double &px1,double &py1,double &pz1,double& E2,double &px2,double &py2,double &pz2,double &mass,int &iFbadevent)
 {
   //     This routine decays a particle into two particles of mass mdec,
@@ -416,7 +433,8 @@ void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,d
   default :
     cout<<"No default mass selected for single photon-photon particle, expect errant results"<<endl;
   }
-  mass = mdec;
+  mass = mdec; //returns the determined mass to the output reference parameter.
+
   //Calculating the momentum's magnitude
     if(W < 2*mdec){
       cout<<" ERROR: W="<<W<<endl;
@@ -502,12 +520,18 @@ starlightConstants::event Gammagammasingle::produceEvent(int &/*ievent*/)
 }
 
 
-//______________________________________________________________________________
+/**
+ * @brief Produces an event of the specified Two Photon Channel.
+ * 
+ * @details Approach: properties of decay/daughter particles are temporarily stored in a starlightConstant::event struct and later converted to a upcEvent object.
+ * 
+ * @param beta The boost vector needed to transform particles from CM to Lab frame. Needed for calculating pseudorapidity in Lab Frame.
+ * @return The newly produced event 
+ */
 upcEvent Gammagammasingle::produceEvent(vector3 beta)
 {
 
-  //    returns the vector with the decay particles inside.
-  starlightConstants::event single;
+  starlightConstants::event single;//The structure temporarily storing event properties
   double comenergy = 0.;
   double rapidity = 0.;
   double parentE = 0.;
@@ -547,9 +571,10 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
   int ievent = 0;
   int iFbadevent=0;
   double mass = 0.;
-  double mass2 =0;
-  double ptCutMin2 = _ptCutMin*_ptCutMin;
-  double ptCutMax2 = _ptCutMax*_ptCutMax;
+  double mass2 =0; // This is used for events where we have more than two different decays rather than just one. It keeps track of the masses of the species in case they differ.
+
+  double ptCutMin2 = _ptCutMin*_ptCutMin;//Used to make Pt Cuts comparison without using square roots.
+  double ptCutMax2 = _ptCutMax*_ptCutMax;//Used to make Pt Cuts comparison without using square roots.
   starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
   double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.,E2=0.,E1=0.;
   double px3=0.,px4=0.,py3=0.,py4=0.,pz3=0.,pz4=0.,E3=0.,E4=0.;
@@ -559,7 +584,7 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
   case starlightConstants::ZOVERZ03:
 
     do{
-      iFbadevent = 0;
+      iFbadevent = 0; //Ensures that this is reset after every loop cycle.
       pickw(comenergy);
       picky(rapidity);
       parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
@@ -568,39 +593,40 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
     parentmomx=parentmomx/2.;
     parentmomy=parentmomy/2.;
     parentmomz=parentmomz/2.;
-    accepted = true;
+    accepted = true;//re-initialize the acceptance flag in the loop 
     _nmbAttempts++;
     //Pair #1	
-    twoBodyDecay(ipid,comenergy/2.,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,mass,iFbadevent);
+    twoBodyDecay(ipid,comenergy/2.,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,mass,iFbadevent);//Decaying/Producing the first two daughter
     //Pair #2
     
-    twoBodyDecay(ipid,comenergy/2.,parentmomx,parentmomy,parentmomz,E3,px3,py3,pz3,E4,px4,py4,pz4,mass2,iFbadevent);
-    //Now add them to vectors to be written out later.
+    twoBodyDecay(ipid,comenergy/2.,parentmomx,parentmomy,parentmomz,E3,px3,py3,pz3,E4,px4,py4,pz4,mass2,iFbadevent);//Decaying/producing the 3rd and 4th daughter.
+  
     
-    if(_ptCutEnabled){
-      double pt1chk2 = px1*px1 + py1*py1;
-      double pt2chk2 = px2*px2 + py2*py2;
-      double pt3chk2 = px3*px3 + py3*py3;
-      double pt4chk2 = px4*px4 + py4*py4;
-      if(pt1chk2 < ptCutMin2 || pt1chk2 > ptCutMax2 || pt2chk2 < ptCutMin2 || pt2chk2 > ptCutMax2 || pt3chk2 < ptCutMin2 || pt3chk2 > ptCutMax2 || pt4chk2 < ptCutMin2 || pt4chk2 > ptCutMax2){
+    if(_ptCutEnabled){//carries out pt_Cut checks
+      double pt1chk2 = px1*px1 + py1*py1;// determines the transverse momentum (squared) for daughter 1
+      double pt2chk2 = px2*px2 + py2*py2;//similar as above
+      double pt3chk2 = px3*px3 + py3*py3;//similar as above
+      double pt4chk2 = px4*px4 + py4*py4;//similar as above
+      if(pt1chk2 < ptCutMin2 || pt1chk2 > ptCutMax2 || pt2chk2 < ptCutMin2 || pt2chk2 > ptCutMax2 || pt3chk2 < ptCutMin2 || pt3chk2 > ptCutMax2 || pt4chk2 < ptCutMin2 || pt4chk2 > ptCutMax2){//if any of the 4 particles fall outside the range of ptCuts.
         accepted = false;
         continue;
       }
     }
-    if(_etaCutEnabled){
-      double eta1chk = pseudoRapidityLab(px1,py1,pz1,E1,beta);
-      double eta2chk = pseudoRapidityLab(px2,py2,pz2,E2,beta);
-      double eta3chk = pseudoRapidityLab(px3,py3,pz3,E3,beta);
-      double eta4chk = pseudoRapidityLab(px4,py4,pz4,E4,beta);
-      if(eta1chk < _etaCutMin || eta1chk >_etaCutMax || eta2chk < _etaCutMin || eta2chk >_etaCutMax || eta3chk < _etaCutMin || eta3chk >_etaCutMax || eta4chk < _etaCutMin || eta4chk >_etaCutMax){
+    if(_etaCutEnabled){//Carries out _etaCut checks
+      double eta1chk = pseudoRapidityLab(px1,py1,pz1,E1,beta);//computes the pseudorapidity in the Lab Frame.
+      double eta2chk = pseudoRapidityLab(px2,py2,pz2,E2,beta);//similar as above
+      double eta3chk = pseudoRapidityLab(px3,py3,pz3,E3,beta);//similar as above
+      double eta4chk = pseudoRapidityLab(px4,py4,pz4,E4,beta);//similar as above
+      if(eta1chk < _etaCutMin || eta1chk >_etaCutMax || eta2chk < _etaCutMin || eta2chk >_etaCutMax || eta3chk < _etaCutMin || eta3chk >_etaCutMax || eta4chk < _etaCutMin || eta4chk >_etaCutMax){//if any of the 4 particles fall outside the range of etaCuts
         accepted = false;
         continue;
       }
     }
-    if(accepted and (iFbadevent==0)){
+    if(accepted and (iFbadevent==0)){//keeps count of the successfully accepted events.
       _nmbAccepted++;
     }
-    }while(!accepted || iFbadevent !=0);
+    }while(!accepted || iFbadevent !=0);//repeats the loop if event does not satisfy ptCut etaCut or does not decay successfully
+
     single._numberOfTracks=4;//number of tracks per event
     if (iFbadevent==0){
       xtest = _randy->Rndom();
@@ -622,6 +648,7 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
 	single._charge[2]=-1;//q3=-1;
 	single._charge[3]=1;//q4=1;
       }
+      //storing the remaining event's track details
       //Track #1
       single.px[0]=px1;
       single.py[0]=py1;
@@ -658,48 +685,49 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
   case starlightConstants::F2:
   case starlightConstants::F2PRIME:
     do{
-      iFbadevent = 0;
+      iFbadevent = 0; //Resets this after every loop cycle-to avoid an infinite loop
       pickw(comenergy);
       picky(rapidity);
       parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
-      accepted = true;
+      accepted = true;//Reinitialize the acceptance flag after every loop cycle
       _nmbAttempts++;
-      twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,mass,iFbadevent);
+      twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,mass,iFbadevent);//Decaying/producing daughter particles
 
-      if(_ptCutEnabled){
-        double pt1chk2 = px1*px1 + py1*py1;
-        double pt2chk2 = px2*px2 + py2*py2;
+      if(_ptCutEnabled){//Carries out Momentum cut Checks
+        double pt1chk2 = px1*px1 + py1*py1;//computes transverse momentum (squared) of daughter 1
+        double pt2chk2 = px2*px2 + py2*py2;// similar as above
         
-        if(pt1chk2 < ptCutMin2 || pt1chk2 > ptCutMax2 || pt2chk2 < ptCutMin2 || pt2chk2 > ptCutMax2 ){
+        if(pt1chk2 < ptCutMin2 || pt1chk2 > ptCutMax2 || pt2chk2 < ptCutMin2 || pt2chk2 > ptCutMax2 ){//If any of both particles fall outside the ptCut range
           accepted = false;
           continue;
         }
       }
-      if(_etaCutEnabled){
-        double eta1chk = pseudoRapidityLab(px1,py1,pz1,E1,beta);
-        double eta2chk = pseudoRapidityLab(px2,py2,pz2,E2,beta);
+      if(_etaCutEnabled){//Carries out eta Cut Checks
+        double eta1chk = pseudoRapidityLab(px1,py1,pz1,E1,beta);//Computes eta in Lab frame for daughter 1.
+        double eta2chk = pseudoRapidityLab(px2,py2,pz2,E2,beta);//Similar as above
         
-        if(eta1chk < _etaCutMin || eta1chk >_etaCutMax || eta2chk < _etaCutMin || eta2chk >_etaCutMax ){
+        if(eta1chk < _etaCutMin || eta1chk >_etaCutMax || eta2chk < _etaCutMin || eta2chk >_etaCutMax ){//if any of both particles fall outside the etaCut range
           accepted = false;
           continue;
         }
       }
       if(accepted and (iFbadevent == 0)){
-        _nmbAccepted++;
+        _nmbAccepted++;//maintain count of successfully accepted events
       }
-    }while(!accepted || iFbadevent != 0);
+    }while(!accepted || iFbadevent != 0);//repeats loop if ptCut, etaCut or succesful decay requirements are not satisfied.
 
-    single._numberOfTracks=2;
+    single._numberOfTracks=2;//number of tracks per event
     if (iFbadevent==0){
       xtest = _randy->Rndom();
-      if (xtest<0.5){
+      if (xtest<0.5){// randomly sets the charge of the particles
 	single._charge[0]=1;//q1=1;
 	single._charge[1]=-1;//q2=-1;
       }
       else{
 	single._charge[0]=-1;//q1=-1;
 	single._charge[1]=1;//q2=1;
-      }	
+      }
+      //storing the event details	
       //Track #1
       single.px[0]=px1;
       single.py[0]=py1;
@@ -720,40 +748,41 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
 
   case starlightConstants::AXION:      // AXION HACK, start
     do{
-      iFbadevent =0;
+      iFbadevent =0;//resets variable after every loop cycle - to avoid infinite loops
       pickw(comenergy);
       picky(rapidity);
       parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
-      accepted = true;
+      accepted = true;//reinitializes the acceptance flag after every loop cycle - avoid inifinte loop
       _nmbAttempts++;
-      twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,mass,iFbadevent);
+      twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,mass,iFbadevent);//decaying/producing daughter particles
 
-      if(_ptCutEnabled){
-        double pt1chk2 = px1*px1 + py1*py1;
-        double pt2chk2 = px2*px2 + py2*py2;
+      if(_ptCutEnabled){//apply ptCut checks
+        double pt1chk2 = px1*px1 + py1*py1;//computing the transverse momentum (squared) for daughter 1.
+        double pt2chk2 = px2*px2 + py2*py2;//similar as above
         
-        if(pt1chk2 < ptCutMin2 || pt1chk2 > ptCutMax2 || pt2chk2 < ptCutMin2 || pt2chk2 > ptCutMax2 ){
+        if(pt1chk2 < ptCutMin2 || pt1chk2 > ptCutMax2 || pt2chk2 < ptCutMin2 || pt2chk2 > ptCutMax2 ){//if any of the 2 particles fall outside the range
           accepted = false;
           continue;
         }
       }
-      if(_etaCutEnabled){
-        double eta1chk = pseudoRapidityLab(px1,py1,pz1,E1,beta);
-        double eta2chk = pseudoRapidityLab(px2,py2,pz2,E2,beta);
+      if(_etaCutEnabled){//apply eta Cut checks
+        double eta1chk = pseudoRapidityLab(px1,py1,pz1,E1,beta);//Computes eta in Lab frame for daughter 1
+        double eta2chk = pseudoRapidityLab(px2,py2,pz2,E2,beta);//similar as above
         
-        if(eta1chk < _etaCutMin || eta1chk >_etaCutMax || eta2chk < _etaCutMin || eta2chk >_etaCutMax ){
+        if(eta1chk < _etaCutMin || eta1chk >_etaCutMax || eta2chk < _etaCutMin || eta2chk >_etaCutMax ){//if any of the two particles fall outside the etaCut range
           accepted = false;
           continue;
         }
       }
       if(accepted and (iFbadevent == 0)){
-        _nmbAccepted++;
+        _nmbAccepted++;//Keeps count of successfully accepted events
       }
-    }while(!accepted || iFbadevent != 0);
+    }while(!accepted || iFbadevent != 0);//repeats loop if ptCut,EtaCut or successful decay requirements are not satisfied.
     
 
-    single._numberOfTracks=2;
+    single._numberOfTracks=2;//number of tracks per event
     if (iFbadevent==0){
+      //storing the event's details.
 
         single._charge[0]=0;//q1=0;
         single._charge[1]=0;//q2=0;
@@ -782,6 +811,7 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
     break;
   }
   
+  //converting the stored event data to a valid upcEvent object.
   return upcEvent(single);
 }
 

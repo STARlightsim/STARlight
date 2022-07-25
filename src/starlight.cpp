@@ -207,7 +207,11 @@ starlight::init()
 	return true;
 }
 
-
+/**
+ * @brief Creates an event using the event_channel object
+ * 
+ * @return [upcEvent]: The created event. 
+ */
 upcEvent
 starlight::produceEvent()
 {
@@ -217,10 +221,18 @@ starlight::produceEvent()
 	}
 	double gamma1 = _inputParameters->beam1LorentzGamma();
 	double gamma2 = _inputParameters->beam2LorentzGamma();
-	vector3 beta = extract_beta(gamma1,gamma2);
+	vector3 beta = extract_beta(gamma1,gamma2);//the boost vector for CM-Lab Frame transformation is computed and passed to the _eventChannel object.
 	return _eventChannel->produceEvent(beta);
 }
 
+/**
+ * @brief Determines the boost vector needed to transform from the CM frame to the Lab Frame
+ * 
+ * This function must remain in synchronization with @ref boostEvent() in starlightStandalone.cpp
+ * @param lorentzGammaBeam1 Lorentz boost for the first beam's projectile
+ * @param lorentzGammaBeam2 Lorentz boost for the 2nd beam's projectile
+ * @return [vector3] The boost vector that would transform  
+ */
 vector3
 starlight::extract_beta(double lorentzGammaBeam1, double lorentzGammaBeam2)
 {

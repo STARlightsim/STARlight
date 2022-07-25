@@ -38,7 +38,11 @@ upcEvent::upcEvent() :
         _particles(0)
         ,_vertices(0)
 { }
-
+/**
+ * @brief Construct a new upc Event from a starlightConstants::event struct.
+ * 
+ * @param ev The starlightConstants::event struct
+ */
 upcEvent::upcEvent(starlightConstants::event &ev) :
         _particles(0)
         ,_vertices(0)
@@ -57,6 +61,11 @@ upcEvent::upcEvent(starlightConstants::event &ev) :
       addParticle(p);
     }
 }
+/**
+ * @brief Construct a new upc Event::upc Event object => A copy Constructor
+ * @details Created to handle a warning with >= gcc9 compiler.
+ * @param [event]: The upcEvent to be copied
+ */
 upcEvent::upcEvent(const upcEvent& event){
   _particles = event._particles;
   _vertices = event._vertices;
