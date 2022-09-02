@@ -427,7 +427,7 @@ void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,d
       mdec = _ip->kaonChargedMass();
     }
     else{
-      mdec = 0.493677;
+      mdec = _ip->kaonNeutralMass();
     }
     break;
   default :
@@ -503,7 +503,7 @@ void Gammagammasingle::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,d
       }
     else
       {
-	ipid=starlightConstants::KAONNEUTRAL;
+	ipid=starlightConstants::KAONSHORT;
       }	
     break;
   default:

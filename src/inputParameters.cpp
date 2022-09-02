@@ -98,6 +98,7 @@ inputParameters::inputParameters()
           _pionChargedMass       ("pionChargedMass"       , 0.13957018    , NOT_REQUIRED),
           _pionNeutralMass       ("pionNeutralMass"       , 0.1349766     , NOT_REQUIRED),
           _kaonChargedMass       ("kaonChargedMass"       , 0.493677      , NOT_REQUIRED),
+		  _kaonNeutralMass       ("kaonNeutralMass"       , 0.497611      , NOT_REQUIRED),
           _mel                   ("mel"                   , 0.000510998928, NOT_REQUIRED),
           _muonMass              ("muonMass"              , 0.1056583715  , NOT_REQUIRED),
           _tauMass               ("tauMass"               , 1.77682       , NOT_REQUIRED),
@@ -232,6 +233,7 @@ inputParameters::inputParameters()
         _ip.addParameter(_pionChargedMass       );
         _ip.addParameter(_pionNeutralMass       );
         _ip.addParameter(_kaonChargedMass       );
+		_ip.addParameter(_kaonNeutralMass       );
         _ip.addParameter(_mel                   );
         _ip.addParameter(_muonMass              );
         _ip.addParameter(_tauMass               );

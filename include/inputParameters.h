@@ -232,6 +232,7 @@ public:
         double pionChargedMass       () const {return _pionChargedMass       .value();}
         double pionNeutralMass       () const {return _pionNeutralMass       .value();}
         double kaonChargedMass       () const {return _kaonChargedMass       .value();}
+        double kaonNeutralMass       () const {return _kaonNeutralMass       .value();}
         double mel                   () const {return _mel                   .value();}
         double muonMass              () const {return _muonMass              .value();}
         double tauMass               () const {return _tauMass               .value();}
@@ -437,6 +438,7 @@ private:
         parameter<double, VALIDITY_CHECK> _pionChargedMass       ;           ///< mass of the pi^+/- [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _pionNeutralMass       ;           ///< mass of the pi^0 [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _kaonChargedMass       ;           ///< mass of the K^+/- [GeV/c^2]
+        parameter<double, VALIDITY_CHECK> _kaonNeutralMass       ;           ///< mass of the K^0 [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _mel                   ;           ///< mass of the e^+/- [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _muonMass              ;           ///< mass of the mu^+/- [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _tauMass               ;           ///< mass of the tau^+/- [GeV/c^2]
