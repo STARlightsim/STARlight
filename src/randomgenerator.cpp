@@ -123,7 +123,7 @@ double randomGenerator::Rndom(int)
    const unsigned int kMatrixA =         0x9908b0df;
 
    if (_count624 >= kN) {
-      register int i;
+     int i;  // register keyword removed Oct, 2022 by SRK for compatibility with C++ 2017
 
       for (i=0; i < kN-kM; i++) {
          y = (_Mt[i] & kUpperMask) | (_Mt[i+1] & kLowerMask);
