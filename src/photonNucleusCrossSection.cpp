@@ -616,6 +616,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 			sigmagp_r=1.E-4*(0.55*exp(0.22*log(Wgp))+18.0*exp(-1.92*log(Wgp)));
 			break;                                                      
 		case PHI:
+		case PHI_ee:
 			sigmagp_r=1.E-4*0.34*exp(0.22*log(Wgp));
 			break;
 		case JPSI:
