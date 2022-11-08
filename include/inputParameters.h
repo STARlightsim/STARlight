@@ -286,6 +286,7 @@ public:
         double PhiMass               () const {return _PhiMass               .value();}
         double PhiWidth              () const {return _PhiWidth              .value();}
         double PhiBrKK               () const {return _PhiBrKK               .value();}
+        double PhiBree               () const {return _PhiBree               .value();}
         double JpsiMass              () const {return _JpsiMass              .value();}
         double JpsiWidth             () const {return _JpsiWidth             .value();}
         double JpsiBree              () const {return _JpsiBree              .value();}
@@ -492,6 +493,7 @@ private:
         parameter<double, VALIDITY_CHECK> _PhiMass               ;           ///< mass of the phi [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _PhiWidth              ;           ///< width of the phi [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _PhiBrKK               ;           ///< branching ratio phi -> K^+ K^-
+        parameter<double, VALIDITY_CHECK> _PhiBree               ;           ///< branching ratio phi -> e^+ e^-
         parameter<double, VALIDITY_CHECK> _JpsiMass              ;           ///< mass of the J/psi [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _JpsiWidth             ;           ///< width of the J/psi [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _JpsiBree              ;           ///< branching ratio J/psi -> e^+ e^-					      
