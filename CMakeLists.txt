@@ -250,6 +250,7 @@ set(SOURCES
   src/gammagammaleptonpair.cpp
   src/starlight.cpp
   src/upcevent.cpp
+  src/upcXevent.cpp
   src/vector3.cpp
   src/lorentzvector.cpp
   src/filewriter.cpp

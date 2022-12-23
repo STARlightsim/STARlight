@@ -57,7 +57,8 @@ class Gammagammasingle : public eventChannel
   void singleCrossSection();
   starlightConstants::event produceEvent(int &ievent);
 
-  upcEvent produceEvent(vector3 beta);
+  //upcEvent produceEvent(vector3 beta);
+  upcXEvent produceEvent(vector3 beta);
 
  private:
   double _sigmax[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];

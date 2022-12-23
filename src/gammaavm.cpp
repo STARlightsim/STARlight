@@ -481,16 +481,20 @@ double Gammaavectormeson::getSpin()
 
 
 //______________________________________________________________________________
-void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &py,double &pz,int &tcheck)
+void Gammaavectormeson::momenta(double W,double Y,
+								double &E,double &px,double &py,double &pz,int &tcheck, //vector meson in cms frame
+								double &Eb1, double &pxb1, double &pyb1, double &pzb1,//outgoing beam 1 in cms frame.
+								double &Eb2, double &pxb2, double &pyb2, double &pzb2, double t2, //outgoing beam 2 in cms frame.
+								double &Egam, double&pxgam, double &pygam, double &pzgam, double &Qgam) //photon in the cms frame.
 {
 	//     This subroutine calculates momentum and energy of vector meson
 	//     given W and Y,   without interference.  Subroutine vmpt handles
 	//     production with interference
  
-	double Egam,Epom,tmin,pt1,pt2,phi1,phi2;
+	double Epom,tmin,pt1,pt2,phi1,phi2;
 	double px1,py1,px2,py2;
 	double pt,xt,xtest,ytest;
-	double t2;
+	//double t2, Egam;
 
   
 	//Find Egam,Epom in CM frame
@@ -653,6 +657,43 @@ void Gammaavectormeson::momenta(double W,double Y,double &E,double &px,double &p
        
 	E  = sqrt(W*W+pt*pt)*cosh(Y);
 	pz = sqrt(W*W+pt*pt)*sinh(Y);
+
+	//pt1 is for gamma
+	pxgam = px1;
+	pygam = py1;//t2 and Egam naturally fixed._ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()
+	double E0b1 = _pEnergy*_ip->beam1A();
+	double px0b1 = 0, px0b2 =0, py0b1=0, py0b2=0;
+	double pz0b1 = sqrt(E0b1*E0b1 - _ip->protonMass()*_ip->beam1A());
+	double E0b2 =_pEnergy*_ip->beam2A();
+	double pz0b2 = -sqrt(E0b2*E0b2 - _ip->protonMass()*_ip->beam2A());
+	if(_TargetBeam == 2){
+		Eb2 = Egam + E0b2 - E;//
+		pxb2 = pxgam +px0b2 -px;//
+		pyb2 = pygam + py0b2 - py;//
+		pzb2 = sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
+		pzgam = pzb2 + pz - pz0b2;
+		Qgam = sqrt(Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam));
+		Eb1 = E0b1 -Egam;
+		pxb1 = px0b1 - pxgam;
+		pyb1 = py0b1 - pygam;	
+		pzb1 = pz0b1 - pzgam;
+	}
+	else if(_TargetBeam == 1){
+		Eb1 = Egam + E0b1 - E;//
+		pxb1 = pxgam +px0b1 -px;//
+		pyb1 = pygam + py0b1 - py;//
+		pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->protonMass()*_ip->beam1A()*_ip->protonMass()*_ip->beam1A()));
+		pzgam = pzb1 + pz - pz0b1;
+		Qgam = sqrt(Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam));
+		Eb2 = E0b2 -Egam;
+		pxb2 = px0b2 - pxgam;
+		pyb2 = py0b2 - pygam;	
+		pzb2 = pz0b2 - pzgam;
+	}
+	else{
+		cout << " ERROR: Target Beam Number: " << _TargetBeam << "is invalid" << endl;	
+	}
+
 
 }
 
@@ -867,10 +908,13 @@ starlightConstants::event Gammaavectormeson::produceEvent(int&)
  * @param beta 
  * @return upcEvent 
  */
-upcEvent Gammaavectormeson::produceEvent(vector3 beta)
+//upcEvent Gammaavectormeson::produceEvent(vector3 beta)
+upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 {
+	
+	//upcEvent event;//former type output variable
 	// The new event type
-	upcEvent event;//output variable
+	upcXEvent event;//output variable
 
 	int iFbadevent=0;//variable to track successful and unsuccessful vector Meson decay
 	int tcheck=0;//variable to track successful and unsuccessful Vector Meson creation
@@ -880,7 +924,10 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 
 	double ptCutMin2 = _ptCutMin*_ptCutMin;//used for ptCut comparison without using square roots - to reduce processing time
 	double ptCutMax2 = _ptCutMax*_ptCutMax;//same as above
-	
+	double Pgam[4] = {0.0,0.0,0.0,0.0};
+	double Pb1[4] = {0.0,0.0,0.0,0.0};
+	double Pb2[4] = {0.0,0.0,0.0,0.0};
+	double Qgam =0, t=0;
 	if (_VMpidtest == starlightConstants::FOURPRONG) {
 		double        comenergy = 0;
 		double        mom[3]    = {0, 0, 0};
@@ -895,7 +942,10 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 
 			//Vector meson is created and its four momentum is determined below
 			if (_VMinterferencemode == 0)
-				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);//without interference
+				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck,
+						Pb1[0], Pb1[1],Pb1[2],Pb1[3],
+						Pb2[0], Pb2[1],Pb2[2],Pb2[3],t,
+						Pgam[0], Pgam[1],Pgam[2],Pgam[3],Qgam);//without interference
 			else if (_VMinterferencemode==1)
 				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);//with interference
 			_nmbAttempts++;
@@ -968,7 +1018,10 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 			pickwy(comenergy, rapidity);
 			//Creating the vector meson.
 			if (_VMinterferencemode == 0)
-				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
+				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck,
+						Pb1[0], Pb1[1],Pb1[2],Pb1[3],
+						Pb2[0], Pb2[1],Pb2[2],Pb2[3],t,
+						Pgam[0], Pgam[1],Pgam[2],Pgam[3],Qgam);
 			else if (_VMinterferencemode==1)
 				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			_nmbAttempts++;
@@ -1050,7 +1103,10 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 
 			//Vector meson creation
 			if (_VMinterferencemode==0){
-				momenta(comenergy,rapidity,E,momx,momy,momz,tcheck);
+				momenta(comenergy,rapidity,E,momx,momy,momz,tcheck,
+						Pb1[0], Pb1[1],Pb1[2],Pb1[3],
+						Pb2[0], Pb2[1],Pb2[2],Pb2[3],t,
+						Pgam[0], Pgam[1],Pgam[2],Pgam[3],Qgam);
 			
 			} else if (_VMinterferencemode==1){
 				vmpt(comenergy,rapidity,E,momx,momy,momz,tcheck);
@@ -1125,6 +1181,20 @@ upcEvent Gammaavectormeson::produceEvent(vector3 beta)
                         double Ed2 = sqrt(md*md+px2*px2+py2*py2+pz2*pz2); 
 			starlightParticle particle2(px2, py2, pz2, Ed2, md, ipid2, q2);
 			event.addParticle(particle2);
+			lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
+			lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
+			double targetEgamma, rap1cm = acosh(_ip->beamLorentzGamma()),cmsEgam = Pgam[0], Pzgam = Pgam[3];
+			lorentzVector gamma(Pgam[1],Pgam[2],Pzgam,cmsEgam);
+
+			if(_TargetBeam == 1)
+			targetEgamma = cmsEgam*cosh(rap1cm) - Pzgam*sinh(rap1cm);
+			else
+			targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
+
+			event.addGamma(gamma,targetEgamma,Qgam);
+			event.addOutgoingBeam1(beam1,_TargetBeam);
+			event.addOutgoingBeam2(beam2,_TargetBeam);
+			event.addVertext(t);
 
 
 		}

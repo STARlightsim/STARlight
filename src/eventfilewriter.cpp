@@ -118,3 +118,82 @@ int eventFileWriter::writeEvent(upcEvent &event, int eventnumber)
     return 0;
 }
 
+int eventFileWriter::writeEvent(upcXEvent &event, int eventnumber)
+{
+   
+    int numberoftracks = 0;
+    if(_writeFullPythia)
+    {
+        numberoftracks = event.getParticles()->size();
+    }
+    else
+    {
+        for(unsigned int i = 0; i<event.getParticles()->size(); ++i)
+        {
+            if(event.getParticles()->at(i).getStatus() >= 0) numberoftracks++;
+        }
+    }
+    
+
+    // sometimes we don't have tracks due to wrongly picked W , check it
+    if(numberoftracks){
+      eventnumber++;
+      
+      _fileStream << "EVENT: " << eventnumber << " " << numberoftracks << " " << 1 << std::endl;
+      
+
+      //
+      _fileStream <<"VERTEX: "<<0.<<" "<<0.<<" "<<0.<<" "<<0.<<" "<<1<<" "<<0<<" "<<0<<" "<<numberoftracks<<std::endl;
+      
+      for( uint igam = 0 ; igam < event.getGammaEnergies()->size(); ++igam){
+	      _fileStream <<"GAMMA: "<<event.getGammaEnergies()->at(igam)<<" "<<event.getGammaMasses()->at(igam)<<std::endl;
+	      lorentzVector gam = event.getGamma()->at(igam);
+	      // Write the photon 4-vector out to file. Might be used in later iterations, so I keep it here
+	      //_fileStream <<"GAMMA VECTOR: "<<gam.GetPx()<<" "<<gam.GetPy()<<" "<<gam.GetPz()<<" "<<gam.GetE()<<" "<<-temp<<std::endl;
+      }
+      int itarget = 0;
+      for( uint ibeam = 0 ; ibeam < event.getBeams()->size(); ++ibeam){
+	      if(event.getBeamIsTarget()->at(ibeam)){
+
+          lorentzVector target = event.getBeams()->at(ibeam);
+    	    _fileStream <<"t: "<<event.getVertext()->at(itarget)<<std::endl;
+	        _fileStream <<"TARGET->BEAM"<< event.getBeamNo()->at(ibeam)<<": "<<target.GetPx()<<" "<<target.GetPy()<<" "<<target.GetPz()<<" "<<target.GetE()<<std::endl;
+          itarget++;
+        }
+        
+      }
+      
+      for( uint ibeam = 0 ; ibeam < event.getBeams()->size(); ++ibeam){
+	      if(!(event.getBeamIsTarget()->at(ibeam))){
+          lorentzVector source = event.getBeams()->at(ibeam); 
+	        _fileStream <<"SOURCE->BEAM"<< event.getBeamNo()->at(ibeam)<<": "<<source.GetPx()<<" "<<source.GetPy()<<" "<<source.GetPz()<<" "<<source.GetE()<<std::endl;
+        }
+        
+      }
+
+      int ipart = 0;
+      std::vector<starlightParticle>::const_iterator part = (event.getParticles())->begin();
+      
+      for (part = event.getParticles()->begin(); part != event.getParticles()->end(); part++, ipart++)
+	{
+          if(!_writeFullPythia) 
+          {
+              if((*part).getStatus() < 0) continue;
+          }
+	  _fileStream << "TRACK: " << " " << starlightParticleCodes::jetsetToGeant((*part).getPdgCode()) <<" "<< (*part).GetPx() << " " << (*part).GetPy()
+		      << " "<< (*part).GetPz() << " " << eventnumber << " " << ipart << " " << 0 << " "
+		      << (*part).getPdgCode();
+		      
+	  if(_writeFullPythia)
+	  {
+	    lorentzVector vtx = (*part).getVertex();
+	    _fileStream << " " << vtx.GetPx() << " " << vtx.GetPy() << " " << vtx.GetPz() << " " << vtx.GetE();
+	    _fileStream << " " << (*part).getFirstParent() << " " << (*part).getLastParent() << " " << (*part).getFirstDaughter() << " " << (*part).getLastDaughter() << " " << (*part).getStatus();
+	  }
+		      
+	  _fileStream <<std::endl;
+	}
+    }
+
+    return 0;
+}
