@@ -484,8 +484,8 @@ double Gammaavectormeson::getSpin()
 void Gammaavectormeson::momenta(double W,double Y,
 								double &E,double &px,double &py,double &pz,int &tcheck, //vector meson in cms frame
 								double &Eb1, double &pxb1, double &pyb1, double &pzb1,//outgoing beam 1 in cms frame.
-								double &Eb2, double &pxb2, double &pyb2, double &pzb2, double t2, //outgoing beam 2 in cms frame.
-								double &Egam, double&pxgam, double &pygam, double &pzgam, double &Qgam) //photon in the cms frame.
+								double &Eb2, double &pxb2, double &pyb2, double &pzb2, double &t2, //outgoing beam 2 in cms frame.
+								double &Egam, double&pxgam, double &pygam, double &pzgam, double &Q2gam) //photon in the cms frame.
 {
 	//     This subroutine calculates momentum and energy of vector meson
 	//     given W and Y,   without interference.  Subroutine vmpt handles
@@ -514,7 +514,7 @@ void Gammaavectormeson::momenta(double W,double Y,
   	    Epom = 0.5*W*exp(Y);
           }else{
     	    Egam = 0.5*W*exp(Y);
-  	    Epom = 0.5*W*exp(-Y);
+  	    Epom = 0.5*W*exp (-Y);
           }
 	} else {
           // This is pp or AA 
@@ -663,16 +663,16 @@ void Gammaavectormeson::momenta(double W,double Y,
 	pygam = py1;//t2 and Egam naturally fixed._ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()
 	double E0b1 = _pEnergy*_ip->beam1A();
 	double px0b1 = 0, px0b2 =0, py0b1=0, py0b2=0;
-	double pz0b1 = sqrt(E0b1*E0b1 - _ip->protonMass()*_ip->beam1A());
+	double pz0b1 = sqrt(E0b1*E0b1 - _ip->protonMass()*_ip->protonMass()*_ip->beam1A()*_ip->beam1A());
 	double E0b2 =_pEnergy*_ip->beam2A();
-	double pz0b2 = -sqrt(E0b2*E0b2 - _ip->protonMass()*_ip->beam2A());
+	double pz0b2 = -sqrt(E0b2*E0b2 - _ip->protonMass()*_ip->protonMass()*_ip->beam2A()*_ip->beam2A());
 	if(_TargetBeam == 2){
 		Eb2 = Egam + E0b2 - E;//
 		pxb2 = pxgam +px0b2 -px;//
 		pyb2 = pygam + py0b2 - py;//
-		pzb2 = sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
+		pzb2 = -sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
 		pzgam = pzb2 + pz - pz0b2;
-		Qgam = sqrt(Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam));
+		Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);
 		Eb1 = E0b1 -Egam;
 		pxb1 = px0b1 - pxgam;
 		pyb1 = py0b1 - pygam;	
@@ -682,9 +682,9 @@ void Gammaavectormeson::momenta(double W,double Y,
 		Eb1 = Egam + E0b1 - E;//
 		pxb1 = pxgam +px0b1 -px;//
 		pyb1 = pygam + py0b1 - py;//
-		pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->protonMass()*_ip->beam1A()*_ip->protonMass()*_ip->beam1A()));
+		pzb1 = -sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->protonMass()*_ip->beam1A()*_ip->protonMass()*_ip->beam1A()));
 		pzgam = pzb1 + pz - pz0b1;
-		Qgam = sqrt(Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam));
+		Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);
 		Eb2 = E0b2 -Egam;
 		pxb2 = px0b2 - pxgam;
 		pyb2 = py0b2 - pygam;	
@@ -927,7 +927,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 	double Pgam[4] = {0.0,0.0,0.0,0.0};
 	double Pb1[4] = {0.0,0.0,0.0,0.0};
 	double Pb2[4] = {0.0,0.0,0.0,0.0};
-	double Qgam =0, t=0;
+	double Q2gam =0., t=0.;
 	if (_VMpidtest == starlightConstants::FOURPRONG) {
 		double        comenergy = 0;
 		double        mom[3]    = {0, 0, 0};
@@ -945,7 +945,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck,
 						Pb1[0], Pb1[1],Pb1[2],Pb1[3],
 						Pb2[0], Pb2[1],Pb2[2],Pb2[3],t,
-						Pgam[0], Pgam[1],Pgam[2],Pgam[3],Qgam);//without interference
+						Pgam[0], Pgam[1],Pgam[2],Pgam[3],Q2gam);//without interference
 			else if (_VMinterferencemode==1)
 				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);//with interference
 			_nmbAttempts++;
@@ -1021,7 +1021,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck,
 						Pb1[0], Pb1[1],Pb1[2],Pb1[3],
 						Pb2[0], Pb2[1],Pb2[2],Pb2[3],t,
-						Pgam[0], Pgam[1],Pgam[2],Pgam[3],Qgam);
+						Pgam[0], Pgam[1],Pgam[2],Pgam[3],Q2gam);
 			else if (_VMinterferencemode==1)
 				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			_nmbAttempts++;
@@ -1106,7 +1106,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				momenta(comenergy,rapidity,E,momx,momy,momz,tcheck,
 						Pb1[0], Pb1[1],Pb1[2],Pb1[3],
 						Pb2[0], Pb2[1],Pb2[2],Pb2[3],t,
-						Pgam[0], Pgam[1],Pgam[2],Pgam[3],Qgam);
+						Pgam[0], Pgam[1],Pgam[2],Pgam[3],Q2gam);
 			
 			} else if (_VMinterferencemode==1){
 				vmpt(comenergy,rapidity,E,momx,momy,momz,tcheck);
@@ -1191,7 +1191,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 			else
 			targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
 
-			event.addGamma(gamma,targetEgamma,Qgam);
+			event.addGamma(gamma,targetEgamma,Q2gam);
 			event.addOutgoingBeam1(beam1,_TargetBeam);
 			event.addOutgoingBeam2(beam2,_TargetBeam);
 			event.addVertext(t);

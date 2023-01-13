@@ -61,8 +61,8 @@ class Gammaavectormeson : public eventChannel
   void pickwy(double &W, double &Y);
   void momenta(double W,double Y,double &E,double &px,double &py,double &pz,int &tcheck,
                 double &Eb1, double &pxb1, double &pyb1, double &pzb1,
-								double &Eb2, double &pxb2, double &pyb2, double &pzb2, double t2,
-								double &Egam, double&pxgam, double &pygam, double &pzgam, double &Qgam);
+								double &Eb2, double &pxb2, double &pyb2, double &pzb2, double &t2,
+								double &Egam, double&pxgam, double &pygam, double &pzgam, double &Q2gam);
   double pTgamma(double E); 
   void vmpt(double W,double Y,double &E,double &px,double &py, double &pz,int &tcheck);
   void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &E1,double &px1,double &py1,double&pz1, double &E2, double &px2,double &py2,double &pz2,int &iFbadevent);
