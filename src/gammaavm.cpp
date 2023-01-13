@@ -992,7 +992,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 		} while (!accepted || tcheck != 0);//repeats loop if VM creation, decay, ptcut or etaCut criterias are not fulfilled. Important to avoid situations where events produced is less than requested.
 
 		double md = getDaughterMass(ipid);
-		if ((iFbadevent == 0) and (tcheck == 0))
+		if ((iFbadevent == 0) and (tcheck == 0)){
 		//adds daughters as particles into the output event.
 			for (unsigned int i = 0; i < 4; ++i) {
 				starlightParticle daughter(decayVecs[i].GetPx(),
@@ -1004,6 +1004,23 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 							   (2*(i/2)-1));//charge
 				event.addParticle(daughter);
 			}
+			if(_VMinterferencemode == 0){
+				lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
+				lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
+				double targetEgamma, rap1cm = acosh(_ip->beamLorentzGamma()),cmsEgam = Pgam[0], Pzgam = Pgam[3];
+				lorentzVector gamma(Pgam[1],Pgam[2],Pzgam,cmsEgam);
+
+				if(_TargetBeam == 1)
+				targetEgamma = cmsEgam*cosh(rap1cm) - Pzgam*sinh(rap1cm);
+				else
+				targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
+
+				event.addGamma(gamma,targetEgamma,Q2gam);
+				event.addOutgoingBeam1(beam1,_TargetBeam);
+				event.addOutgoingBeam2(beam2,_TargetBeam);
+				event.addVertext(t);
+			}
+		}
 	} else if (_VMpidtest == starlightConstants::OMEGA_pipipi) {
 		double        comenergy = 0;
 		double        mom[3]    = {0, 0, 0};
@@ -1067,7 +1084,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 			}
 		} while (!accepted || tcheck != 0);//repeats loop if VM creation, decay,ptCut or etaCut requirements is not satisfied.
 
-		if ((iFbadevent == 0) and (tcheck == 0))
+		if ((iFbadevent == 0) and (tcheck == 0)){
 			for (unsigned int i = 0; i < 3; ++i) {
 				if(i<2){
 					mass = getDaughterMass(ipid);
@@ -1086,6 +1103,24 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 							   charge);//charge
 				event.addParticle(daughter);
 			}
+			if(_VMinterferencemode == 0)
+			{
+				lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
+				lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
+				double targetEgamma, rap1cm = acosh(_ip->beamLorentzGamma()),cmsEgam = Pgam[0], Pzgam = Pgam[3];
+				lorentzVector gamma(Pgam[1],Pgam[2],Pzgam,cmsEgam);
+
+				if(_TargetBeam == 1)
+				targetEgamma = cmsEgam*cosh(rap1cm) - Pzgam*sinh(rap1cm);
+				else
+				targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
+
+				event.addGamma(gamma,targetEgamma,Q2gam);
+				event.addOutgoingBeam1(beam1,_TargetBeam);
+				event.addOutgoingBeam2(beam2,_TargetBeam);
+				event.addVertext(t);
+			}
+		}
 	} else {
 		//initializations
 		double comenergy = 0.;
@@ -1181,20 +1216,23 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
                         double Ed2 = sqrt(md*md+px2*px2+py2*py2+pz2*pz2); 
 			starlightParticle particle2(px2, py2, pz2, Ed2, md, ipid2, q2);
 			event.addParticle(particle2);
-			lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
-			lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
-			double targetEgamma, rap1cm = acosh(_ip->beamLorentzGamma()),cmsEgam = Pgam[0], Pzgam = Pgam[3];
-			lorentzVector gamma(Pgam[1],Pgam[2],Pzgam,cmsEgam);
+			
+			if(_VMinterferencemode ==0){
+				lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
+				lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
+				double targetEgamma, rap1cm = acosh(_ip->beamLorentzGamma()),cmsEgam = Pgam[0], Pzgam = Pgam[3];
+				lorentzVector gamma(Pgam[1],Pgam[2],Pzgam,cmsEgam);
 
-			if(_TargetBeam == 1)
-			targetEgamma = cmsEgam*cosh(rap1cm) - Pzgam*sinh(rap1cm);
-			else
-			targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
+				if(_TargetBeam == 1)
+				targetEgamma = cmsEgam*cosh(rap1cm) - Pzgam*sinh(rap1cm);
+				else
+				targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
 
-			event.addGamma(gamma,targetEgamma,Q2gam);
-			event.addOutgoingBeam1(beam1,_TargetBeam);
-			event.addOutgoingBeam2(beam2,_TargetBeam);
-			event.addVertext(t);
+				event.addGamma(gamma,targetEgamma,Q2gam);
+				event.addOutgoingBeam1(beam1,_TargetBeam);
+				event.addOutgoingBeam2(beam2,_TargetBeam);
+				event.addVertext(t);
+			}
 
 
 		}
