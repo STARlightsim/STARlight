@@ -20,7 +20,7 @@
 /////////////////////////////////////////////////////////////////////////// 
 // 
 // File and Version Information: 
-// $Rev::     $: revision of last commit // $Author::         $: author of last commit 
+// $Rev:: 311 $: revision of last commit // $Author:: aaronst#$: author of last commit 
 // $Date::                            $: date of last commit // 
 // Description: 
 // 

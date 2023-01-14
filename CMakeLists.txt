@@ -20,9 +20,10 @@
 ###########################################################################
 #
 # File and Version Information:
-# $Rev::                             $: revision of last commit
-# $Author::                          $: author of last commit
-# $Date::                            $: date of last commit
+#
+# $Rev:: 247                         $: revision of last commit
+# $Author:: butter                   $: author of last commit
+# $Date:: 2016-03-05 01:59:24 +0100 #$: date of last commit
 #
 # Description:
 #      Starlight build file
