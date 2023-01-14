@@ -20,8 +20,8 @@
 ///////////////////////////////////////////////////////////////////////////
 //
 // File and Version Information:
-// $Rev::                             $: revision of last commit
-// $Author::                          $: author of last commit
+// $Rev:: 311                         $: revision of last commit
+// $Author:: aaronstanek              $: author of last commit
 // $Date::                            $: date of last commit
 //
 // Description:
@@ -171,6 +171,15 @@ starlightStandalone::run()
 
 	return true;
 }
+/**
+ * @brief boosts upcEvents from the original CM frame to the Lab frame.
+ * 
+ * @details description: 
+ * @note There is another fuction: extract_beta()-starlight.cpp that mimicks this function
+ *  	  and must be in syncronization with this function.
+ * 
+ * @param event The upcEvent in the CM frame to be boosted
+ */
 void starlightStandalone::boostEvent(upcEvent &event)
 {
   

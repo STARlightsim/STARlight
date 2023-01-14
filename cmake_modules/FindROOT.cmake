@@ -1,4 +1,4 @@
-###########################################################################
+##########################################################################
 #
 #    Copyright 2010
 #
@@ -20,8 +20,8 @@
 ###########################################################################
 #
 # File and Version Information:
-# $Rev::                             $: revision of last commit
-# $Author::                          $: author of last commit
+# $Rev:: 28                          $: revision of last commit
+# $Author:: bgrube                   $: author of last commit
 # $Date::                            $: date of last commit
 #
 # Description:

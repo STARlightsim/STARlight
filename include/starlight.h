@@ -20,8 +20,8 @@
 ///////////////////////////////////////////////////////////////////////////
 //
 // File and Version Information:
-// $Rev::                             $: revision of last commit
-// $Author::                          $: author of last commit
+// $Rev:: 293                         $: revision of last commit
+// $Author:: butter                   $: author of last commit
 // $Date::                            $: date of last commit
 //
 // Description:
@@ -56,6 +56,7 @@ public:
       
 	bool init();
 
+	vector3 extract_beta(double lorentzGammaBeam1, double lorentzGammaBeam2);
 	upcEvent produceEvent();
       
         std::string   baseFileName  () const { return _baseFileName;		  }

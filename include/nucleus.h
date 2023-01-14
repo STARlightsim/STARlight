@@ -20,8 +20,8 @@
 ///////////////////////////////////////////////////////////////////////////
 //
 // File and Version Information:
-// $Rev::                             $: revision of last commit
-// $Author::                          $: author of last commit
+// $Rev:: 298                         $: revision of last commit
+// $Author:: srklein                  $: author of last commit
 // $Date::                            $: date of last commit
 //
 // Description:
@@ -67,6 +67,9 @@ public:
 	double nuclearRadius() const { return _Radius; }
 	double rho0() const { return _rho0; }
 	double woodSaxonSkinDepth() const {return _woodSaxonSkinDepth;}
+	/** The "wine_bottle" parameter
+	*/
+	double w() const {return _w;}
 	
 private:
 
@@ -81,6 +84,7 @@ private:
 	double _Radius;
 	double _rho0;
 	double _woodSaxonSkinDepth;
+	double _w;
 
 };
 

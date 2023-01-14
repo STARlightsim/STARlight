@@ -20,8 +20,8 @@
 ///////////////////////////////////////////////////////////////////////////
 //
 // File and Version Information:
-// $Rev::                             $: revision of last commit
-// $Author::                          $: author of last commit
+// $Rev:: 293                         $: revision of last commit
+// $Author:: butter                   $: author of last commit
 // $Date::                            $: date of last commit
 //
 // Description:
@@ -97,7 +97,14 @@ eventChannel::transform(const double  betax,
 }
 
 
-//______________________________________________________________________________
+/**
+ * @brief Determine the pseudorapidity of a particle
+ * 
+ * @param px The x-momentum of the particle
+ * @param py The y-momentum
+ * @param pz The z-momentum
+ * @return [double]: The pseudorapidity of the particle.
+ */
 double
 eventChannel::pseudoRapidity(const double px,
                              const double py,
@@ -105,9 +112,34 @@ eventChannel::pseudoRapidity(const double px,
 {
   const double pT= sqrt(px * px + py * py);
   const double p = sqrt(pz * pz + pT * pT);
-  double eta = -99.9;  // instead of special value, std::numeric_limits<double>::quiet_NaN() should be used
-  if ((p - pz) != 0)
+  double eta = 1.0 * pow(10.0,20);  // instead of special value, std::numeric_limits<double>::quiet_NaN() should be used
+  if ((p - pz) != 0)//This is to avoid the division by zero error.
 	  eta = 0.5 * log((p + pz)/(p - pz));
+  else
+  {
+    if (pz<0)//This is to consider and distinguish between positive and negative infinity
+      eta = eta*-1.0;
+  }
   return eta;
 }
 
+/**
+ * @brief Determines the pseudorapidity of a particle in Laboratory frame of reference.
+ * 
+ * @param px The x-momemtum of the particle in the CM frame
+ * @param py The y-momentum of the particle in the CM frame
+ * @param pz The z-momentum of the particle in the CM frame
+ * @param E  The energy of the particle in the CM frame
+ * @param beta The boost vector to transform the particle from CM frame to Lab Frame
+ * @return double: The Lab frame pseudorapidity of the particle
+ */
+double eventChannel::pseudoRapidityLab(const double px,
+								                       const double py,
+								                       const double pz,
+			                        				 const double E,
+      								                 const vector3 beta)
+{
+  lorentzVector vecme(px,py,pz,E);// A lorentz vector is created from the particle
+  vecme.Boost(beta);// The vector is boosted from CM frame to Lab frame
+  return pseudoRapidity(vecme.GetPx(),vecme.GetPy(),vecme.GetPz());//The pseudorapidity in this new Frame (Lab) is computed and returned.
+}

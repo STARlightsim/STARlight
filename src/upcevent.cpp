@@ -20,8 +20,8 @@
 ///////////////////////////////////////////////////////////////////////////
 //
 // File and Version Information:
-// $Rev::                             $: revision of last commit
-// $Author::                          $: author of last commit
+// $Rev:: 263                         $: revision of last commit
+// $Author:: butter                   $: author of last commit
 // $Date::                            $: date of last commit
 //
 // Description:
@@ -38,7 +38,11 @@ upcEvent::upcEvent() :
         _particles(0)
         ,_vertices(0)
 { }
-
+/**
+ * @brief Construct a new upc Event from a starlightConstants::event struct.
+ * 
+ * @param ev The starlightConstants::event struct
+ */
 upcEvent::upcEvent(starlightConstants::event &ev) :
         _particles(0)
         ,_vertices(0)
@@ -49,13 +53,23 @@ upcEvent::upcEvent(starlightConstants::event &ev) :
 			  ev.px[i], 
 			  ev.py[i], 
 			  ev.pz[i], 
-			  starlightConstants::UNKNOWN, 
-			  starlightConstants::UNKNOWN, 
+			  ev.E[i], 
+			  ev.mass[i], 
 			  ev._fsParticle[i],
 			  ev._charge[i]
 			  );
       addParticle(p);
     }
+}
+/**
+ * @brief Construct a new upc Event::upc Event object => A copy Constructor
+ * @details Created to handle a warning with >= gcc9 compiler.
+ * @param [event]: The upcEvent to be copied
+ */
+upcEvent::upcEvent(const upcEvent& event){
+  _particles = event._particles;
+  _vertices = event._vertices;
+  _gammaEnergies = event._gammaEnergies;
 }
 
 upcEvent::~upcEvent()

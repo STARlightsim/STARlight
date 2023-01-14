@@ -20,8 +20,8 @@
 ///////////////////////////////////////////////////////////////////////////
 //
 // File and Version Information:
-// $Rev::                             $: revision of last commit
-// $Author::                          $: author of last commit
+// $Rev:: 28                          $: revision of last commit
+// $Author:: bgrube                   $: author of last commit
 // $Date::                            $: date of last commit
 //
 // Description:
@@ -45,6 +45,7 @@ class vector3
       vector3();
       vector3(double *vec);
       vector3(double x, double y, double z);
+	  vector3(const vector3& vec);
       virtual ~vector3();
       
       const double* GetVector() const { return _vec; }

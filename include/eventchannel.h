@@ -20,8 +20,8 @@
 ///////////////////////////////////////////////////////////////////////////
 //
 // File and Version Information:
-// $Rev::                             $: revision of last commit
-// $Author::                          $: author of last commit
+// $Rev:: 293                         $: revision of last commit
+// $Author:: butter                   $: author of last commit
 // $Date::                            $: date of last commit
 //
 // Description:
@@ -57,7 +57,7 @@ public:
 
 	virtual starlightConstants::event produceEvent(int &ievent) = 0;
 
-	virtual upcEvent produceEvent() = 0;
+	virtual upcEvent produceEvent(vector3 beta) = 0;
  
 	static void transform(const double betax,
 	                      const double betay,
@@ -70,9 +70,17 @@ public:
 
 	beamBeamSystem  _bbs;
 	randomGenerator* _randy;
+///< calculates pseudorapidity for given 3-momentum
 	static double pseudoRapidity(const double px,
 	                             const double py,
-	                             const double pz);  ///< calculates pseudorapidity for given 3-momentum
+	                             const double pz);  
+
+///< calculates pseudorapidity (in the lab frame) of a particle moving in the CMS frame
+	static double pseudoRapidityLab(const double px,
+								 const double py,
+								 const double pz,
+								 const double E,
+								 const vector3 beta);
 
 	double getTotalChannelCrossSection () const {return _totalChannelCrossSection;}
 	void   setTotalChannelCrossSection (double sigma) {_totalChannelCrossSection = sigma;}

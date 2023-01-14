@@ -20,8 +20,8 @@
 ///////////////////////////////////////////////////////////////////////////
 //
 // File and Version Information:
-// $Rev::                             $: revision of last commit
-// $Author::                          $: author of last commit
+// $Rev:: 313                         $: revision of last commit
+// $Author:: aaronstanek              $: author of last commit
 // $Date::                            $: date of last commit
 //
 // Description:
@@ -136,12 +136,29 @@ void Gammaavectormeson::pickwy(double &W, double &Y)
 }         
 
 
-//______________________________________________________________________________                                               
+/**
+ * @brief Creates the respective daughter particles for two body decay channels.
+ * 
+ * @param ipid [output reference] ipid of the daughter particle
+ * @param W [input] Parent mass in CM Frame
+ * @param px0 [input] Parent x-momentum in CM Frame
+ * @param py0 [input] Parent y-momentum in CM Frame
+ * @param pz0 [input] Parent z-momentum in CM Frame
+ * @param E1 [output reference] Daughter 1's Energy in CM Frame
+ * @param px1 [output reference] Daughter 1's x-momentum in CM Frame
+ * @param py1 [output reference] Daughter 1's y-momentum in CM Frame
+ * @param pz1 [output reference] Daughter 1's z-momentum in CM Frame
+ * @param E2 [output reference] Daugter 2's Energy in CM Frame
+ * @param px2 [output reference] Daughter 2's x-momentum in CM Frame
+ * @param py2 [output reference] Daughter 2's y-momentum in CM Frame
+ * @param pz2 [output reference] Daughter 2's z-momentum in CM Frame
+ * @param iFbadevent 
+ */
 void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
                                      double  W,
                                      double  px0, double  py0, double  pz0,
-                                     double& px1, double& py1, double& pz1,
-                                     double& px2, double& py2, double& pz2,
+                                     double &E1, double& px1, double& py1, double& pz1,
+                                     double &E2, double& px2, double& py2, double& pz2,
                                      int&    iFbadevent)
 {
 	// This routine decays a particle into two particles of mass mdec,
@@ -151,7 +168,7 @@ void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
 	double phi,theta,Ecm;
 	double betax,betay,betaz;
 	double mdec=0.0;
-	double E1=0.0,E2=0.0;
+	//double E1=0.0,E2=0.0; not needed any more as references to these variables are now provided in parameter
 
 	//    set the mass of the daughter particles
 	mdec=getDaughterMass(ipid);
@@ -197,10 +214,22 @@ void Gammaavectormeson::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
 
 }
 
-//______________________________________________________________________________                                               
-// decays a particle into three particles with isotropic angular distribution
+/**
+ * @brief decays a particle into three particles with isotropic angular distribution.
+ * 
+ * @param ipid [output reference] Holds the ipid of the charged particle
+ * @param ipid2 [output reference] Holds the ipid of the uncharged particle
+ * @param W [input] parent mass
+ * @param p [input] parent momentum vector.
+ * @param decayVecs [output reference] Array of daughter particles.
+ * 						The first two particles are charged and the 3rd/last is uncharged.
+ * @param iFbadevent [output reference] is set to 1 when decay is unsuccessful ONLY. N.B. Its value remains as initial when decay is successful - It does not reset to 0.
+ * @return true if decay is successful
+ * @return false if decay is unsuccessful
+ */
 bool Gammaavectormeson::omega3piDecay
-(starlightConstants::particleTypeEnum& ipid,
+(starlightConstants::particleTypeEnum& ipid,//This holds the ipid of the charged pion
+starlightConstants::particleTypeEnum& ipid2,// This holds the ipid of the uncharged pion
  const double                  ,           // E (unused)
  const double                  W,          // mass of produced particle
  const double*                 p,          // momentum of produced particle; expected to have size 3
@@ -210,8 +239,9 @@ bool Gammaavectormeson::omega3piDecay
 	const double parentMass = W;
 
 	// set the mass of the daughter particles
-	const double daughterMass = getDaughterMass(ipid);
-	if (parentMass < 3 * daughterMass){
+	const double daughterMass = getDaughterMass(ipid);//mass of the two charged particle
+	const double _2ndDaughterMass = get2ndDaughterMass(ipid2);//mass of the 3rd uncharged particle
+	if (parentMass < (2 * daughterMass + _2ndDaughterMass) ){
 		cout << " ERROR: W=" << parentMass << " GeV too small" << endl;
 		iFbadevent = 1;
 		return false;
@@ -288,8 +318,27 @@ bool Gammaavectormeson::fourBodyDecay
 		decayVecs[i] = _phaseSpaceGen->daughter(i);
 	return true;
 }
-
-
+/**
+ * @brief This is used to determine the identity of the 2nd daughter particles for channels with more than one daughter type e.g. OMEGA_PIPIPI
+ * 
+ * @param ipid2 [output reference] holds the ipid of the second daughter specie.
+ * @return [double]  The mass of the daughter specie.
+ */
+double Gammaavectormeson::get2ndDaughterMass(starlightConstants::particleTypeEnum &ipid2)
+{
+	// This is used only for channels producing more than one daughter type. Notably: Omega-3-pions
+	//It returns both the mass of the 2nd daughter and the ipid of the second daughter.
+	double mdec=0.;
+  
+	switch(_VMpidtest){
+	case starlightConstants::OMEGA_pipipi:
+		mdec = _ip->pionNeutralMass();
+		ipid2 = starlightConstants::PIONNEUTRAL;
+		break;
+	default: cout<<"No 2nddaughtermass defined for this channel, try gammaavectormeson::getdaughtermass instead"<<endl;
+	}
+	return mdec;
+}
 //______________________________________________________________________________
 double Gammaavectormeson::getDaughterMass(starlightConstants::particleTypeEnum &ipid)
 {
@@ -315,6 +364,7 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particleTypeEnum &
 		break; 
 	case starlightConstants::RHO_ee:
 	case starlightConstants::JPSI_ee:
+	case starlightConstants::PHI_ee:
 		mdec = _ip->mel();
 		ipid = starlightConstants::ELECTRON;
 		break; 
@@ -811,40 +861,97 @@ starlightConstants::event Gammaavectormeson::produceEvent(int&)
 }
 
 
-//______________________________________________________________________________
-upcEvent Gammaavectormeson::produceEvent()
+/**
+ * @brief 
+ * 
+ * @param beta 
+ * @return upcEvent 
+ */
+upcEvent Gammaavectormeson::produceEvent(vector3 beta)
 {
 	// The new event type
-	upcEvent event;
+	upcEvent event;//output variable
 
-	int iFbadevent=0;
-	int tcheck=0;
-	starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
-        starlightConstants::particleTypeEnum vmpid = starlightConstants::UNKNOWN; 
+	int iFbadevent=0;//variable to track successful and unsuccessful vector Meson decay
+	int tcheck=0;//variable to track successful and unsuccessful Vector Meson creation
+	starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;//stores the ipid of the daughter particle ( or main daughter- if  there are more than one daughter)
+	starlightConstants::particleTypeEnum ipid2 = starlightConstants::UNKNOWN;//used to store the ipid of 2nd daughters in channels that have more than one daughter particle.
+        starlightConstants::particleTypeEnum vmpid = starlightConstants::UNKNOWN;//used for temporary local storage in twobodydecays(). 
 
+	double ptCutMin2 = _ptCutMin*_ptCutMin;//used for ptCut comparison without using square roots - to reduce processing time
+	double ptCutMax2 = _ptCutMax*_ptCutMax;//same as above
 	
 	if (_VMpidtest == starlightConstants::FOURPRONG) {
 		double        comenergy = 0;
 		double        mom[3]    = {0, 0, 0};
 		double        E         = 0;
 		lorentzVector decayVecs[4];
+		bool accepted;
+		double rapidity = 0;
 		do {
-			double rapidity = 0;
+			tcheck = 0;//reinitialized after every loop cycle - to avoid infinite loop
+			iFbadevent = 0;//same as above.			
 			pickwy(comenergy, rapidity);
+
+			//Vector meson is created and its four momentum is determined below
 			if (_VMinterferencemode == 0)
-				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
+				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);//without interference
 			else if (_VMinterferencemode==1)
-				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
-		} while (!fourBodyDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent));
+				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);//with interference
+			_nmbAttempts++;
+			accepted = true;//re-initialized after every loop cycle -to avoid infinite loop
+
+			
+			if(tcheck != 0 || !fourBodyDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent))
+			{//if either vector meson creation, or further decay into four pions, is impossible
+				accepted = false;
+				continue;//this skips the etaCut and ptCut checks.
+			}
+
+			if (_ptCutEnabled) {
+				for (int i = 0; i < 4; i++) {
+					double pt_chk2 = 0;
+					pt_chk2 += pow( decayVecs[i].GetPx() , 2);
+					pt_chk2 += pow( decayVecs[i].GetPy() , 2);// compute transverse momentum (squared) for the particle, for ptCut checks.
+
+					if (pt_chk2 < ptCutMin2 || pt_chk2 > ptCutMax2) {//if particle does not fall into ptCut range.
+						accepted = false;
+						break;//skips checking other daughter particles
+					}
+				}
+			}
+			if (_etaCutEnabled) {
+				for (int i = 0; i < 4; i++) {
+					double eta_chk = pseudoRapidityLab(
+						decayVecs[i].GetPx(),
+						decayVecs[i].GetPy(),
+						decayVecs[i].GetPz(),
+						decayVecs[i].GetE(),
+						beta
+					);//computes the pseudorapidity in the laboratory frame.
+					if (eta_chk < _etaCutMin || eta_chk > _etaCutMax) {//if this particle does not fall into range
+						accepted = false;
+						break;//skips checking other daughter particles
+					}
+				}
+			}
+			if (accepted and (tcheck == 0)) {
+				_nmbAccepted++;//maintain counts of accepted events.
+			}
+
+		} while (!accepted || tcheck != 0);//repeats loop if VM creation, decay, ptcut or etaCut criterias are not fulfilled. Important to avoid situations where events produced is less than requested.
+
+		double md = getDaughterMass(ipid);
 		if ((iFbadevent == 0) and (tcheck == 0))
+		//adds daughters as particles into the output event.
 			for (unsigned int i = 0; i < 4; ++i) {
 				starlightParticle daughter(decayVecs[i].GetPx(),
 				                           decayVecs[i].GetPy(),
 				                           decayVecs[i].GetPz(),
-							   sqrt(decayVecs[i].GetPx()*decayVecs[i].GetPx()+decayVecs[i].GetPy()*decayVecs[i].GetPy()+decayVecs[i].GetPz()*decayVecs[i].GetPz()+0.139*0.139),//energy 
-							   starlightConstants::UNKNOWN,  // _mass
+							   sqrt(decayVecs[i].GetPx()*decayVecs[i].GetPx()+decayVecs[i].GetPy()*decayVecs[i].GetPy()+decayVecs[i].GetPz()*decayVecs[i].GetPz()+md*md),//energy 
+							   md,  // _mass
 							   ipid*(2*(i/2)-1),   // make half of the particles pi^+, half pi^-
-							   i/2);
+							   (2*(i/2)-1));//charge
 				event.addParticle(daughter);
 			}
 	} else if (_VMpidtest == starlightConstants::OMEGA_pipipi) {
@@ -852,34 +959,49 @@ upcEvent Gammaavectormeson::produceEvent()
 		double        mom[3]    = {0, 0, 0};
 		double        E         = 0;
 		lorentzVector decayVecs[3];
+		bool accepted;
+		double mass,rapidity = 0;
+		int charge;
 		do {
-			double rapidity = 0;
+			tcheck = 0;//reinitialized after every loop to avoid inifinite loop traps.
+			iFbadevent = 0;//same as above.
 			pickwy(comenergy, rapidity);
+			//Creating the vector meson.
 			if (_VMinterferencemode == 0)
 				momenta(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			else if (_VMinterferencemode==1)
 				vmpt(comenergy, rapidity, E, mom[0], mom[1], mom[2], tcheck);
 			_nmbAttempts++;
-			bool accepted = true;
+			accepted = true;//re-initialized after every loop
+
+			//VM decay excecuted and checked if it is successful. Otherwise restart the loop
+			if(tcheck != 0 || !omega3piDecay(ipid, ipid2, E, comenergy, mom, decayVecs, iFbadevent)){
+				accepted = false;
+				continue;
+			}
+			//For etaCuts and Momentum cuts only charged particles are considered.
+			//The first two particles are the charged particles while the last particle is uncharged.
 			if (_ptCutEnabled) {
-				for (short i = 0; i < 3; i++) {
-					double pt_chk = 0;
-					pt_chk += pow( decayVecs[i].GetPx() , 2);
-					pt_chk += pow( decayVecs[i].GetPy() , 2);
-					pt_chk += pow( decayVecs[i].GetPz() , 2);
-					pt_chk = sqrt(pt_chk);
-					if (pt_chk < _ptCutMin || pt_chk > _ptCutMax) {
+				for (int i = 0; i < 2/*//only the first two particles are charged particles*/; i++) {
+					double pt_chk2 = 0;
+					pt_chk2 += pow( decayVecs[i].GetPx() , 2);
+					pt_chk2 += pow( decayVecs[i].GetPy() , 2);
+					
+					if (pt_chk2 < ptCutMin2 || pt_chk2 > ptCutMax2) {
 						accepted = false;
 						break;
 					}
 				}
 			}
 			if (_etaCutEnabled) {
-				for (short i = 0; i < 3; i++) {
-					double eta_chk = pseudoRapidity(
+				for (int i = 0; i < 2/*//only the first two particles are charged particles*/; i++) {
+					
+					double eta_chk = pseudoRapidityLab(
 						decayVecs[i].GetPx(),
 						decayVecs[i].GetPy(),
-						decayVecs[i].GetPz()
+						decayVecs[i].GetPz(),
+						decayVecs[i].GetE(),
+						beta
 					);
 					if (eta_chk < _etaCutMin || eta_chk > _etaCutMax) {
 						accepted = false;
@@ -887,32 +1009,46 @@ upcEvent Gammaavectormeson::produceEvent()
 					}
 				}
 			}
-			if (accepted) {
-				_nmbAccepted++;
+			if (accepted and (tcheck == 0)) {
+				_nmbAccepted++;//maintain count of successfully accepted events.
 			}
-		} while (!omega3piDecay(ipid, E, comenergy, mom, decayVecs, iFbadevent));
+		} while (!accepted || tcheck != 0);//repeats loop if VM creation, decay,ptCut or etaCut requirements is not satisfied.
+
 		if ((iFbadevent == 0) and (tcheck == 0))
 			for (unsigned int i = 0; i < 3; ++i) {
+				if(i<2){
+					mass = getDaughterMass(ipid);
+					charge = 2*i - 1;//make the first negative and the second positive.
+				}else{
+					ipid = ipid2;//ensures that the right ipid is written for the neutral pion.
+					charge = 0; // the last particle is neutral. A neutral pion
+					mass = get2ndDaughterMass(ipid2);
+				}
 				starlightParticle daughter(decayVecs[i].GetPx(),
 				                           decayVecs[i].GetPy(),
 				                           decayVecs[i].GetPz(),
-							   sqrt(decayVecs[i].GetPx()*decayVecs[i].GetPx()+decayVecs[i].GetPy()*decayVecs[i].GetPy()+decayVecs[i].GetPz()*decayVecs[i].GetPz()+0.139*0.139),//energy 
-							   starlightConstants::UNKNOWN,  // _mass
-							   ipid*(2*(i/2)-1),   // make half of the particles pi^+, half pi^-
-							   i/2);
+							   sqrt(decayVecs[i].GetPx()*decayVecs[i].GetPx()+decayVecs[i].GetPy()*decayVecs[i].GetPy()+decayVecs[i].GetPz()*decayVecs[i].GetPz()+mass*mass),//energy 
+							   mass,  // _mass
+							   ipid*(charge==0? 1: charge),   // make first two particles pi^-, pi^+ and last uncharged
+							   charge);//charge
 				event.addParticle(daughter);
 			}
 	} else {
+		//initializations
 		double comenergy = 0.;
 		double rapidity = 0.;
 		double E = 0.;
 		double momx=0.,momy=0.,momz=0.;
 
-		double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
+		double E2=0.,E1=0., px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
 		bool accepted = false;
 		do{
+			tcheck = 0;//reset after every loop cycles - to avoid infinite loop traps
+			iFbadevent = 0;//same as above
+
 			pickwy(comenergy,rapidity);
 
+			//Vector meson creation
 			if (_VMinterferencemode==0){
 				momenta(comenergy,rapidity,E,momx,momy,momz,tcheck);
 			
@@ -923,39 +1059,44 @@ upcEvent Gammaavectormeson::produceEvent()
 			_nmbAttempts++;
 
                         vmpid = ipid;
-			twoBodyDecay(ipid,comenergy,momx,momy,momz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
-			double pt1chk = sqrt(px1*px1+py1*py1);
-			double pt2chk = sqrt(px2*px2+py2*py2);
-			double eta1 = pseudoRapidity(px1, py1, pz1);
-			double eta2 = pseudoRapidity(px2, py2, pz2);
+			twoBodyDecay(ipid,comenergy,momx,momy,momz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);//vector meson decay.
+			if(tcheck !=  0 || iFbadevent != 0){
+				continue;//jumps to loop repeat if either VM Creation or decay is unsuccessful.
+			}
+			double pt1chk2 = px1*px1+py1*py1;//computes transverse momentum (squared) of daughter 1 for ptCut checks
+			double pt2chk2 = px2*px2+py2*py2;
+			double eta1 = pseudoRapidityLab(px1, py1, pz1,E1,beta);//computes eta of daughter 1 in lab frame for etaCut checks
+			double eta2 = pseudoRapidityLab(px2, py2, pz2,E2,beta);
 
-			if(_ptCutEnabled && !_etaCutEnabled){
-				if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
+			if(_ptCutEnabled && !_etaCutEnabled){//ptCut only enabled
+				if(pt1chk2 > ptCutMin2 && pt1chk2 < ptCutMax2 &&  pt2chk2 > ptCutMin2 && pt2chk2 < ptCutMax2){//ptCut of both daughters within range
 					accepted = true;
 					_nmbAccepted++;
 				}
 			}
-			else if(!_ptCutEnabled && _etaCutEnabled){
-				if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){
+			else if(!_ptCutEnabled && _etaCutEnabled){//etaCut only enabled
+				if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){//etaCut of both daughters within range
 					accepted = true;
 					_nmbAccepted++;
 				}
 			}
-			else if(_ptCutEnabled && _etaCutEnabled){
-				if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
-					if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){
+			else if(_ptCutEnabled && _etaCutEnabled){//both Cuts enabled
+				if(pt1chk2 > ptCutMin2 && pt1chk2 < ptCutMax2 &&  pt2chk2 > ptCutMin2 && pt2chk2 < ptCutMax2){
+					if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){//ptCut and etaCuts of both daughters within range
 						accepted = true;
 						_nmbAccepted++;
 					}
 				}
 			}
-			else if(!_ptCutEnabled && !_etaCutEnabled)
+			else if(!_ptCutEnabled && !_etaCutEnabled)//no Cuts enabled
 				_nmbAccepted++;
-		}while((_ptCutEnabled || _etaCutEnabled) && !accepted);
+		}while(tcheck !=  0 || iFbadevent != 0 || ((_ptCutEnabled || _etaCutEnabled) && !accepted));//repeats loop if either VM Creation, VM decay,ptCuts or etaCuts is unsuccessful.
+
 		if (iFbadevent==0&&tcheck==0) {
 			int q1=0,q2=0;
                         int ipid1,ipid2=0;
 
+			//randomly assign charges to daughter particles
 			double xtest = _randy->Rndom(); 
 			if (xtest<0.5)
 				{
@@ -967,7 +1108,8 @@ upcEvent Gammaavectormeson::produceEvent()
 				q2=1;
 			}
 
-                        if ( ipid == 11 || ipid == 13 ){
+                        //sets ipid of daughter particles based on their charges.
+						if ( ipid == starlightConstants::ELECTRON || ipid == starlightConstants::MUON ){
                           ipid1 = -q1*ipid;
                           ipid2 = -q2*ipid;
                         } else {
@@ -977,11 +1119,11 @@ upcEvent Gammaavectormeson::produceEvent()
 
 			double md = getDaughterMass(vmpid);
                         double Ed1 = sqrt(md*md+px1*px1+py1*py1+pz1*pz1); 
-			starlightParticle particle1(px1, py1, pz1, Ed1, starlightConstants::UNKNOWN, ipid1, q1);
+			starlightParticle particle1(px1, py1, pz1, Ed1,md, ipid1, q1);
 			event.addParticle(particle1);
 
                         double Ed2 = sqrt(md*md+px2*px2+py2*py2+pz2*pz2); 
-			starlightParticle particle2(px2, py2, pz2, Ed2, starlightConstants::UNKNOWN, ipid2, q2);
+			starlightParticle particle2(px2, py2, pz2, Ed2, md, ipid2, q2);
 			event.addParticle(particle2);
 
 
@@ -991,13 +1133,7 @@ upcEvent Gammaavectormeson::produceEvent()
 	return event;
 
 }
-double Gammaavectormeson::pseudoRapidity(double px, double py, double pz)
-{
-	double pT = sqrt(px*px + py*py);
-	double p = sqrt(pz*pz + pT*pT);
-	double eta = -99.9; if((p-pz) != 0){eta = 0.5*log((p+pz)/(p-pz));}
-	return eta;
-}
+
 
 //______________________________________________________________________________
 Gammaanarrowvm::Gammaanarrowvm(const inputParameters& input, randomGenerator* randy, beamBeamSystem& bbsystem):Gammaavectormeson(input, randy, bbsystem)

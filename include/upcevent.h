@@ -20,8 +20,8 @@
 ///////////////////////////////////////////////////////////////////////////
 //
 // File and Version Information:
-// $Rev::                             $: revision of last commit
-// $Author::                          $: author of last commit
+// $Rev:: 263                         $: revision of last commit
+// $Author:: butter                   $: author of last commit
 // $Date::                            $: date of last commit
 //
 // Description:
@@ -47,6 +47,7 @@ class upcEvent
 
       upcEvent();
       upcEvent(starlightConstants::event &ev);
+      upcEvent(const upcEvent& event);
       ~upcEvent();
 
       void addParticle(starlightParticle &part) { _particles.push_back(part); }
