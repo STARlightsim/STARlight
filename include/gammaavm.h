@@ -54,22 +54,23 @@ class Gammaavectormeson : public eventChannel
   virtual ~Gammaavectormeson();
   starlightConstants::event produceEvent(int &ievent);
   
-   upcEvent produceEvent();
+  upcEvent produceEvent(vector3 beta);
 
   void pickwy(double &W, double &Y);
   void momenta(double W,double Y,double &E,double &px,double &py,double &pz,int &tcheck);
   double pTgamma(double E); 
   void vmpt(double W,double Y,double &E,double &px,double &py, double &pz,int &tcheck);
-  void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,double &pz2,int &iFbadevent);
-  bool omega3piDecay(starlightConstants::particleTypeEnum& ipid, const double E, const double W, const double* p, lorentzVector* decayMoms, int& iFbadevent);
+  void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &E1,double &px1,double &py1,double&pz1, double &E2, double &px2,double &py2,double &pz2,int &iFbadevent);
+  bool omega3piDecay(starlightConstants::particleTypeEnum& ipid, starlightConstants::particleTypeEnum& ipid2, const double E, const double W, const double* p, lorentzVector* decayMoms, int& iFbadevent);
   bool fourBodyDecay(starlightConstants::particleTypeEnum& ipid, const double E, const double W, const double* p, lorentzVector* decayMoms, int& iFbadevent);
   double getMass();
   double getWidth();
   virtual double getTheta(starlightConstants::particleTypeEnum ipid);
   double getSpin();
   double _VMbslope;
-  virtual double getDaughterMass(starlightConstants::particleTypeEnum &ipid);                
-  double pseudoRapidity(double px, double py, double pz);
+  virtual double getDaughterMass(starlightConstants::particleTypeEnum &ipid);
+  virtual double get2ndDaughterMass(starlightConstants::particleTypeEnum &ipid);                
+
   
  private:
   starlightConstants::particleTypeEnum _VMpidtest;

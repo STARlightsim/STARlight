@@ -67,6 +67,9 @@ public:
 	double nuclearRadius() const { return _Radius; }
 	double rho0() const { return _rho0; }
 	double woodSaxonSkinDepth() const {return _woodSaxonSkinDepth;}
+	/** The "wine_bottle" parameter
+	*/
+	double w() const {return _w;}
 	
 private:
 
@@ -81,6 +84,7 @@ private:
 	double _Radius;
 	double _rho0;
 	double _woodSaxonSkinDepth;
+	double _w;
 
 };
 

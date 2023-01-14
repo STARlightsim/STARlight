@@ -56,9 +56,12 @@ namespace starlightConstants
 		TAUON          = 15,
 		TAUONDECAY     = 10015,
 		PROTON         = 2212,
+		PIONNEUTRAL    = 111,
 		PION           = 211,
 		KAONCHARGE     = 321,
-		KAONNEUTRAL    = 310,
+		//KAONNEUTRAL  = 310,
+		KAONSHORT      = 310,
+		KAONLONG       = 130,
 		A2             = 115,
 		ETA            = 221,
 		F2             = 225,
@@ -75,6 +78,7 @@ namespace starlightConstants
 		OMEGA          = 223,
 		OMEGA_pipipi   = 223211111,
 		PHI            = 333,
+		PHI_ee         = 333011,
 		JPSI           = 443,
 		JPSI_ee        = 443011,
 		JPSI_mumu      = 443013,
@@ -130,13 +134,16 @@ namespace starlightConstants
                 NUCLEON             = 2  //gamma+p or incoherent gamma+A
         };        
 	
-	//Structure for each event's set of tracks.
+	/**
+	 * @brief Structure for each event's set of tracks.
+	 * Energy and Mass was added to ensure correct conversion of the struct to a upcEvent, and to fix the incorrect Lorentz transformation bug caused by this improper conversion
+	 */
 	struct event{
  
 	public:
 
 		int _numberOfTracks;
-		double px[30],py[30],pz[30];
+		double px[30],py[30],pz[30],E[30],mass[30];//momentum and energy
 		int _fsParticle[30];
 		int _charge[30];
 		//To help track mothers and daughters produced through pythia.

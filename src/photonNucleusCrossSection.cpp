@@ -104,6 +104,7 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_width        = _ip->OmegaWidth();
 		break;
 	case PHI:
+	case PHI_ee:
 		_slopeParameter=7.0;
 		_vmPhotonCoupling=13.71;
 		_ANORM=-2.75;
@@ -615,6 +616,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 			sigmagp_r=1.E-4*(0.55*exp(0.22*log(Wgp))+18.0*exp(-1.92*log(Wgp)));
 			break;                                                      
 		case PHI:
+		case PHI_ee:
 			sigmagp_r=1.E-4*0.34*exp(0.22*log(Wgp));
 			break;
 		case JPSI:
@@ -857,7 +859,7 @@ photonNucleusCrossSection::breitWigner(const double W,
 		ppi=sqrt(((W/2.)*(W/2.))-_ip->mel()*_ip->mel());
 		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->mel()*_ip->mel());
 	}
-	if (_particleType==JPSI_ee){
+	if (_particleType==JPSI_ee || _particleType == PHI_ee){
 		if(W<2.*_ip->mel()){
 			nrbw_r=0.;
 			return nrbw_r;

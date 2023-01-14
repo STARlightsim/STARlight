@@ -98,6 +98,7 @@ inputParameters::inputParameters()
           _pionChargedMass       ("pionChargedMass"       , 0.13957018    , NOT_REQUIRED),
           _pionNeutralMass       ("pionNeutralMass"       , 0.1349766     , NOT_REQUIRED),
           _kaonChargedMass       ("kaonChargedMass"       , 0.493677      , NOT_REQUIRED),
+		  _kaonNeutralMass       ("kaonNeutralMass"       , 0.497611      , NOT_REQUIRED),
           _mel                   ("mel"                   , 0.000510998928, NOT_REQUIRED),
           _muonMass              ("muonMass"              , 0.1056583715  , NOT_REQUIRED),
           _tauMass               ("tauMass"               , 1.77682       , NOT_REQUIRED),
@@ -151,6 +152,7 @@ inputParameters::inputParameters()
           _PhiMass               ("PhiMass"               , 1.019461      , NOT_REQUIRED),
           _PhiWidth              ("PhiWidth"              , 0.004266      , NOT_REQUIRED),
           _PhiBrKK               ("PhiBrKK"               , 0.489         , NOT_REQUIRED),
+		  _PhiBree               ("PhiBree"               , 0.0002973     , NOT_REQUIRED),
           _JpsiMass              ("JpsiMass"              , 3.096916      , NOT_REQUIRED),
           _JpsiWidth             ("JpsiWidth"             , 0.0000929     , NOT_REQUIRED),
           _JpsiBree              ("JpsiBree"              , 0.05971       , NOT_REQUIRED),
@@ -232,6 +234,7 @@ inputParameters::inputParameters()
         _ip.addParameter(_pionChargedMass       );
         _ip.addParameter(_pionNeutralMass       );
         _ip.addParameter(_kaonChargedMass       );
+		_ip.addParameter(_kaonNeutralMass       );
         _ip.addParameter(_mel                   );
         _ip.addParameter(_muonMass              );
         _ip.addParameter(_tauMass               );
@@ -285,6 +288,7 @@ inputParameters::inputParameters()
         _ip.addParameter(_PhiMass               );
         _ip.addParameter(_PhiWidth              );
         _ip.addParameter(_PhiBrKK               );
+		_ip.addParameter(_PhiBree               );
         _ip.addParameter(_JpsiMass              );
         _ip.addParameter(_JpsiWidth             );
         _ip.addParameter(_JpsiBree              );
@@ -611,6 +615,15 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		defaultMinW   = 2 * kaonChargedMass();
 		defaultMaxW         = mass + 5 * width;
 		_inputBranchingRatio = PhiBrKK(); 
+		break;
+	case 333011:  // phi(1020)
+		_particleType = PHI_ee;
+		_decayType    = NARROWVMDEFAULT;
+		mass          = PhiMass();
+		width         = PhiWidth();
+		defaultMinW   = mass - 5 * width;
+		defaultMaxW         = mass + 5 * width;
+		_inputBranchingRatio = PhiBree(); 
 		break;
 	case 443:  // J/psi
 		_particleType = JPSI;

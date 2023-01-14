@@ -48,6 +48,16 @@ vector3::vector3(double x, double y, double z)
    _vec[1] = y;
    _vec[2] = z;
 }
+/**
+ * @brief Construct a new vector3::vector3 object ==> A copy constructor
+ * @details Created to handle a gcc9 compiler warning: 
+ * @param [vec]: The vector3 object to be copied.
+ */
+vector3::vector3 (const vector3& vec){
+	_vec[0] = vec._vec[0];
+	_vec[1] = vec._vec[1];
+	_vec[2] = vec._vec[2];
+}
 
 
 vector3::~vector3()

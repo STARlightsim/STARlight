@@ -392,18 +392,36 @@ double Gammagammaleptonpair::pp_2(double E)
 
 
 
-//______________________________________________________________________________
+/**
+ * @brief creates the daughter particles for the respective two photon decay channel in the CM Frame.
+ * 
+ * @param ipid [output reference] Sets to the ipid of the daughter particles.
+ * @param W [input] Parent Energy in CM-Frame
+ * @param px0 [input] Parent x-momentum in CM Frame
+ * @param py0 [input] Parent y-momentum in CM Frame
+ * @param pz0 [input] Parent z-momentum in CM Frame
+ * @param E1 [output reference] Sets to daughter 1 Energy in CM Frame
+ * @param px1 [output reference] Sets to daughter 1 x-momentum in CM Frame
+ * @param py1 [output reference] Sets to daughter 1 y-momentum in CM Frame
+ * @param pz1 [output reference] Sets to daughter 1 z-momentum in CM frame
+ * @param E2 [output reference] Sets to daughter 2 Energy in CM Frame
+ * @param px2 [output reference] Sets to daughter 2 x-momentum in CM Frame
+ * @param py2 [output reference] Sets to daughter 2 y-momentum in CM Frame
+ * @param pz2 [output reference] Sets to daughter 2 z-momentum in CM Frame
+ * @param iFbadevent [output reference] It sets to 1 for unsuccessful decay ONLY. N.B. It does not reset
+ * (but remains at initial value) for successful decays.
+ */
 void Gammagammaleptonpair::twoBodyDecay(starlightConstants::particleTypeEnum &ipid,
                                     double  W,
                                     double  px0, double  py0, double  pz0,
-                                    double& px1, double& py1, double& pz1,
-                                    double& px2, double& py2, double& pz2,
+                                    double& E1, double& px1, double& py1, double& pz1,
+                                    double& E2, double& px2, double& py2, double& pz2,
                                     int&    iFbadevent)
 {
     //     This routine decays a particle into two particles of mass mdec,
     //     taking spin into account
 
-    double mdec=0.,E1=0.,E2=0.;
+    double mdec=0.;
     double pmag, anglelep[20001];
     double phi,theta=0.,xtest,Ecm;
     double betax,betay,betaz;
@@ -532,7 +550,12 @@ double Gammagammaleptonpair::thetalep(double W,double theta)
 }
 
 
-//______________________________________________________________________________
+/**
+ * @brief Creates an event with the decay particles inside.
+ * 
+ * @param ievent 
+ * @return [starlightConstants::event] The produced event
+ */
 starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
 {//returns the vector with the decay particles inside.
     starlightConstants::event leptonpair; //This object will store all the tracks for a single event
@@ -543,7 +566,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
     int iFbadevent=0;
     starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
 	
-    double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
+    double E1=0.,E2=0., px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
     //this function decays particles and writes events to a file
     //zero out the event structure
     leptonpair._numberOfTracks=0;
@@ -552,6 +575,8 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
 	leptonpair.px[i]=0.;
 	leptonpair.py[i]=0.;
 	leptonpair.pz[i]=0.;
+    leptonpair.E[i] =0.;
+    leptonpair.mass[i] = 0.;
 	leptonpair._fsParticle[i]=starlightConstants::UNKNOWN;
 	leptonpair._charge[i]=0;
     }
@@ -561,11 +586,12 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
     picky(rapidity);
 
     pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
-    twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
+    twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);//decaying/producing the daughter particles.
     if (iFbadevent==0){
 	int q1=0,q2=0; 
 
-	double xtest = _randy->Rndom();
+	//charges of each daughter is randomly determined.
+    double xtest = _randy->Rndom();
 	if (xtest<0.5)
 	{
 	    q1=1;
@@ -574,17 +600,24 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
 	else{
 	    q1=-1;
 	    q2=1;
-	}	
+	}
+    double mlepton = getMass();	
 	leptonpair._numberOfTracks=2;//leptonpairs are two tracks...
+
+    //storing the properties of each of the lepton pair
 	leptonpair.px[0]=px1;
 	leptonpair.py[0]=py1;
 	leptonpair.pz[0]=pz1;
+    leptonpair.E[0] = E1;
+    leptonpair.mass[0] = mlepton;
 	leptonpair._fsParticle[0]=ipid; 
 	leptonpair._charge[0]=q1;
 
 	leptonpair.px[1]=px2;
 	leptonpair.py[1]=py2;
 	leptonpair.pz[1]=pz2;
+    leptonpair.E[1] =E2;
+    leptonpair.mass[1] =mlepton;
 	leptonpair._fsParticle[1]=ipid;
 	leptonpair._charge[1]=q2;
 
@@ -595,25 +628,31 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
 }
 
 
-//______________________________________________________________________________
-upcEvent Gammagammaleptonpair::produceEvent()
+/**
+ * @brief Creates a upcEvent of the predefined channel containing the decay particles
+ * 
+ * @param beta The boost vector to transform from CM to Lab Frame. Important for pseudorapidity cuts.
+ * @return [upcEvent] The produced event
+ */
+upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
 {
 //returns the vector with the decay particles inside.
 
    upcEvent event;
-
+    //all important  variables are initialized.
    double comenergy = 0.;
    double rapidity = 0.;
    double pairE = 0.;
    double pairmomx=0.,pairmomy=0.,pairmomz=0.;
-   int iFbadevent=0;
+   int iFbadevent=0;//variable to track successful and unsuccessful decays.
    starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
    
    double px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.,E2=0.,E1=0.;
    bool accepted = false;
+   double ptCutMin2 = _ptCutMin*_ptCutMin;//used to make pt_Cut comparisons without using square_roots
+   double ptCutMax2 = _ptCutMax*_ptCutMax;//used to make pt_Cut comparison without using square_roots
    do{ 
-     //this function decays particles and writes events to a file
-     //zero out the event structure
+     
      pickw(comenergy);
      
      picky(rapidity);
@@ -622,37 +661,45 @@ upcEvent Gammagammaleptonpair::produceEvent()
    
   
      _nmbAttempts++;
-     twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,px1,py1,pz1,px2,py2,pz2,iFbadevent);
-     double pt1chk = sqrt(px1*px1+py1*py1);
-     double pt2chk = sqrt(px2*px2+py2*py2);
+     iFbadevent =0;
+     twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);//Decaying/producing daughter particle
     
-     double eta1 = pseudoRapidity(px1, py1, pz1);
-     double eta2 = pseudoRapidity(px2, py2, pz2);
-    
-     if(_ptCutEnabled && !_etaCutEnabled){
-       if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
+    if(iFbadevent != 0){//checks for successful decay - Important to avoid false accepted counts in the PtCut-EtaCut if-Block.
+        continue;//skips all checks to repeat the do-while loop.
+    } 
+     double pt1chk2 = px1*px1+py1*py1;//used for ptCut comparison without using square roots.
+     double pt2chk2 = px2*px2+py2*py2;//as above: computes transverse momentum (squared) for 2nd daughter.
+     
+
+     double eta1 = pseudoRapidityLab(px1,py1,pz1,E1,beta);//Determines pseudorapidity of  daughter particle 1 in the laboratory frame
+     double eta2 = pseudoRapidityLab(px2,py2,pz2,E2,beta);//similar as above
+
+    //ptCuts and Eta_Cuts are carried out below---->PtCut-EtaCut-if-Block
+
+     if(_ptCutEnabled && !_etaCutEnabled){//Only ptCut is enabled
+       if(pt1chk2 > ptCutMin2 && pt1chk2 < ptCutMax2 &&  pt2chk2 > ptCutMin2 && pt2chk2 < ptCutMax2){//if ALL daughter particles fall into ptCut range
+	    accepted = true;
+	    _nmbAccepted++;
+       }
+     }
+     else if(!_ptCutEnabled && _etaCutEnabled){//only etaCut is enabled
+       if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){//BOTH particles fall with EtaCut range.
 	 accepted = true;
 	 _nmbAccepted++;
        }
      }
-     else if(!_ptCutEnabled && _etaCutEnabled){
-       if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){
-	 accepted = true;
-	 _nmbAccepted++;
-       }
-     }
-     else if(_ptCutEnabled && _etaCutEnabled){
-       if(pt1chk > _ptCutMin && pt1chk < _ptCutMax &&  pt2chk > _ptCutMin && pt2chk < _ptCutMax){
-	 if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){
+     else if(_ptCutEnabled && _etaCutEnabled){//both cuts are enabled
+       if(pt1chk2 > ptCutMin2 && pt1chk2 < ptCutMax2 &&  pt2chk2 > ptCutMin2 && pt2chk2 < ptCutMax2){
+	 if(eta1 > _etaCutMin && eta1 < _etaCutMax && eta2 > _etaCutMin && eta2 < _etaCutMax){//BOTH particles fall within BOTH ptCut and EtaCut range
 	   accepted = true;
 	    _nmbAccepted++;
 	 }
        }
      }
-     else if(!_ptCutEnabled && !_etaCutEnabled) 
+     else if(!_ptCutEnabled && !_etaCutEnabled) //no cut is enabled
 	_nmbAccepted++;
     
-   }while((_ptCutEnabled || _etaCutEnabled) && !accepted);
+   }while((iFbadevent != 0) || ((_ptCutEnabled || _etaCutEnabled) && !accepted));//repeats loop if ptCuts, EtaCuts or successful decay requirements are not satisfied.
    
    if (iFbadevent==0){
      int q1=0,q2=0; 
@@ -673,10 +720,10 @@ upcEvent Gammagammaleptonpair::produceEvent()
      E1 = sqrt( mlepton*mlepton + px1*px1 + py1*py1 + pz1*pz1 ); 
      E2 = sqrt( mlepton*mlepton + px2*px2 + py2*py2 + pz2*pz2 ); 
 
-     starlightParticle particle1(px1, py1, pz1, E1, starlightConstants::UNKNOWN, -q1*ipid, q1);
+     starlightParticle particle1(px1, py1, pz1, E1, mlepton, -q1*ipid, q1);
      event.addParticle(particle1);
      
-     starlightParticle particle2(px2, py2, pz2, E2, starlightConstants::UNKNOWN, -q2*ipid, q2);
+     starlightParticle particle2(px2, py2, pz2, E2, mlepton, -q2*ipid, q2);
      event.addParticle(particle2);
      
     }

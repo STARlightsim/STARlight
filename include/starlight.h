@@ -56,6 +56,7 @@ public:
       
 	bool init();
 
+	vector3 extract_beta(double lorentzGammaBeam1, double lorentzGammaBeam2);
 	upcEvent produceEvent();
       
         std::string   baseFileName  () const { return _baseFileName;		  }

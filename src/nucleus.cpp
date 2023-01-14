@@ -96,6 +96,13 @@ void nucleus::init()
 		_woodSaxonSkinDepth=0.46;
 	      }
 	      break;
+	case 8: //Oxygen, 3-parameter-Fermi Model added from parameters in DOI:10.1016/0092-640X(87)90013-1
+	{
+		_Radius = 2.608;
+		_woodSaxonSkinDepth = 0.513;
+		_w = -0.051;//added for the first time for the 3pF model
+		_rho0 = 0.16536;// determined by nomalization \int d^3r \rho(r) = 16
+	}break;
 	case 1: 
 		{
 		  //is this a proton or deuteron
@@ -135,7 +142,12 @@ nucleus::rws(const double r) const
     double norm = (3./(2.*starlightConstants::pi))*sqrt( (3./(2.*starlightConstants::pi)) );
     norm = norm/(nuclearRadius()*nuclearRadius()*nuclearRadius());
     return norm*exp(-((3./2.)*r*r)/(nuclearRadius()*nuclearRadius()));
-  }else{
+  }else if(_Z==8){
+	//3-parameter-Fermi Model (3pF) for Oxygen
+	double x=exp(-(r - nuclearRadius()) / woodSaxonSkinDepth());
+	return x*(1.0 +w()*r*r/nuclearRadius()/nuclearRadius())/(1.0 + x);//expression adjusted to avoid problems on some machines if r is too large
+  }
+  else{
     // Fermi density distribution for heavy nuclei
     double x=exp(-(r - nuclearRadius()) / woodSaxonSkinDepth());
     return x/(1.+x);

@@ -57,7 +57,7 @@ class Gammagammasingle : public eventChannel
   void singleCrossSection();
   starlightConstants::event produceEvent(int &ievent);
 
-  upcEvent produceEvent();
+  upcEvent produceEvent(vector3 beta);
 
  private:
   double _sigmax[starlightLimits::MAXWBINS][starlightLimits::MAXYBINS];
@@ -72,7 +72,7 @@ class Gammagammasingle : public eventChannel
   // Duplicated old function pp into pp1 and pp2 to handle the two nuclei separately, allowing for asymmetric species
   double pp1(double E);
   double pp2(double E);
-  void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &px1,double &py1,double&pz1,double &px2,double &py2,double &pz2,int &iFbadevent);
+  void twoBodyDecay(starlightConstants::particleTypeEnum &ipid,double W,double px0,double py0,double pz0,double &E1, double &px1,double &py1,double&pz1, double &E2, double &px2,double &py2,double &pz2,double &mass,int &iFbadevent);
   
   double getMass();
   double getWidth();
