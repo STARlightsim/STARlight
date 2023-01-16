@@ -2,7 +2,7 @@
 This is the new repository for the STARlight Monte Carlo, which simulates ultra-peripheral collisions of relativistic heavy ions.   It simulates two-photon 
 and coherent and incoherent photoproduction of vector mesons.  It also includes an interface to DPMJet to be able to simulate other, general photoproductio reactions.
 
-The code was described in [STARlight: A Monte Carlo simulation program for ultra-peripheral collisions of relativistic ions](arXiv:1607.03838) by Spencer R. Klein, Joakim Nystrand, Janet Seger,Yuri Gorbunov and Joey Butterworth, Computer Physics Communications, 212, 258 (2017) also available at arXiv:1607.03838.
+The code was described in [STARlight: A Monte Carlo simulation program for ultra-peripheral collisions of relativistic ions](https://doi.org/10.1016/j.cpc.2016.10.016) by Spencer R. Klein, Joakim Nystrand, Janet Seger,Yuri Gorbunov and Joey Butterworth, Computer Physics Communications, 212, 258 (2017) also available at [arXiv:1607.03838]((https://arxiv.org/abs/1607.03838)).
 
 ## Installation Instructions
 The following instructions illustrates the procedure to install and run STARlight in a *nix based environment:
