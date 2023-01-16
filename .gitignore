@@ -1,0 +1,5 @@
+#Installation directory
+build
+
+#Editor configuration files
+.vscode

@@ -41,6 +41,6 @@ The easiest way to setup `slight.in` is to start with a test file and edit [as d
     ```
 9. The output will be found in the installation directory with the default name: `slight.out`. This name can change depending on the `basefilename` set in your `slight.in`. For example, if your `basefilename` is `slightvoppPb_lhc`, your output file will be named as `slightvoppPb_lhc.out` in the installation directory.
 
-10. <a id="extra"></a> __Extra on setting up__ `slight.in`: There are a few test files in the `config` folder. These test files if they will be used must be renamed to `slight.in` and moved or copied to the installation directory: `build`. These files can also be edited to suite the simulation conditions as desired by the user, useful comments on the different parameters can be found in these test files. More detailed information on the parameters can be found in the [PDF documentation](Readme.pdf)
+10. <a id="extra"></a> __Extra on setting up__ `slight.in`: There are a few test files in the `config` folder. If these test files will be used, they must be renamed to `slight.in` and moved or copied to the installation directory: `build`. These files can also be edited to suit the simulation conditions desired by the user. Useful comments on the role of different parameters can be found in these test files and more detailed information on the parameters can be found in the [PDF documentation](Readme.pdf)
 
 
