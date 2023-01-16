@@ -528,7 +528,8 @@ starlightConstants::event Gammagammasingle::produceEvent(int &/*ievent*/)
  * @param beta The boost vector needed to transform particles from CM to Lab frame. Needed for calculating pseudorapidity in Lab Frame.
  * @return The newly produced event 
  */
-upcEvent Gammagammasingle::produceEvent(vector3 beta)
+//upcEvent Gammagammasingle::produceEvent(vector3 beta)
+upcXEvent Gammagammasingle::produceEvent(vector3 beta)
 {
 
   starlightConstants::event single;//The structure temporarily storing event properties
@@ -812,7 +813,8 @@ upcEvent Gammagammasingle::produceEvent(vector3 beta)
   }
   
   //converting the stored event data to a valid upcEvent object.
-  return upcEvent(single);
+  //return upcEvent(single);
+  return upcXEvent(single);
 }
 
 

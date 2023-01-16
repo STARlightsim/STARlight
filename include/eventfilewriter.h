@@ -55,7 +55,8 @@ class eventFileWriter : public fileWriter
 
       /** Write an UPC event to file */
       int writeEvent(upcEvent &event, int eventnumber);
-      
+      int writeEvent(upcXEvent &event, int eventnumber);
+
       /** Set if we want to write full pythia information */
       void writeFullPythiaInfo(bool v) { _writeFullPythia = v; }
       

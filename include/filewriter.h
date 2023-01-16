@@ -39,6 +39,7 @@
 #include <fstream>
 
 #include "upcevent.h"
+#include "upcXevent.h"
 
 
 class fileWriter

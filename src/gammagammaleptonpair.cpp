@@ -634,11 +634,13 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
  * @param beta The boost vector to transform from CM to Lab Frame. Important for pseudorapidity cuts.
  * @return [upcEvent] The produced event
  */
-upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
+//upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
+upcXEvent Gammagammaleptonpair::produceEvent(vector3 beta)
 {
 //returns the vector with the decay particles inside.
 
-   upcEvent event;
+   //upcEvent event;
+   upcXEvent event;
     //all important  variables are initialized.
    double comenergy = 0.;
    double rapidity = 0.;

@@ -137,7 +137,8 @@ starlightStandalone::run()
 		for (unsigned int iEvent = 0; (iEvent < _nmbEventsPerFile) && (nmbEvents < _nmbEventsTot);
 		     ++iEvent, ++nmbEvents) {
 			progressIndicator(iEvent, _nmbEventsTot, true, 4);
-			upcEvent event = _starlight->produceEvent();
+			//upcEvent event = _starlight->produceEvent();
+			upcXEvent event = _starlight->produceEvent();
 			// Boost event from CMS system to lab system
 			boostEvent(event);
 			fileWriter.writeEvent(event, iEvent);
@@ -191,3 +192,13 @@ void starlightStandalone::boostEvent(upcEvent &event)
    event.boost(boost);
 }
 
+void starlightStandalone::boostEvent(upcXEvent &event)
+{
+  
+   // Calculate CMS boost 
+   double rap1 = acosh(_inputParameters->beam1LorentzGamma());
+   double rap2 = -acosh(_inputParameters->beam2LorentzGamma());
+   double boost = (rap1+rap2)/2.;
+
+   event.boost(boost);
+}
