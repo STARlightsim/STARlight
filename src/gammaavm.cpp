@@ -682,7 +682,7 @@ void Gammaavectormeson::momenta(double W,double Y,
 		Eb1 = Egam + E0b1 - E;//
 		pxb1 = pxgam +px0b1 -px;//
 		pyb1 = pygam + py0b1 - py;//
-		pzb1 = -sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->protonMass()*_ip->beam1A()*_ip->protonMass()*_ip->beam1A()));
+		pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->protonMass()*_ip->beam1A()*_ip->protonMass()*_ip->beam1A()));
 		pzgam = pzb1 + pz - pz0b1;
 		Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);
 		Eb2 = E0b2 -Egam;
@@ -924,10 +924,10 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 
 	double ptCutMin2 = _ptCutMin*_ptCutMin;//used for ptCut comparison without using square roots - to reduce processing time
 	double ptCutMax2 = _ptCutMax*_ptCutMax;//same as above
-	double Pgam[4] = {0.0,0.0,0.0,0.0};
-	double Pb1[4] = {0.0,0.0,0.0,0.0};
-	double Pb2[4] = {0.0,0.0,0.0,0.0};
-	double Q2gam =0., t=0.;
+	double Pgam[4] = {0.0,0.0,0.0,0.0};//E,pxgam,pygam,pzgam
+	double Pb1[4] = {0.0,0.0,0.0,0.0};//beam1 - Eb1, pxb1,pyb1,pzb1
+	double Pb2[4] = {0.0,0.0,0.0,0.0};//beam2 - Eb2, pxb2,pyb2,pzb2
+	double Q2gam =0., t=0.; //q2 for photon, t - transferred momenta squared
 	if (_VMpidtest == starlightConstants::FOURPRONG) {
 		double        comenergy = 0;
 		double        mom[3]    = {0, 0, 0};

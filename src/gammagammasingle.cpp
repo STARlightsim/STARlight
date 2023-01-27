@@ -275,14 +275,18 @@ void Gammagammasingle::picky(double &y)
 
 
 //______________________________________________________________________________
-void Gammagammasingle::parentMomentum(double w,double y,double &E,double &px,double &py,double &pz)
+void Gammagammasingle::parentMomentum(double w,double y,double &E,double &px,double &py,double&pz,
+                    double &Eb1, double &pxb1, double &pyb1, double &pzb1,
+								    double &Eb2, double &pxb2, double &pyb2, double &pzb2, double &t2,
+								    double &Egam1, double&pxgam1, double &pygam1, double &pzgam1, double &Q2gam1,
+                    double &Egam2, double&pxgam2, double &pygam2, double &pzgam2, double &Q2gam2)
 {
   //this function calculates px,py,pz,and E given w and y
   double anglepp1=0.,anglepp2=0.,ppp1=0.,ppp2=0.,E1=0.,E2=0.,signpx=0.,pt=0.;
   
   //E1 and E2 are for the 2 photons in the CM frame
-  E1 = w*exp(y)/2.;
-  E2 = w*exp(-y)/2.;
+  E1 = w*exp(y)/2.;//from beam1
+  E2 = w*exp(-y)/2.;//from beam2
   //calculate px and py
   //to get x and y components-- phi is random between 0 and 2*pi
   anglepp1 = _randy->Rndom();
@@ -300,7 +304,34 @@ void Gammagammasingle::parentMomentum(double w,double y,double &E,double &px,dou
   signpx = _randy->Rndom();
   //pick the z direction
   if(signpx > 0.5) 
-    pz = -pz;	
+    pz = -pz;
+
+  double E0b1 = _ip->protonEnergy()*_ip->beam1A();
+	double px0b1 = 0, px0b2 =0, py0b1=0, py0b2=0;
+	double pz0b1 = sqrt(E0b1*E0b1 - _ip->protonMass()*_ip->protonMass()*_ip->beam1A()*_ip->beam1A());
+	double E0b2 = _ip->protonEnergy()*_ip->beam2A();
+	double pz0b2 = -sqrt(E0b2*E0b2 - _ip->protonMass()*_ip->protonMass()*_ip->beam2A()*_ip->beam2A());
+  pxgam1 = ppp1*cos(2.*starlightConstants::pi*anglepp1);
+  pygam1 = ppp1*sin(2.*starlightConstants::pi*anglepp1);
+  pxgam2 = ppp2*cos(2.*starlightConstants::pi*anglepp2);
+  pygam2 = ppp2*sin(2.*starlightConstants::pi*anglepp2);
+  Egam1 = E1;
+  Egam2 = E2;
+
+  Eb1 = E0b1 - Egam1;
+  pxb1 = px0b1 - pxgam1;
+  pyb1 = py0b1 - pygam1;
+  pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->protonMass()*_ip->beam1A()*_ip->protonMass()*_ip->beam1A()));
+  pzgam1 = pz0b1 - pzb1;
+  Q2gam1 = Egam1*Egam1 - (pxgam1*pxgam1 + pygam1*pygam1 + pzgam1*pzgam1);
+
+  Eb2 = E0b2 - Egam2;
+  pxb2 = px0b2 - pxgam2;
+  pyb2 = py0b2 - pygam2;
+  pzb2 = -sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
+  pzgam2 = pz0b2 - pzb2;
+  Q2gam2 = Egam2*Egam2 - (pxgam2*pxgam2 + pygam2*pygam2 + pzgam2*pzgam2);
+  t2= pt*pt;//not sure
 }
 
 
@@ -530,35 +561,31 @@ starlightConstants::event Gammagammasingle::produceEvent(int &/*ievent*/)
  */
 //upcEvent Gammagammasingle::produceEvent(vector3 beta)
 upcXEvent Gammagammasingle::produceEvent(vector3 beta)
-{
+{//this function decays particles and writes events to a file
 
-  starlightConstants::event single;//The structure temporarily storing event properties
+  upcXEvent event;//keeps record of the produced event and its properties.
   double comenergy = 0.;
   double rapidity = 0.;
   double parentE = 0.;
   double parentmomx=0.,parentmomy=0.,parentmomz=0.;
 
-  //this function decays particles and writes events to a file
-  //zeroing out the event structure
-  single._numberOfTracks=0;
-  for(int i=0;i<4;i++){
-    single.px[i]=0.;
-    single.py[i]=0.;
-    single.pz[i]=0.;
-    single.E[i] =0.;
-    single.mass[i] = 0.;
-    single._fsParticle[i]=starlightConstants::UNKNOWN;
-    single._charge[i]=0;
-  }
   
-  
+  double Pgam1[4] = {0.0,0.0,0.0,0.0};//Photon from beam1 - Egam1,pxgam1,pygam1,pzgam1
+  double Pgam2[4] = {0.0,0.0,0.0,0.0};//Photon from beam2 Egam2,pxgam2,pygam2,pzgam2
+  double Pb1[4] = {0.0,0.0,0.0,0.0};//Outgoing beam1 Eb1,pxb1,pyb1,pzb1
+  double Pb2[4] = {0.0,0.0,0.0,0.0};//Outgoing beam2 Eb2,pxb2,pyb2,pzb2
+  double Q2gam1 =0.,Q2gam2, t=0.;
   
   
   if(_GGsingInputpidtest != starlightConstants::F2 && _GGsingInputpidtest != starlightConstants::F2PRIME && _GGsingInputpidtest != starlightConstants::AXION)
   {
     pickw(comenergy);
     picky(rapidity);
-    parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
+    parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz,
+                    Pb1[0],Pb1[1],Pb1[2],Pb1[3],
+                    Pb2[0],Pb2[1],Pb2[2],Pb2[3],t,
+                    Pgam1[0],Pgam1[1],Pgam1[2],Pgam1[3],Q2gam1,
+                    Pgam2[0],Pgam2[1],Pgam2[2],Pgam2[3], Q2gam2);
 #ifdef ENABLE_PYTHIA
     starlightParticle particle(parentmomx,parentmomy,parentmomz, parentE, getMass(),_GGsingInputpidtest , 0);
   
@@ -574,6 +601,8 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
   double mass = 0.;
   double mass2 =0; // This is used for events where we have more than two different decays rather than just one. It keeps track of the masses of the species in case they differ.
 
+  
+
   double ptCutMin2 = _ptCutMin*_ptCutMin;//Used to make Pt Cuts comparison without using square roots.
   double ptCutMax2 = _ptCutMax*_ptCutMax;//Used to make Pt Cuts comparison without using square roots.
   starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
@@ -588,7 +617,12 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
       iFbadevent = 0; //Ensures that this is reset after every loop cycle.
       pickw(comenergy);
       picky(rapidity);
-      parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
+      parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz,
+                    Pb1[0],Pb1[1],Pb1[2],Pb1[3],
+                    Pb2[0],Pb2[1],Pb2[2],Pb2[3],t,
+                    Pgam1[0],Pgam1[1],Pgam1[2],Pgam1[3],Q2gam1,
+                    Pgam2[0],Pgam2[1],Pgam2[2],Pgam2[3], Q2gam2);
+
   
     //Decays into two pairs.
     parentmomx=parentmomx/2.;
@@ -628,58 +662,79 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
     }
     }while(!accepted || iFbadevent !=0);//repeats the loop if event does not satisfy ptCut etaCut or does not decay successfully
 
-    single._numberOfTracks=4;//number of tracks per event
     if (iFbadevent==0){
+      
+      starlightParticle particle1;
+      starlightParticle particle2;
+      starlightParticle particle3;
+      starlightParticle particle4;
+
       xtest = _randy->Rndom();
       ztest = _randy->Rndom();
       //Assigning charges randomly.
       if (xtest<0.5){
-	single._charge[0]=1;//q1=1;
-	single._charge[1]=-1;//q2=-1;
+        particle1.setCharge(1);//q1=1
+        particle2.setCharge(-1);//q2=-1
       }
       else{
-	single._charge[0]=-1;//q1=-1;
-	single._charge[1]=1;//q2=1;
+        particle1.setCharge(-1);//q1=-1
+        particle2.setCharge(1);//q2=1
       }
       if (ztest<0.5){
-	single._charge[2]=1;//q3=1;
-	single._charge[3]=-1;//q4=-1;
+        particle3.setCharge(1);//q3=1
+        particle4.setCharge(-1);//q4=-1
       }
       else{
-	single._charge[2]=-1;//q3=-1;
-	single._charge[3]=1;//q4=1;
+        particle3.setCharge(-1);//q3=-1
+        particle4.setCharge(1);//q4=1
       }
       //storing the remaining event's track details
       //Track #1
-      single.px[0]=px1;
-      single.py[0]=py1;
-      single.pz[0]=pz1;
-      single.E[0] =E1;
-      single.mass[0] = mass;
-      single._fsParticle[0]=ipid*single._charge[0];
-      //Track #2                                                                                                                      
-      single.px[1]=px2;
-      single.py[1]=py2;
-      single.pz[1]=pz2;
-      single.E[1] =E2;
-      single.mass[1] = mass;
-      single._fsParticle[1]=ipid*single._charge[1];
+      particle1.SetPxPyPzE(px1,py1,pz1,E1);
+      particle1.setMass(mass);
+      particle1.setPdgCode(ipid*particle1.getCharge());
+      event.addParticle(particle1);
+
+      //Track #2
+      particle2.SetPxPyPzE(px2,py2,pz2,E2);
+      particle2.setMass(mass);
+      particle2.setPdgCode(ipid*particle2.getCharge());
+      event.addParticle(particle2);
+
       //Track #3
-      single.px[2]=px3;
-      single.py[2]=py3;
-      single.pz[2]=pz3;
-      single.E[2] =E3;
-      single.mass[2] = mass2;
-      single._fsParticle[2]=ipid*single._charge[2];
+      particle3.SetPxPyPzE(px3,py3,pz3,E3);
+      particle3.setMass(mass2);
+      particle3.setPdgCode(ipid*particle3.getCharge());
+      event.addParticle(particle3);
+
       //Track #4
-      single.px[3]=px4;
-      single.py[3]=py4;
-      single.pz[3]=pz4;
-      single.E[3] =E4;
-      single.mass[3] = mass2;
-      single._fsParticle[3]=ipid*single._charge[3];
-      
+      particle4.SetPxPyPzE(px4,py4,pz4,E4);
+      particle4.setMass(mass2);
+      particle4.setPdgCode(ipid*particle4.getCharge());
+      event.addParticle(particle4);
+
+      //add information about the meadiating photons and beams.
+
+      if(true){//check if breakup happens or not.- all might be embedded in the HEPMC3 info parameter
+        lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
+        lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
+        double targetEgamma1, targetEgamma2, rap1cm = acosh(_ip->beamLorentzGamma()), cmsEgam1 = Pgam1[0];
+        double cmsEgam2 = Pgam2[0], Pzgam1 = Pgam1[3], Pzgam2 = Pgam2[3];
+        lorentzVector gamma1(Pgam1[1],Pgam1[2],Pzgam1,cmsEgam1);
+        lorentzVector gamma2(Pgam2[1],Pgam2[2],Pzgam2,cmsEgam2);
+
+        targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
+        targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
+
+        event.addGamma(gamma1,targetEgamma1,Q2gam1);
+        event.addGamma(gamma2,targetEgamma2,Q2gam2);
+        event.addOutgoingBeam1(beam1,1);
+        event.addOutgoingBeam2(beam2,1);
+        event.addVertext(t);        
+      }
+                
       ievent=ievent+1;
+      return event;
     }	
     
     break;
@@ -689,7 +744,12 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
       iFbadevent = 0; //Resets this after every loop cycle-to avoid an infinite loop
       pickw(comenergy);
       picky(rapidity);
-      parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
+      parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz,
+                    Pb1[0],Pb1[1],Pb1[2],Pb1[3],
+                    Pb2[0],Pb2[1],Pb2[2],Pb2[3],t,
+                    Pgam1[0],Pgam1[1],Pgam1[2],Pgam1[3],Q2gam1,
+                    Pgam2[0],Pgam2[1],Pgam2[2],Pgam2[3], Q2gam2);
+      
       accepted = true;//Reinitialize the acceptance flag after every loop cycle
       _nmbAttempts++;
       twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,mass,iFbadevent);//Decaying/producing daughter particles
@@ -716,33 +776,54 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
         _nmbAccepted++;//maintain count of successfully accepted events
       }
     }while(!accepted || iFbadevent != 0);//repeats loop if ptCut, etaCut or succesful decay requirements are not satisfied.
+    
 
-    single._numberOfTracks=2;//number of tracks per event
     if (iFbadevent==0){
+      starlightParticle particle1;
+      starlightParticle particle2;
+      
       xtest = _randy->Rndom();
       if (xtest<0.5){// randomly sets the charge of the particles
-	single._charge[0]=1;//q1=1;
-	single._charge[1]=-1;//q2=-1;
+	      particle1.setCharge(1);//q1=1
+        particle2.setCharge(-1);//q2=-1
       }
       else{
-	single._charge[0]=-1;//q1=-1;
-	single._charge[1]=1;//q2=1;
+        particle1.setCharge(-1);//q1=-1
+        particle2.setCharge(1);//q2=1
       }
       //storing the event details	
       //Track #1
-      single.px[0]=px1;
-      single.py[0]=py1;
-      single.pz[0]=pz1;
-      single.E[0] =E1;
-      single.mass[0] = mass;
-      single._fsParticle[0]=ipid*single._charge[0]; 
+      particle1.SetPxPyPzE(px1,py1,pz1,E1);
+      particle1.setMass(mass);
+      particle1.setPdgCode(ipid*particle1.getCharge());
+      event.addParticle(particle1);
+
       //Track #2
-      single.px[1]=px2;
-      single.py[1]=py2;
-      single.pz[1]=pz2;
-      single.E[1] =E2;
-      single.mass[1] = mass;
-      single._fsParticle[1]=ipid*single._charge[1];
+      particle2.SetPxPyPzE(px2,py2,pz2,E2);
+      particle2.setMass(mass);
+      particle2.setPdgCode(ipid*particle2.getCharge());
+      event.addParticle(particle2);
+
+      //adds information about mediating photons and outgoing beams
+
+      if(true){//check if breakup happens or not - it might be embedded in the HEPMC3 info parameter
+        lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
+        lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
+        double targetEgamma1, targetEgamma2, rap1cm = acosh(_ip->beamLorentzGamma()), cmsEgam1 = Pgam1[0];
+        double cmsEgam2 = Pgam2[0], Pzgam1 = Pgam1[3], Pzgam2 = Pgam2[3];
+        lorentzVector gamma1(Pgam1[1],Pgam1[2],Pzgam1,cmsEgam1);
+        lorentzVector gamma2(Pgam2[1],Pgam2[2],Pzgam2,cmsEgam2);
+
+        targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
+        targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
+
+        event.addGamma(gamma1,targetEgamma1,Q2gam1);
+        event.addGamma(gamma2,targetEgamma2,Q2gam2);
+        event.addOutgoingBeam1(beam1,1);
+        event.addOutgoingBeam2(beam2,1);
+        event.addVertext(t);        
+      }
+      
       ievent=ievent+1;
     }
     break;
@@ -752,7 +833,11 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
       iFbadevent =0;//resets variable after every loop cycle - to avoid infinite loops
       pickw(comenergy);
       picky(rapidity);
-      parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz);
+      parentMomentum(comenergy,rapidity,parentE,parentmomx,parentmomy,parentmomz,
+                    Pb1[0],Pb1[1],Pb1[2],Pb1[3],
+                    Pb2[0],Pb2[1],Pb2[2],Pb2[3],t,
+                    Pgam1[0],Pgam1[1],Pgam1[2],Pgam1[3],Q2gam1,
+                    Pgam2[0],Pgam2[1],Pgam2[2],Pgam2[3], Q2gam2);
       accepted = true;//reinitializes the acceptance flag after every loop cycle - avoid inifinte loop
       _nmbAttempts++;
       twoBodyDecay(ipid,comenergy,parentmomx,parentmomy,parentmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,mass,iFbadevent);//decaying/producing daughter particles
@@ -781,27 +866,47 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
     }while(!accepted || iFbadevent != 0);//repeats loop if ptCut,EtaCut or successful decay requirements are not satisfied.
     
 
-    single._numberOfTracks=2;//number of tracks per event
     if (iFbadevent==0){
       //storing the event's details.
+      starlightParticle particle1;
+      starlightParticle particle2;
 
-        single._charge[0]=0;//q1=0;
-        single._charge[1]=0;//q2=0;
+
+      particle1.setCharge(0);//q1=0;
+      particle2.setCharge(0);//q2=0;
 
       //Track #1
-      single.px[0]=px1;
-      single.py[0]=py1;
-      single.pz[0]=pz1;
-      single.E[0] =E1;
-      single.mass[0] = mass;
-      single._fsParticle[0]=ipid;
+      particle1.SetPxPyPzE(px1,py1,pz1,E1);
+      particle1.setMass(mass);
+      particle1.setPdgCode(ipid);
+      event.addParticle(particle1);
+
       //Track #2
-      single.px[1]=px2;
-      single.py[1]=py2;
-      single.pz[1]=pz2;
-      single.E[1] =E2;
-      single.mass[1] = mass;
-      single._fsParticle[1]=ipid;
+      particle2.SetPxPyPzE(px2,py2,pz2,E2);
+      particle2.setMass(mass);
+      particle2.setPdgCode(ipid);
+      event.addParticle(particle2);
+
+      //adds information about the mediating photon and the outgoing beams
+
+      if(true){//check if breakup happens or not - it might be embedded in the HEPMC3 info parameter
+        lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
+        lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
+        double targetEgamma1, targetEgamma2, rap1cm = acosh(_ip->beamLorentzGamma()), cmsEgam1 = Pgam1[0];
+        double cmsEgam2 = Pgam2[0], Pzgam1 = Pgam1[3], Pzgam2 = Pgam2[3];
+        lorentzVector gamma1(Pgam1[1],Pgam1[2],Pzgam1,cmsEgam1);
+        lorentzVector gamma2(Pgam2[1],Pgam2[2],Pzgam2,cmsEgam2);
+
+        targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
+        targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
+
+        event.addGamma(gamma1,targetEgamma1,Q2gam1);
+        event.addGamma(gamma2,targetEgamma2,Q2gam2);
+        event.addOutgoingBeam1(beam1,1);
+        event.addOutgoingBeam2(beam2,1);
+        event.addVertext(t);        
+      }
+
       ievent=ievent+1;
 
     }
@@ -812,9 +917,8 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
     break;
   }
   
-  //converting the stored event data to a valid upcEvent object.
-  //return upcEvent(single);
-  return upcXEvent(single);
+  
+  return event;
 }
 
 

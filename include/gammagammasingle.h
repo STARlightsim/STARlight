@@ -69,7 +69,12 @@ class Gammagammasingle : public eventChannel
   void pickw(double &w);
   void picky(double &y);
   
-  void parentMomentum(double w,double y,double &E,double &px,double &py,double&pz);
+  void parentMomentum(double w,double y,double &E,double &px,double &py,double&pz,
+                    double &Eb1, double &pxb1, double &pyb1, double &pzb1,
+								    double &Eb2, double &pxb2, double &pyb2, double &pzb2, double &t2,
+								    double &Egam1, double&pxgam1, double &pygam1, double &pzgam1, double &Q2gam1,
+                    double &Egam2, double&pxgam2, double &pygam2, double &pzgam2, double &Q2gam2);
+
   // Duplicated old function pp into pp1 and pp2 to handle the two nuclei separately, allowing for asymmetric species
   double pp1(double E);
   double pp2(double E);
