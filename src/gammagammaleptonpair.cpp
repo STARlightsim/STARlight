@@ -771,23 +771,26 @@ upcXEvent Gammagammaleptonpair::produceEvent(vector3 beta)
      
      starlightParticle particle2(px2, py2, pz2, E2, mlepton, -q2*ipid, q2);
      event.addParticle(particle2);
-     
-     lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
-     lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
-     double targetEgamma1, targetEgamma2, rap1cm = acosh(_ip->beamLorentzGamma()), cmsEgam1 = Pgam1[0];
-     double cmsEgam2 = Pgam2[0], Pzgam1 = Pgam1[3], Pzgam2 = Pgam2[3];
-     lorentzVector gamma1(Pgam1[1],Pgam1[2],Pzgam1,cmsEgam1);
-     lorentzVector gamma2(Pgam2[1],Pgam2[2],Pzgam2,cmsEgam2);
 
-     
-     targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
-     targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
+     if(_ip->HEPMC3OutputEnabled())
+     {     
+        lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
+        lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
+        double targetEgamma1, targetEgamma2, rap1cm = acosh(_ip->beamLorentzGamma()), cmsEgam1 = Pgam1[0];
+        double cmsEgam2 = Pgam2[0], Pzgam1 = Pgam1[3], Pzgam2 = Pgam2[3];
+        lorentzVector gamma1(Pgam1[1],Pgam1[2],Pzgam1,cmsEgam1);
+        lorentzVector gamma2(Pgam2[1],Pgam2[2],Pzgam2,cmsEgam2);
 
-     event.addGamma(gamma1,targetEgamma1,Q2gam1);
-     event.addGamma(gamma2,targetEgamma2,Q2gam2);
-     event.addOutgoingBeam1(beam1,1);
-     event.addOutgoingBeam2(beam2,1);
-     event.addVertext(t);
+        
+        targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
+        targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
+
+        event.addGamma(gamma1,targetEgamma1,Q2gam1);
+        event.addGamma(gamma2,targetEgamma2,Q2gam2);
+        event.addOutgoingBeam1(beam1,1);
+        event.addOutgoingBeam2(beam2,1);
+        event.addVertext(t);
+     }//end if
 
     }
    return event;

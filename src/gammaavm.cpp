@@ -1004,7 +1004,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 							   (2*(i/2)-1));//charge
 				event.addParticle(daughter);
 			}
-			if(_VMinterferencemode == 0){
+			if (_ip->HEPMC3OutputEnabled() && _VMinterferencemode == 0 ){
 				lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
 				lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
 				double targetEgamma, rap1cm = acosh(_ip->beamLorentzGamma()),cmsEgam = Pgam[0], Pzgam = Pgam[3];
@@ -1103,7 +1103,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 							   charge);//charge
 				event.addParticle(daughter);
 			}
-			if(_VMinterferencemode == 0)
+			if(_ip->HEPMC3OutputEnabled() && _VMinterferencemode == 0)
 			{
 				lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
 				lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
@@ -1217,7 +1217,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 			starlightParticle particle2(px2, py2, pz2, Ed2, md, ipid2, q2);
 			event.addParticle(particle2);
 			
-			if(_VMinterferencemode ==0){
+			if(_ip->HEPMC3OutputEnabled() && _VMinterferencemode ==0 ){
 				lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
 				lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
 				double targetEgamma, rap1cm = acosh(_ip->beamLorentzGamma()),cmsEgam = Pgam[0], Pzgam = Pgam[3];

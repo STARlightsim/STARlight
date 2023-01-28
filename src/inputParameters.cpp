@@ -50,6 +50,7 @@ parameterlist parameterbase::_parameters;
 //______________________________________________________________________________
 inputParameters::inputParameters()
         : _baseFileName          ("baseFileName","slight"),
+      _HEPMC3OutputEnabled	 ("HEPMC3", false, NOT_REQUIRED),
  	  _beam1Z                ("BEAM_1_Z",0),
 	  _beam1A                ("BEAM_1_A",0),
 	  _beam2Z                ("BEAM_2_Z",0),
@@ -180,7 +181,9 @@ inputParameters::inputParameters()
   // or similar
 	
         _ip.addParameter(_baseFileName);
+	
 
+	_ip.addParameter(_HEPMC3OutputEnabled);
 	_ip.addParameter(_beam1Z);
 	_ip.addParameter(_beam2Z);
 	_ip.addParameter(_beam1A);
@@ -785,6 +788,18 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		return false;
 	}
 
+	if(HEPMC3OutputEnabled() == true){
+		if(beamBreakupMode() != 4){
+			_HEPMC3OutputEnabled = false;
+			printWarn<<"HEPMC3 format is only implemented for 0n0n cases"<<endl;
+		}
+		if (productionMode() !=1 && interferenceEnabled())
+		{
+			printWarn<<"HEPMC3 format cannot be used with interference turned on"<<endl;			
+		}
+
+	}
+
 	printInfo << "using the following " << *this;
 	
 	return true;
@@ -796,7 +811,8 @@ ostream&
 inputParameters::print(ostream& out) const
 {
 	out << "starlight parameters:" << endl
-	    << "    base file name  ...................... '"  << _baseFileName.value() << "'" << endl
+	    << "    base file name  ....................... '"  << _baseFileName.value() << "'" << endl
+		<< "    HEPMC3 Format Turned on ................ "  << yesNo(_HEPMC3OutputEnabled.value()) << endl 
 	    << "    beam 1 atomic number ................... " << _beam1Z.value() << endl
 	    << "    beam 1 atomic mass number .............. " << _beam1A.value() << endl
 	    << "    beam 2 atomic number ................... " << _beam2Z.value() << endl
@@ -814,7 +830,7 @@ inputParameters::print(ostream& out) const
     if (_etaCutEnabled.value()) {
 	out << "        minumum eta......................... " << _etaCutMin.value() << endl
 	    << "        maximum eta......................... " << _etaCutMax.value() << endl;}
-        out << "    production mode ........................ " << _productionMode.value() << endl
+        out << "    production mode .................... " << _productionMode.value() << endl
 	    << "    number of events to generate ........... " << _nmbEventsTot.value() << endl
 	    << "    PDG ID of produced particle ............ " << _prodParticleId.value() << endl
 	    << "    seed for random generator .............. " << _randomSeed.value() << endl
@@ -859,6 +875,7 @@ inputParameters::write(ostream& out) const
 {
   
         out << "baseFileName"  << baseFileName         () <<endl
+		<< "HEPMC3"		   << HEPMC3OutputEnabled  () <<endl
 	    << "BEAM_1_Z"      << beam1Z               () <<endl
 	    << "BEAM_2_Z"      << beam1A               () <<endl
 	    << "BEAM_1_A"      << beam2Z               () <<endl

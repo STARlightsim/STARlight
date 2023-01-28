@@ -179,6 +179,7 @@ public:
 	bool configureFromFile(const std::string &configFileName = "./config/slight.in");
 
         std::string  baseFileName          () const { return _baseFileName.value();           }
+    bool         HEPMC3OutputEnabled   () const {return _HEPMC3OutputEnabled.value();     }  ///< returns true if HEPMC3 Output format is enabled.
 	unsigned int beam1Z                () const { return _beam1Z.value();                 }  ///< returns atomic number of beam particle 1
 	unsigned int beam1A                () const { return _beam1A.value();                 }  ///< returns atomic mass number of beam particle 1
 	unsigned int beam2Z                () const { return _beam2Z.value();                 }  ///< returns atomic number of beam particle 2
@@ -311,6 +312,7 @@ public:
         double Upsilon3SBrmumu       () const {return _Upsilon3SBrmumu       .value();}
 	
         void setBaseFileName          (std::string v )  {  _baseFileName = v;     }
+    void setHEPMC3OutputEnabled   (bool v)    { _HEPMC3OutputEnabled = v;     }  ///< sets whether output format should be written in HEPMC3
 	void setBeam1Z                (unsigned int v)  {  _beam1Z = v;           }  ///< sets atomic number of beam particle 1
 	void setBeam1A                (unsigned int v)  {  _beam1A = v;           }  ///< sets atomic mass number of beam particle 1
 	void setBeam2Z                (unsigned int v)  {  _beam2Z = v;           }  ///< sets atomic number of beam particle 2
@@ -377,6 +379,7 @@ private:
 
 	// config file parameters
         parameter<std::string,NO_VALIDITY_CHECK>   _baseFileName;
+    parameter<bool, VALIDITY_CHECK>            _HEPMC3OutputEnabled;     ///< This en/disables writing the output in HEPMC3 format- when disable it writes in the HEPMC2 format 
 	parameter<unsigned int,VALIDITY_CHECK>     _beam1Z;                  ///< atomic number of beam particle 1
 	parameter<unsigned int,VALIDITY_CHECK>     _beam1A;                  ///< atomic mass number of beam particle 1
 	parameter<unsigned int,VALIDITY_CHECK>     _beam2Z;                  ///< atomic number of beam particle 2

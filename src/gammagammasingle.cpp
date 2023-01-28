@@ -715,7 +715,7 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
 
       //add information about the meadiating photons and beams.
 
-      if(true){//check if breakup happens or not.- all might be embedded in the HEPMC3 info parameter
+      if(_ip->HEPMC3OutputEnabled()){//check if breakup happens or not.- all might be embedded in the HEPMC3 info parameter
         lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
         lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
         double targetEgamma1, targetEgamma2, rap1cm = acosh(_ip->beamLorentzGamma()), cmsEgam1 = Pgam1[0];
@@ -806,7 +806,7 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
 
       //adds information about mediating photons and outgoing beams
 
-      if(true){//check if breakup happens or not - it might be embedded in the HEPMC3 info parameter
+      if(_ip->HEPMC3OutputEnabled()){//check if breakup happens or not - it might be embedded in the HEPMC3 info parameter
         lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
         lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
         double targetEgamma1, targetEgamma2, rap1cm = acosh(_ip->beamLorentzGamma()), cmsEgam1 = Pgam1[0];
@@ -889,7 +889,7 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
 
       //adds information about the mediating photon and the outgoing beams
 
-      if(true){//check if breakup happens or not - it might be embedded in the HEPMC3 info parameter
+      if(_ip->HEPMC3OutputEnabled()){//check if breakup happens or not - it might be embedded in the HEPMC3 info parameter
         lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
         lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
         double targetEgamma1, targetEgamma2, rap1cm = acosh(_ip->beamLorentzGamma()), cmsEgam1 = Pgam1[0];
