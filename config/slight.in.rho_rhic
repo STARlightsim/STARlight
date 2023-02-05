@@ -32,5 +32,4 @@ INT_PT_MAX = 0.24  #Maximum pt considered, when interference is turned on; ignor
 INT_PT_N_BINS =120   #Number of pt bins when interference is turned on; ignored if INTERFERENCE=0
 XSEC_METHOD = 1 # Set to 0 to use old method for calculating gamma-gamma luminosity
 PYTHIA_FULL_EVENTRECORD = 0 # (0 = off, 1 = on) Writes full pythia information to output (vertex, parents, daughter etc), 0=do not write Pythia record
-HEPMC3 = 1       #1 to write output in HEPMC3 format, 0 to write ouptut in HEPMC2 format. HEPMC3 gives information about outgoing beams...
-                #Only works if breakup mode is 4 - 0n0n
+

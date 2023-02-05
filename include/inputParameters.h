@@ -185,7 +185,8 @@ public:
 	unsigned int beam2Z                () const { return _beam2Z.value();                 }  ///< returns atomic number of beam particle 2
 	unsigned int beam2A                () const { return _beam2A.value();                 }  ///< returns atomic mass number of beam particle 2
 	double       beamLorentzGamma      () const { return _beamLorentzGamma;       	      }  ///< returns Lorentz gamma factor of both beams in beam CMS frame
-	double       beam1LorentzGamma     () const { return _beam1LorentzGamma.value();      }  ///< returns Lorentz gamma factor of beam 1 in collider frame
+	double       giveExtraBeamInfo     () const { return _giveExtraBeamInfo;              }  ///< returns a bool showing if the user's preferences supports providing information on outgoing beams and virtual photons.
+    double       beam1LorentzGamma     () const { return _beam1LorentzGamma.value();      }  ///< returns Lorentz gamma factor of beam 1 in collider frame
 	double       beam2LorentzGamma     () const { return _beam2LorentzGamma.value();      }  ///< returns Lorentz gamma factor of beam 2 in collider frame
 	double       maxW                  () const { return _maxW.value();                   }  ///< returns maximum mass W of produced hadronic system [GeV/c^2]
 	double       minW                  () const { return _minW.value();                   }  ///< returns minimum mass W of produced hadronic system [GeV/c^2]
@@ -526,6 +527,7 @@ private:
 
 	double                         _beamLorentzGamma;         ///< Lorentz gamma factor of the beams in CMS frame, not an input parameter
 	double                         _inputBranchingRatio;      ///< Branching ratio defined for each channel
+    bool                           _giveExtraBeamInfo;        ///< Tells if the user's preferences supports providing information on outgoing beams and virtual photons.
 	
 	inputParser _ip;
 	

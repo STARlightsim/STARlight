@@ -713,9 +713,9 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
       particle4.setPdgCode(ipid*particle4.getCharge());
       event.addParticle(particle4);
 
-      //add information about the meadiating photons and beams.
+      //add information about the meadiating photons and beams when possible
 
-      if(_ip->HEPMC3OutputEnabled()){//check if breakup happens or not.- all might be embedded in the HEPMC3 info parameter
+      if(_ip->giveExtraBeamInfo()){//is it possible to obtain extra information
         lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
         lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
         double targetEgamma1, targetEgamma2, rap1cm = acosh(_ip->beamLorentzGamma()), cmsEgam1 = Pgam1[0];
@@ -726,10 +726,10 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
         targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
         targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
 
-        event.addGamma(gamma1,targetEgamma1,Q2gam1);
-        event.addGamma(gamma2,targetEgamma2,Q2gam2);
-        event.addOutgoingBeam1(beam1,1);
-        event.addOutgoingBeam2(beam2,1);
+        event.addGamma(gamma1,targetEgamma1,Q2gam1);//emmitted by beam1. Order is important - write gamma1 b4 gamma2
+        event.addGamma(gamma2,targetEgamma2,Q2gam2);//emmitted by beam2
+        event.addOutgoingBeam1(beam1,false);//the order is important. Write beam1 before beam2 so that output can be consistent.
+        event.addOutgoingBeam2(beam2,false);//and so that we can associate gamma1 to beam1 and gamma2 to beam2
         event.addVertext(t);        
       }
                 
@@ -804,9 +804,9 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
       particle2.setPdgCode(ipid*particle2.getCharge());
       event.addParticle(particle2);
 
-      //adds information about mediating photons and outgoing beams
+      //adds information about mediating photons and outgoing beams when possible
 
-      if(_ip->HEPMC3OutputEnabled()){//check if breakup happens or not - it might be embedded in the HEPMC3 info parameter
+      if(_ip->giveExtraBeamInfo()){//is it possible to obtain extra information?
         lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
         lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
         double targetEgamma1, targetEgamma2, rap1cm = acosh(_ip->beamLorentzGamma()), cmsEgam1 = Pgam1[0];
@@ -817,10 +817,10 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
         targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
         targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
 
-        event.addGamma(gamma1,targetEgamma1,Q2gam1);
-        event.addGamma(gamma2,targetEgamma2,Q2gam2);
-        event.addOutgoingBeam1(beam1,1);
-        event.addOutgoingBeam2(beam2,1);
+        event.addGamma(gamma1,targetEgamma1,Q2gam1);//emmitted by beam1. Order is important - write gamma1 b4 gamma2
+        event.addGamma(gamma2,targetEgamma2,Q2gam2);//emmitted by beam2
+        event.addOutgoingBeam1(beam1,false);//the order is important. Write beam1 before beam2 so that output can be consistent.
+        event.addOutgoingBeam2(beam2,false);//and so that we can associate gamma1 to beam1 and gamma2 to beam2
         event.addVertext(t);        
       }
       
@@ -889,7 +889,7 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
 
       //adds information about the mediating photon and the outgoing beams
 
-      if(_ip->HEPMC3OutputEnabled()){//check if breakup happens or not - it might be embedded in the HEPMC3 info parameter
+      if(_ip->giveExtraBeamInfo()){//is it possible to obtain extra information
         lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
         lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
         double targetEgamma1, targetEgamma2, rap1cm = acosh(_ip->beamLorentzGamma()), cmsEgam1 = Pgam1[0];
@@ -900,10 +900,10 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
         targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
         targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
 
-        event.addGamma(gamma1,targetEgamma1,Q2gam1);
-        event.addGamma(gamma2,targetEgamma2,Q2gam2);
-        event.addOutgoingBeam1(beam1,1);
-        event.addOutgoingBeam2(beam2,1);
+        event.addGamma(gamma1,targetEgamma1,Q2gam1);//emmitted by beam1. Order is important - write gamma1 b4 gamma2
+        event.addGamma(gamma2,targetEgamma2,Q2gam2);//emmitted by beam2
+        event.addOutgoingBeam1(beam1,false);//the order is important. Write beam1 before beam2 so that output can be consistent.
+        event.addOutgoingBeam2(beam2,false);//and so that we can associate gamma1 to beam1 and gamma2 to beam2
         event.addVertext(t);        
       }
 

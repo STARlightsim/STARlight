@@ -788,17 +788,32 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		return false;
 	}
 
-	if(HEPMC3OutputEnabled() == true){
-		if(beamBreakupMode() != 4){
-			_HEPMC3OutputEnabled = false;
-			printWarn<<"HEPMC3 format is only implemented for 0n0n cases"<<endl;
-		}
-		if (productionMode() !=1 && interferenceEnabled())
+	if(beamBreakupMode() == 4)
+	{
+		if(interferenceEnabled() == 0){
+			_giveExtraBeamInfo = true;
+		}else if(interferenceEnabled() ==1 && productionMode() ==1)
 		{
-			printWarn<<"HEPMC3 format cannot be used with interference turned on"<<endl;			
+			_giveExtraBeamInfo = true;					
+		}else{
+			_giveExtraBeamInfo = false;
+			printWarn<<"Note: Outgoing beam information is not available when interference is turned on"<<endl;
 		}
-
 	}
+	else{
+		_giveExtraBeamInfo = false;
+		printWarn<<"Note: Outgoing beam information is only available for 0n0n breakup mode"<<endl;
+	}
+	
+	//#if(HEPMC3_ON)//HEPMC3 is installed and flag is set
+	//if(_giveExtrabeamInfo){_HEPMC3OutputEnabled = true;}
+	//else {_HEPMC3OutputEnabled = false;
+	// printWarn<<"HEPMC3 output cannot be used for this type of ultraperipheral collision because outgoing beam info is not available"}
+	//#else if(_HEPMC3OutputEnabled){_HEPMC3OutputEnabled = false;
+	//printWarn<<"HEPMC3 must be installed separately and the DENABLE flag set from the terminal for you 
+	//to turn on the HEPMC3 Output format. Please check Documentation for more details."<<endl;}
+	//#end_if
+	
 
 	printInfo << "using the following " << *this;
 	

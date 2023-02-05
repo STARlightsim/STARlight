@@ -151,23 +151,25 @@ int eventFileWriter::writeEvent(upcXEvent &event, int eventnumber)
       // Write the photon 4-vector out to file. Might be used in later iterations, so I keep it here
       //_fileStream <<"GAMMA VECTOR: "<<gam.GetPx()<<" "<<gam.GetPy()<<" "<<gam.GetPz()<<" "<<gam.GetE()<<" "<<-temp<<std::endl;
     }
-    int itarget = 0;
+
+    for (uint it =0; it < event.getVertext()->size(); ++it)
+    {
+      _fileStream <<"t: "<<event.getVertext()->at(it)<<std::endl;
+    }
+    
     for( uint ibeam = 0 ; ibeam < event.getBeams()->size(); ++ibeam){
       if(event.getBeamIsTarget()->at(ibeam)){
 
         lorentzVector target = event.getBeams()->at(ibeam);
-        _fileStream <<"t: "<<event.getVertext()->at(itarget)<<std::endl;
-        _fileStream <<"TARGET->BEAM"<< event.getBeamNo()->at(ibeam)<<": "<<target.GetPx()<<" "<<target.GetPy()<<" "<<target.GetPz()<<" "<<target.GetE()<<std::endl;
-        itarget++;
+        //_fileStream <<"TARGET->BEAM"<< event.getBeamNo()->at(ibeam)<<": "<<target.GetPx()<<" "<<target.GetPy()<<" "<<target.GetPz()<<" "<<target.GetE()<<std::endl;
+        _fileStream <<"TARGET: BEAM"<< event.getBeamNo()->at(ibeam)<<": "<<target.GetPx()<<" "<<target.GetPy()<<" "<<target.GetPz()<<" "<<target.GetE()<<std::endl;
       }
-      
-    }
-    
-    for( uint ibeam = 0 ; ibeam < event.getBeams()->size(); ++ibeam){
       if(!(event.getBeamIsTarget()->at(ibeam))){
         lorentzVector source = event.getBeams()->at(ibeam); 
-        _fileStream <<"SOURCE->BEAM"<< event.getBeamNo()->at(ibeam)<<": "<<source.GetPx()<<" "<<source.GetPy()<<" "<<source.GetPz()<<" "<<source.GetE()<<std::endl;
-      } 
+        //_fileStream <<"SOURCE->BEAM"<< event.getBeamNo()->at(ibeam)<<": "<<source.GetPx()<<" "<<source.GetPy()<<" "<<source.GetPz()<<" "<<source.GetE()<<std::endl;
+        _fileStream <<"SOURCE: BEAM"<< event.getBeamNo()->at(ibeam)<<": "<<source.GetPx()<<" "<<source.GetPy()<<" "<<source.GetPz()<<" "<<source.GetE()<<std::endl;
+      }
+      
     }
 
     int ipart = 0;
