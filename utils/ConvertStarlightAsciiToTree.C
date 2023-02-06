@@ -41,7 +41,12 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 	TTree*          outTree           = new TTree("starlightTree", "starlightTree");
 	TLorentzVector* parentParticle    = new TLorentzVector();
   	TClonesArray*   daughterParticles = new TClonesArray("TLorentzVector");
+	TLorentzVector* beam1             = new TLorentzVector();
+	TLorentzVector* beam2             = new TLorentzVector();
+	
 	outTree->Branch("parent",    "TLorentzVector", &parentParticle,    32000, -1);
+	outTree->Branch("beam1", 	 "TLorentzVector", &beam1, 			   32000, -1);
+	outTree->Branch("beam2", 	 "TLorentzVector", &beam1, 			   32000, -1);
 	outTree->Branch("daughters", "TClonesArray",   &daughterParticles, 32000, -1);
 
 	ifstream inFile;
@@ -71,22 +76,43 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 		assert(label == "VERTEX:");
 			
 		*parentParticle = TLorentzVector(0, 0, 0, 0);
-		for (int i = 0; i < nmbTracks; ++i) {
-			// read tracks
-			int    particleCode;
-			double momentum[3];
+		int itrack = 0;
+		while (itrack < nmbTracks) {
+			
 			if (!getline(inFile, line))
 				break;
 			++countLines;
 			lineStream.str(line);
-			assert(lineStream >> label >> particleCode >> momentum[0] >> momentum[1] >> momentum[2]);
-			assert(label == "TRACK:");
-			Double_t daughterMass = IDtoMass(particleCode);
-			if (daughterMass < 0) {break;}
-			const double E = sqrt(  momentum[0] * momentum[0] + momentum[1] * momentum[1]
-			                      + momentum[2] * momentum[2] + daughterMass * daughterMass);
-			new ( (*daughterParticles)[i] ) TLorentzVector(momentum[0], momentum[1], momentum[2], E);
-			*parentParticle += *(static_cast<TLorentzVector*>(daughterParticles->At(i)));
+			assert(lineStream >> label);
+
+			if(label == "TARGET:" || label =="SOURCE:"){
+				double momentum[4];
+				//string label2;
+				assert(lineStream >> label >>momentum[0]>>momentum[1]>>momentum[2]>>momentum[3]);
+				lineStream.clear();
+				if(label == "BEAM1:")
+				{
+					*beam1 = TLorentzVector(momentum[0], momentum[1], momentum[2], momentum[3]);
+				}else if(label == "BEAM2:"){
+					*beam2 = TLorentzVector(momentum[0], momentum[1], momentum[2], momentum[3]);
+				}
+			}			
+			else if(label == "TRACK:")// read tracks
+			{
+				int    particleCode;
+				double momentum[3];
+				
+				assert(lineStream>> particleCode >> momentum[0] >> momentum[1] >> momentum[2]);
+				itrack++;
+				Double_t daughterMass = IDtoMass(particleCode);
+				if (daughterMass < 0) {break;}
+				const double E = sqrt(  momentum[0] * momentum[0] + momentum[1] * momentum[1]
+									+ momentum[2] * momentum[2] + daughterMass * daughterMass);
+				new ( (*daughterParticles)[itrack] ) TLorentzVector(momentum[0], momentum[1], momentum[2], E);
+				*parentParticle += *(static_cast<TLorentzVector*>(daughterParticles->At(itrack)));
+
+			}
+			 
 		}
 		daughterParticles->Compress();
 		outTree->Fill();

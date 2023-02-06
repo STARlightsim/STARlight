@@ -25,10 +25,14 @@ public :
 
    // Declaration of leaf types
    TLorentzVector  *parent;
+   TLorentzVector  *beam1;
+   TLorentzVector  *beam2;
    TClonesArray    *daughters;
 
    // List of branches
    TBranch        *b_parent;   //!
+   TBranch        *b_beam1;
+   TBranch        *b_beam2;
    TBranch        *b_daughters;   //!
 
    AnalyzeTree(TTree *tree=0);
@@ -97,6 +101,8 @@ void AnalyzeTree::Init(TTree *tree)
 
    // Set object pointer
    parent = 0;
+   beam1 = 0;
+   beam2 = 0;
    daughters = 0;
    // Set branch addresses and branch pointers
    if (!tree) return;
@@ -105,6 +111,8 @@ void AnalyzeTree::Init(TTree *tree)
    fChain->SetMakeClass(1);
 
    fChain->SetBranchAddress("parent", &parent, &b_parent);
+   fChain->SetBranchAddress("beam1", &beam1, &b_beam1);
+   fChain->SetBranchAddress("beam2", &beam2, &b_beam2);
    fChain->SetBranchAddress("daughters", &daughters, &b_daughters);
    Notify();
 }

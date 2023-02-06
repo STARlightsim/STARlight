@@ -4,6 +4,6 @@
 //
 void AnaTree(){
 gROOT->ProcessLine(".L AnalyzeTree.cxx");
-AnalyzeTree* l = new AnalyzeTree();
-l->Loop();
+gROOT->ProcessLine("AnalyzeTree* l = new AnalyzeTree()");
+gROOT->ProcessLine("l->Loop()");
 }
