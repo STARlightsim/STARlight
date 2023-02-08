@@ -59,6 +59,7 @@ void AnalyzeTree::Loop()
     TH1D* ParentMass     = new TH1D("ParentMass","Invariant Mass of Parent",100, 0, 5.);
     TH1D* B1Pt = new TH1D("B1Pt","Transverse Momentum of Beam 1",100, 0,2.);
     TH1D* B2Pt = new TH1D("B2Pt","Transverse Momentum of Beam 2",100, 0,2.);
+    TH1D* H_t    = new TH1D("t","Squared Transfered Momentum",100,-0.002, 0.1);
     
 // Fill histograms
    Long64_t nentries = fChain->GetEntriesFast();
@@ -82,6 +83,7 @@ void AnalyzeTree::Loop()
 	ParentMass->Fill(parent->M());
    B1Pt->Fill(beam1->Pt());
    B2Pt->Fill(beam2->Pt());
+   H_t->Fill(t);
    }// jentry
 
 
@@ -98,6 +100,7 @@ void AnalyzeTree::Loop()
     ParentMass->Write();
     B1Pt->Write();
     B2Pt->Write();
+    H_t->Write();
 
      histofile->Save();
      histofile->Close();

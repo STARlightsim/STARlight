@@ -27,12 +27,14 @@ public :
    TLorentzVector  *parent;
    TLorentzVector  *beam1;
    TLorentzVector  *beam2;
+   double           t;
    TClonesArray    *daughters;
 
    // List of branches
    TBranch        *b_parent;   //!
    TBranch        *b_beam1;
    TBranch        *b_beam2;
+   TBranch        *b_t;
    TBranch        *b_daughters;   //!
 
    AnalyzeTree(TTree *tree=0);
@@ -104,6 +106,8 @@ void AnalyzeTree::Init(TTree *tree)
    beam1 = 0;
    beam2 = 0;
    daughters = 0;
+   t =0;
+
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -113,6 +117,7 @@ void AnalyzeTree::Init(TTree *tree)
    fChain->SetBranchAddress("parent", &parent, &b_parent);
    fChain->SetBranchAddress("beam1", &beam1, &b_beam1);
    fChain->SetBranchAddress("beam2", &beam2, &b_beam2);
+   fChain->SetBranchAddress("t",     &t,     &b_t);
    fChain->SetBranchAddress("daughters", &daughters, &b_daughters);
    Notify();
 }

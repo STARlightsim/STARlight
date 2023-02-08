@@ -43,11 +43,13 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
   	TClonesArray*   daughterParticles = new TClonesArray("TLorentzVector");
 	TLorentzVector* beam1             = new TLorentzVector();
 	TLorentzVector* beam2             = new TLorentzVector();
+	double			t  				  = 0;
 	
 	outTree->Branch("parent",    "TLorentzVector", &parentParticle,    32000, -1);
 	outTree->Branch("beam1", 	 "TLorentzVector", &beam1, 			   32000, -1);
 	outTree->Branch("beam2", 	 "TLorentzVector", &beam1, 			   32000, -1);
 	outTree->Branch("daughters", "TClonesArray",   &daughterParticles, 32000, -1);
+	outTree->Branch("t",   &t, 	"value/D");
 
 	ifstream inFile;
 	inFile.open(inFileName);
@@ -85,7 +87,14 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 			lineStream.str(line);
 			assert(lineStream >> label);
 
-			if(label == "TARGET:" || label =="SOURCE:"){
+			if(label == "t:"){
+				double t_origin;
+				assert(lineStream >> t_origin);
+				lineStream.clear();
+				t = t_origin;
+			}
+			else if(label == "TARGET:" || label =="SOURCE:")
+			{
 				double momentum[4];
 				//string label2;
 				assert(lineStream >> label >>momentum[0]>>momentum[1]>>momentum[2]>>momentum[3]);
