@@ -44,12 +44,20 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 	TLorentzVector* beam1             = new TLorentzVector();
 	TLorentzVector* beam2             = new TLorentzVector();
 	double			t  				  = 0;
+	double			q2_gamma1		  = 0;
+	double			q2_gamma2		  = 0;
+	double			targetEgamma1	  = 0;
+	double 			targetEgamma2	  = 0;
 	
 	outTree->Branch("parent",    "TLorentzVector", &parentParticle,    32000, -1);
 	outTree->Branch("beam1", 	 "TLorentzVector", &beam1, 			   32000, -1);
 	outTree->Branch("beam2", 	 "TLorentzVector", &beam1, 			   32000, -1);
 	outTree->Branch("daughters", "TClonesArray",   &daughterParticles, 32000, -1);
-	outTree->Branch("t",   &t, 	"value/D");
+	outTree->Branch("t",		 	 &t, 		     "value/D");
+	outTree->Branch("q2_gamma1",	 &q2_gamma1, 	 "value/D");
+	outTree->Branch("q2_gamma2",	 &q2_gamma2, 	 "value/D");
+	outTree->Branch("targetEgamma1", &targetEgamma1, "value/D");
+	outTree->Branch("targetEgamma2", &targetEgamma2, "value/D");
 
 	ifstream inFile;
 	inFile.open(inFileName);
@@ -79,6 +87,7 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 			
 		*parentParticle = TLorentzVector(0, 0, 0, 0);
 		int itrack = 0;
+		int igam = 0;
 		while (itrack < nmbTracks) {
 			
 			if (!getline(inFile, line))
@@ -86,8 +95,22 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 			++countLines;
 			lineStream.str(line);
 			assert(lineStream >> label);
-
-			if(label == "t:"){
+			
+			if(label == "GAMMA:"){
+				double in_targetEgamma, in_Q2;				
+				assert(lineStream>>in_targetEgamma>>in_Q2);
+				lineStream.clear();
+				if (igam==0) {
+					q2_gamma1 =in_Q2; 
+					targetEgamma1 =in_targetEgamma;
+				}else if(igam==1){
+					q2_gamma2 = in_Q2;
+					targetEgamma2 = in_targetEgamma;
+				}else assert(false);
+				igam++;
+			}
+			else if(label == "t:")
+			{
 				double t_origin;
 				assert(lineStream >> t_origin);
 				lineStream.clear();
@@ -112,6 +135,7 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 				double momentum[3];
 				
 				assert(lineStream>> particleCode >> momentum[0] >> momentum[1] >> momentum[2]);
+				lineStream.clear();
 				itrack++;
 				Double_t daughterMass = IDtoMass(particleCode);
 				if (daughterMass < 0) {break;}
