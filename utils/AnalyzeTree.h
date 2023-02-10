@@ -28,14 +28,27 @@ public :
    TLorentzVector  *beam1;
    TLorentzVector  *beam2;
    double           t;
+   double           q2_gamma1;
+   double           q2_gamma2;
+   double           targetEgamma1;
+   double           targetEgamma2;
    TClonesArray    *daughters;
+   TClonesArray    *sources;
+   TLorentzVector  *target;
+   
 
    // List of branches
    TBranch        *b_parent;   //!
    TBranch        *b_beam1;
    TBranch        *b_beam2;
    TBranch        *b_t;
+   TBranch        *b_q2_gamma1;
+   TBranch        *b_q2_gamma2;
+   TBranch        *b_targetEgamma1;
+   TBranch        *b_targetEgamma2;
    TBranch        *b_daughters;   //!
+   TBranch        *b_sources;
+   TBranch        *b_target;
 
    AnalyzeTree(TTree *tree=0);
    virtual ~AnalyzeTree();
@@ -61,7 +74,6 @@ AnalyzeTree::AnalyzeTree(TTree *tree) : fChain(0)
          f = new TFile("starlight.root");
       }
       f->GetObject("starlightTree",tree);
-
    }
    Init(tree);
 }
@@ -106,6 +118,12 @@ void AnalyzeTree::Init(TTree *tree)
    beam1 = 0;
    beam2 = 0;
    daughters = 0;
+   q2_gamma1 =0;
+   q2_gamma2 =0;
+   targetEgamma1 = 0;
+   targetEgamma2 = 0;
+   target =0;
+   sources = 0;
    t =0;
 
    // Set branch addresses and branch pointers
@@ -119,6 +137,12 @@ void AnalyzeTree::Init(TTree *tree)
    fChain->SetBranchAddress("beam2", &beam2, &b_beam2);
    fChain->SetBranchAddress("t",     &t,     &b_t);
    fChain->SetBranchAddress("daughters", &daughters, &b_daughters);
+   fChain->SetBranchAddress("q2_gamma1", &q2_gamma1, &b_q2_gamma1);
+   fChain->SetBranchAddress("q2_gamma2", &q2_gamma2, &b_q2_gamma2);
+   fChain->SetBranchAddress("targetEgamma1", &targetEgamma1, &b_targetEgamma1);
+   fChain->SetBranchAddress("targetEgamma2", &targetEgamma2, &b_targetEgamma2);
+   fChain->SetBranchAddress("target", &target, &b_target);
+   fChain->SetBranchAddress("sources", &sources, &b_sources);
    Notify();
 }
 

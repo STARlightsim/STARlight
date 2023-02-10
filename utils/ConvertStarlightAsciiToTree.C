@@ -48,6 +48,8 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 	double			q2_gamma2		  = 0;
 	double			targetEgamma1	  = 0;
 	double 			targetEgamma2	  = 0;
+	TLorentzVector* target			  = new TLorentzVector();
+	TClonesArray*   sources			  = new TClonesArray("TLorentzVector");
 	
 	outTree->Branch("parent",    "TLorentzVector", &parentParticle,    32000, -1);
 	outTree->Branch("beam1", 	 "TLorentzVector", &beam1, 			   32000, -1);
@@ -58,6 +60,8 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 	outTree->Branch("q2_gamma2",	 &q2_gamma2, 	 "value/D");
 	outTree->Branch("targetEgamma1", &targetEgamma1, "value/D");
 	outTree->Branch("targetEgamma2", &targetEgamma2, "value/D");
+	outTree->Branch("target", "TLorentzVector",   &target, 32000, -1);
+	outTree->Branch("sources", "TClonesArray",   &sources, 32000, -1);
 
 	ifstream inFile;
 	inFile.open(inFileName);
@@ -88,6 +92,8 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 		*parentParticle = TLorentzVector(0, 0, 0, 0);
 		int itrack = 0;
 		int igam = 0;
+		int itarget =0;
+		int isource =0;
 		while (itrack < nmbTracks) {
 			
 			if (!getline(inFile, line))
@@ -119,15 +125,24 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 			else if(label == "TARGET:" || label =="SOURCE:")
 			{
 				double momentum[4];
-				//string label2;
-				assert(lineStream >> label >>momentum[0]>>momentum[1]>>momentum[2]>>momentum[3]);
+				string label2;
+				assert(lineStream >> label2 >>momentum[0]>>momentum[1]>>momentum[2]>>momentum[3]);
 				lineStream.clear();
-				if(label == "BEAM1:")
+				if(label2 == "BEAM1:")
 				{
 					*beam1 = TLorentzVector(momentum[0], momentum[1], momentum[2], momentum[3]);
-				}else if(label == "BEAM2:"){
+
+				}else if(label2 == "BEAM2:"){
 					*beam2 = TLorentzVector(momentum[0], momentum[1], momentum[2], momentum[3]);
 				}
+				if(label == "SOURCE:"){
+					isource++;
+					new ( (*sources)[isource] ) TLorentzVector(momentum[0], momentum[1], momentum[2], momentum[3]);			
+				}
+				else if(label == "TARGET:" && itarget == 0){
+					*target = TLorentzVector(momentum[0], momentum[1], momentum[2], momentum[3]);
+					itarget++;
+				}else assert(false);//You can't have more than one targets
 			}			
 			else if(label == "TRACK:")// read tracks
 			{
@@ -147,6 +162,7 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 			}
 			 
 		}
+		sources->Compress();
 		daughterParticles->Compress();
 		outTree->Fill();
 	}
