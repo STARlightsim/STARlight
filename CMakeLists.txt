@@ -221,6 +221,20 @@ if(ENABLE_DPMJET)
    endif(DPMJET_FOUND)
  endif(ENABLE_DPMJET)
 
+ option (ENABLE_HEPMC3  "Enable compilation against hepmc3 (necessary for hepmc3 output)" OFF) 
+if(ENABLE_HEPMC3)
+  find_package(HepMC3 HINTS ${HepMC3_DIR} ${HepMC3} )
+  if(HepMC3_FOUND)
+    message ( "-- HepMC3 library found at ${HEPMC3_LIB} --> Adding HepMC sources and headers" )
+    set(optionalLibs ${optionalLibs} ${HEPMC3_LIB})
+    option(ENABLE_HEPMC3  "Should we use the HepMC3 library" ON) 
+  else()
+    message ( WARNING "Hepmc3 not found.")
+    option(ENABLE_HEPMC3  "Should we use the HepMC3 library" OFF) 
+  endif()
+endif()
+
+
 
 # set include directories
 set(INCLUDE_DIRECTORIES
@@ -279,6 +293,16 @@ if(ENABLE_PYTHIA6)
 		src/spectrumprotonnucleus.cpp
 		)
 endif()
+
+if (ENABLE_HEPMC3)
+  set (SOURCES
+		${SOURCES}
+                src/hepmc3writer.cpp
+		)
+  include_directories(${HEPMC3_INCLUDE_DIR})
+  add_definitions( -DHEPMC3_ON )
+endif()
+
 if(ENABLE_DPMJET)
   set (SOURCES 
 		${SOURCES}

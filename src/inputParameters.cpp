@@ -805,14 +805,18 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		printWarn<<"Note: Outgoing beam information is only available for 0n0n breakup mode"<<endl;
 	}
 	
-	//#if(HEPMC3_ON)//HEPMC3 is installed and flag is set
-	//if(_giveExtrabeamInfo){_HEPMC3OutputEnabled = true;}
-	//else {_HEPMC3OutputEnabled = false;
-	// printWarn<<"HEPMC3 output cannot be used for this type of ultraperipheral collision because outgoing beam info is not available"}
-	//#else if(_HEPMC3OutputEnabled){_HEPMC3OutputEnabled = false;
-	//printWarn<<"HEPMC3 must be installed separately and the DENABLE flag set from the terminal for you 
-	//to turn on the HEPMC3 Output format. Please check Documentation for more details."<<endl;}
-	//#end_if
+#if(HEPMC3_ON)//HEPMC3 is installed and flag is set
+	if(_giveExtraBeamInfo){
+		_HEPMC3OutputEnabled = true;
+		}
+	else {
+		_HEPMC3OutputEnabled = false;
+		printWarn<<"HEPMC3 output cannot be used for this type of ultraperipheral collision because outgoing beam info is not available";
+		}
+#elif(_HEPMC3OutputEnabled){
+	_HEPMC3OutputEnabled = false;
+	printWarn<<"HEPMC3 must be installed separately and the DENABLE flag set from the terminal for you to turn on the HEPMC3 Output format. Please check Documentation for more details."<<endl;}
+#endif
 	
 
 	printInfo << "using the following " << *this;
