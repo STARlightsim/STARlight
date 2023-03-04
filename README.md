@@ -44,3 +44,19 @@ The easiest way to setup `slight.in` is to start with a test file and edit [as d
 10. <a id="extra"></a> __Extra on setting up__ `slight.in`: There are a few test files in the `config` folder. If these test files will be used, they must be renamed to `slight.in` and moved or copied to the installation directory: `build`. These files can also be edited to suit the simulation conditions desired by the user. Useful comments on the role of different parameters can be found in these test files and more detailed information on the parameters can be found in the [PDF documentation](Readme.pdf)
 
 
+## HEPMC3 OutPut
+The Official source tarball for installation can be found [here](http://hepmc.web.cern.ch/hepmc/index.html)
+
+After unpacking the source tarball, compile, build and install the HEPMC3 package into the ```desired_installation_path``` following the instructions [here](http://hepmc.web.cern.ch/hepmc/building.html). 
+
+Please take note of the ```desired_installation_path``` where you installed HEPMC3, as you would need this location to link HEPMC3 to STARlight.
+
+To compile STARlight with HEPMC3 output enabled use:
+```
+cmake /pathto/starlight -DENABLE_HEPMC3=ON -DHepMC3_DIR=/pathto/hepmc3/hepmc3-install
+```
+
+For example: if your ```desired_installation_path``` is ```~/Desktop/STARLIGHT/HepMC3-3.2.5/build```, and your present working directory is the STARlight build directory, then use:
+```
+cmake .. -DENABLE_HEPMC3=ON -DHepMC3_DIR=~/Desktop/STARLIGHT/HepMC3-3.2.5/build/
+```

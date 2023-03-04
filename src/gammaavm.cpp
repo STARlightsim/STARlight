@@ -1009,12 +1009,14 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
 				double targetEgamma, rap1cm = acosh(_ip->beamLorentzGamma()),cmsEgam = Pgam[0], Pzgam = Pgam[3];
 				lorentzVector gamma(Pgam[1],Pgam[2],Pzgam,cmsEgam);
+				lorentzVector vmeson(mom[0],mom[1],mom[2],E);
 
 				if(_TargetBeam == 1)
 				targetEgamma = cmsEgam*cosh(rap1cm) - Pzgam*sinh(rap1cm);
 				else
 				targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
 
+				event.addVectorMeson(vmeson);
 				event.addGamma(gamma,targetEgamma,Q2gam);
 				event.addOutgoingBeam1(beam1,_TargetBeam);//the order is important. Write beam1 before beam2 so that output can be consistent.
 				event.addOutgoingBeam2(beam2,_TargetBeam);
@@ -1109,12 +1111,14 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
 				double targetEgamma, rap1cm = acosh(_ip->beamLorentzGamma()),cmsEgam = Pgam[0], Pzgam = Pgam[3];
 				lorentzVector gamma(Pgam[1],Pgam[2],Pzgam,cmsEgam);
+				lorentzVector vmeson(mom[0],mom[1],mom[2],E);
 
 				if(_TargetBeam == 1)
 				targetEgamma = cmsEgam*cosh(rap1cm) - Pzgam*sinh(rap1cm);
 				else
 				targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
 
+				event.addVectorMeson(vmeson);
 				event.addGamma(gamma,targetEgamma,Q2gam);
 				event.addOutgoingBeam1(beam1,_TargetBeam);//the order is important. Write beam1 before beam2 so that output can be consistent.
 				event.addOutgoingBeam2(beam2,_TargetBeam);
@@ -1222,12 +1226,15 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
 				double targetEgamma, rap1cm = acosh(_ip->beamLorentzGamma()),cmsEgam = Pgam[0], Pzgam = Pgam[3];
 				lorentzVector gamma(Pgam[1],Pgam[2],Pzgam,cmsEgam);
+				lorentzVector vmeson(momx,momy,momz,E);
+
 
 				if(_TargetBeam == 1)
 				targetEgamma = cmsEgam*cosh(rap1cm) - Pzgam*sinh(rap1cm);
 				else
 				targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
 
+				event.addVectorMeson(vmeson);
 				event.addGamma(gamma,targetEgamma,Q2gam);
 				event.addOutgoingBeam1(beam1,_TargetBeam);//the order is important. Write beam1 before beam2 so that output can be consistent.
 				event.addOutgoingBeam2(beam2,_TargetBeam);

@@ -56,6 +56,17 @@ int eventFileWriter::writeInit(inputParameters &_p)
 	     <<" "<<_p.quantumGlauber()<<" "<<_p.impulseVM()<<" "<<_p.randomSeed()<<std::endl;
   _fileStream<<"BEAM_1: "<<_p.beam1Z()<<" "<<_p.beam1A()<<" "<<_p.beam1LorentzGamma()<<std::endl;
   _fileStream<<"BEAM_2: "<<_p.beam2Z()<<" "<<_p.beam2A()<<" "<<_p.beam2LorentzGamma()<<std::endl;
+
+  #ifdef HEPMC3_ON //Friday March 3rd 2023
+  if(_p.giveExtraBeamInfo())
+  {
+    _hepmc3writer = new hepMC3Writer();
+    _hepmc3writer->initWriter(_p);
+  }
+  
+  #endif
+
+  _ip = _p;
   
   return 0;
 }
@@ -194,6 +205,11 @@ int eventFileWriter::writeEvent(upcXEvent &event, int eventnumber)
             
       _fileStream <<std::endl;
     }
+#ifdef HEPMC3_ON
+    if(_ip.giveExtraBeamInfo()){
+      _hepmc3writer->writeEvent(event,eventnumber);
+    }
+#endif
   }
 
   return 0;

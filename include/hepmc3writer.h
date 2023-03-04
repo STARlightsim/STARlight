@@ -9,6 +9,7 @@
 
 using HepMC3::WriterAscii;
 using HepMC3::FourVector;
+using namespace starlightConstants;
 
 class hepMC3Writer
 {
@@ -33,10 +34,13 @@ class hepMC3Writer
   int initBeamHepMC3(const inputParameters &param);
   
   WriterAscii * _hepmc3_output;
-  FourVector hepmc3_electronBeam_four_vector_;
-  FourVector hepmc3_targetBeam_four_vector_;
-  int electronBeam_pdg_id_;
-  int targetBeam_pdg_id_;
+  FourVector hepmc3_beam1_four_vector;
+  FourVector hepmc3_beam2_four_vector;
+  int beam1_pdg_id;
+  int beam2_pdg_id;
+  particleTypeEnum VM_pdg_id;//Particle type or pdg code for the produced vector meson
+  particleTypeEnum PID;//channel id or prod_pid for the channel of interest
+  decayTypeEnum _decay;
   
 };
 

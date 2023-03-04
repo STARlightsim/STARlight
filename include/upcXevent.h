@@ -3,6 +3,7 @@
 
 
 #include <vector>
+#include <cassert>
 
 #include "starlightconstants.h"
 #include "starlightparticle.h"
@@ -27,7 +28,9 @@ class upcXEvent
       void addOutgoingBeam2(lorentzVector &beam2,  int _targetBeamNo){_beams.push_back(beam2); _beamNo.push_back(2); _beamIsTarget.push_back( _targetBeamNo == 2 ? true : false );}
       void addNeutrons(lorentzVector &neutrons){_neutrons.push_back(neutrons);}
       void addVertext(double t){_vertext.push_back(t);}
+      void addVectorMeson(lorentzVector &VM){_VM.push_back(VM);}
 
+      const std::vector<lorentzVector> * getVectorMeson()const{return &_VM;}
       const std::vector<starlightParticle> * getParticles() const { return &_particles; }
       const std::vector<vector3> * getVertices() const { return &_vertices; }
       /*returns the array of Lorentzvector of beams*/
@@ -43,12 +46,40 @@ class upcXEvent
       /*returns the list of virtual photons - in TwoPhoton channel they can be two*/
       const std::vector<lorentzVector>* getGamma() const {return &_gamma;}
       const std::vector<double> * getVertext() const {return &_vertext;}
-      //const std::vector<int> * getTargetBeam() const {return ;} //later a subset of beams containing only target beams to match perfectly with vertext
+      //nonsense//const std::vector<int> * getTargetBeam() const {return ;} //later a subset of beams containing only target beams to match perfectly with vertext
       //const std::vector<int> * getSourceBeam() const {return ;} //later
       /*Returns the Photon Q^2 for each photon. Index associated with those of @see getGammaEnergies*/
       const std::vector<float>* getGammaMasses() const {return &_gammaMasses;}
       /*Returns the Photon Target Energies. Index is associated with those of @see getGammaMasses*/
       const std::vector<float> * getGammaEnergies() const { return &_gammaEnergies; }
+      const lorentzVector getBeam1() const{
+         if (_beamNo[0] == 1){
+            return _beams[0];
+         }else if (_beamNo[1] == 1){
+            return _beams[1];
+         }else assert(false);
+         return lorentzVector();
+      }
+      const lorentzVector getBeam2() const{
+         if (_beamNo[0] == 2){
+            return _beams[0];
+         }else if (_beamNo[1] == 2){
+            return _beams[1];
+         } else assert(false);
+         return lorentzVector();
+      }
+      int targetBeamNo() const{
+         if(_beamIsTarget.size() ==2){
+            bool aa = _beamIsTarget[0];
+            bool bb = _beamIsTarget[1];
+            if(aa==true &&bb==false)
+               return _beamNo[0];
+            else if (aa ==false && bb ==true)
+               return _beamNo[1];            
+         }
+         assert(false);
+         return -1;
+      }
 
       upcXEvent & operator=(const upcXEvent&);
       upcXEvent & operator+(const upcXEvent&);
@@ -68,6 +99,7 @@ class upcXEvent
 
       //std:vector<int>_breakupGammaIndices;
       std::vector<lorentzVector> _gamma;
+      std::vector<lorentzVector> _VM;//Vector Meson
       std::vector<float> _gammaMasses;//q^2 for the photon
       std::vector<float> _gammaEnergies;//Energy in the target frame of reference for the photon.
 };

@@ -722,10 +722,14 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
         double cmsEgam2 = Pgam2[0], Pzgam1 = Pgam1[3], Pzgam2 = Pgam2[3];
         lorentzVector gamma1(Pgam1[1],Pgam1[2],Pzgam1,cmsEgam1);
         lorentzVector gamma2(Pgam2[1],Pgam2[2],Pzgam2,cmsEgam2);
+        lorentzVector vmeson(parentmomx,parentmomy,parentmomz,parentE/2);
+        lorentzVector vmeson2(parentmomx,parentmomy,parentmomz,parentE/2);
 
         targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
         targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
 
+        event.addVectorMeson(vmeson);//rho
+        event.addVectorMeson(vmeson2);//rho
         event.addGamma(gamma1,targetEgamma1,Q2gam1);//emmitted by beam1. Order is important - write gamma1 b4 gamma2
         event.addGamma(gamma2,targetEgamma2,Q2gam2);//emmitted by beam2
         event.addOutgoingBeam1(beam1,false);//the order is important. Write beam1 before beam2 so that output can be consistent.
@@ -813,10 +817,12 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
         double cmsEgam2 = Pgam2[0], Pzgam1 = Pgam1[3], Pzgam2 = Pgam2[3];
         lorentzVector gamma1(Pgam1[1],Pgam1[2],Pzgam1,cmsEgam1);
         lorentzVector gamma2(Pgam2[1],Pgam2[2],Pzgam2,cmsEgam2);
+        lorentzVector vmeson(parentmomx,parentmomy,parentmomz,parentE);
 
         targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
         targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
 
+        event.addVectorMeson(vmeson);//F2 or F2_Prime
         event.addGamma(gamma1,targetEgamma1,Q2gam1);//emmitted by beam1. Order is important - write gamma1 b4 gamma2
         event.addGamma(gamma2,targetEgamma2,Q2gam2);//emmitted by beam2
         event.addOutgoingBeam1(beam1,false);//the order is important. Write beam1 before beam2 so that output can be consistent.
@@ -896,10 +902,12 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
         double cmsEgam2 = Pgam2[0], Pzgam1 = Pgam1[3], Pzgam2 = Pgam2[3];
         lorentzVector gamma1(Pgam1[1],Pgam1[2],Pzgam1,cmsEgam1);
         lorentzVector gamma2(Pgam2[1],Pgam2[2],Pzgam2,cmsEgam2);
+        lorentzVector vmeson(parentmomx,parentmomy,parentmomz,parentE);
 
         targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
         targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
 
+        event.addVectorMeson(vmeson);//Axion
         event.addGamma(gamma1,targetEgamma1,Q2gam1);//emmitted by beam1. Order is important - write gamma1 b4 gamma2
         event.addGamma(gamma2,targetEgamma2,Q2gam2);//emmitted by beam2
         event.addOutgoingBeam1(beam1,false);//the order is important. Write beam1 before beam2 so that output can be consistent.
