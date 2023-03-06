@@ -3,3 +3,4 @@ build
 
 #Editor configuration files
 .vscode
+.DS_Store
