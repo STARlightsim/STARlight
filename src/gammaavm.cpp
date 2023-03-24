@@ -666,17 +666,50 @@ void Gammaavectormeson::momenta(double W,double Y,
 	double pz0b1 = sqrt(E0b1*E0b1 - _ip->protonMass()*_ip->protonMass()*_ip->beam1A()*_ip->beam1A());
 	double E0b2 =_pEnergy*_ip->beam2A();
 	double pz0b2 = -sqrt(E0b2*E0b2 - _ip->protonMass()*_ip->protonMass()*_ip->beam2A()*_ip->beam2A());
+
+	double m2deviation, m1deviation;
+	//int ite, count;
+	static ofstream testfile;
+	static bool ty = true;
+	if(ty){
+		ty = false;
+		char testfilename[] = "Test_mass3.csv";
+  		testfile.precision(15);
+  		testfile.open(testfilename);
+  	
+    	testfile << "B1_MASS "<<"B2_MASS"<< endl;
+		testfile << _ip->beam1A()*_ip->protonMass()<<" " << _ip->protonMass()*_ip->beam2A() << endl;
+	}
+  	
 	if(_TargetBeam == 2){
 		Eb2 = Egam + E0b2 - E;//
 		pxb2 = pxgam +px0b2 -px;//
-		pyb2 = pygam + py0b2 - py;//
+		pyb2 = pygam + py0b2 - py;// correct nxt line
 		pzb2 = -sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
-		pzgam = pzb2 + pz - pz0b2;
-		Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);
+		pzgam = pzb2 + pz - pz0b2;//correct
+		Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);//correct
 		Eb1 = E0b1 -Egam;
 		pxb1 = px0b1 - pxgam;
 		pyb1 = py0b1 - pygam;	
-		pzb1 = pz0b1 - pzgam;
+		pzb1 = pz0b1 - pzgam;//correct
+		m1deviation = Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + pzb1*pzb1);
+		m1deviation = m1deviation >= 0 ? sqrt(m1deviation) : -1*sqrt(-m1deviation);
+		pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->beam1A()*_ip->protonMass()*_ip->beam1A()*_ip->protonMass()));
+		pzgam = pz0b1 - pzb1;
+		Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);//correct
+		pzb2 = pzgam - pz + pz0b2;//correct
+		m2deviation = Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + pzb2*pzb2 );
+		m2deviation = m2deviation >= 0  ? sqrt(m2deviation) : -1*sqrt(-m2deviation);
+
+		testfile << m1deviation << " " << m2deviation << endl;
+		//testfile.close();
+
+		pzb2 = -sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
+		pzgam = pzb2 + pz - pz0b2;//correct
+		Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);//correct
+		pzb1 = pz0b1 - pzgam;//correct
+		m1deviation = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + pzb1*pzb1)) -_ip->beam1A()*_ip->protonMass();
+
 	}
 	else if(_TargetBeam == 1){
 		Eb1 = Egam + E0b1 - E;//
@@ -1029,7 +1062,7 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 		double        E         = 0;
 		lorentzVector decayVecs[3];
 		bool accepted;
-		double mass,rapidity = 0;
+		double mass, rapidity = 0;
 		int charge;
 		do {
 			tcheck = 0;//reinitialized after every loop to avoid inifinite loop traps.
