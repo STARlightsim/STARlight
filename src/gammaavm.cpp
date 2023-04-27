@@ -667,18 +667,18 @@ void Gammaavectormeson::momenta(double W,double Y,
 	double E0b2 =_pEnergy*_ip->beam2A();
 	double pz0b2 = -sqrt(E0b2*E0b2 - _ip->protonMass()*_ip->protonMass()*_ip->beam2A()*_ip->beam2A());
 
-	double pzdev, pzgamdev;
+	double m1deviation, m2deviation, pzdev, pzgamdev, pzgam2, pzgamMean, pzdevMean, pzpom, pzpom1, pzpomdev, pzpomMean;
 	//int ite, count;
 	static ofstream testfile;
 	static bool ty = true;
 	if(ty){
 		ty = false;
-		char testfilename[] = "Test_PdevRat.csv";
+		char testfilename[] = "Test_MPJeCompdevRat3.csv";
   		testfile.precision(15);
   		testfile.open(testfilename);
   	
-    	testfile << "Pz_dev "<<"PzGam_dev "<<"Pz_devRat "<<"PzGam_devRat" <<endl;
-		testfile << _ip->beam1A()*_ip->protonMass()<<" " << _ip->protonMass()*_ip->beam2A() << endl;
+    	testfile << "PzGam "<<"Pz "<< "B1Mass_DevRat " << "B2Mass_DevRat "<<"Pz_devRat "<<"PzGam_devRat " << "PzGam2_devRat " << "PzGamMean_devRat " << "PzMean_devRat " << "PzPom " << "PzPomBest_devRat " << "PzPomMean_devRat " << "PzPomLst_devRat" << endl;
+		testfile << 0.0 <<" "<< 0.0 << " " << _ip->beam1A()*_ip->protonMass()<< " " << _ip->protonMass()*_ip->beam2A()<< " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 <<" "<< 0.0 << " "<< 0.0 << endl;
 	}
   	
 	if(_TargetBeam == 2){
@@ -686,35 +686,51 @@ void Gammaavectormeson::momenta(double W,double Y,
 		pxb2 = pxgam +px0b2 -px;//
 		pyb2 = pygam + py0b2 - py;// correct nxt line
 		pzb2 = -sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
-		//pzgam = pzb2 + pz - pz0b2;//correct
-		//Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);//correct
+	
 		Eb1 = E0b1 -Egam;
 		pxb1 = px0b1 - pxgam;
 		pyb1 = py0b1 - pygam;	
 		pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->beam1A()*_ip->protonMass()*_ip->beam1A()*_ip->protonMass()));//correct
 		pzgam = pz0b1- pzb1;
+		pzgam2 = pz + pzb2 - pz0b2;
 		pzdev = (pzgam +pz0b2 -pzb2) - pz; //deviation of the enforced pz from original one.
-		pzgamdev = (pz + pzb2 - pz0b2) - pzgam;//deviation of the b2 enforced pzgam from the b1 enforced pzgam
+		pzgamMean = (pzgam + pzgam2)/2.0;
+		pzgamdev = pzgam2 - pzgam;//deviation of the b2 enforced pzgam from the b1 enforced pzgam
+		pzdevMean = (pzgamMean +pz0b2 -pzb2) - pz;
+
+		pzpom = pzb1 + pz - pz0b1;
+		pzpom1 = pz0b2 -pzb2;
+		pzpomdev = pzpom - pzpom1;
+		pzpomMean = (pzpom + pzpom1)/2.0;
 
 
-
-		//m1deviation = Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + pzb1*pzb1);
-		//m1deviation = m1deviation >= 0 ? sqrt(m1deviation) : -1*sqrt(-m1deviation);
-		//pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->beam1A()*_ip->protonMass()*_ip->beam1A()*_ip->protonMass()));
-		//pzgam = pz0b1 - pzb1;
+		pzgam = pzb2 + pz - pz0b2;//correct
+		pzb1 = pz0b1 -pzgam;//correct
 		//Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);//correct
-		//pzb2 = pzgam - pz + pz0b2;//correct
-		//m2deviation = Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + pzb2*pzb2 );
-		//m2deviation = m2deviation >= 0  ? sqrt(m2deviation) : -1*sqrt(-m2deviation);
+		m1deviation = Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + pzb1*pzb1);
+		m1deviation = m1deviation >= 0 ? sqrt(m1deviation) : -1*sqrt(-m1deviation);
+		m1deviation = (m1deviation - _ip->beam1A()*_ip->protonMass())/_ip->beam1A()*_ip->protonMass();
 
-		testfile << pzdev << " " << pzgamdev << " "<<pzdev/pz << " "<<pzgamdev/pzgam <<endl;
+		pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->beam1A()*_ip->protonMass()*_ip->beam1A()*_ip->protonMass()));
+		pzgam = pz0b1 - pzb1;
+		Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);//correct
+		pzb2 = pzgam - pz + pz0b2;//correct
+		m2deviation = Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + pzb2*pzb2 );
+		m2deviation = m2deviation >= 0  ? sqrt(m2deviation) : -1*sqrt(-m2deviation);
+		m2deviation = (m2deviation - _ip->beam2A()*_ip->protonMass())/(_ip->beam2A()*_ip->protonMass());
+
+		testfile << pzgam <<" " << pz << " " << m1deviation << " "<< m2deviation << " "<<pzdev/pz << " "<<pzgamdev/pzgam << " "<< -pzgamdev/pzgam2 << " " << pzgamdev/pzgamMean<< " " << pzdevMean/pz << " "<< pzpom << " " <<pzpomdev/pzpom << " " << pzpomdev/pzpomMean << " " << pzpomdev/pzpom1 <<endl;
 		//testfile.close();
 
-		//pzb2 = -sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
-		//pzgam = pzb2 + pz - pz0b2;//correct
-		//Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);//correct
-		//pzb1 = pz0b1 - pzgam;//correct
+		pzb2 = -sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
+		pzgam = pzb2 + pz - pz0b2;//correct
+		Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);//correct
+		pzb1 = pz0b1 - pzgam;//correct
 		//m1deviation = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + pzb1*pzb1)) -_ip->beam1A()*_ip->protonMass();
+
+		pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->beam1A()*_ip->protonMass()*_ip->beam1A()*_ip->protonMass()));
+		pzgam = pzgam2;
+		Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);
 
 	}
 	else if(_TargetBeam == 1){
