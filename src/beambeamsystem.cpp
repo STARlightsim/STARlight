@@ -300,7 +300,12 @@ beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
         RR2  = -DELR; 
 	NY   = ((R1+5.)/DELL);
 	NX   = 2*NY;
-	// This calculates T_A(b) for beam 1 and stores it in DEN1[IR1] 
+	// This calculates T_A(b) for beam 1 and stores it in DEN1[IR1]
+
+	// T_A(b) and T_B(b) are calculated with an hard-coded wood saxon distribution, 
+	//which is unrelated to rws(). It is used for all nuclei types whether deuteron, oxygen, gold or lead 
+	//except for protons because protons are handled directly in the probabilityOfBreakup() fxn.
+
 	for ( int IR1 = 1; IR1 <= NR1; IR1++) {
 		DEN1[IR1] = 0.;
 		RR1       = RR1+DELR;
