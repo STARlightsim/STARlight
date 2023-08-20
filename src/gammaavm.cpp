@@ -667,18 +667,18 @@ void Gammaavectormeson::momenta(double W,double Y,
 	double E0b2 =_pEnergy*_ip->beam2A();
 	double pz0b2 = -sqrt(E0b2*E0b2 - _ip->protonMass()*_ip->protonMass()*_ip->beam2A()*_ip->beam2A());
 
-	double m1deviation, m2deviation, pzdev, pzgamdev, pzgam2, pzgamMean, pzdevMean, pzpom, pzpom1, pzpomdev, pzpomMean, Q2gam2, Q2gamMean;
+	double pzgam1, pzgam2, pzgamAdev, pzgamA, pzgamB, pzgamBdev, Q2gamA, Q2gamB, pzgam3, pzPom, pzPomdev, totalDev;
 	//int ite, count;
 	static ofstream testfile;
 	static bool ty = true;
 	if(ty){
 		ty = false;
-		char testfilename[] = "Test_MPJeAbsdev3.csv";
+		char testfilename[] = "Test_UPRmOAbsdev3.csv";
   		testfile.precision(15);
   		testfile.open(testfilename);
   	
-    	testfile << "PzGam "<<"Pz "<< "B1Mass_Dev " << "B2Mass_Dev "<<"Pz_dev "<<"PzGam_dev " << "PzGam2 " << "PzGamMean " << "PzMean_dev " << "PzPomBest_dev " << "PzPomBest " << "PzPomMean " << "PzPomLst " << "Q2gam " << "Q2gam2 " << "Q2gamMean" <<endl;
-		testfile << 0.0 <<" "<< 0.0 << " " << _ip->beam1A()*_ip->protonMass()<< " " << _ip->protonMass()*_ip->beam2A()<< " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 <<" "<< 0.0 << " "<< 0.0 << " " << 0.0<< " "<< 0.0 << " "<< 0.0 <<endl;
+    	testfile << "PzGamA "<< "PzGamB "<<"Pz "<<"PzGamA_dev " << "PzGamB_dev " <<"PzGamA_devRat " << "PzGamB_devRat " <<"PzPom " << "PzPom_dev "<< "PzPom_devRat "<< "totalDev " << "Q2gamA " << "Q2gamB " << endl;
+		//testfile << 0.0 <<" "<< 0.0 << " " << _ip->beam1A()*_ip->protonMass()<< " " << _ip->protonMass()*_ip->beam2A()<< " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 <<" "<< 0.0 << " "<< 0.0 << " " << 0.0<< " "<< 0.0 << " "<< 0.0 <<endl;
 	}
   	
 	if(_TargetBeam == 2){
@@ -691,49 +691,28 @@ void Gammaavectormeson::momenta(double W,double Y,
 		pxb1 = px0b1 - pxgam;
 		pyb1 = py0b1 - pygam;	
 		pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->beam1A()*_ip->protonMass()*_ip->beam1A()*_ip->protonMass()));//correct
-		pzgam = pz0b1- pzb1;
+		
+		pzgam1 = pz0b1- pzb1;
 		pzgam2 = pz + pzb2 - pz0b2;
-		pzdev = (pzgam +pz0b2 -pzb2) - pz; //deviation of the enforced pz from original one.
-		pzgamMean = (pzgam + pzgam2)/2.0;
-		pzgamdev = pzgam2 - pzgam;//deviation of the b2 enforced pzgam from the b1 enforced pzgam
-		pzdevMean = (pzgamMean +pz0b2 -pzb2) - pz;
-
-		pzpom = pzb1 + pz - pz0b1;
-		pzpom1 = pz0b2 -pzb2;
-		pzpomdev = pzpom - pzpom1;
-		pzpomMean = (pzpom + pzpom1)/2.0;
-		Q2gamMean = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgamMean*pzgamMean);
-		Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);//correct
-		Q2gam2 = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam2*pzgam2);//correct
-
-
-		pzgam = pzb2 + pz - pz0b2;//correct
-		pzb1 = pz0b1 -pzgam;//correct
 		
-		m1deviation = Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + pzb1*pzb1);
-		m1deviation = m1deviation >= 0 ? sqrt(m1deviation) : -1*sqrt(-m1deviation);
-		m1deviation = (m1deviation - _ip->beam1A()*_ip->protonMass());///(_ip->beam1A()*_ip->protonMass());
+		pzgamA = (pzgam1 + pzgam2)/2.0;
+		pzgamAdev = 1.0/sqrt(2.0)*abs(pzgam2 - pzgam1);//Uncertainty in pzgam using the collapsed graph structure.
+		Q2gamA = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgamA*pzgamA);//virtuality of photon in collapsed graph structure.
 
-		pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->beam1A()*_ip->protonMass()*_ip->beam1A()*_ip->protonMass()));
-		pzgam = pz0b1 - pzb1;
-		
-		pzb2 = pzgam - pz + pz0b2;//correct
-		m2deviation = Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + pzb2*pzb2 );
-		m2deviation = m2deviation >= 0  ? sqrt(m2deviation) : -1*sqrt(-m2deviation);
-		m2deviation = (m2deviation - _ip->beam2A()*_ip->protonMass());///(_ip->beam2A()*_ip->protonMass());
+		pzgamB = (2*pzgam1 + pzgam2)/3.0;//z-momentum of photon using the  complete graph structure
+		pzgamBdev = 1.0/sqrt(2.0)*sqrt(2.0*pow((pzgam1-pzgamB),2) +pow((pzgam2- pzgamB),2));//Uncertainty in pzgam using the complete graph structure.
+		Q2gamB = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgamB*pzgamB);//virtuality of photon in complete graph structure.
 
-		testfile << pzgam <<" " << pz << " " << m1deviation << " "<< m2deviation << " "<<pzdev << " "<<pzgamdev << " "<< pzgam2 << " " << pzgamMean<< " " << pzdevMean << " "<< pzpomdev << " " <<pzpom << " " << pzpomMean << " " << pzpom1 << " " << Q2gam <<" "<< Q2gam2 << " " << Q2gamMean<<endl;
+		pzgam3 = pz0b2 - pzb2;
+		pzPom = (2*pzgam3 + (pz-pzgam1))/3.0;//z-momentum of Pomeron using the  complete graph structure
+		pzPomdev = 1.0/sqrt(2.0)*sqrt(2.0*pow((pzgam3-pzPom),2) +pow((pz- pzgam1 - pzPom),2));//Uncertainty in pzPom using the complete graph structure.
+
+		totalDev = sqrt(pow((pzgam3-pzPom),2) +pow((pzgam1 - pzgamB),2) + pow((pz - pzgamB - pzPom),2));
+	
+		testfile << pzgamA <<" "<< pzgamB <<" "<< pz<<" "<<pzgamAdev<<" " << pzgamBdev<<" " <<pzgamAdev/pzgamA<<" " << pzgamBdev/pzgamB <<" " <<pzPom<<" " << pzPomdev<<" "<< pzPomdev/pzPom<<" "<< totalDev<<" " << Q2gamA<<" " << Q2gamB << endl;
 		//testfile.close();
-
-		pzb2 = -sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
-		pzgam = pzb2 + pz - pz0b2;//correct
-		//Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);//correct
-		pzb1 = pz0b1 - pzgam;//correct
-		//m1deviation = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + pzb1*pzb1)) -_ip->beam1A()*_ip->protonMass();
-
-		pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->beam1A()*_ip->protonMass()*_ip->beam1A()*_ip->protonMass()));
-		pzgam = pzgam2;
-		//Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);
+		pzgam = pzgamB;
+		Q2gam = Q2gamB;
 
 	}
 	else if(_TargetBeam == 1){
@@ -741,12 +720,37 @@ void Gammaavectormeson::momenta(double W,double Y,
 		pxb1 = pxgam +px0b1 -px;//
 		pyb1 = pygam + py0b1 - py;//
 		pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->protonMass()*_ip->beam1A()*_ip->protonMass()*_ip->beam1A()));
-		pzgam = pzb1 + pz - pz0b1;
-		Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);
+		//pzgam = pzb1 + pz - pz0b1;
+		//Q2gam = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgam*pzgam);
 		Eb2 = E0b2 -Egam;
 		pxb2 = px0b2 - pxgam;
 		pyb2 = py0b2 - pygam;	
-		pzb2 = pz0b2 - pzgam;
+		//pzb2 = pz0b2 - pzgam;
+		pzb2 = -sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
+		
+		
+		pzgam1 = pz0b2- pzb2;
+		pzgam2 = pz + pzb1 - pz0b1;
+		
+		pzgamA = (pzgam1 + pzgam2)/2.0;
+		pzgamAdev = 1.0/sqrt(2.0)*abs(pzgam2 - pzgam1);//Uncertainty in pzgam using the collapsed graph structure.
+		Q2gamA = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgamA*pzgamA);//virtuality of photon in collapsed graph structure.
+
+		pzgamB = (2.0*pzgam1 + pzgam2)/3.0;//z-momentum of photon using the  complete graph structure
+		pzgamBdev = 1.0/sqrt(2.0)*sqrt(2.0*pow((pzgam1-pzgamB),2) +pow((pzgam2- pzgamB),2));//Uncertainty in pzgam using the complete graph structure.
+		Q2gamB = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgamB*pzgamB);//virtuality of photon in complete graph structure.
+
+		pzgam3 = pz0b1 - pzb1;
+		pzPom = (2*pzgam3 + (pz-pzgam1))/3.0;//z-momentum of Pomeron using the  complete graph structure
+		pzPomdev = 1.0/sqrt(2.0)*sqrt(2.0*pow((pzgam3-pzPom),2) +pow((pz- pzgam1 - pzPom),2));//Uncertainty in pzPom using the complete graph structure.
+
+		totalDev = sqrt(pow((pzgam3-pzPom),2) +pow((pzgam1 - pzgamB),2) + pow((pz - pzgamB - pzPom),2));
+	
+		testfile << pzgamA <<" "<< pzgamB <<" "<< pz<<" "<<pzgamAdev<<" " << pzgamBdev<<" " <<pzgamAdev/pzgamA<<" " << pzgamBdev/pzgamB <<" " <<pzPom<<" " << pzPomdev<<" "<< pzPomdev/pzPom<<" "<< totalDev<<" " << Q2gamA<<" " << Q2gamB << endl;
+		//testfile.close();
+		pzgam = pzgamB;
+		Q2gam = Q2gamB;
+
 	}
 	else{
 		cout << " ERROR: Target Beam Number: " << _TargetBeam << "is invalid" << endl;	
