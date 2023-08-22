@@ -121,7 +121,9 @@ void nucleus::init()
                 _Radius = 1.2*pow(_A, 1. / 3.);
 		// _rho0 = 0.138;  This matches the radius above for a hard-sphere nucleus
 		// add empircal correction to match to the Woods-Saxon nucleus that STARlight uses   S. Klein 2/2018
-		_rho0=0.138/(1.13505-0.0004283*_A);
+		//_rho0=0.138/(1.13505-0.0004283*_A);
+		// additional changes to the normalization parameterization, made to match the Woods-Saxon nucleus more closely.  H. Akinleye 8/2023
+		_rho0 = (0.077934 +0.008056*_A)/(1 + 0.05961*_A);		
 		if( _Z < 7 ){
 		  // This is for Gaussian form factors/densities 
 		  _rho0 = _A;
