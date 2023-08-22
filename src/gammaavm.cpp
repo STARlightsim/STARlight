@@ -673,7 +673,7 @@ void Gammaavectormeson::momenta(double W,double Y,
 	static bool ty = true;
 	if(ty){
 		ty = false;
-		char testfilename[] = "Test_UPRmOAbsdev3.csv";
+		char testfilename[] = "Test_UPO3PAbsdev3.csv";
   		testfile.precision(15);
   		testfile.open(testfilename);
   	
