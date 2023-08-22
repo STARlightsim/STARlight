@@ -695,7 +695,7 @@ void Gammaavectormeson::momenta(double W,double Y,
 		pzgam1 = pz0b1- pzb1;
 		pzgam2 = pz + pzb2 - pz0b2;
 		
-		pzgamA = (pzgam1 + pzgam2)/2.0;
+		pzgamA = (pzgam1 + pzgam2)/2.0;//determining pzgam with the collapsed graph structure
 		pzgamAdev = 1.0/sqrt(2.0)*abs(pzgam2 - pzgam1);//Uncertainty in pzgam using the collapsed graph structure.
 		Q2gamA = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgamA*pzgamA);//virtuality of photon in collapsed graph structure.
 

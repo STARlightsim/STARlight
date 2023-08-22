@@ -322,16 +322,28 @@ void Gammagammasingle::parentMomentum(double w,double y,double &E,double &px,dou
   pxb1 = px0b1 - pxgam1;
   pyb1 = py0b1 - pygam1;
   pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->protonMass()*_ip->beam1A()*_ip->protonMass()*_ip->beam1A()));
-  pzgam1 = pz0b1 - pzb1;
-  Q2gam1 = Egam1*Egam1 - (pxgam1*pxgam1 + pygam1*pygam1 + pzgam1*pzgam1);
+  //pzgam1 = pz0b1 - pzb1;
+  //Q2gam1 = Egam1*Egam1 - (pxgam1*pxgam1 + pygam1*pygam1 + pzgam1*pzgam1);
 
   Eb2 = E0b2 - Egam2;
   pxb2 = px0b2 - pxgam2;
   pyb2 = py0b2 - pygam2;
   pzb2 = -sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
-  pzgam2 = pz0b2 - pzb2;
-  Q2gam2 = Egam2*Egam2 - (pxgam2*pxgam2 + pygam2*pygam2 + pzgam2*pzgam2);
+  //pzgam2 = pz0b2 - pzb2;
+  //Q2gam2 = Egam2*Egam2 - (pxgam2*pxgam2 + pygam2*pygam2 + pzgam2*pzgam2);
   t2= pt*pt;//not sure
+
+  double pzgamA1, pzgamB1, pzgamA2, pzgamB2;
+
+  pzgamA1 = pz0b1- pzb1;
+	pzgamA2 = pz + pzb2 - pz0b2;
+  pzgamB1 = pz0b2 - pzb2;
+  pzgamB2 = pz - pzgamA1;
+
+  pzgam1 = (2*pzgamA1 + pzgamA2)/3.0;
+  pzgam2 = (2*pzgamB1 + pzgamB2)/3.0;
+  Q2gam1 = Egam1*Egam1 - (pxgam1*pxgam1 + pygam1*pygam1 + pzgam1*pzgam1);
+  Q2gam2 = Egam2*Egam2 - (pxgam2*pxgam2 + pygam2*pygam2 + pzgam2*pzgam2);
 }
 
 
