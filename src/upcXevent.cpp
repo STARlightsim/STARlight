@@ -6,12 +6,11 @@ upcXEvent::upcXEvent() :
         _particles(0)
         ,_vertices(0)
         ,_beams(0)
-        ,_beamNo(0)
-        ,_beamIsTarget(0)
         ,_neutrons(0)
         ,_vertext(0)
         ,_gamma(0)
-        ,_VM(0)        
+        ,_sourceBeamIndex(0)
+        ,_meson(0)        
         ,_gammaMasses(0)
         ,_gammaEnergies(0)
 { }
@@ -21,11 +20,10 @@ upcXEvent::upcXEvent(const upcXEvent& event){
   _particles = event._particles;
   _vertices = event._vertices;
   _beams = event._beams;
-  _beamNo = event._beamNo;
-  _beamIsTarget = event._beamIsTarget; 
+  _sourceBeamIndex = event._sourceBeamIndex;
   _neutrons = event._neutrons;
   _gamma = event._gamma;
-  _VM = event._VM;
+  _meson = event._meson;
 
   _vertext = event._vertext;
   _gammaMasses = event._gammaMasses;
@@ -64,11 +62,10 @@ upcXEvent& upcXEvent::operator=(const upcXEvent& rhs)
     this->_vertices = rhs._vertices;
     
     this->_beams = rhs._beams;
-    this->_beamIsTarget = rhs._beamIsTarget;
-    this->_beamNo = rhs._beamNo;
+    this->_sourceBeamIndex =rhs._sourceBeamIndex;
     this->_neutrons = rhs._neutrons;
     this->_gamma = rhs._gamma;
-    this->_VM = rhs._VM;
+    this->_meson = rhs._meson;
 
     this->_vertext = rhs._vertext;
     this->_gammaMasses = rhs._gammaMasses;
@@ -77,6 +74,7 @@ upcXEvent& upcXEvent::operator=(const upcXEvent& rhs)
   return *this;
 }
 
+/*I must say that this operator is meaningless and useless at the moment, if you want to use, think critically and modify how you want to concatenate weird object like: _beams, _sourcebeamIndex, ... */
 upcXEvent& upcXEvent::operator+(const upcXEvent& ev)
 {
   for(unsigned int n = 0; n < ev._particles.size(); n++)
@@ -91,13 +89,9 @@ upcXEvent& upcXEvent::operator+(const upcXEvent& ev)
   {
     this->_beams.push_back(ev._beams.at(n));
   }
-  for(unsigned int n = 0; n < ev._beamNo.size(); n++)
+  for(unsigned int n = 0; n < ev._sourceBeamIndex.size(); n++)
   {
-    this->_beamNo.push_back(ev._beamNo.at(n));
-  }
-  for(unsigned int n = 0; n < ev._beamIsTarget.size(); n++)
-  {
-    this->_beamIsTarget.push_back(ev._beamIsTarget.at(n));
+    this->_sourceBeamIndex.push_back(ev._sourceBeamIndex.at(n));
   }
   for(unsigned int n = 0; n < ev._neutrons.size(); n++)
   {
@@ -122,9 +116,9 @@ upcXEvent& upcXEvent::operator+(const upcXEvent& ev)
     this->_gammaEnergies.push_back(ev._gammaEnergies.at(n));
   }
   return *this;
-  for(unsigned int n=0; n< ev._VM.size(); n++)
+  for(unsigned int n=0; n< ev._meson.size(); n++)
   {
-    this->_VM.push_back(ev._VM.at(n));
+    this->_meson.push_back(ev._meson.at(n));
   }
 }
 
@@ -147,8 +141,8 @@ void upcXEvent::boost(double rapidity)
       (*gamma).Boost(boostVector);
     }
     
-    std::vector<lorentzVector>::iterator vm = _VM.begin();
-    for(vm = _VM.begin(); vm != _VM.end(); ++vm){
+    std::vector<lorentzVector>::iterator vm = _meson.begin();
+    for(vm = _meson.begin(); vm != _meson.end(); ++vm){
       (*vm).Boost(boostVector);
     }
 

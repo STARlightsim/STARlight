@@ -740,13 +740,12 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
         targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
         targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
 
-        event.addVectorMeson(vmeson);//rho
-        event.addVectorMeson(vmeson2);//rho
-        event.addGamma(gamma1,targetEgamma1,Q2gam1);//emmitted by beam1. Order is important - write gamma1 b4 gamma2
-        event.addGamma(gamma2,targetEgamma2,Q2gam2);//emmitted by beam2
-        event.addOutgoingBeam1(beam1,false);//the order is important. Write beam1 before beam2 so that output can be consistent.
-        event.addOutgoingBeam2(beam2,false);//and so that we can associate gamma1 to beam1 and gamma2 to beam2
-        event.addVertext(t);        
+        event.addMeson(vmeson);//rho
+        event.addMeson(vmeson2);//rho
+        event.addGammaFromBeam1(gamma1,targetEgamma1,Q2gam1);//emmitted by beam1.
+        event.addGammaFromBeam2(gamma2,targetEgamma2,Q2gam2);//emmitted by beam2
+        event.addOutgoingBeams(beam1,beam2);
+        event.addVertext(t);
       }
                 
       ievent=ievent+1;
@@ -834,12 +833,11 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
         targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
         targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
 
-        event.addVectorMeson(vmeson);//F2 or F2_Prime
-        event.addGamma(gamma1,targetEgamma1,Q2gam1);//emmitted by beam1. Order is important - write gamma1 b4 gamma2
-        event.addGamma(gamma2,targetEgamma2,Q2gam2);//emmitted by beam2
-        event.addOutgoingBeam1(beam1,false);//the order is important. Write beam1 before beam2 so that output can be consistent.
-        event.addOutgoingBeam2(beam2,false);//and so that we can associate gamma1 to beam1 and gamma2 to beam2
-        event.addVertext(t);        
+        event.addMeson(vmeson);//F2 or F2_Prime
+        event.addGammaFromBeam1(gamma1,targetEgamma1,Q2gam1);//emmitted by beam1.
+        event.addGammaFromBeam2(gamma2,targetEgamma2,Q2gam2);//emmitted by beam2
+        event.addOutgoingBeams(beam1,beam2);
+        event.addVertext(t);
       }
       
       ievent=ievent+1;
@@ -920,10 +918,9 @@ upcXEvent Gammagammasingle::produceEvent(vector3 beta)
         targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
 
         event.addVectorMeson(vmeson);//Axion
-        event.addGamma(gamma1,targetEgamma1,Q2gam1);//emmitted by beam1. Order is important - write gamma1 b4 gamma2
-        event.addGamma(gamma2,targetEgamma2,Q2gam2);//emmitted by beam2
-        event.addOutgoingBeam1(beam1,false);//the order is important. Write beam1 before beam2 so that output can be consistent.
-        event.addOutgoingBeam2(beam2,false);//and so that we can associate gamma1 to beam1 and gamma2 to beam2
+        event.addGammaFromBeam1(gamma1,targetEgamma1,Q2gam1);//emmitted by beam1.
+        event.addGammaFromBeam2(gamma2,targetEgamma2,Q2gam2);//emmitted by beam2
+        event.addOutgoingBeams(beam1,beam2);
         event.addVertext(t);        
       }
 

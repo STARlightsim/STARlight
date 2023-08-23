@@ -1079,9 +1079,12 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
 
 				event.addVectorMeson(vmeson);
-				event.addGamma(gamma,targetEgamma,Q2gam);
-				event.addOutgoingBeam1(beam1,_TargetBeam);//the order is important. Write beam1 before beam2 so that output can be consistent.
-				event.addOutgoingBeam2(beam2,_TargetBeam);
+				if(_TargetBeam == 1)
+					event.addGammaFromBeam2(gamma,targetEgamma,Q2gam);
+				else if(_TargetBeam == 2)
+					event.addGammaFromBeam1(gamma,targetEgamma,Q2gam);
+				
+				event.addOutgoingBeams(beam1,beam2);
 				event.addVertext(t);
 			}
 		}
@@ -1181,9 +1184,12 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
 
 				event.addVectorMeson(vmeson);
-				event.addGamma(gamma,targetEgamma,Q2gam);
-				event.addOutgoingBeam1(beam1,_TargetBeam);//the order is important. Write beam1 before beam2 so that output can be consistent.
-				event.addOutgoingBeam2(beam2,_TargetBeam);
+				if(_TargetBeam == 1)
+					event.addGammaFromBeam2(gamma,targetEgamma,Q2gam);
+				else if(_TargetBeam == 2)
+					event.addGammaFromBeam1(gamma,targetEgamma,Q2gam);
+				
+				event.addOutgoingBeams(beam1,beam2);
 				event.addVertext(t);
 			}
 		}
@@ -1297,12 +1303,14 @@ upcXEvent Gammaavectormeson::produceEvent(vector3 beta)
 				targetEgamma = cmsEgam*cosh(rap1cm) + Pzgam*sinh(rap1cm);
 
 				event.addVectorMeson(vmeson);
-				event.addGamma(gamma,targetEgamma,Q2gam);
-				event.addOutgoingBeam1(beam1,_TargetBeam);//the order is important. Write beam1 before beam2 so that output can be consistent.
-				event.addOutgoingBeam2(beam2,_TargetBeam);
+				if(_TargetBeam == 1)
+					event.addGammaFromBeam2(gamma,targetEgamma,Q2gam);
+				else if(_TargetBeam == 2)
+					event.addGammaFromBeam1(gamma,targetEgamma,Q2gam);
+				
+				event.addOutgoingBeams(beam1,beam2);
 				event.addVertext(t);
 			}
-
 
 		}
 	}

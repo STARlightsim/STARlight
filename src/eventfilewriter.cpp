@@ -156,32 +156,36 @@ int eventFileWriter::writeEvent(upcXEvent &event, int eventnumber)
     //
     _fileStream <<"VERTEX: "<<0.<<" "<<0.<<" "<<0.<<" "<<0.<<" "<<1<<" "<<0<<" "<<0<<" "<<numberoftracks<<std::endl;
     
-    for( uint igam = 0 ; igam < event.getGammaEnergies()->size(); ++igam){
-      _fileStream <<"GAMMA: "<<event.getGammaEnergies()->at(igam)<<" "<<event.getGammaMasses()->at(igam)<<std::endl;
-      lorentzVector gam = event.getGamma()->at(igam);
-      // Write the photon 4-vector out to file. Might be used in later iterations, so I keep it here
-      //_fileStream <<"GAMMA VECTOR: "<<gam.GetPx()<<" "<<gam.GetPy()<<" "<<gam.GetPz()<<" "<<gam.GetE()<<" "<<-temp<<std::endl;
-    }
 
-    for (uint it =0; it < event.getVertext()->size(); ++it)
-    {
-      _fileStream <<"t: "<<event.getVertext()->at(it)<<std::endl;
-    }
-    
-    for( uint ibeam = 0 ; ibeam < event.getBeams()->size(); ++ibeam){
-      if(event.getBeamIsTarget()->at(ibeam)){
+   if(_ip.giveExtraBeamInfo()){
+      for( uint igam = 0 ; igam < event.getGammaEnergies()->size(); ++igam){
+        _fileStream <<"GAMMA: "<<event.getGammaEnergies()->at(igam)<<" "<<event.getGammaMasses()->at(igam)<<std::endl;
+      }
 
-        lorentzVector target = event.getBeams()->at(ibeam);
-        //_fileStream <<"TARGET->BEAM"<< event.getBeamNo()->at(ibeam)<<": "<<target.GetPx()<<" "<<target.GetPy()<<" "<<target.GetPz()<<" "<<target.GetE()<<std::endl;
-        _fileStream <<"TARGET: BEAM"<< event.getBeamNo()->at(ibeam)<<": "<<target.GetPx()<<" "<<target.GetPy()<<" "<<target.GetPz()<<" "<<target.GetE()<<std::endl;
+      for (uint it =0; it < event.getVertext()->size(); ++it)
+      {
+        _fileStream <<"t: "<<event.getVertext()->at(it)<<std::endl;
       }
-      if(!(event.getBeamIsTarget()->at(ibeam))){
-        lorentzVector source = event.getBeams()->at(ibeam); 
-        //_fileStream <<"SOURCE->BEAM"<< event.getBeamNo()->at(ibeam)<<": "<<source.GetPx()<<" "<<source.GetPy()<<" "<<source.GetPz()<<" "<<source.GetE()<<std::endl;
-        _fileStream <<"SOURCE: BEAM"<< event.getBeamNo()->at(ibeam)<<": "<<source.GetPx()<<" "<<source.GetPy()<<" "<<source.GetPz()<<" "<<source.GetE()<<std::endl;
+      lorentzVector target, source;
+      int targetNo = event.targetBeamNo();
+      if(targetNo == 2){
+        target =  event.getBeam2();
+        source = event.getBeam1();
+      }else{
+        target = event.getBeam1();
+        source = event.getBeam2();        
       }
-      
-    }
+
+      if(targetNo == -1){
+        //This is to handle the case of two-photon interactions. //if multiple photon - for breakup is considered, this strategy should be changed.
+        targetNo = 1;
+        _fileStream <<"SOURCE: BEAM"<< targetNo <<": "<<target.GetPx()<<" "<<target.GetPy()<<" "<<target.GetPz()<<" "<<target.GetE()<<std::endl;
+      }
+      else
+        _fileStream <<"TARGET: BEAM"<< targetNo<<": "<<target.GetPx()<<" "<<target.GetPy()<<" "<<target.GetPz()<<" "<<target.GetE()<<std::endl;
+
+      _fileStream <<"SOURCE: BEAM"<< 3 - targetNo<<": "<<source.GetPx()<<" "<<source.GetPy()<<" "<<source.GetPz()<<" "<<source.GetE()<<std::endl;
+   }//end of additional section for the extended details output
 
     int ipart = 0;
     std::vector<starlightParticle>::const_iterator part = (event.getParticles())->begin();
