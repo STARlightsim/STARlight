@@ -34,11 +34,15 @@
 #ifndef EVENTFILEWRITER_H
 #define EVENTFILEWRITER_H
 
+#ifdef HEPMC3_ON
+#include "hepmc3writer.h"
+#endif
 
 #include <string>
 
 #include "filewriter.h"
 #include "inputParameters.h"
+
 
 class eventFileWriter : public fileWriter
 {
@@ -55,13 +59,21 @@ class eventFileWriter : public fileWriter
 
       /** Write an UPC event to file */
       int writeEvent(upcEvent &event, int eventnumber);
-      
+      int writeEvent(upcXEvent &event, int eventnumber);
+
       /** Set if we want to write full pythia information */
       void writeFullPythiaInfo(bool v) { _writeFullPythia = v; }
+
       
 private:
   
   bool _writeFullPythia;
+
+#ifdef HEPMC3_ON
+  hepMC3Writer * _hepmc3writer;
+#endif
+inputParameters _ip;
+
       
 };
 

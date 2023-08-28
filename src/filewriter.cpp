@@ -62,6 +62,8 @@ int fileWriter::open()
     try
     {
         _fileStream.open(_fileName.c_str());
+        _fileStream.precision(15);
+        _fileStream.setf(ios::fixed);
     }
     catch (const ios::failure & error)
     {

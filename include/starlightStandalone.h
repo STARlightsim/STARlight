@@ -38,6 +38,7 @@
 #include <string>
 
 class upcEvent;
+class upcXEvent;
 
 class starlight;
 class inputParameters;
@@ -62,6 +63,7 @@ public:
 	void setEventDataFileName(const std::string& eventDataFileName) { _eventDataFileName = eventDataFileName; }  ///< sets path to output file
 	
 	void boostEvent(upcEvent &e); ///< Boost event from beam CMS to lab system
+	void boostEvent(upcXEvent &e);
 
 private:
 

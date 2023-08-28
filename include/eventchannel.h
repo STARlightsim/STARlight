@@ -41,6 +41,7 @@
 #include "beambeamsystem.h"
 #include "randomgenerator.h"
 #include "upcevent.h"
+#include "upcXevent.h"
 #include "inputParameters.h"
 
 
@@ -57,7 +58,8 @@ public:
 
 	virtual starlightConstants::event produceEvent(int &ievent) = 0;
 
-	virtual upcEvent produceEvent(vector3 beta) = 0;
+	//virtual upcEvent produceEvent(vector3 beta) = 0;
+	virtual upcXEvent produceEvent(vector3 beta) = 0;
  
 	static void transform(const double betax,
 	                      const double betay,

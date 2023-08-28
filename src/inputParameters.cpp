@@ -50,6 +50,7 @@ parameterlist parameterbase::_parameters;
 //______________________________________________________________________________
 inputParameters::inputParameters()
         : _baseFileName          ("baseFileName","slight"),
+      _HEPMC3OutputEnabled	 ("HEPMC3", false, NOT_REQUIRED),
  	  _beam1Z                ("BEAM_1_Z",0),
 	  _beam1A                ("BEAM_1_A",0),
 	  _beam2Z                ("BEAM_2_Z",0),
@@ -92,6 +93,7 @@ inputParameters::inputParameters()
 	  _bmin                  ("BMIN",0,NOT_REQUIRED),
           _bmax                  ("BMAX",0,NOT_REQUIRED),
 		  _outputHeader          ("OUTPUT_HEADER", false, NOT_REQUIRED),
+		  _HEPMC3_EXTENDED_OUTPUT("HEPMC3_EXTENDED_OUTPUT",false, NOT_REQUIRED),
 
           _deuteronSlopePar      ("deuteronSlopePar"      , 9.5           , NOT_REQUIRED),
           _protonMass            ("protonMass"            , 0.938272046   , NOT_REQUIRED),
@@ -180,7 +182,10 @@ inputParameters::inputParameters()
   // or similar
 	
         _ip.addParameter(_baseFileName);
+	
 
+	_ip.addParameter(_HEPMC3OutputEnabled);
+	_ip.addParameter(_HEPMC3_EXTENDED_OUTPUT);
 	_ip.addParameter(_beam1Z);
 	_ip.addParameter(_beam2Z);
 	_ip.addParameter(_beam1A);
@@ -785,6 +790,37 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		return false;
 	}
 
+	if(beamBreakupMode() == 4)
+	{
+		if(interferenceEnabled() == 0){
+			_giveExtraBeamInfo = true;
+		}else if(interferenceEnabled() ==1 && productionMode() ==1)
+		{
+			_giveExtraBeamInfo = true;					
+		}else{
+			_giveExtraBeamInfo = false;
+			printWarn<<"Note: Outgoing beam information is not available when interference is turned on"<<endl;
+		}
+	}
+	else{
+		_giveExtraBeamInfo = false;
+		printWarn<<"Note: Outgoing beam information is only available for 0n0n breakup mode"<<endl;
+	}
+	
+#if(HEPMC3_ON)//HEPMC3 is installed and flag is set
+	if(_giveExtraBeamInfo){
+		_HEPMC3OutputEnabled = true;
+		}
+	else {
+		_HEPMC3OutputEnabled = false;
+		printWarn<<"HEPMC3 output cannot be used for this type of ultraperipheral collision because outgoing beam info is not available";
+		}
+#elif(_HEPMC3OutputEnabled)
+	_HEPMC3OutputEnabled = false;
+	printWarn<<"HEPMC3 must be installed separately and the DENABLE flag set from the terminal for you to turn on the HEPMC3 Output format. Please check Documentation for more details."<<endl;}
+#endif
+	
+
 	printInfo << "using the following " << *this;
 	
 	return true;
@@ -796,7 +832,8 @@ ostream&
 inputParameters::print(ostream& out) const
 {
 	out << "starlight parameters:" << endl
-	    << "    base file name  ...................... '"  << _baseFileName.value() << "'" << endl
+	    << "    base file name  ....................... '"  << _baseFileName.value() << "'" << endl
+		<< "    HEPMC3 Format Turned on ................ "  << yesNo(_HEPMC3OutputEnabled.value()) << endl 
 	    << "    beam 1 atomic number ................... " << _beam1Z.value() << endl
 	    << "    beam 1 atomic mass number .............. " << _beam1A.value() << endl
 	    << "    beam 2 atomic number ................... " << _beam2Z.value() << endl
@@ -814,7 +851,7 @@ inputParameters::print(ostream& out) const
     if (_etaCutEnabled.value()) {
 	out << "        minumum eta......................... " << _etaCutMin.value() << endl
 	    << "        maximum eta......................... " << _etaCutMax.value() << endl;}
-        out << "    production mode ........................ " << _productionMode.value() << endl
+        out << "    production mode .................... " << _productionMode.value() << endl
 	    << "    number of events to generate ........... " << _nmbEventsTot.value() << endl
 	    << "    PDG ID of produced particle ............ " << _prodParticleId.value() << endl
 	    << "    seed for random generator .............. " << _randomSeed.value() << endl
@@ -859,6 +896,7 @@ inputParameters::write(ostream& out) const
 {
   
         out << "baseFileName"  << baseFileName         () <<endl
+		<< "HEPMC3"		   << HEPMC3OutputEnabled  () <<endl
 	    << "BEAM_1_Z"      << beam1Z               () <<endl
 	    << "BEAM_2_Z"      << beam1A               () <<endl
 	    << "BEAM_1_A"      << beam2Z               () <<endl

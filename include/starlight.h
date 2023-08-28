@@ -38,6 +38,7 @@
 #include <string>
 
 #include "upcevent.h"
+#include "upcXevent.h"
 #include "eventchannel.h"
 
 
@@ -57,7 +58,8 @@ public:
 	bool init();
 
 	vector3 extract_beta(double lorentzGammaBeam1, double lorentzGammaBeam2);
-	upcEvent produceEvent();
+	//upcEvent produceEvent();
+	upcXEvent produceEvent();
       
         std::string   baseFileName  () const { return _baseFileName;		  }
 	unsigned long nmbAttempts   () const { return _eventChannel->nmbAttempts(); }

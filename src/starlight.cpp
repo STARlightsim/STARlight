@@ -59,6 +59,7 @@
 #include "gammaaluminosity.h"
 #include "incoherentPhotonNucleusLuminosity.h"
 #include "upcevent.h"
+#include "upcXevent.h"
 #include "eventfilewriter.h"
 #include "starlight.h"
 
@@ -122,7 +123,7 @@ starlight::init()
 	  return false;
 	}
 	if( _inputParameters->interactionType() == PHOTONPOMERONINCOHERENT && _inputParameters->beam1A() == 1 &&
-	    _inputParameters->beam1Z() == 1 && _inputParameters->beam2A() == 1 && _inputParameters->beam2Z() ){
+ 	    _inputParameters->beam1Z() == 1 && _inputParameters->beam2A() == 1 && _inputParameters->beam2Z() ){
           printErr << endl << " Do not use PROD_MODE = 4 for pp collisions. Use PROD_MODE = 2 or 3 instead. Terminating."<<endl;
 	  return false; 
 	}
@@ -212,7 +213,8 @@ starlight::init()
  * 
  * @return [upcEvent]: The created event. 
  */
-upcEvent
+//upcEvent
+upcXEvent
 starlight::produceEvent()
 {
 	if (!_isInitialised) {

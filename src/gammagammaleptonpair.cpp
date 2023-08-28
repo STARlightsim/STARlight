@@ -280,7 +280,11 @@ void Gammagammaleptonpair::picky(double &y)
 
 
 //______________________________________________________________________________
-void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,double &py,double &pz)
+void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,double &py,double &pz,
+                                        double &Eb1, double &pxb1, double &pyb1, double &pzb1,
+								        double &Eb2, double &pxb2, double &pyb2, double &pzb2, double &t2,
+								        double &Egam1, double&pxgam1, double &pygam1, double &pzgam1, double &Q2gam1,
+                                        double &Egam2, double&pxgam2, double &pygam2, double &pzgam2, double &Q2gam2)
 {
     //this function calculates px,py,pz,and E given w and y
 
@@ -296,8 +300,8 @@ void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,d
     anglepp1 = _randy->Rndom();
     anglepp2 = _randy->Rndom();
 
-    pp1 = pp_1(E1);
-    pp2 = pp_2(E2);
+    pp1 = pp_1(E1);//this is from beam1
+    pp2 = pp_2(E2);//this is from beam2
     px = pp1*cos(2.*starlightConstants::pi*anglepp1)+pp2*cos(2.*starlightConstants::pi*anglepp2);
     py = pp1*sin(2.*starlightConstants::pi*anglepp1)+pp2*sin(2.*starlightConstants::pi*anglepp2);
 
@@ -308,6 +312,44 @@ void Gammagammaleptonpair::pairMomentum(double w,double y,double &E,double &px,d
     E = sqrt(w*w+pt*pt)*cosh(y);
     pz= sqrt(w*w+pt*pt)*sinh(y);
 
+    double E0b1 = _ip->protonEnergy()*_ip->beam1A();
+	double px0b1 = 0, px0b2 =0, py0b1=0, py0b2=0;
+	double pz0b1 = sqrt(E0b1*E0b1 - _ip->protonMass()*_ip->protonMass()*_ip->beam1A()*_ip->beam1A());
+	double E0b2 = _ip->protonEnergy()*_ip->beam2A();
+	double pz0b2 = -sqrt(E0b2*E0b2 - _ip->protonMass()*_ip->protonMass()*_ip->beam2A()*_ip->beam2A());
+    pxgam1 = pp1*cos(2.*starlightConstants::pi*anglepp1);
+    pygam1 = pp1*sin(2.*starlightConstants::pi*anglepp1);
+    pxgam2 = pp2*cos(2.*starlightConstants::pi*anglepp2);
+    pygam2 = pp2*sin(2.*starlightConstants::pi*anglepp2);
+    Egam1 = E1;
+    Egam2 = E2;
+    
+    Eb1 = E0b1 - Egam1;
+    pxb1 = px0b1 - pxgam1;
+    pyb1 = py0b1 - pygam1;
+    pzb1 = sqrt(Eb1*Eb1 - (pxb1*pxb1 + pyb1*pyb1 + _ip->protonMass()*_ip->beam1A()*_ip->protonMass()*_ip->beam1A()));
+    //pzgam1 = pz0b1 - pzb1;
+    //Q2gam1 = Egam1*Egam1 - (pxgam1*pxgam1 + pygam1*pygam1 + pzgam1*pzgam1);
+
+    Eb2 = E0b2 - Egam2;
+    pxb2 = px0b2 - pxgam2;
+    pyb2 = py0b2 - pygam2;
+    pzb2 = -sqrt(Eb2*Eb2 - (pxb2*pxb2 + pyb2*pyb2 + _ip->protonMass()*_ip->beam2A()*_ip->protonMass()*_ip->beam2A()));
+    //pzgam2 = pz0b2 - pzb2;
+    //Q2gam2 = Egam2*Egam2 - (pxgam2*pxgam2 + pygam2*pygam2 + pzgam2*pzgam2);
+    t2= pt*pt;//not sure
+
+    double pzgamA1, pzgamB1, pzgamA2, pzgamB2;
+
+    pzgamA1 = pz0b1- pzb1;
+	pzgamA2 = pz + pzb2 - pz0b2;
+    pzgamB1 = pz0b2 - pzb2;
+    pzgamB2 = pz - pzgamA1;
+
+    pzgam1 = (2*pzgamA1 + pzgamA2)/3.0;
+    pzgam2 = (2*pzgamB1 + pzgamB2)/3.0;
+    Q2gam1 = Egam1*Egam1 - (pxgam1*pxgam1 + pygam1*pygam1 + pzgam1*pzgam1);
+    Q2gam2 = Egam2*Egam2 - (pxgam2*pxgam2 + pygam2*pygam2 + pzgam2*pzgam2);
 }
 
 
@@ -564,6 +606,7 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
     double pairE = 0.;
     double pairmomx=0.,pairmomy=0.,pairmomz=0.;
     int iFbadevent=0;
+    pairE = pairE + 1;
     starlightConstants::particleTypeEnum ipid = starlightConstants::UNKNOWN;
 	
     double E1=0.,E2=0., px2=0.,px1=0.,py2=0.,py1=0.,pz2=0.,pz1=0.;
@@ -585,7 +628,9 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
 
     picky(rapidity);
 
-    pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
+    //commented to avoid updating the pair momentum to accomodate beam and photon informations
+    //hopes it has no unintended consequence.
+    //pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
     twoBodyDecay(ipid,comenergy,pairmomx,pairmomy,pairmomz,E1,px1,py1,pz1,E2,px2,py2,pz2,iFbadevent);//decaying/producing the daughter particles.
     if (iFbadevent==0){
 	int q1=0,q2=0; 
@@ -634,11 +679,13 @@ starlightConstants::event Gammagammaleptonpair::produceEvent(int &ievent)
  * @param beta The boost vector to transform from CM to Lab Frame. Important for pseudorapidity cuts.
  * @return [upcEvent] The produced event
  */
-upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
+//upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
+upcXEvent Gammagammaleptonpair::produceEvent(vector3 beta)
 {
 //returns the vector with the decay particles inside.
 
-   upcEvent event;
+   //upcEvent event;
+   upcXEvent event;
     //all important  variables are initialized.
    double comenergy = 0.;
    double rapidity = 0.;
@@ -651,13 +698,24 @@ upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
    bool accepted = false;
    double ptCutMin2 = _ptCutMin*_ptCutMin;//used to make pt_Cut comparisons without using square_roots
    double ptCutMax2 = _ptCutMax*_ptCutMax;//used to make pt_Cut comparison without using square_roots
+
+   double Pgam1[4] = {0.0,0.0,0.0,0.0};//Photon from beam1 - Egam1,pxgam1,pygam1,pzgam1
+   double Pgam2[4] = {0.0,0.0,0.0,0.0};//Photon from beam2 Egam2,pxgam2,pygam2,pzgam2
+   double Pb1[4] = {0.0,0.0,0.0,0.0};//Outgoing beam1 Eb1,pxb1,pyb1,pzb1
+   double Pb2[4] = {0.0,0.0,0.0,0.0};//Outgoing beam2 Eb2,pxb2,pyb2,pzb2
+   double Q2gam1 =0.,Q2gam2, t=0.;
    do{ 
      
      pickw(comenergy);
      
      picky(rapidity);
      
-     pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz);
+     pairMomentum(comenergy,rapidity,pairE,pairmomx,pairmomy,pairmomz,
+                    Pb1[0],Pb1[1],Pb1[2],Pb1[3],
+                    Pb2[0],Pb2[1],Pb2[2],Pb2[3],t,
+                    Pgam1[0],Pgam1[1],Pgam1[2],Pgam1[3],Q2gam1,
+                    Pgam2[0],Pgam2[1],Pgam2[2],Pgam2[3], Q2gam2);
+
    
   
      _nmbAttempts++;
@@ -725,7 +783,28 @@ upcEvent Gammagammaleptonpair::produceEvent(vector3 beta)
      
      starlightParticle particle2(px2, py2, pz2, E2, mlepton, -q2*ipid, q2);
      event.addParticle(particle2);
-     
+
+     if(_ip->giveExtraBeamInfo())
+     {     
+        lorentzVector beam1(Pb1[1],Pb1[2],Pb1[3],Pb1[0]);
+        lorentzVector beam2(Pb2[1],Pb2[2],Pb2[3],Pb2[0]);
+        double targetEgamma1, targetEgamma2, rap1cm = acosh(_ip->beamLorentzGamma()), cmsEgam1 = Pgam1[0];
+        double cmsEgam2 = Pgam2[0], Pzgam1 = Pgam1[3], Pzgam2 = Pgam2[3];
+        lorentzVector gamma1(Pgam1[1],Pgam1[2],Pzgam1,cmsEgam1);
+        lorentzVector gamma2(Pgam2[1],Pgam2[2],Pzgam2,cmsEgam2);
+
+        
+        targetEgamma2 = cmsEgam2*cosh(rap1cm) - Pzgam2*sinh(rap1cm);//beam 1 is target - hence for gamma2
+        targetEgamma1 = cmsEgam1*cosh(rap1cm) + Pzgam1*sinh(rap1cm);//beam2 is target - hence for gamma1
+
+        
+		event.addGammaFromBeam1(gamma1,targetEgamma1,Q2gam1);
+		event.addGammaFromBeam2(gamma2,targetEgamma2,Q2gam2);
+				
+		event.addOutgoingBeams(beam1,beam2);
+        event.addVertext(t);
+     }//end if
+
     }
    return event;
 }

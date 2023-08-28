@@ -179,12 +179,16 @@ public:
 	bool configureFromFile(const std::string &configFileName = "./config/slight.in");
 
         std::string  baseFileName          () const { return _baseFileName.value();           }
+    //Only used to indicate to user in the console display, on whether the HEPMC3 module was successfully turned on or not.
+    bool         HEPMC3OutputEnabled   () const {return _HEPMC3OutputEnabled.value();     }  ///< returns true if HEPMC3 Output format is enabled.
+    bool         HEPMC3_EXTENDED_OUTPUT() const {return _HEPMC3_EXTENDED_OUTPUT.value();  }  ///<returns true if the user wants the slight extended output (which contains momenta info of outgoing beams)
 	unsigned int beam1Z                () const { return _beam1Z.value();                 }  ///< returns atomic number of beam particle 1
 	unsigned int beam1A                () const { return _beam1A.value();                 }  ///< returns atomic mass number of beam particle 1
 	unsigned int beam2Z                () const { return _beam2Z.value();                 }  ///< returns atomic number of beam particle 2
 	unsigned int beam2A                () const { return _beam2A.value();                 }  ///< returns atomic mass number of beam particle 2
 	double       beamLorentzGamma      () const { return _beamLorentzGamma;       	      }  ///< returns Lorentz gamma factor of both beams in beam CMS frame
-	double       beam1LorentzGamma     () const { return _beam1LorentzGamma.value();      }  ///< returns Lorentz gamma factor of beam 1 in collider frame
+	double       giveExtraBeamInfo     () const { return _giveExtraBeamInfo;              }  ///< returns a bool showing if the user's preferences supports providing information on outgoing beams and virtual photons.
+    double       beam1LorentzGamma     () const { return _beam1LorentzGamma.value();      }  ///< returns Lorentz gamma factor of beam 1 in collider frame
 	double       beam2LorentzGamma     () const { return _beam2LorentzGamma.value();      }  ///< returns Lorentz gamma factor of beam 2 in collider frame
 	double       maxW                  () const { return _maxW.value();                   }  ///< returns maximum mass W of produced hadronic system [GeV/c^2]
 	double       minW                  () const { return _minW.value();                   }  ///< returns minimum mass W of produced hadronic system [GeV/c^2]
@@ -311,6 +315,8 @@ public:
         double Upsilon3SBrmumu       () const {return _Upsilon3SBrmumu       .value();}
 	
         void setBaseFileName          (std::string v )  {  _baseFileName = v;     }
+    void setHEPMC3_EXTENDED_OUTPUT(bool v)    {_HEPMC3_EXTENDED_OUTPUT = v;}     ///< sets whether slight.out should be extended for more HEPMC3 information or not
+    void setHEPMC3OutputEnabled   (bool v)    { _HEPMC3OutputEnabled = v;     }  ///< sets whether output format should be written in HEPMC3
 	void setBeam1Z                (unsigned int v)  {  _beam1Z = v;           }  ///< sets atomic number of beam particle 1
 	void setBeam1A                (unsigned int v)  {  _beam1A = v;           }  ///< sets atomic mass number of beam particle 1
 	void setBeam2Z                (unsigned int v)  {  _beam2Z = v;           }  ///< sets atomic number of beam particle 2
@@ -377,6 +383,7 @@ private:
 
 	// config file parameters
         parameter<std::string,NO_VALIDITY_CHECK>   _baseFileName;
+    parameter<bool, VALIDITY_CHECK>            _HEPMC3OutputEnabled;     ///< This en/disables writing the output in HEPMC3 format- when disable it writes in the HEPMC2 format 
 	parameter<unsigned int,VALIDITY_CHECK>     _beam1Z;                  ///< atomic number of beam particle 1
 	parameter<unsigned int,VALIDITY_CHECK>     _beam1A;                  ///< atomic mass number of beam particle 1
 	parameter<unsigned int,VALIDITY_CHECK>     _beam2Z;                  ///< atomic number of beam particle 2
@@ -434,6 +441,7 @@ private:
 	parameter<double, VALIDITY_CHECK>          _bmin;                    ///< Optional parameter minimum impact parameter for b-range calculation
 	parameter<double, VALIDITY_CHECK>          _bmax;                    /// < Optional parameter maximum impact parameter for b-range calculation
     parameter<bool, NO_VALIDITY_CHECK>          _outputHeader;           /// < Optional parameter puts parameter information at the top of the output file
+    parameter<bool, NO_VALIDITY_CHECK>          _HEPMC3_EXTENDED_OUTPUT;     ///< false if user prefers the old format for event record writing which does not contain momenta information of outgoing beams
 
         parameter<double, VALIDITY_CHECK> _deuteronSlopePar      ;           ///< deuteron slope parameter (effective temperature) [(GeV/c)^-2]
         parameter<double, VALIDITY_CHECK> _protonMass            ;           ///< mass of the proton [GeV/c^2]
@@ -523,6 +531,7 @@ private:
 
 	double                         _beamLorentzGamma;         ///< Lorentz gamma factor of the beams in CMS frame, not an input parameter
 	double                         _inputBranchingRatio;      ///< Branching ratio defined for each channel
+    bool                           _giveExtraBeamInfo;        ///< Tells if the user's preferences supports providing information on outgoing beams and virtual photons.
 	
 	inputParser _ip;
 	
