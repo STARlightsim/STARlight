@@ -93,6 +93,7 @@ inputParameters::inputParameters()
 	  _bmin                  ("BMIN",0,NOT_REQUIRED),
           _bmax                  ("BMAX",0,NOT_REQUIRED),
 		  _outputHeader          ("OUTPUT_HEADER", false, NOT_REQUIRED),
+		  _HEPMC3_EXTENDED_OUTPUT("HEPMC3_EXTENDED_OUTPUT",false, NOT_REQUIRED),
 
           _deuteronSlopePar      ("deuteronSlopePar"      , 9.5           , NOT_REQUIRED),
           _protonMass            ("protonMass"            , 0.938272046   , NOT_REQUIRED),
@@ -184,6 +185,7 @@ inputParameters::inputParameters()
 	
 
 	_ip.addParameter(_HEPMC3OutputEnabled);
+	_ip.addParameter(_HEPMC3_EXTENDED_OUTPUT);
 	_ip.addParameter(_beam1Z);
 	_ip.addParameter(_beam2Z);
 	_ip.addParameter(_beam1A);

@@ -157,7 +157,7 @@ int eventFileWriter::writeEvent(upcXEvent &event, int eventnumber)
     _fileStream <<"VERTEX: "<<0.<<" "<<0.<<" "<<0.<<" "<<0.<<" "<<1<<" "<<0<<" "<<0<<" "<<numberoftracks<<std::endl;
     
 
-   if(_ip.giveExtraBeamInfo()){
+   if(_ip.giveExtraBeamInfo() && _ip.HEPMC3_EXTENDED_OUTPUT()){
       for( uint igam = 0 ; igam < event.getGammaEnergies()->size(); ++igam){
         _fileStream <<"GAMMA: "<<event.getGammaEnergies()->at(igam)<<" "<<event.getGammaMasses()->at(igam)<<std::endl;
       }
