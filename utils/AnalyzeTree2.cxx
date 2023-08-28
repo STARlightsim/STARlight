@@ -15,7 +15,7 @@
 // (as downloaded, it calls starlight.root).  Then open root and type .x anaTree.C .
 
 #define AnalyzeTree_cxx
-#include "AnalyzeTree2.h"
+#include "AnalyzeTree.h"
 #include <TH2.h>
 #include <TStyle.h>
 #include <TCanvas.h>
