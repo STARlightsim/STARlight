@@ -41,8 +41,27 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 	TTree*          outTree           = new TTree("starlightTree", "starlightTree");
 	TLorentzVector* parentParticle    = new TLorentzVector();
   	TClonesArray*   daughterParticles = new TClonesArray("TLorentzVector");
+	TLorentzVector* beam1             = new TLorentzVector();
+	TLorentzVector* beam2             = new TLorentzVector();
+	double			t  				  = 0;
+	double			q2_gamma1		  = 0;
+	double			q2_gamma2		  = 0;
+	double			targetEgamma1	  = 0;
+	double 			targetEgamma2	  = 0;
+	TLorentzVector* target			  = new TLorentzVector();
+	TClonesArray*   sources			  = new TClonesArray("TLorentzVector");
+	
 	outTree->Branch("parent",    "TLorentzVector", &parentParticle,    32000, -1);
+	outTree->Branch("beam1", 	 "TLorentzVector", &beam1, 			   32000, -1);
+	outTree->Branch("beam2", 	 "TLorentzVector", &beam1, 			   32000, -1);
 	outTree->Branch("daughters", "TClonesArray",   &daughterParticles, 32000, -1);
+	outTree->Branch("t",		 	 &t, 		     "value/D");
+	outTree->Branch("q2_gamma1",	 &q2_gamma1, 	 "value/D");
+	outTree->Branch("q2_gamma2",	 &q2_gamma2, 	 "value/D");
+	outTree->Branch("targetEgamma1", &targetEgamma1, "value/D");
+	outTree->Branch("targetEgamma2", &targetEgamma2, "value/D");
+	outTree->Branch("target", "TLorentzVector",   &target, 32000, -1);
+	outTree->Branch("sources", "TClonesArray",   &sources, 32000, -1);
 
 	ifstream inFile;
 	inFile.open(inFileName);
@@ -71,23 +90,79 @@ void ConvertStarlightAsciiToTree(const char* inFileName  = "slight.out",
 		assert(label == "VERTEX:");
 			
 		*parentParticle = TLorentzVector(0, 0, 0, 0);
-		for (int i = 0; i < nmbTracks; ++i) {
-			// read tracks
-			int    particleCode;
-			double momentum[3];
+		int itrack = 0;
+		int igam = 0;
+		int itarget =0;
+		int isource =0;
+		while (itrack < nmbTracks) {
+			
 			if (!getline(inFile, line))
 				break;
 			++countLines;
 			lineStream.str(line);
-			assert(lineStream >> label >> particleCode >> momentum[0] >> momentum[1] >> momentum[2]);
-			assert(label == "TRACK:");
-			Double_t daughterMass = IDtoMass(particleCode);
-			if (daughterMass < 0) {break;}
-			const double E = sqrt(  momentum[0] * momentum[0] + momentum[1] * momentum[1]
-			                      + momentum[2] * momentum[2] + daughterMass * daughterMass);
-			new ( (*daughterParticles)[i] ) TLorentzVector(momentum[0], momentum[1], momentum[2], E);
-			*parentParticle += *(static_cast<TLorentzVector*>(daughterParticles->At(i)));
+			assert(lineStream >> label);
+			
+			if(label == "GAMMA:"){
+				double in_targetEgamma, in_Q2;				
+				assert(lineStream>>in_targetEgamma>>in_Q2);
+				lineStream.clear();
+				if (igam==0) {
+					q2_gamma1 =in_Q2; 
+					targetEgamma1 =in_targetEgamma;
+				}else if(igam==1){
+					q2_gamma2 = in_Q2;
+					targetEgamma2 = in_targetEgamma;
+				}else assert(false);
+				igam++;
+			}
+			else if(label == "t:")
+			{
+				double t_origin;
+				assert(lineStream >> t_origin);
+				lineStream.clear();
+				t = t_origin;
+			}
+			else if(label == "TARGET:" || label =="SOURCE:")
+			{
+				double momentum[4];
+				string label2;
+				assert(lineStream >> label2 >>momentum[0]>>momentum[1]>>momentum[2]>>momentum[3]);
+				lineStream.clear();
+				if(label2 == "BEAM1:")
+				{
+					*beam1 = TLorentzVector(momentum[0], momentum[1], momentum[2], momentum[3]);
+
+				}else if(label2 == "BEAM2:"){
+					*beam2 = TLorentzVector(momentum[0], momentum[1], momentum[2], momentum[3]);
+				}
+				if(label == "SOURCE:"){
+					isource++;
+					new ( (*sources)[isource] ) TLorentzVector(momentum[0], momentum[1], momentum[2], momentum[3]);			
+				}
+				else if(label == "TARGET:" && itarget == 0){
+					*target = TLorentzVector(momentum[0], momentum[1], momentum[2], momentum[3]);
+					itarget++;
+				}else assert(false);//You can't have more than one targets
+			}			
+			else if(label == "TRACK:")// read tracks
+			{
+				int    particleCode;
+				double momentum[3];
+				
+				assert(lineStream>> particleCode >> momentum[0] >> momentum[1] >> momentum[2]);
+				lineStream.clear();
+				itrack++;
+				Double_t daughterMass = IDtoMass(particleCode);
+				if (daughterMass < 0) {break;}
+				const double E = sqrt(  momentum[0] * momentum[0] + momentum[1] * momentum[1]
+									+ momentum[2] * momentum[2] + daughterMass * daughterMass);
+				new ( (*daughterParticles)[itrack] ) TLorentzVector(momentum[0], momentum[1], momentum[2], E);
+				*parentParticle += *(static_cast<TLorentzVector*>(daughterParticles->At(itrack)));
+
+			}
+			 
 		}
+		sources->Compress();
 		daughterParticles->Compress();
 		outTree->Fill();
 	}
