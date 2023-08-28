@@ -20,7 +20,6 @@
 ###########################################################################
 #
 # File and Version Information:
-#
 # $Rev:: 247                         $: revision of last commit
 # $Author:: butter                   $: author of last commit
 # $Date:: 2016-03-05 01:59:24 +0100 #$: date of last commit
@@ -323,11 +322,25 @@ add_library(${THIS_LIB} STATIC ${SOURCES})
 if(ENABLE_DPMJET)
   enable_language(Fortran)
   set(DPMJET_LIB "DpmJetLib")
-  message(STATUS "DPMJet objects: ${DPMJET_OBJECTS}")
-  add_library(${DPMJET_LIB} STATIC dpmjet/dpmjetint.f ${DPMJET_OBJECTS})
+  
+  # ###
+  # old:
+  #
+  # message(STATUS "DPMJet objects: ${DPMJET_OBJECTS}")
+  # add_library(${DPMJET_LIB} STATIC dpmjet/dpmjetint.f ${DPMJET_OBJECTS})
+  # ###
+
+  # ###
+  # new (Luan Arbeletche):
+  #
+  message(STATUS "DPMJet external library: ${DPMJET_EXTERNAL_LIB}")
+  add_library(${DPMJET_LIB} STATIC dpmjet/dpmjetint.f)
+  #
+  # ###
+
   set(optionalLibs ${optionalLibs} ${DPMJET_LIB})
   set(optionalLibs ${optionalLibs} "gfortran")
-
+  set(optionalLibs ${optionalLibs} ${DPMJET_EXTERNAL_LIB})
 endif()
 
 if(ENABLE_PYTHIA6)
