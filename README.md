@@ -45,9 +45,11 @@ The easiest way to setup `slight.in` is to start with a test file and edit [as d
 
 
 ## HEPMC3 OutPut
-The Official source tarball for installation can be found [here](http://hepmc.web.cern.ch/hepmc/index.html)
+To obtain output in the HEPMC3 format, the CERN HEPMC3 module must first be installed on the user's computer/machine.
 
-After unpacking the source tarball, compile, build and install the HEPMC3 package into the ```desired_installation_path``` following the instructions [here](http://hepmc.web.cern.ch/hepmc/building.html). 
+The Official source tarball for installation of the CERN HEPMC3 module can be found [here](http://hepmc.web.cern.ch/hepmc/index.html)
+
+After unpacking the source tarball, compile, build and install the HEPMC3 package into the ```desired_installation_path``` following the instructions [here](http://hepmc.web.cern.ch/hepmc/building.html).
 
 Please take note of the ```desired_installation_path``` where you installed HEPMC3, as you would need this location to link HEPMC3 to STARlight.
 
