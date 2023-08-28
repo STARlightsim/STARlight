@@ -667,19 +667,7 @@ void Gammaavectormeson::momenta(double W,double Y,
 	double E0b2 =_pEnergy*_ip->beam2A();
 	double pz0b2 = -sqrt(E0b2*E0b2 - _ip->protonMass()*_ip->protonMass()*_ip->beam2A()*_ip->beam2A());
 
-	double pzgam1, pzgam2, pzgamAdev, pzgamA, pzgamB, pzgamBdev, Q2gamA, Q2gamB, pzgam3, pzPom, pzPomdev, totalDev;
-	//int ite, count;
-	static ofstream testfile;
-	static bool ty = true;
-	if(ty){
-		ty = false;
-		char testfilename[] = "Test_UPO3PAbsdev3.csv";
-  		testfile.precision(15);
-  		testfile.open(testfilename);
-  	
-    	testfile << "PzGamA "<< "PzGamB "<<"Pz "<<"PzGamA_dev " << "PzGamB_dev " <<"PzGamA_devRat " << "PzGamB_devRat " <<"PzPom " << "PzPom_dev "<< "PzPom_devRat "<< "totalDev " << "Q2gamA " << "Q2gamB " << endl;
-		//testfile << 0.0 <<" "<< 0.0 << " " << _ip->beam1A()*_ip->protonMass()<< " " << _ip->protonMass()*_ip->beam2A()<< " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 << " " << 0.0 <<" "<< 0.0 << " "<< 0.0 << " " << 0.0<< " "<< 0.0 << " "<< 0.0 <<endl;
-	}
+	double pzgam1, pzgam2, pzgamB, Q2gamB;
   	
 	if(_TargetBeam == 2){
 		Eb2 = Egam + E0b2 - E;//
@@ -695,22 +683,15 @@ void Gammaavectormeson::momenta(double W,double Y,
 		pzgam1 = pz0b1- pzb1;
 		pzgam2 = pz + pzb2 - pz0b2;
 		
-		pzgamA = (pzgam1 + pzgam2)/2.0;//determining pzgam with the collapsed graph structure
-		pzgamAdev = 1.0/sqrt(2.0)*abs(pzgam2 - pzgam1);//Uncertainty in pzgam using the collapsed graph structure.
-		Q2gamA = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgamA*pzgamA);//virtuality of photon in collapsed graph structure.
+		//pzgamA = (pzgam1 + pzgam2)/2.0;//determining pzgam with the collapsed graph structure
+		//Q2gamA = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgamA*pzgamA);//virtuality of photon in collapsed graph structure.
 
 		pzgamB = (2*pzgam1 + pzgam2)/3.0;//z-momentum of photon using the  complete graph structure
-		pzgamBdev = 1.0/sqrt(2.0)*sqrt(2.0*pow((pzgam1-pzgamB),2) +pow((pzgam2- pzgamB),2));//Uncertainty in pzgam using the complete graph structure.
 		Q2gamB = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgamB*pzgamB);//virtuality of photon in complete graph structure.
 
-		pzgam3 = pz0b2 - pzb2;
-		pzPom = (2*pzgam3 + (pz-pzgam1))/3.0;//z-momentum of Pomeron using the  complete graph structure
-		pzPomdev = 1.0/sqrt(2.0)*sqrt(2.0*pow((pzgam3-pzPom),2) +pow((pz- pzgam1 - pzPom),2));//Uncertainty in pzPom using the complete graph structure.
-
-		totalDev = sqrt(pow((pzgam3-pzPom),2) +pow((pzgam1 - pzgamB),2) + pow((pz - pzgamB - pzPom),2));
+		//pzgam3 = pz0b2 - pzb2;
+		//pzPom = (2*pzgam3 + (pz-pzgam1))/3.0;//z-momentum of Pomeron using the  complete graph structure
 	
-		testfile << pzgamA <<" "<< pzgamB <<" "<< pz<<" "<<pzgamAdev<<" " << pzgamBdev<<" " <<pzgamAdev/pzgamA<<" " << pzgamBdev/pzgamB <<" " <<pzPom<<" " << pzPomdev<<" "<< pzPomdev/pzPom<<" "<< totalDev<<" " << Q2gamA<<" " << Q2gamB << endl;
-		//testfile.close();
 		pzgam = pzgamB;
 		Q2gam = Q2gamB;
 
@@ -732,22 +713,15 @@ void Gammaavectormeson::momenta(double W,double Y,
 		pzgam1 = pz0b2- pzb2;
 		pzgam2 = pz + pzb1 - pz0b1;
 		
-		pzgamA = (pzgam1 + pzgam2)/2.0;
-		pzgamAdev = 1.0/sqrt(2.0)*abs(pzgam2 - pzgam1);//Uncertainty in pzgam using the collapsed graph structure.
-		Q2gamA = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgamA*pzgamA);//virtuality of photon in collapsed graph structure.
+		//pzgamA = (pzgam1 + pzgam2)/2.0;
+		//Q2gamA = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgamA*pzgamA);//virtuality of photon in collapsed graph structure.
 
 		pzgamB = (2.0*pzgam1 + pzgam2)/3.0;//z-momentum of photon using the  complete graph structure
-		pzgamBdev = 1.0/sqrt(2.0)*sqrt(2.0*pow((pzgam1-pzgamB),2) +pow((pzgam2- pzgamB),2));//Uncertainty in pzgam using the complete graph structure.
 		Q2gamB = Egam*Egam - (pxgam*pxgam + pygam*pygam + pzgamB*pzgamB);//virtuality of photon in complete graph structure.
 
-		pzgam3 = pz0b1 - pzb1;
-		pzPom = (2*pzgam3 + (pz-pzgam1))/3.0;//z-momentum of Pomeron using the  complete graph structure
-		pzPomdev = 1.0/sqrt(2.0)*sqrt(2.0*pow((pzgam3-pzPom),2) +pow((pz- pzgam1 - pzPom),2));//Uncertainty in pzPom using the complete graph structure.
+		//pzgam3 = pz0b1 - pzb1;
+		//pzPom = (2*pzgam3 + (pz-pzgam1))/3.0;//z-momentum of Pomeron using the  complete graph structure
 
-		totalDev = sqrt(pow((pzgam3-pzPom),2) +pow((pzgam1 - pzgamB),2) + pow((pz - pzgamB - pzPom),2));
-	
-		testfile << pzgamA <<" "<< pzgamB <<" "<< pz<<" "<<pzgamAdev<<" " << pzgamBdev<<" " <<pzgamAdev/pzgamA<<" " << pzgamBdev/pzgamB <<" " <<pzPom<<" " << pzPomdev<<" "<< pzPomdev/pzPom<<" "<< totalDev<<" " << Q2gamA<<" " << Q2gamB << endl;
-		//testfile.close();
 		pzgam = pzgamB;
 		Q2gam = Q2gamB;
 

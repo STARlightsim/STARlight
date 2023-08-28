@@ -24,10 +24,11 @@ PROD_MODE = 2     #gg or gP switch (1 = 2-photon, 2 = coherent vector meson (nar
 N_EVENTS = 1000   #Number of events
 PROD_PID = 443013   #Channel of interest; this is j/psi --> mu+ mu-
 RND_SEED = 5574533 #Random number seed
-BREAKUP_MODE = 5     #Controls the nuclear breakup; a 5 here makes no requirement on the breakup of the ions
+BREAKUP_MODE = 4     #Controls the nuclear breakup; a 5 here makes no requirement on the breakup of the ions
 INTERFERENCE = 0     #Interference (0 = off, 1 = on)
 IF_STRENGTH = 1.    #% of intefernce (0.0 - 0.1)
 INT_PT_MAX = 0.24  #Maximum pt considered, when interference is turned on
 INT_PT_N_BINS =120   #Number of pt bins when interference is turned on
 XSEC_METHOD = 1 # Set to 0 to use old method for calculating gamma-gamma luminosity
 PYTHIA_FULL_EVENTRECORD = 0 # Write full pythia information to output (vertex, parents, daughter etc).
+HEPMC3_EXTENDED_OUTPUT = 0# Set to 1 to turn on the extension of old slight.out format to show momenta of outgoing beams
