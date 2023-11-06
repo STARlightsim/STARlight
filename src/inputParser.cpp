@@ -236,13 +236,17 @@ void inputParser::printParameterInfo(std::ostream &out)
 bool inputParser::validateParameters(std::ostream& errOut)
 {
 
-    int nNonCriticalMissing = 0;
-    int nCriticalMissing = 0;
+
 
     std::map<std::string, _parameter<int> >::iterator intIt;
     std::map<std::string, _parameter<float> >::iterator floatIt;
     std::map<std::string, _parameter<double> >::iterator doubleIt;
     std::map<std::string, _parameter<bool> >::iterator boolIt;
+
+    // commented out all occurences of nNonCriticalMissing since it is set to zero, and then incremented, but apparently the result
+    // is never used, and the compiler was complaining   SRK  Oct. 18, 2023
+    //   int nNonCriticalMissing = 0;
+    int nCriticalMissing = 0;
 
     for (intIt = _intParameters.begin(); intIt != _intParameters.end(); ++intIt)
     {
@@ -251,11 +255,11 @@ bool inputParser::validateParameters(std::ostream& errOut)
             if (intIt->second._required)
             {
                 errOut << "Could not find parameter: " << intIt->second._name << " which is required. Please specify this parameter in the config file!" << std::endl;
-                nCriticalMissing++;
+		//              nNonCriticalMissing++;
             }
             else
             {
-                nNonCriticalMissing++;
+	      //  nNonCriticalMissing++;
             }
         }
     }
@@ -270,7 +274,7 @@ bool inputParser::validateParameters(std::ostream& errOut)
             }
             else
             {
-                nNonCriticalMissing++;
+              //  nNonCriticalMissing++;
             }
         }
     }
@@ -285,7 +289,7 @@ bool inputParser::validateParameters(std::ostream& errOut)
             }
             else
             {
-                nNonCriticalMissing++;
+	      //    nNonCriticalMissing++;
             }
         }
     }
@@ -300,7 +304,7 @@ bool inputParser::validateParameters(std::ostream& errOut)
             }
             else
             {
-                nNonCriticalMissing++;
+	      //           nNonCriticalMissing++;
             }
         }
     }

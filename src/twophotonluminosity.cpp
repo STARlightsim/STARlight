@@ -749,8 +749,9 @@ double twoPhotonLuminosity::radmul(int N,double *A,double *B,int MINPTS,int MAXP
 
 
 //______________________________________________________________________________
+// Changed 'X[]' to 'X[15]' to fix Mac compilation problem.  Oct 18, 2023 SRK
 double twoPhotonLuminosity::integrand(double ,  // N (unused)
-                                      double X[])
+                                      double X[15])
 {
   double  b1 = X[0];      //1
   double  b2 = X[1];      //2
