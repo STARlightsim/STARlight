@@ -78,6 +78,8 @@ namespace starlightConstants
 		OMEGA          = 223,
 		OMEGA_pipipi   = 223211111,
 		PHI            = 333,
+		 // added Jan. 2022 by SRK
+                PHIKK          = 933,
 		PHI_ee         = 333011,
 		JPSI           = 443,
 		JPSI_ee        = 443011,

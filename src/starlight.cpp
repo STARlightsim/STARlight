@@ -354,6 +354,7 @@ starlight::createEventChannel()
 	case OMEGA:
 	case OMEGA_pipipi:  
 	case PHI:
+	case PHIKK:
 	case PHI_ee:
 	case JPSI:
 	case JPSI_ee:

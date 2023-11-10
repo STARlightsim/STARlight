@@ -113,6 +113,16 @@ photonNucleusCrossSection::photonNucleusCrossSection(const inputParameters& inpu
 		_channelMass  = _ip->PhiMass();
 		_width        = _ip->PhiWidth();
 		break;
+        case PHIKK:                        // phi+direct K^+K^- Added Jan. 2022 by Spencer Klein.  ported to Github Nov. 2023
+                 _slopeParameter=7.0;     // assume slope and coupling are the same as for the phi alone
+                 _vmPhotonCoupling=2.02;
+                 _ANORM=-2.75;              // Choose BNORM/ANORM to be the same as the rho+direct pi pi  Feb. 2023
+                 _BNORM=1.84;
+                 _defaultC=1.0;
+                 _channelMass    =_ip->PhiMass();
+                 _width          =_ip->PhiWidth();
+                 break;
+
 	case JPSI:
 	case JPSI_ee:
 	case JPSI_mumu:
@@ -616,6 +626,7 @@ photonNucleusCrossSection::sigmagp(const double Wgp)
 			sigmagp_r=1.E-4*(0.55*exp(0.22*log(Wgp))+18.0*exp(-1.92*log(Wgp)));
 			break;                                                      
 		case PHI:
+		case PHIKK:   // Assume the same as the phi.  Added Jan, 2022 by SRK, moved to github Nov. 2023
 		case PHI_ee:
 			sigmagp_r=1.E-4*0.34*exp(0.22*log(Wgp));
 			break;
@@ -840,8 +851,8 @@ photonNucleusCrossSection::breitWigner(const double W,
 		ppi0=sqrt(((_channelMass/2.)*(_channelMass/2.))-_ip->muonMass()*_ip->muonMass());
 	}
   
-	// handle phi-->K+K- properly
-	if (_particleType  ==  PHI){
+	// handle phi-->K+K- properly   PHIKK added to github Nov. 2023
+	if (_particleType  ==  PHI || _particleType==PHIKK){
 		if (W < 2.*_ip->kaonChargedMass()){
 			nrbw_r=0.;
 			return nrbw_r;

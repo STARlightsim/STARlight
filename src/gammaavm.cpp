@@ -355,6 +355,7 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particleTypeEnum &
 		ipid = starlightConstants::PION;
 		break;
 	case starlightConstants::PHI:
+	case starlightConstants::PHIKK:
 		mdec = _ip->kaonChargedMass();
 		ipid = starlightConstants::KAONCHARGE;
 		break;

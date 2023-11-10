@@ -25,7 +25,7 @@
 // Description: 
 // 
 ///////////////////////////////////////////////////////////////////////////
-
+// Added dikaon photoproduction and gamma gamma -> f_2(1270)->KK Nov. 2023 SRK
 
 #include <iostream>
 #include <fstream>
@@ -239,7 +239,7 @@ inputParameters::inputParameters()
         _ip.addParameter(_pionChargedMass       );
         _ip.addParameter(_pionNeutralMass       );
         _ip.addParameter(_kaonChargedMass       );
-		_ip.addParameter(_kaonNeutralMass       );
+	_ip.addParameter(_kaonNeutralMass       );
         _ip.addParameter(_mel                   );
         _ip.addParameter(_muonMass              );
         _ip.addParameter(_tauMass               );
@@ -488,7 +488,8 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		_particleType = F2;
 		_decayType    = SINGLEMESON;
 		mass          = f2Mass();
-		width         = f2Width();
+		//width         = f2Width(); //This may not work, for unknown reasons SRK Nov. 23, so hard-code:
+		width = 0.1867;    
                 defaultMinW   = mass - 5*width; // JES 6.17.2015 to avoid problems with default of 0
                 defaultMaxW         = mass + 5*width; // JES 6.17.2015 to avoid problems with no default
                 _inputBranchingRatio = f2BrPiPi(); 
@@ -621,7 +622,16 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		defaultMaxW         = mass + 5 * width;
 		_inputBranchingRatio = PhiBrKK(); 
 		break;
-	case 333011:  // phi(1020)
+       case 933: // phi(1020) + direct K^+K^-      Added Jan. 2022 by SRK, ported to github Nov. 2023
+ 	        _particleType  = PHIKK;   // need to define PhiKK
+ 		_decayType     = WIDEVMDEFAULT;   // the K^+K^- continuum is by nature wide
+ 		mass           = PhiMass();
+ 		width          = PhiWidth();
+ 		defaultMinW    = 2*kaonChargedMass();
+ 		defaultMaxW    = 2.0;    // GeV. The phi is narrow, so a multiple of the phi width isn't useful.  2 GeV is a resaonable choice for now.
+		_inputBranchingRatio = PhiBrKK();
+		break;
+	case 333011:  // phi(1020)-->ee
 		_particleType = PHI_ee;
 		_decayType    = NARROWVMDEFAULT;
 		mass          = PhiMass();
