@@ -15,17 +15,15 @@ C      SUBROUTINE CRINT
 * Call the init sub routine in the first event
       DATA INIT /0/
 
-      PARAMETER (NMXHKK=200000)
+      INCLUDE 'inc/dtflka'
 
-      COMMON /DTIONT/ LINP,LOUT,LDAT
-
-      COMMON /DTEVT1/ NHKK,NEVHKK,ISTHKK(NMXHKK),IDHKK(NMXHKK),
-     &                JMOHKK(2,NMXHKK),JDAHKK(2,NMXHKK),
-     &                PHKK(5,NMXHKK),VHKK(4,NMXHKK),WHKK(4,NMXHKK)
+      INCLUDE 'inc/dtevt1'
 
 *     event flag
-      COMMON /DTEVNO/ NEVENT, ICASCA
+      INCLUDE 'inc/dtevno'
 
+      LPRi = 20
+      LOUt = 6
       IF(INIT.EQ.0) THEN
          OPEN (UNIT = 50, file = "my.input")    
 	 LINP = 50
@@ -94,16 +92,10 @@ c     Fill the particle info
 *
 * event history
 
-      PARAMETER (NMXHKK=200000)
-
-      COMMON /DTEVT1/ NHKK,NEVHKK,ISTHKK(NMXHKK),IDHKK(NMXHKK),
-     &                JMOHKK(2,NMXHKK),JDAHKK(2,NMXHKK),
-     &                PHKK(5,NMXHKK),VHKK(4,NMXHKK),WHKK(4,NMXHKK)
+      INCLUDE 'inc/dtevt1'
 
 * extended event history
-      COMMON /DTEVT2/ IDRES(NMXHKK),IDXRES(NMXHKK),NOBAM(NMXHKK),
-     &                IDBAM(NMXHKK),IDCH(NMXHKK),NPOINT(10),
-     &                IHIST(2,NMXHKK)
+      INCLUDE 'inc/dtevt2'
 
       DOUBLE PRECISION SLPX, SLPY, SLPZ, SLE, SLM
       INTEGER SLPID, SLCHARGE

@@ -27,16 +27,17 @@
 
 extern "C"
 {
+    constexpr size_t nmxhkk = 250000;
     extern struct
         {
 
-            double slpx[200000];
-            double slpy[200000];
-            double slpz[200000];
-            double sle[200000];
-            double slm[200000];
-            int slpid[200000];
-            int slcharge[200000];
+            double slpx[nmxhkk];
+            double slpy[nmxhkk];
+            double slpz[nmxhkk];
+            double sle[nmxhkk];
+            double slm[nmxhkk];
+            int slpid[nmxhkk];
+            int slcharge[nmxhkk];
 
         } dpmjetparticle_;
 
