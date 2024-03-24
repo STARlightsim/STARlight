@@ -137,7 +137,12 @@ starlightStandalone::run()
 		for (unsigned int iEvent = 0; (iEvent < _nmbEventsPerFile) && (nmbEvents < _nmbEventsTot);
 		     ++iEvent, ++nmbEvents) {
 			progressIndicator(iEvent, _nmbEventsTot, true, 4);
-			//upcEvent event = _starlight->produceEvent();
+            if (_inputParameters->interactionType() >= starlightConstants::PHOTONUCLEARSINGLE) {
+              upcEvent event = _starlight->produceUpcEvent();
+              boostEvent(event);
+              fileWriter.writeEvent(event, iEvent);
+              continue;
+            }
 			upcXEvent event = _starlight->produceEvent();
 			// Boost event from CMS system to lab system
 			boostEvent(event);
