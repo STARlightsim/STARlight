@@ -227,6 +227,16 @@ starlight::produceEvent()
 	return _eventChannel->produceEvent(beta);
 }
 
+upcEvent
+starlight::produceUpcEvent()
+{
+    if (!_isInitialised) {
+        printErr << "trying to generate event but Starlight is not initialised. aborting." << endl;
+        exit(-1);
+    }
+    return _eventChannel->produceEvent();
+}
+
 /**
  * @brief Determines the boost vector needed to transform from the CM frame to the Lab Frame
  * 

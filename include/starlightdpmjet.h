@@ -35,6 +35,7 @@ public:
     int init();
     
     virtual upcEvent produceEvent();
+    virtual upcXEvent produceEvent(vector3 /*beta*/) { return {}; }
     
     virtual upcEvent produceSingleEvent(int zdirection, float egamma);
     
