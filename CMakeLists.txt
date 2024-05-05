@@ -32,8 +32,8 @@
 
 
 # check if cmake has the required version
-cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
-
+# note: Compatibility with CMake < 3.5 will be removed from a future version of CMake.
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 # set verbosity
 set(CMAKE_VERBOSE_MAKEFILE 0)  # if set to 1 compile and link commands are displayed during build
@@ -67,8 +67,6 @@ endif()
 message(STATUS "Detected host system '${CMAKE_HOST_SYSTEM_NAME}' version '${CMAKE_HOST_SYSTEM_VERSION}' architecture '${CMAKE_HOST_SYSTEM_PROCESSOR}'")
 message(STATUS "Compiling for system '${CMAKE_SYSTEM_NAME}' version '${CMAKE_SYSTEM_VERSION}' architecture '${CMAKE_SYSTEM_PROCESSOR}'")
 
-option (CPP11 "Enable compilation with C++11 features" OFF) 
-
 # define build types
 # set a default build type for single-configuration CMake generators, if no build type is set.
 set(CMAKE_BUILD_TYPE Debug)
@@ -78,36 +76,23 @@ if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Set the C++ standard
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+if(COMPILER_SUPPORTS_CXX11)
+    message(STATUS "Compiler ${CMAKE_CXX_COMPILER} with C++11 support - OK.")
+    set(CMAKE_CXX_STANDARD 11)
+else()
+    message(WARNING "Compiler ${CMAKE_CXX_COMPILER} w/o C++11 support. Trying with C++98 standard.")
+    set(CMAKE_CXX_STANDARD 98)
+endif()
 
 # common compiler flags
 if (CMAKE_COMPILER_IS_GNUCC)
-  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
-  message(STATUS "GCC_VERSTION")
-  message(STATUS  ${GCC_VERSION})
-  if (GCC_VERSION VERSION_GREATER 4.6 OR GCC_VERSION VERSION_EQUAL 4.6)
-    message(STATUS "GCC_VERSION>=4.6")
-    if(CPP11)
-      set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-error=unused-but-set-variable -Wno-error=unused-but-set-parameter -std=c++11")
-      message(STATUS "Enabling usage of C++11 features")
-    else()
-      set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-error=unused-but-set-variable -Wno-error=unused-but-set-parameter")
-    endif()
-  else()
-    message(STATUS "GCC_VERSION<4.6")
-      set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-error=unused-but-set-variable -Wno-error=unused-but-set-parameter")
-    if(CPP11)
-      message(WARNING "C++11 feautures not supported for your compiler")
-    endif()
-  endif()
+  set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-error=unused-but-set-variable -Wno-error=unused-but-set-parameter")
 else()
-  message(STATUS "Not GCC")
   set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror")
-  if(CPP11)
-    message(WARNING "C++11 feautures not supported for your compiler")
-  endif()
 endif()
+
 # flags for specific build types
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
@@ -369,6 +354,13 @@ add_custom_command (TARGET Starlib POST_BUILD COMMAND touch ARGS slight.txt)
 add_custom_command (TARGET Starlib POST_BUILD COMMAND cp ARGS slight.txt slight.txt.bak)
 add_custom_command (TARGET Starlib POST_BUILD COMMAND echo ARGS '' > slight.txt )
 
+# place things in the right place - add an install target
+# use with 'make install' to configure use "cmake <src_dir_where_this_file> -DCMAKE_INSTALL_PREFIX=<install_dir>  -DCMAKE_BUILD_TYPE=Release"
+include(GNUInstallDirs)
+install(TARGETS starlight Starlib
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 message(STATUS "Cmake did not find any errors. run 'make' to build the project.")
 message(STATUS "On multi-core machines 'make -j#', where # is the number of parallel jobs, can speedup compilation considerably.")
