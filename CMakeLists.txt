@@ -69,7 +69,7 @@ message(STATUS "Compiling for system '${CMAKE_SYSTEM_NAME}' version '${CMAKE_SYS
 
 # define build types
 # set a default build type for single-configuration CMake generators, if no build type is set.
-set(CMAKE_BUILD_TYPE Debug)
+
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
   message(STATUS "No build type was specified. Setting build type to 'Release'.")
   set(CMAKE_BUILD_TYPE Release)
