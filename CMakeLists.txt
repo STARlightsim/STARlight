@@ -301,9 +301,17 @@ if(ENABLE_DPMJET)
 		)
 endif()
 
+# allow the user to build shared or static via this option
+option(BUILD_SHARED_LIB  "Build shared library instead of static one" OFF)
+if(BUILD_SHARED_LIB)
+    set(LIB_TYPE SHARED)
+else()
+    set(LIB_TYPE STATIC)
+endif()
+
 # add Starlight library to the build system
 set(THIS_LIB "Starlib")
-add_library(${THIS_LIB} STATIC ${SOURCES})
+add_library(${THIS_LIB} ${LIB_TYPE} ${SOURCES})
 #make_shared_library("${THIS_LIB}" "${SOURCES}"
 #	"${PYTHIA8_LIBRARY}"
 #	"${LHAPDF_LIBRARIES}"
