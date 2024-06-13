@@ -370,6 +370,7 @@ starlight::createEventChannel()
 	case JPSI_ee:
 	case JPSI_mumu:
 	case JPSI_ppbar:
+	case JPSI_lambdalambdabar:
 	case JPSI2S:
 	case JPSI2S_ee:
 	case JPSI2S_mumu:
@@ -385,6 +386,7 @@ starlight::createEventChannel()
 		{
 			if (_inputParameters->interactionType() == PHOTONPOMERONNARROW) {
 				_eventChannel = new Gammaanarrowvm(*_inputParameters, _randomGenerator, *_beamSystem);
+				cout<<" ========================== IM HERE =========================== "<<endl;
 				if (_eventChannel)
 					return true;
 				else {
