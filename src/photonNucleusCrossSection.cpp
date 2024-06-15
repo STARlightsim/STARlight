@@ -687,7 +687,7 @@ photonNucleusCrossSection::sigma_A(const double sig_N, const int beam)
 	// sig_N,sigma_A in (fm**2) 
 
 	double sum;
-	double b,bmax,Pint,arg,sigma_A_r;
+	double b,bmax,Pint,arg{0},sigma_A_r;
   
 	int NGAUSS;
   
