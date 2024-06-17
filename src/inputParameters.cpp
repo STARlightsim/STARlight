@@ -100,7 +100,8 @@ inputParameters::inputParameters()
           _pionChargedMass       ("pionChargedMass"       , 0.13957018    , NOT_REQUIRED),
           _pionNeutralMass       ("pionNeutralMass"       , 0.1349766     , NOT_REQUIRED),
           _kaonChargedMass       ("kaonChargedMass"       , 0.493677      , NOT_REQUIRED),
-		  _kaonNeutralMass       ("kaonNeutralMass"       , 0.497611      , NOT_REQUIRED),
+		      _kaonNeutralMass       ("kaonNeutralMass"       , 0.497611      , NOT_REQUIRED),
+		      _lambdaMass            ("lambdaMass"            , 1.115683      , NOT_REQUIRED),
           _mel                   ("mel"                   , 0.000510998928, NOT_REQUIRED),
           _muonMass              ("muonMass"              , 0.1056583715  , NOT_REQUIRED),
           _tauMass               ("tauMass"               , 1.77682       , NOT_REQUIRED),
@@ -160,6 +161,7 @@ inputParameters::inputParameters()
           _JpsiBree              ("JpsiBree"              , 0.05971       , NOT_REQUIRED),
           _JpsiBrmumu            ("JpsiBrmumu"            , 0.05961       , NOT_REQUIRED),
           _JpsiBrppbar           ("JpsiBrppbar"           , 0.002120      , NOT_REQUIRED),
+          _JpsiBrlambdalambdabar ("_JpsiBrlambdalambdabar", 0.001890      , NOT_REQUIRED),
           _Psi2SMass             ("Psi2SMass"             , 3.686109      , NOT_REQUIRED),
           _Psi2SWidth            ("Psi2SWidth"            , 0.000299      , NOT_REQUIRED),
           _Psi2SBree             ("Psi2SBree"             , 0.00789       , NOT_REQUIRED),
@@ -299,6 +301,7 @@ inputParameters::inputParameters()
         _ip.addParameter(_JpsiBree              );
         _ip.addParameter(_JpsiBrmumu            );
         _ip.addParameter(_JpsiBrppbar           );
+				_ip.addParameter(_JpsiBrlambdalambdabar );
         _ip.addParameter(_Psi2SMass             );
         _ip.addParameter(_Psi2SWidth            );
         _ip.addParameter(_Psi2SBree             );
@@ -678,6 +681,16 @@ inputParameters::configureFromFile(const std::string &_configFileName)
 		defaultMaxW         = mass + 5 * width;
 		_inputBranchingRatio = JpsiBrppbar(); 
 		break;
+		case 4433122:  // J/psi
+			cout<<"In inputParameters setting J/psi mass!"<<endl;
+			_particleType = JPSI_lambdalambdabar;
+			_decayType    = NARROWVMDEFAULT;
+			mass          = JpsiMass();
+			width         = JpsiWidth();
+			defaultMinW   = mass - 5 * width;
+			defaultMaxW         = mass + 5 * width;
+			_inputBranchingRatio = JpsiBrlambdalambdabar();
+			break;
 	case 444:  // psi(2S) 
 		_particleType = JPSI2S;
 		_decayType    = NARROWVMDEFAULT;

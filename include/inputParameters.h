@@ -238,6 +238,7 @@ public:
         double pionNeutralMass       () const {return _pionNeutralMass       .value();}
         double kaonChargedMass       () const {return _kaonChargedMass       .value();}
         double kaonNeutralMass       () const {return _kaonNeutralMass       .value();}
+				double lambdaMass            () const {return _lambdaMass            .value();}
         double mel                   () const {return _mel                   .value();}
         double muonMass              () const {return _muonMass              .value();}
         double tauMass               () const {return _tauMass               .value();}
@@ -297,6 +298,7 @@ public:
         double JpsiBree              () const {return _JpsiBree              .value();}
         double JpsiBrmumu            () const {return _JpsiBrmumu            .value();}
         double JpsiBrppbar           () const {return _JpsiBrppbar           .value();}
+				double JpsiBrlambdalambdabar () const {return _JpsiBrlambdalambdabar .value();}
         double Psi2SMass             () const {return _Psi2SMass             .value();}
         double Psi2SWidth            () const {return _Psi2SWidth            .value();}
         double Psi2SBree             () const {return _Psi2SBree             .value();}
@@ -449,6 +451,7 @@ private:
         parameter<double, VALIDITY_CHECK> _pionNeutralMass       ;           ///< mass of the pi^0 [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _kaonChargedMass       ;           ///< mass of the K^+/- [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _kaonNeutralMass       ;           ///< mass of the K^0 [GeV/c^2]
+				parameter<double, VALIDITY_CHECK> _lambdaMass            ;           ///< mass of the proton [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _mel                   ;           ///< mass of the e^+/- [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _muonMass              ;           ///< mass of the mu^+/- [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _tauMass               ;           ///< mass of the tau^+/- [GeV/c^2]
@@ -507,7 +510,8 @@ private:
         parameter<double, VALIDITY_CHECK> _JpsiWidth             ;           ///< width of the J/psi [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _JpsiBree              ;           ///< branching ratio J/psi -> e^+ e^-					      
         parameter<double, VALIDITY_CHECK> _JpsiBrmumu            ;           ///< branching ratio J/psi -> mu^+ mu^-					      
-        parameter<double, VALIDITY_CHECK> _JpsiBrppbar           ;           ///< branching ratio J/psi -> p pbar					      
+        parameter<double, VALIDITY_CHECK> _JpsiBrppbar           ;           ///< branching ratio J/psi -> p pbar
+				parameter<double, VALIDITY_CHECK> _JpsiBrlambdalambdabar ;           ///< branching ratio J/psi -> lambda lambdabar
         parameter<double, VALIDITY_CHECK> _Psi2SMass             ;           ///< mass of the psi(2S) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _Psi2SWidth            ;           ///< width of the psi(2S) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _Psi2SBree             ;           ///< branching ratio psi(2S) -> e^+ e^-
