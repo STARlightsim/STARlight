@@ -34,7 +34,9 @@ IF (DPMJET_FOUND)
       MESSAGE(STATUS "Found DPMJet: ${DPMJET_EXTERNAL_LIB}")
       # extract the include directory
       # get the directory of the library
-      GET_FILENAME_COMPONENT(DPMJET_DIR ${DPMJET_EXTERNAL_LIB} PATH)
+      GET_FILENAME_COMPONENT(DPMJET_LIB_DIR ${DPMJET_EXTERNAL_LIB} PATH)
+      # get the directory of the include files
+      GET_FILENAME_COMPONENT(DPMJET_DIR ${DPMJET_LIB_DIR} PATH)
       SET(DPMJET_INCLUDE_DIR "${DPMJET_DIR}/include")
       MESSAGE(STATUS "Assuming DPMJet include directory: ${DPMJET_INCLUDE_DIR}")
       # check if the include directory exists
