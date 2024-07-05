@@ -313,6 +313,11 @@ public:
         double Upsilon3SWidth        () const {return _Upsilon3SWidth        .value();}
         double Upsilon3SBree         () const {return _Upsilon3SBree         .value();}
         double Upsilon3SBrmumu       () const {return _Upsilon3SBrmumu       .value();}
+        double beam1SkinDepth        () const {return _beam1SkinDepth        .value();}
+        double beam2SkinDepth        () const {return _beam2SkinDepth        .value();}
+        double beam1Radius           () const {return _beam1Radius           .value();}
+        double beam2Radius           () const {return _beam2Radius           .value();}
+        double SigmaNNInel           () const {return _SigmaNNInel           .value();}
 	
         void setBaseFileName          (std::string v )  {  _baseFileName = v;     }
     void setHEPMC3_EXTENDED_OUTPUT(bool v)    {_HEPMC3_EXTENDED_OUTPUT = v;}     ///< sets whether slight.out should be extended for more HEPMC3 information or not
@@ -524,6 +529,11 @@ private:
         parameter<double, VALIDITY_CHECK> _Upsilon3SWidth        ;           ///< width of the Upsilon(3S) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _Upsilon3SBree         ;           ///< branching ratio Upsilon(3S) -> e^+ e^-
         parameter<double, VALIDITY_CHECK> _Upsilon3SBrmumu       ;           ///< branching ratio Upsilon(3S) -> mu^+ mu^-
+        parameter<double, VALIDITY_CHECK> _beam1SkinDepth        ;           ///< Woods-Saxon skin depth of beam particle 1
+        parameter<double, VALIDITY_CHECK> _beam2SkinDepth        ;           ///< Woods-Saxon skin depth of beam particle 2
+        parameter<double, VALIDITY_CHECK> _beam1Radius           ;           ///< Woods-Saxon nuclear radius of beam particle 1
+        parameter<double, VALIDITY_CHECK> _beam2Radius           ;           ///< Woods-Saxon nuclear radius of beam particle 2
+        parameter<double, VALIDITY_CHECK> _SigmaNNInel           ;           ///< inelastic nucleon-nucleon cross section
 	
 	starlightConstants::particleTypeEnum       _particleType;
 	starlightConstants::decayTypeEnum          _decayType;

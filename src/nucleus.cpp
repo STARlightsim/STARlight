@@ -46,12 +46,16 @@ using namespace starlightConstants;
 //______________________________________________________________________________
 nucleus::nucleus(const int    Z,
                  const int    A,
+                 const double a,
+                 const double R,
 		 const int    productionMode)
 	: _Z(Z),
 	  _A(A),
 	  _productionMode(productionMode)
 {
   init();	
+  if (a > 0) _woodSaxonSkinDepth = a;
+  if (R > 0) _Radius = R;
 }
 
 void nucleus::init()
