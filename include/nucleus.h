@@ -46,6 +46,8 @@ public:
 	nucleus();
 	nucleus(const int    Z,
 	        const int    A,
+            const double a,
+            const double R,
 		const int     productionMode);
 	~nucleus();
 	

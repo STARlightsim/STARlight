@@ -175,7 +175,12 @@ inputParameters::inputParameters()
           _Upsilon3SMass         ("Upsilon3SMass"         , 10.3552       , NOT_REQUIRED),
           _Upsilon3SWidth        ("Upsilon3SWidth"        , 0.00002032    , NOT_REQUIRED),
           _Upsilon3SBree         ("Upsilon3SBree"         , 0.0218        , NOT_REQUIRED),
-          _Upsilon3SBrmumu       ("Upsilon3SBrmumu"       , 0.0218        , NOT_REQUIRED)
+          _Upsilon3SBrmumu       ("Upsilon3SBrmumu"       , 0.0218        , NOT_REQUIRED),
+          _beam1SkinDepth        ("BEAM_1_WS_A"           , -1            , NOT_REQUIRED),
+          _beam2SkinDepth        ("BEAM_2_WS_A"           , -1            , NOT_REQUIRED),
+          _beam1Radius           ("BEAM_1_WS_R"           , -1            , NOT_REQUIRED),
+          _beam2Radius           ("BEAM_2_WS_R"           , -1            , NOT_REQUIRED),
+          _SigmaNNInel           ("SigmaNNInel"           , -1            , NOT_REQUIRED)
 {
   // All parameters must be initialised in initialisation list! 
   // If not: error: 'parameter<T, validate>::parameter() [with T = unsigned int, bool validate = true]' is private
@@ -315,6 +320,11 @@ inputParameters::inputParameters()
         _ip.addParameter(_Upsilon3SWidth        );
         _ip.addParameter(_Upsilon3SBree         );
         _ip.addParameter(_Upsilon3SBrmumu       );
+        _ip.addParameter(_beam1SkinDepth        );
+        _ip.addParameter(_beam2SkinDepth        );
+        _ip.addParameter(_beam1Radius           );
+        _ip.addParameter(_beam2Radius           );
+        _ip.addParameter(_SigmaNNInel           );
 }
 
 
@@ -886,6 +896,14 @@ inputParameters::print(ostream& out) const
       out <<"    Minimum impact parameter.................."<<_bmin.value()<<" fm"<<endl;
       out <<"    Maximum impact parameter.................."<<_bmax.value()<<" fm"<<endl;
     }
+    if (_beam1SkinDepth.value()>0 || _beam1Radius.value()>0) {
+      out <<"    beam 1 Woods-Saxon skin depth .......... " << _beam1SkinDepth.value() << " fm" << endl;
+      out <<"    beam 1 Woods-Saxon nuclear radius ...... " << _beam1Radius.value() << " fm" << endl;}
+    if (_beam2SkinDepth.value()>0 || _beam2Radius.value()>0) {
+      out <<"    beam 2 Woods-Saxon skin depth .......... " << _beam2SkinDepth.value() << " fm" << endl;
+      out <<"    beam 2 Woods-Saxon nuclear radius ...... " << _beam2Radius.value() << " fm" << endl;}
+    if (_SigmaNNInel.value()>0)
+      out <<"    inelastic n-n cross section ............ " << _SigmaNNInel.value() << " mb" << endl;
 
     // Add some checks here  SRK September, 2017
     if (_beamBreakupMode.value()==8 && _bmin.value() > _bmax.value()) {
