@@ -20,7 +20,7 @@
 # ###
 # new (Luan Arbeletche):
 #
-FIND_LIBRARY(DPMJET_EXTERNAL_LIB NAMES DPMJET PATHS $ENV{DPMJETDIR} $ENV{DPMJETDIR}/lib)
+FIND_LIBRARY(DPMJET_EXTERNAL_LIB NAMES DPMJET PATHS $ENV{DPMJETDIR} $ENV{DPMJETDIR}/lib $ENV{DPMJET_DIR} $ENV{DPMJET_DIR}/lib)
 #
 IF (DPMJET_EXTERNAL_LIB)
    SET(DPMJET_FOUND TRUE)
@@ -32,13 +32,27 @@ IF (DPMJET_FOUND)
    IF (NOT DPMJet_FIND_QUIETLY)
       # MESSAGE(STATUS "Found DPMJet: ${DPMJET_OBJECT}")
       MESSAGE(STATUS "Found DPMJet: ${DPMJET_EXTERNAL_LIB}")
+      # extract the include directory
+      # get the directory of the library
+      GET_FILENAME_COMPONENT(DPMJET_LIB_DIR ${DPMJET_EXTERNAL_LIB} PATH)
+      # get the directory of the include files
+      GET_FILENAME_COMPONENT(DPMJET_DIR ${DPMJET_LIB_DIR} PATH)
+      SET(DPMJET_INCLUDE_DIR "${DPMJET_DIR}/include")
+      MESSAGE(STATUS "Assuming DPMJet include directory: ${DPMJET_INCLUDE_DIR}")
+      # check if the include directory exists
+      IF (EXISTS "${DPMJET_INCLUDE_DIR}")
+         MESSAGE(STATUS "DPMJet include directory exists: ${DPMJET_INCLUDE_DIR}")
+         INCLUDE_DIRECTORIES(${DPMJET_INCLUDE_DIR})
+      ELSE (EXISTS "${DPMJET_INCLUDE_DIR}")
+         MESSAGE(FATAL_ERROR "DPMJet include directory does not exist: ${DPMJET_INCLUDE_DIR}")
+      ENDIF (EXISTS "${DPMJET_INCLUDE_DIR}")
    ENDIF (NOT DPMJet_FIND_QUIETLY)
 ELSE (DPMJET_FOUND)
    IF (DPMJet_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find DPMJet, we look in $DPMJETDIR")
+      MESSAGE(FATAL_ERROR "Could not find DPMJet, we look in $DPMJETDIR $DPMJET_DIR")
    ELSE(DPMJet_FIND_REQUIRED)
       IF(NOT DPMJet_FIND_QUIETLY)
-	 MESSAGE(STATUS "Could not find DPMJet, we look in $DPMJETDIR")
+	 MESSAGE(STATUS "Could not find DPMJet, we look in $DPMJETDIR or $DPMJET_DIR")
       ENDIF(NOT DPMJet_FIND_QUIETLY)
    ENDIF (DPMJet_FIND_REQUIRED)
 ENDIF (DPMJET_FOUND)

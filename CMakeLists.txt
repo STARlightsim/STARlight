@@ -336,7 +336,7 @@ if(ENABLE_DPMJET)
   #
   # ###
 
-  target_include_directories(${DPMJET_LIB} PRIVATE $ENV{DPMJETDIR}/include/dpmjet)
+  target_include_directories(${DPMJET_LIB} PRIVATE $ENV{DPMJETDIR}/include/dpmjet ${DPMJET_INCLUDE_DIR}/dpmjet)
   set(optionalLibs ${optionalLibs} ${DPMJET_LIB})
   set(optionalLibs ${optionalLibs} "gfortran")
   set(optionalLibs ${optionalLibs} ${DPMJET_EXTERNAL_LIB})
