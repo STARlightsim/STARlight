@@ -32,16 +32,16 @@ void pythiaDecayer::addParticle(const starlightParticle &p)
   
 }
 
-upcEvent pythiaDecayer::execute()
+upcXEvent pythiaDecayer::execute()
 {
-  upcEvent slEvent;
+  upcXEvent slEvent;
   
   Event &pyEvent = _pythia.event;
   _pythia.forceTimeShower(1, 2, 100000.0);
   if(!_pythia.next())
   {
     printWarn << "Pythia::next() failed" << std::endl;
-    return upcEvent();
+    return upcXEvent();
   }
   
   for(int i = 0; i < pyEvent.size(); ++i)
