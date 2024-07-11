@@ -377,7 +377,11 @@ double Gammaavectormeson::getDaughterMass(starlightConstants::particleTypeEnum &
 	case starlightConstants::JPSI_ppbar:
 		mdec = _ip->protonMass();
 		ipid = starlightConstants::PROTON;
-		break; 
+		break;
+	case starlightConstants::JPSI_lambdalambdabar:
+		mdec = _ip->lambdaMass();
+		ipid = starlightConstants::LAMBDA;
+		break;
 	case starlightConstants::JPSI2S_ee:
 		mdec = _ip->mel();
 		ipid = starlightConstants::ELECTRON;
@@ -441,6 +445,11 @@ double Gammaavectormeson::getTheta(starlightConstants::particleTypeEnum ipid)
 	case starlightConstants::PROTON:
 		//Pick this angular distribution for J/psi --> ppbar 
 	        dndtheta = sin(theta)*(1.+(0.605*cos(theta)*cos(theta)));
+		break;
+
+	case starlightConstants::LAMBDA:
+		//Pick this angular distribution for J/psi --> lambdalambdabar <-- blindly copying ppbar
+		dndtheta = sin(theta)*(1.+(0.605*cos(theta)*cos(theta)));
 		break;
     
 	case starlightConstants::PION:
