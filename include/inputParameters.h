@@ -451,7 +451,7 @@ private:
         parameter<double, VALIDITY_CHECK> _pionNeutralMass       ;           ///< mass of the pi^0 [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _kaonChargedMass       ;           ///< mass of the K^+/- [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _kaonNeutralMass       ;           ///< mass of the K^0 [GeV/c^2]
-				parameter<double, VALIDITY_CHECK> _lambdaMass            ;           ///< mass of the proton [GeV/c^2]
+				parameter<double, VALIDITY_CHECK> _lambdaMass            ;           ///< mass of the lambda [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _mel                   ;           ///< mass of the e^+/- [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _muonMass              ;           ///< mass of the mu^+/- [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _tauMass               ;           ///< mass of the tau^+/- [GeV/c^2]
