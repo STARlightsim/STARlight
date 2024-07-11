@@ -69,16 +69,21 @@ beamBeamSystem::beamBeamSystem(const inputParameters& inputParametersInstance,
 
 //______________________________________________________________________________
 beamBeamSystem::beamBeamSystem(const inputParameters& inputParametersInstance)
-	: _beamLorentzGamma(inputParametersInstance.beamLorentzGamma()),
+	: _ip(&inputParametersInstance),
+      _beamLorentzGamma(inputParametersInstance.beamLorentzGamma()),
           _beamLorentzGamma1(inputParametersInstance.beam1LorentzGamma()),
           _beamLorentzGamma2(inputParametersInstance.beam2LorentzGamma()),
 	  _beamBreakupMode (inputParametersInstance.beamBreakupMode()),
 	  _beam1           (inputParametersInstance.beam1Z(),
 	                    inputParametersInstance.beam1A(),
+                        inputParametersInstance.beam1SkinDepth(),
+                        inputParametersInstance.beam1Radius(),
 			    inputParametersInstance.productionMode(),
                             inputParametersInstance.beam1LorentzGamma()),
 	  _beam2           (inputParametersInstance.beam2Z(),
 	                    inputParametersInstance.beam2A(),
+                        inputParametersInstance.beam2SkinDepth(),
+                        inputParametersInstance.beam2Radius(),
 			    inputParametersInstance.productionMode(),
                             inputParametersInstance.beam2LorentzGamma()),
 	  _breakupProbabilities(0),
@@ -278,6 +283,7 @@ beamBeamSystem::probabilityOfHadronBreakup(const double impactparameter)
 	mconst=2.076;
 	energyx=energy*energy/pow((2*0.938+mconst),2);
 	  sigmainmb = 0.2838*pow(log(energyx),2)+33.73+13.67*pow(energyx,-0.412)-7.77*pow(energyx,-0.5626);
+      if (_ip->SigmaNNInel() > 0) sigmainmb = _ip->SigmaNNInel();
 	  // end cross-section fix SRK July 2020.  Previously the above equation just used 'energy' from the earlier line
 	  SIGNN=sigmainmb/10.;
 

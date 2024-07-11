@@ -115,16 +115,16 @@ starlight::init()
 
 	// Do some sanity checks of the input parameters here.
         if( _inputParameters->beam1Z() > _inputParameters->beam1A() ){
-	  printErr << endl << "A must be >= Z; A beam1 = "<<_inputParameters->beam1A()<<", Z beam1 = "<<_inputParameters->beam1Z()<<". Terminating."<<endl ;
+	  printErro << endl << "A must be >= Z; A beam1 = "<<_inputParameters->beam1A()<<", Z beam1 = "<<_inputParameters->beam1Z()<<". Terminating."<<endl ;
 	  return false;
 	}
         if( _inputParameters->beam2Z() > _inputParameters->beam2A() ){
-	  printErr << endl << "A must be >= Z; A beam2 = "<<_inputParameters->beam2A()<<", Z beam2 = "<<_inputParameters->beam2Z()<<". Terminating."<<endl ;
+	  printErro << endl << "A must be >= Z; A beam2 = "<<_inputParameters->beam2A()<<", Z beam2 = "<<_inputParameters->beam2Z()<<". Terminating."<<endl ;
 	  return false;
 	}
 	if( _inputParameters->interactionType() == PHOTONPOMERONINCOHERENT && _inputParameters->beam1A() == 1 &&
  	    _inputParameters->beam1Z() == 1 && _inputParameters->beam2A() == 1 && _inputParameters->beam2Z() ){
-          printErr << endl << " Do not use PROD_MODE = 4 for pp collisions. Use PROD_MODE = 2 or 3 instead. Terminating."<<endl;
+          printErro << endl << " Do not use PROD_MODE = 4 for pp collisions. Use PROD_MODE = 2 or 3 instead. Terminating."<<endl;
 	  return false; 
 	}
 
@@ -218,7 +218,7 @@ upcXEvent
 starlight::produceEvent()
 {
 	if (!_isInitialised) {
-		printErr << "trying to generate event but Starlight is not initialised. aborting." << endl;
+		printErro << "trying to generate event but Starlight is not initialised. aborting." << endl;
 		exit(-1);
 	}
 	double gamma1 = _inputParameters->beam1LorentzGamma();
@@ -231,7 +231,7 @@ upcEvent
 starlight::produceUpcEvent()
 {
     if (!_isInitialised) {
-        printErr << "trying to generate event but Starlight is not initialised. aborting." << endl;
+        printErro << "trying to generate event but Starlight is not initialised. aborting." << endl;
         exit(-1);
     }
     return _eventChannel->produceEvent();
@@ -334,7 +334,7 @@ starlight::createEventChannel()
 #ifdef ENABLE_PYTHIA
 			// PythiaOutput = true;
  		        cout<<"Pythia is enabled!"<<endl;
-// 			return true;
+			return true;
 #else
 			printWarn << "Starlight is not compiled against Pythia8; "
 			          << "jetset event channel cannot be used." << endl;

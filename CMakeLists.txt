@@ -69,7 +69,7 @@ message(STATUS "Compiling for system '${CMAKE_SYSTEM_NAME}' version '${CMAKE_SYS
 
 # define build types
 # set a default build type for single-configuration CMake generators, if no build type is set.
-set(CMAKE_BUILD_TYPE Debug)
+
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
   message(STATUS "No build type was specified. Setting build type to 'Release'.")
   set(CMAKE_BUILD_TYPE Release)
@@ -301,9 +301,17 @@ if(ENABLE_DPMJET)
 		)
 endif()
 
+# allow the user to build shared or static via this option
+option(BUILD_SHARED_LIB  "Build shared library instead of static one" OFF)
+if(BUILD_SHARED_LIB)
+    set(LIB_TYPE SHARED)
+else()
+    set(LIB_TYPE STATIC)
+endif()
+
 # add Starlight library to the build system
 set(THIS_LIB "Starlib")
-add_library(${THIS_LIB} STATIC ${SOURCES})
+add_library(${THIS_LIB} ${LIB_TYPE} ${SOURCES})
 #make_shared_library("${THIS_LIB}" "${SOURCES}"
 #	"${PYTHIA8_LIBRARY}"
 #	"${LHAPDF_LIBRARIES}"
@@ -328,7 +336,7 @@ if(ENABLE_DPMJET)
   #
   # ###
 
-  target_include_directories(${DPMJET_LIB} PRIVATE $ENV{DPMJETDIR}/include/dpmjet)
+  target_include_directories(${DPMJET_LIB} PRIVATE $ENV{DPMJETDIR}/include/dpmjet ${DPMJET_INCLUDE_DIR}/dpmjet)
   set(optionalLibs ${optionalLibs} ${DPMJET_LIB})
   set(optionalLibs ${optionalLibs} "gfortran")
   set(optionalLibs ${optionalLibs} ${DPMJET_EXTERNAL_LIB})

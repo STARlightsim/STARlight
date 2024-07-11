@@ -61,7 +61,7 @@ getClassMethod__(std::string prettyFunction)
 	return prettyFunction;
 }
 
-#define printErr  std::cerr << "!!! " << __PRETTY_FUNCTION__ << " [" << __FILE__ << ":" << __LINE__ << "]: ERROR: "   << std::flush
+#define printErro std::cerr << "!!! " << __PRETTY_FUNCTION__ << " [" << __FILE__ << ":" << __LINE__ << "]: ERROR: "   << std::flush
 #define printWarn std::cerr << ">>> " << __PRETTY_FUNCTION__ << " [" << __FILE__ << ":" << __LINE__ << "]: "<<std::endl<<"Warning: " << std::flush 
 #define printInfo std::cout << ">>> " << getClassMethod__(__PRETTY_FUNCTION__) << "(): Info: "  << std::flush
 

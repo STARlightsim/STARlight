@@ -65,9 +65,6 @@ int spectrum::generateKsingle()
     }
     egamma = _eGammaMin;
 
-    double fnorm = 0;
-
-
     if (_hadBreakProbCalculated == false)
     {
         _hadBreakProbCalculated = generateBreakupProbabilities();
@@ -100,10 +97,6 @@ int spectrum::generateKsingle()
             bint = bint + 0.5*(f1+f2)*(b-bold);
         }
         bint = 2.0*starlightConstants::pi*bint;
-        if (i == 0)
-        {
-            fnorm = 1.0/bint;
-        }
         _fnSingle[i] = bint*(_eGamma[i+1]-_eGamma[i]);
 
         egamma = egamma*eg_inc;

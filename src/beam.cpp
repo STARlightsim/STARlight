@@ -45,10 +45,14 @@ using namespace starlightConstants;
 //______________________________________________________________________________
 beam::beam(const int              Z,
            const int              A,
+           const double           a,
+           const double           R,
 	   const int		  productionMode,
 	   const double		  beamLorentzGamma)
 	: nucleus(Z,
 	          A,
+              a,
+              R,
 		  productionMode)
 	,_beamLorentzGamma(beamLorentzGamma)
 {
