@@ -332,7 +332,7 @@ if(ENABLE_DPMJET)
   # new (Luan Arbeletche):
   #
   message(STATUS "DPMJet external library: ${DPMJET_EXTERNAL_LIB}")
-  add_library(${DPMJET_LIB} STATIC dpmjet/dpmjetint.f)
+  add_library(${DPMJET_LIB} ${LIB_TYPE} dpmjet/dpmjetint.f)
   #
   # ###
 
