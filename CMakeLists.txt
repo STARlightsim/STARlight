@@ -370,5 +370,9 @@ install(TARGETS starlight Starlib
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
+# install the header files
+file(GLOB INCLUDES ${PROJECT_SOURCE_DIR}/include/*.h ${PROJECT_BINARY_DIR}/starlightconfig.h)
+install(FILES ${INCLUDES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
 message(STATUS "Cmake did not find any errors. run 'make' to build the project.")
 message(STATUS "On multi-core machines 'make -j#', where # is the number of parallel jobs, can speedup compilation considerably.")
