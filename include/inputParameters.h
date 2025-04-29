@@ -285,6 +285,8 @@ public:
         double rho0PrimeMass         () const {return _rho0PrimeMass         .value();}
         double rho0PrimeWidth        () const {return _rho0PrimeWidth        .value();}
         double rho0PrimeBrPiPi       () const {return _rho0PrimeBrPiPi       .value();}
+        double rho0PrimeBrFourProng  () const {return _rho0PrimeBrFourProng  .value();}
+        double rho0PrimeCoupling    () const {return _rho0PrimeCoupling      .value();}
         double OmegaMass             () const {return _OmegaMass             .value();}
         double OmegaWidth            () const {return _OmegaWidth            .value();}
         double OmegaBrPiPi           () const {return _OmegaBrPiPi           .value();}
@@ -503,6 +505,8 @@ private:
         parameter<double, VALIDITY_CHECK> _rho0PrimeMass         ;           ///< mass of the rho'^0 (4 pi^+/- final state) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _rho0PrimeWidth        ;           ///< width of the rho'^0 (4 pi^+/- final state) [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _rho0PrimeBrPiPi       ;           ///< branching ratio rho'^0 -> pi^+ pi^-
+        parameter<double, VALIDITY_CHECK> _rho0PrimeBrFourProng  ;           ///< branching ratio rho'^0 -> pi^+ pi^-
+        parameter<double, VALIDITY_CHECK> _rho0PrimeCoupling     ;           ///< branching ratio rho'^0 -> pi^+ pi^-
         parameter<double, VALIDITY_CHECK> _OmegaMass             ;           ///< mass of the omega [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _OmegaWidth            ;           ///< width of the omega [GeV/c^2]
         parameter<double, VALIDITY_CHECK> _OmegaBrPiPi           ;           ///< branching ratio omega -> pi^+ pi^-
