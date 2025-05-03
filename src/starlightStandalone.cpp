@@ -83,7 +83,7 @@ starlightStandalone::init()
         }
 
         int lineSize = 256;
-        char tmp[lineSize];
+        char tmp[256];   // changed from tmp[lineSize] to tmp[256] to avoid problems with newer Mac compiler.  SRK May 2, 2025
         while (!infile.getline(tmp, lineSize).eof())
          {
      	 cout << tmp << endl;
