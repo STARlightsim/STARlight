@@ -32,8 +32,11 @@
 
 
 # check if cmake has the required version
-# note: Compatibility with CMake < 3.5 will be removed from a future version of CMake.
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+# note: Compatibility with CMake < 3.5 will be removed from a future
+# version of CMake.
+#The documentation says <3.5, but it seems that exactly 3.5 is
+# problematic too - SRK May 2, 2025
+cmake_minimum_required(VERSION 3.6 FATAL_ERROR)
 
 # set verbosity
 set(CMAKE_VERBOSE_MAKEFILE 0)  # if set to 1 compile and link commands are displayed during build
@@ -369,10 +372,6 @@ install(TARGETS starlight Starlib
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
-# install the header files
-file(GLOB INCLUDES ${PROJECT_SOURCE_DIR}/include/*.h ${PROJECT_BINARY_DIR}/starlightconfig.h)
-install(FILES ${INCLUDES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 message(STATUS "Cmake did not find any errors. run 'make' to build the project.")
 message(STATUS "On multi-core machines 'make -j#', where # is the number of parallel jobs, can speedup compilation considerably.")
