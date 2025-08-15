@@ -53,7 +53,7 @@ int inputParser::parseFile(std::string filename)
       return -1;
     }
     
-    int lineSize = 256;
+    const int lineSize = 256;
     char tmp[lineSize];
     int nParameters = 0;
     while (!infile.getline(tmp, lineSize).eof())
