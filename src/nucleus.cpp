@@ -107,6 +107,13 @@ void nucleus::init()
 		_w = -0.051;//added for the first time for the 3pF model
 		_rho0 = 0.16536;// determined by nomalization \int d^3r \rho(r) = 16
 	}break;
+	case 10: //Neon-20, 3-parameter-Fermi Model added from parameters in DOI:10.1016/0092-640X(87)90013-1   Added Aug. 15, 2025 SRK
+	{
+	  _Radius =  2.791;
+	  _woodSaxonSkinDepth = 0.698;
+	  _w = -0.168;       // w is large enough that the wineglass term can go negative; added protection below
+	    _rho0 = 0.18783;  // determined by nomalization \int d^3r \rho(r) = 20
+	}break;
 	case 1: 
 		{
 		  //is this a proton or deuteron
@@ -148,10 +155,14 @@ nucleus::rws(const double r) const
     double norm = (3./(2.*starlightConstants::pi))*sqrt( (3./(2.*starlightConstants::pi)) );
     norm = norm/(nuclearRadius()*nuclearRadius()*nuclearRadius());
     return norm*exp(-((3./2.)*r*r)/(nuclearRadius()*nuclearRadius()));
-  }else if(_Z==8){
+  }else if(_Z==8|| _Z==10 ){
 	//3-parameter-Fermi Model (3pF) for Oxygen
+        double result=0;
 	double x=exp(-(r - nuclearRadius()) / woodSaxonSkinDepth());
-	return x*(1.0 +w()*r*r/nuclearRadius()/nuclearRadius())/(1.0 + x);//expression adjusted to avoid problems on some machines if r is too large
+	if ((1.0 +w()*r*r/nuclearRadius()/nuclearRadius())>0) {             //wineglass term can go negative for large enough radii  SRK August 2025
+	  result= x*(1.0 +w()*r*r/nuclearRadius()/nuclearRadius())/(1.0 + x);  //expression adjusted to avoid problems on some machines if r is too large
+        } 
+        return result;
   }
   else{
     // Fermi density distribution for heavy nuclei
