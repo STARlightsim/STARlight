@@ -102,6 +102,10 @@ c     Fill the particle info
       COMMON /DPMJETPARTICLE/ SLPX(NMXHKK), SLPY(NMXHKK), SLPZ(NMXHKK),
      &       SLE(NMXHKK), SLM(NMXHKK), SLPID(NMXHKK), SLCHARGE(NMXHKK)
 
+* Declare and dimension the new arrays for phi and K*0 before the COMMON
+      INTEGER SLMOTH1, SLMOTH2, SLSTATUS
+      DIMENSION SLMOTH1(NMXHKK), SLMOTH2(NMXHKK), SLSTATUS(NMXHKK)
+      COMMON /DPMJETMOTHERS/ SLMOTH1, SLMOTH2, SLSTATUS
 
 C     >> Set Counter to Zero
 
@@ -110,9 +114,11 @@ C     >> Set Counter to Zero
       DO 42 I=1, NHKK
 c      I = IPART
 
-CC       >> Remove all non-final-state particles
-        IF(.not.(ISTHKK(I).eq.1.or.ISTHKK(I).eq.-1.or.
-     $ISTHKK(I).eq.1001)) GOTO 42
+CC       >> Remove all non-final-state particles except phi and K*0
+         IF (.NOT.(ISTHKK(I).EQ.1 .OR. ISTHKK(I).EQ.-1 .OR.
+     1     ISTHKK(I).EQ.1001 .OR. (ISTHKK(I).EQ.2 .AND.
+     1     (IDHKK(I).EQ.333 .OR. IDHKK(I).EQ.313 .OR.
+     1     IDHKK(I).EQ.-313)))) GOTO 42
 
 C	>> Find Particle Charge, qch
         IF((ABS(ISTHKK(I)).eq.1).and.(IDHKK(I).ne.80000))THEN
@@ -135,6 +141,10 @@ C         >> not a final state particle, qch not interesting
         SLM(Nfinal) = PHKK(5,I)
         SLPID(Nfinal) = IDHKK(I)
         SLCHARGE(Nfinal) = qch
+* Now assign mother(phi and K*0) info to the same index
+        SLSTATUS(Nfinal) = ISTHKK(I)
+        SLMOTH1(Nfinal) = JMOHKK(1,I)
+        SLMOTH2(Nfinal) = JMOHKK(2,I)
 
  42     CONTINUE
         NPARTICLES = Nfinal
