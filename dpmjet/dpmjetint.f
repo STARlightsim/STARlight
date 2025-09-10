@@ -107,8 +107,13 @@ c     Fill the particle info
       DIMENSION SLMOTH1(NMXHKK), SLMOTH2(NMXHKK), SLSTATUS(NMXHKK)
       COMMON /DPMJETMOTHERS/ SLMOTH1, SLMOTH2, SLSTATUS
 
-C     >> Set Counter to Zero
+* Switches for each resonance (set in main program or defaults)
+      INTEGER KEEP_PHI, KEEP_KSTAR, KEEP_RHO0, KEEP_LAMBDASTAR
+      COMMON /DPMJET_SWITCHES/ KEEP_PHI, KEEP_KSTAR, KEEP_RHO0,
+     & KEEP_LAMBDASTAR
 
+C     >> Set Counter to Zero
+      LOGICAL KEEPPARTICLE
       Nfinal=0
       
       DO 42 I=1, NHKK
@@ -119,7 +124,27 @@ CC       >> Remove all non-final-state particles except phi and K*0
      1     ISTHKK(I).EQ.1001 .OR. (ISTHKK(I).EQ.2 .AND.
      1     (IDHKK(I).EQ.333 .OR. IDHKK(I).EQ.313 .OR.
      1     IDHKK(I).EQ.-313)))) GOTO 42
+* --- Decide if particle is kept ---
+     
+      KEEPPARTICLE = .FALSE.
 
+* --- Always keep stable particles ---
+      IF (ISTHKK(I).EQ.1 .OR. ISTHKK(I).EQ.-1 .OR. ISTHKK(I).EQ.1001)
+     & THEN KEEPPARTICLE = .TRUE.
+      ENDIF
+
+* --- Keep selected resonances according to switches ---
+      IF (KEEP_PHI.EQ.1 .AND. ISTHKK(I).EQ.2 .AND. IDHKK(I).EQ.333)
+     & KEEPPARTICLE = .TRUE.
+      IF (KEEP_KSTAR.EQ.1 .AND. ISTHKK(I).EQ.2 .AND. (IDHKK(I).EQ.313
+     & .OR. IDHKK(I).EQ.-313)) KEEPPARTICLE = .TRUE.
+      IF (KEEP_RHO0.EQ.1 .AND. ISTHKK(I).EQ.2 .AND. IDHKK(I).EQ.113)
+     & KEEPPARTICLE = .TRUE.
+      IF (KEEP_LAMBDASTAR.EQ.1 .AND. ISTHKK(I).EQ.2 .AND.
+     & (IDHKK(I).EQ.3124 .OR. IDHKK(I).EQ.-3124)) KEEPPARTICLE = .TRUE.
+
+      IF (.NOT.KEEPPARTICLE) GOTO 42
+         
 C	>> Find Particle Charge, qch
         IF((ABS(ISTHKK(I)).eq.1).and.(IDHKK(I).ne.80000))THEN
 C         >> final state ptcles except nuclei
