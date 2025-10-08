@@ -55,7 +55,9 @@ public:
     
     
    private:
-     
+
+       /** Reference to input parameters */
+       const inputParameters& _inputParams;
       /** Contains the photon spectrum */
       spectrum *_spectrum;
 

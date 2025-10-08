@@ -17,7 +17,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 */
-
+#include "inputParameters.h"
 #include "starlightdpmjet.h"
 #include "spectrum.h"
 #include <iostream>
@@ -41,17 +41,19 @@ extern "C"
 
         } dpmjetparticle_;
 
-    void dt_produceevent_(float* gammaE, int* nparticles);
-    void dt_getparticle_(int *ipart, int *res);
+    void dt_produceevent_(float* gammaE, int* nparticles, int* phi, int* kstar);
+    void dt_getparticle_(int *ipart, int *res, int* phi, int* kstar);
     void dt_initialise_();
 }
 
 starlightDpmJet::starlightDpmJet(const inputParameters& inputParametersInstance,randomGenerator* randy,beamBeamSystem& beamsystem ) : eventChannel(inputParametersInstance,randy,beamsystem)
+	,_inputParams(inputParametersInstance)   // <-- store reference here															      
         ,_spectrum(0)
         ,_doDoubleEvent(true)
 	,_minGammaEnergy(6.0)
 	,_maxGammaEnergy(600000.0)
 	,_protonMode(false)
+	
 {
 
 }
@@ -111,8 +113,9 @@ upcEvent starlightDpmJet::produceSingleEvent(int zdirection, float gammaE)
     event.addGamma(gammaE);
 
     int nParticles = 0;
-
-    dt_produceevent_(&gammaE, &nParticles);
+    int phi =  _inputParams.phiSwitch();  // read from input
+    int kstar = _inputParams.kstarSwitch();  // read from input
+    dt_produceevent_(&gammaE, &nParticles, &phi, &kstar);
     
 
     //In which direction do we go?

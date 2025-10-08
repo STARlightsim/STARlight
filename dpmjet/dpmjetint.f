@@ -3,12 +3,12 @@
 *
 C      OPTIONS/ EXTEND_SOURCE
 C      SUBROUTINE CRINT
-      SUBROUTINE DT_PRODUCEEVENT(ENERGY_SL, NPARTICLES)
-
+      SUBROUTINE DT_PRODUCEEVENT(ENERGY_SL, NPARTICLES, KEEP_PHI,
+     & KEEP_KSTAR)
 
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       REAL ENERGY_SL
-      INTEGER INIT
+      INTEGER INIT,KEEP_PHI, KEEP_KSTAR
       REAL ne,etest,prob,slump
       SAVE
 
@@ -28,9 +28,10 @@ C      SUBROUTINE CRINT
          OPEN (UNIT = 50, file = "my.input")    
 	 LINP = 50
          CALL DT_DTUINI(NEVTS,EPN,NPMASS,NPCHAR,NTMASS,NTCHAR,IDP,IEMU)
-*        Init called, make sure it's not called again
+**        Init called, make sure it's not called again
          INIT = 1
       ENDIF
+
 *-----------------------------------------------------------------------
 *     generation of one event
       NEVENT = 1
@@ -56,12 +57,12 @@ C        ELAB = EPN
 c     Return the number of particles produced
       
 c     Fill the particle info 
-      CALL DT_GETPARTICLES(NPARTICLES)
+      CALL DT_GETPARTICLES(NPARTICLES, KEEP_PHI, KEEP_KSTAR)
 
       END
 
 
-      SUBROUTINE DT_GETPARTICLES(NPARTICLES)
+      SUBROUTINE DT_GETPARTICLES(NPARTICLES, KEEP_PHI, KEEP_KSTAR)
 
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       INTEGER pid,qch,q_sum,Ntpc,Nfinal,NACCEPT,IPART,RES
@@ -108,10 +109,6 @@ c     Fill the particle info
       COMMON /DPMJETMOTHERS/ SLMOTH1, SLMOTH2, SLSTATUS
 
 * Switches for each resonance (set in main program or defaults)
-      INTEGER KEEP_PHI, KEEP_KSTAR, KEEP_RHO0, KEEP_LAMBDASTAR
-      COMMON /DPMJET_SWITCHES/ KEEP_PHI, KEEP_KSTAR, KEEP_RHO0,
-     & KEEP_LAMBDASTAR
-
 C     >> Set Counter to Zero
       LOGICAL KEEPPARTICLE
       Nfinal=0
@@ -119,20 +116,14 @@ C     >> Set Counter to Zero
       DO 42 I=1, NHKK
 c      I = IPART
 
-CC       >> Remove all non-final-state particles except phi and K*0
-         IF (.NOT.(ISTHKK(I).EQ.1 .OR. ISTHKK(I).EQ.-1 .OR.
-     1     ISTHKK(I).EQ.1001 .OR. (ISTHKK(I).EQ.2 .AND.
-     1     (IDHKK(I).EQ.333 .OR. IDHKK(I).EQ.313 .OR.
-     1     IDHKK(I).EQ.-313)))) GOTO 42
 * --- Decide if particle is kept ---
      
       KEEPPARTICLE = .FALSE.
 
 * --- Always keep stable particles ---
       IF (ISTHKK(I).EQ.1 .OR. ISTHKK(I).EQ.-1 .OR. ISTHKK(I).EQ.1001)
-     & THEN KEEPPARTICLE = .TRUE.
-      ENDIF
-
+     & KEEPPARTICLE = .TRUE.
+     
 * --- Keep selected resonances according to switches ---
       IF (KEEP_PHI.EQ.1 .AND. ISTHKK(I).EQ.2 .AND. IDHKK(I).EQ.333)
      & KEEPPARTICLE = .TRUE.
