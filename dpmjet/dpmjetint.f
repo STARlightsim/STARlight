@@ -2,7 +2,8 @@
 *===program crint======================================================*
 *
 C      OPTIONS/ EXTEND_SOURCE
-C      SUBROUTINE CRINT
+C     SUBROUTINE CRINT
+*     KEEP_PHI, KEEP_KSTAR are switch to store phi and K*0 and its decay daughter chain information in output        
       SUBROUTINE DT_PRODUCEEVENT(ENERGY_SL, NPARTICLES, KEEP_PHI,
      & KEEP_KSTAR)
 
@@ -28,7 +29,7 @@ C      SUBROUTINE CRINT
          OPEN (UNIT = 50, file = "my.input")    
 	 LINP = 50
          CALL DT_DTUINI(NEVTS,EPN,NPMASS,NPCHAR,NTMASS,NTCHAR,IDP,IEMU)
-**        Init called, make sure it's not called again
+*        Init called, make sure it's not called again
          INIT = 1
       ENDIF
 
@@ -55,7 +56,7 @@ C        ELAB = EPN
       IF (IREJ.NE.0) RETURN
 
 c     Return the number of particles produced
-      
+*     KEEP_PHI, KEEP_KSTAR are switch to store phi and K*0 and its decay daughter chain information in output        
 c     Fill the particle info 
       CALL DT_GETPARTICLES(NPARTICLES, KEEP_PHI, KEEP_KSTAR)
 
@@ -124,16 +125,12 @@ c      I = IPART
       IF (ISTHKK(I).EQ.1 .OR. ISTHKK(I).EQ.-1 .OR. ISTHKK(I).EQ.1001)
      & KEEPPARTICLE = .TRUE.
      
-* --- Keep selected resonances according to switches ---
+* --- Keep selected Phi and K*0 resonances according to switches ---
       IF (KEEP_PHI.EQ.1 .AND. ISTHKK(I).EQ.2 .AND. IDHKK(I).EQ.333)
      & KEEPPARTICLE = .TRUE.
       IF (KEEP_KSTAR.EQ.1 .AND. ISTHKK(I).EQ.2 .AND. (IDHKK(I).EQ.313
      & .OR. IDHKK(I).EQ.-313)) KEEPPARTICLE = .TRUE.
-      IF (KEEP_RHO0.EQ.1 .AND. ISTHKK(I).EQ.2 .AND. IDHKK(I).EQ.113)
-     & KEEPPARTICLE = .TRUE.
-      IF (KEEP_LAMBDASTAR.EQ.1 .AND. ISTHKK(I).EQ.2 .AND.
-     & (IDHKK(I).EQ.3124 .OR. IDHKK(I).EQ.-3124)) KEEPPARTICLE = .TRUE.
-
+    
       IF (.NOT.KEEPPARTICLE) GOTO 42
          
 C	>> Find Particle Charge, qch

@@ -879,8 +879,8 @@ inputParameters::print(ostream& out) const
 	    << "    mass W of produced hadronic system ..... " << _minW.value() << " < W < " << _maxW.value() << " GeV/c^2" << endl
 	    << "    # of W bins ............................ " << _nmbWBins.value() << endl
 	    << "    maximum absolute value for rapidity .... " << _maxRapidity.value() << endl
-	    << "    switch to add phi in output ....... .... " << _phiSwitch.value() << endl
-	    << "    switch to add kstar in output...... .... " << _kstarSwitch.value() << endl
+	    << "    switch to add phi information in output.." << _phiSwitch.value() << endl
+	    << "    switch to add kstar information in output" << _kstarSwitch.value() << endl
 	    << "    # of rapidity bins ..................... " << _nmbRapidityBins.value() << endl
 	    << "    cut in pT............................... " << yesNo(_ptCutEnabled.value()) << endl;
     if (_ptCutEnabled.value()) {

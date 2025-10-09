@@ -40,7 +40,7 @@ extern "C"
             int slcharge[nmxhkk];
 
         } dpmjetparticle_;
-
+  // phi, kstar are the switch to store their information along with daughter particle in starlight+dpmjet output
     void dt_produceevent_(float* gammaE, int* nparticles, int* phi, int* kstar);
     void dt_getparticle_(int *ipart, int *res, int* phi, int* kstar);
     void dt_initialise_();
@@ -113,8 +113,8 @@ upcEvent starlightDpmJet::produceSingleEvent(int zdirection, float gammaE)
     event.addGamma(gammaE);
 
     int nParticles = 0;
-    int phi =  _inputParams.phiSwitch();  // read from input
-    int kstar = _inputParams.kstarSwitch();  // read from input
+    int phi =  _inputParams.phiSwitch();  // read from slight.in, switch to add phi information 
+    int kstar = _inputParams.kstarSwitch();  //  read from slight.in, switch to add K*0 information 
     dt_produceevent_(&gammaE, &nParticles, &phi, &kstar);
     
 
