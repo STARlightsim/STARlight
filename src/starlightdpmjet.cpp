@@ -44,6 +44,7 @@ extern "C"
     void dt_produceevent_(float* gammaE, int* nparticles, int* phi, int* kstar);
     void dt_getparticle_(int *ipart, int *res, int* phi, int* kstar);
     void dt_initialise_();
+    void dt_ltnuc_(double* Pin, double* Ein, double* Pout, double* Eout, int* Mode);
 }
 
 starlightDpmJet::starlightDpmJet(const inputParameters& inputParametersInstance,randomGenerator* randy,beamBeamSystem& beamsystem ) : eventChannel(inputParametersInstance,randy,beamsystem)
@@ -120,9 +121,20 @@ upcEvent starlightDpmJet::produceSingleEvent(int zdirection, float gammaE)
 
     //In which direction do we go?
     double rapidity = _bbs.beam1().rapidity()*zdirection;
-
+ 
     for (int i = 0; i < nParticles; i++)
-    {
+      { /// boost phi and K*0 to dpmjet frame
+       if (dpmjetparticle_.slpid[i] == 333 || std::abs(dpmjetparticle_.slpid[i]) == 313)
+	  {
+	    double Pin  = dpmjetparticle_.slpz[i];
+            double Ein  = dpmjetparticle_.sle[i];
+            double Pout = 0.0, Eout = 0.0;
+            int Mode = -3;   // same as DT_LT2LAB transformation mode
+	    dt_ltnuc_(&Pin, &Ein, &Pout, &Eout, &Mode);
+	    dpmjetparticle_.slpz[i] = Pout;
+	    dpmjetparticle_.sle[i]  = Eout;
+	    
+	  }
         starlightParticle particle(dpmjetparticle_.slpx[i], dpmjetparticle_.slpy[i], zdirection*dpmjetparticle_.slpz[i], dpmjetparticle_.sle[i], dpmjetparticle_.slm[i], dpmjetparticle_.slpid[i], dpmjetparticle_.slcharge[i]);
 	vector3 boostVector(0, 0, tanh(-rapidity));
 	particle.Boost(boostVector);
