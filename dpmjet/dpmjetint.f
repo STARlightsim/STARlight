@@ -2,13 +2,14 @@
 *===program crint======================================================*
 *
 C      OPTIONS/ EXTEND_SOURCE
-C      SUBROUTINE CRINT
-      SUBROUTINE DT_PRODUCEEVENT(ENERGY_SL, NPARTICLES)
-
+C     SUBROUTINE CRINT
+*     KEEP_PHI, KEEP_KSTAR are switch to store phi and K*0 and its decay daughter chain information in output        
+      SUBROUTINE DT_PRODUCEEVENT(ENERGY_SL, NPARTICLES, KEEP_PHI,
+     & KEEP_KSTAR)
 
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       REAL ENERGY_SL
-      INTEGER INIT
+      INTEGER INIT,KEEP_PHI, KEEP_KSTAR
       REAL ne,etest,prob,slump
       SAVE
 
@@ -31,6 +32,7 @@ C      SUBROUTINE CRINT
 *        Init called, make sure it's not called again
          INIT = 1
       ENDIF
+
 *-----------------------------------------------------------------------
 *     generation of one event
       NEVENT = 1
@@ -54,14 +56,14 @@ C        ELAB = EPN
       IF (IREJ.NE.0) RETURN
 
 c     Return the number of particles produced
-      
+*     KEEP_PHI, KEEP_KSTAR are switch to store phi and K*0 and its decay daughter chain information in output        
 c     Fill the particle info 
-      CALL DT_GETPARTICLES(NPARTICLES)
+      CALL DT_GETPARTICLES(NPARTICLES, KEEP_PHI, KEEP_KSTAR)
 
       END
 
 
-      SUBROUTINE DT_GETPARTICLES(NPARTICLES)
+      SUBROUTINE DT_GETPARTICLES(NPARTICLES, KEEP_PHI, KEEP_KSTAR)
 
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       INTEGER pid,qch,q_sum,Ntpc,Nfinal,NACCEPT,IPART,RES
@@ -102,18 +104,46 @@ c     Fill the particle info
       COMMON /DPMJETPARTICLE/ SLPX(NMXHKK), SLPY(NMXHKK), SLPZ(NMXHKK),
      &       SLE(NMXHKK), SLM(NMXHKK), SLPID(NMXHKK), SLCHARGE(NMXHKK)
 
+* Declare and dimension the new arrays for phi and K*0 before the COMMON
+      INTEGER SLMOTH1, SLMOTH2, SLSTATUS
+      DIMENSION SLMOTH1(NMXHKK), SLMOTH2(NMXHKK), SLSTATUS(NMXHKK)
+      COMMON /DPMJETMOTHERS/ SLMOTH1, SLMOTH2, SLSTATUS
 
+* Switches for each resonance (set in main program or defaults)
 C     >> Set Counter to Zero
-
+      LOGICAL KEEPPARTICLE
       Nfinal=0
       
       DO 42 I=1, NHKK
 c      I = IPART
 
-CC       >> Remove all non-final-state particles
-        IF(.not.(ISTHKK(I).eq.1.or.ISTHKK(I).eq.-1.or.
-     $ISTHKK(I).eq.1001)) GOTO 42
+* --- Decide if particle is kept ---
+     
+      KEEPPARTICLE = .FALSE.
 
+* --- Always keep stable particles ---
+      IF (ISTHKK(I).EQ.1 .OR. ISTHKK(I).EQ.-1 .OR. ISTHKK(I).EQ.1001)
+     & KEEPPARTICLE = .TRUE.
+     
+* --- Keep selected Phi and K*0 resonances according to switches and store in output ---
+      IF (KEEP_PHI.EQ.1 .AND. ISTHKK(I).EQ.2 .AND. IDHKK(I).EQ.333)
+     & KEEPPARTICLE = .TRUE.
+      IF (KEEP_KSTAR.EQ.1 .AND. ISTHKK(I).EQ.2 .AND. (IDHKK(I).EQ.313
+     & .OR. IDHKK(I).EQ.-313)) KEEPPARTICLE = .TRUE.
+*     --- to remove the daughter of phi and K*0 
+! This particle is a daughter of Phi
+      IF (JMOHKK(1,I).GT.0) THEN
+         IF (KEEP_PHI.EQ.1 .AND. IDHKK(JMOHKK(1,I)).EQ.333) THEN
+            KEEPPARTICLE = .FALSE.
+            END IF
+!     This particle is a daughter of K*0                                                                                   
+         IF (KEEP_KSTAR .EQ.1 .AND. (IDHKK(JMOHKK(1,I)).EQ.313
+     &      .OR. IDHKK(JMOHKK(1,I)).EQ.-313)) THEN                                                                              
+            KEEPPARTICLE = .FALSE.
+         END IF
+      END IF
+      IF (.NOT.KEEPPARTICLE) GOTO 42
+         
 C	>> Find Particle Charge, qch
         IF((ABS(ISTHKK(I)).eq.1).and.(IDHKK(I).ne.80000))THEN
 C         >> final state ptcles except nuclei
@@ -135,6 +165,10 @@ C         >> not a final state particle, qch not interesting
         SLM(Nfinal) = PHKK(5,I)
         SLPID(Nfinal) = IDHKK(I)
         SLCHARGE(Nfinal) = qch
+* Now assign mother(phi and K*0) info to the same index
+        SLSTATUS(Nfinal) = ISTHKK(I)
+        SLMOTH1(Nfinal) = JMOHKK(1,I)
+        SLMOTH2(Nfinal) = JMOHKK(2,I)
 
  42     CONTINUE
         NPARTICLES = Nfinal

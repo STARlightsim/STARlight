@@ -17,7 +17,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 */
-
+#include "inputParameters.h"
 #include "starlightdpmjet.h"
 #include "spectrum.h"
 #include <iostream>
@@ -40,18 +40,21 @@ extern "C"
             int slcharge[nmxhkk];
 
         } dpmjetparticle_;
-
-    void dt_produceevent_(float* gammaE, int* nparticles);
-    void dt_getparticle_(int *ipart, int *res);
+  // phi, kstar are the switch to store their information and remove its  daughter particle from  starlight+dpmjet output
+    void dt_produceevent_(float* gammaE, int* nparticles, int* phi, int* kstar);
+    void dt_getparticle_(int *ipart, int *res, int* phi, int* kstar);
     void dt_initialise_();
+    void dt_ltnuc_(double* Pin, double* Ein, double* Pout, double* Eout, int* Mode); // boost function from dpmjet, used to give proper  boost to Phi and K*0 
 }
 
 starlightDpmJet::starlightDpmJet(const inputParameters& inputParametersInstance,randomGenerator* randy,beamBeamSystem& beamsystem ) : eventChannel(inputParametersInstance,randy,beamsystem)
+	,_inputParams(inputParametersInstance)   // <-- store reference here															      
         ,_spectrum(0)
         ,_doDoubleEvent(true)
 	,_minGammaEnergy(6.0)
 	,_maxGammaEnergy(600000.0)
 	,_protonMode(false)
+	
 {
 
 }
@@ -111,15 +114,27 @@ upcEvent starlightDpmJet::produceSingleEvent(int zdirection, float gammaE)
     event.addGamma(gammaE);
 
     int nParticles = 0;
-
-    dt_produceevent_(&gammaE, &nParticles);
+    int phi =  _inputParams.phiSwitch();  // read from slight.in, switch to add phi information 
+    int kstar = _inputParams.kstarSwitch();  //  read from slight.in, switch to add K*0 information 
+    dt_produceevent_(&gammaE, &nParticles, &phi, &kstar);
     
 
     //In which direction do we go?
     double rapidity = _bbs.beam1().rapidity()*zdirection;
-
+ 
     for (int i = 0; i < nParticles; i++)
-    {
+      { /// boost phi and K*0 to dpmjet lab frame from particle cms frmae, it is needed because default version of dpmjet only boost stable particle 
+       if (dpmjetparticle_.slpid[i] == 333 || std::abs(dpmjetparticle_.slpid[i]) == 313)
+	  {
+	    double Pin  = dpmjetparticle_.slpz[i];
+            double Ein  = dpmjetparticle_.sle[i];
+            double Pout = 0.0, Eout = 0.0;
+            int Mode = -3;   // same as DT_LT2LAB transformation mode
+	    dt_ltnuc_(&Pin, &Ein, &Pout, &Eout, &Mode);
+	    dpmjetparticle_.slpz[i] = Pout;
+	    dpmjetparticle_.sle[i]  = Eout;
+	    
+	  }
         starlightParticle particle(dpmjetparticle_.slpx[i], dpmjetparticle_.slpy[i], zdirection*dpmjetparticle_.slpz[i], dpmjetparticle_.sle[i], dpmjetparticle_.slm[i], dpmjetparticle_.slpid[i], dpmjetparticle_.slcharge[i]);
 	vector3 boostVector(0, 0, tanh(-rapidity));
 	particle.Boost(boostVector);

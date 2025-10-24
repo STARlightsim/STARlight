@@ -194,6 +194,8 @@ public:
 	double       minW                  () const { return _minW.value();                   }  ///< returns minimum mass W of produced hadronic system [GeV/c^2]
 	unsigned int nmbWBins              () const { return _nmbWBins.value();               }  ///< returns number of W bins in lookup table
 	double       maxRapidity           () const { return _maxRapidity.value();            }  ///< returns maximum absolute value of rapidity
+        int          phiSwitch             () const { return _phiSwitch.value();              }  ///< returns switch to store phi information in starlight+dpmjet output
+        int          kstarSwitch           () const { return _kstarSwitch.value();            }  ///< returns switch to store Kstar information in starlight+dpmjet output
 	unsigned int nmbRapidityBins       () const { return _nmbRapidityBins.value();        }  ///< returns number of rapidity bins in lookup table
 	bool         ptCutEnabled          () const { return _ptCutEnabled.value();           }  ///< returns cut in pt
 	double       ptCutMin              () const { return _ptCutMin.value();               }  ///< returns minimum pt
@@ -286,7 +288,7 @@ public:
         double rho0PrimeWidth        () const {return _rho0PrimeWidth        .value();}
         double rho0PrimeBrPiPi       () const {return _rho0PrimeBrPiPi       .value();}
         double rho0PrimeBrFourProng  () const {return _rho0PrimeBrFourProng  .value();}
-        double rho0PrimeCoupling    () const {return _rho0PrimeCoupling      .value();}
+        double rho0PrimeCoupling     () const {return _rho0PrimeCoupling      .value();}
         double OmegaMass             () const {return _OmegaMass             .value();}
         double OmegaWidth            () const {return _OmegaWidth            .value();}
         double OmegaBrPiPi           () const {return _OmegaBrPiPi           .value();}
@@ -337,6 +339,8 @@ public:
 	void setMinW                  (double v)  {  _minW = v;                   }  ///< sets minimum mass W of produced hadronic system [GeV/c^2]
 	void setNmbWBins              (unsigned int v)  {  _nmbWBins = v;         }  ///< sets number of W bins in lookup table
 	void setMaxRapidity           (double v)  {  _maxRapidity = v;            }  ///< sets maximum absolute value of rapidity
+  	void setphiSwitch             (double v)  {  _phiSwitch = v;              }  ///< sets switch for phi to store its information in Starlight+Dpmjet output 
+    	void setkstarSwitch           (double v)  {  _kstarSwitch = v;            }  ///< sets switch for kstar to store its information in Starlight+Dpmjet output 
 	void setNmbRapidityBins       (unsigned int v)  {  _nmbRapidityBins = v;  }  ///< sets number of rapidity bins in lookup table
 	void setPtCutEnabled          (bool v)  {  _ptCutEnabled = v;             }  ///< sets cut in pt
 	void setPtCutMin              (double v)  {  _ptCutMin = v;               }  ///< sets minimum pt
@@ -403,6 +407,8 @@ private:
 	parameter<double, VALIDITY_CHECK>          _minW;                    ///< minimum mass W of produced hadronic system; if set to -1 default value is taken [GeV/c^2]
 	parameter<unsigned int, VALIDITY_CHECK>    _nmbWBins;                ///< number of W bins in lookup table
 	parameter<double, VALIDITY_CHECK>          _maxRapidity;             ///< maximum absolute value of rapidity
+        parameter<int, VALIDITY_CHECK>             _phiSwitch;               ///< switch to add  phi information in Starlight+Dpmjet output
+        parameter<int, VALIDITY_CHECK>             _kstarSwitch;             ///< switch to add  kstar information in Starlight+Dpmjet output 
 	parameter<unsigned int, VALIDITY_CHECK>    _nmbRapidityBins;         ///< number of rapidity bins in lookup table
 	parameter<bool, VALIDITY_CHECK>            _ptCutEnabled;            ///< en/disables cut in pt
 	parameter<double, VALIDITY_CHECK>          _ptCutMin;                ///< minimum pt, if cut is enabled

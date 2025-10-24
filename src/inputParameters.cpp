@@ -61,6 +61,8 @@ inputParameters::inputParameters()
 	  _minW("W_MIN", 0),
 	  _nmbWBins("W_N_BINS", 0),
 	  _maxRapidity("RAP_MAX", 0),
+	  _phiSwitch("KEEP_PHI",0),
+	  _kstarSwitch("KEEP_KSTAR",0),
 	  _nmbRapidityBins("RAP_N_BINS", 0),
 	  _ptCutEnabled("CUT_PT", false, NOT_REQUIRED),
 	  _ptCutMin("PT_MIN", 0, NOT_REQUIRED),
@@ -207,7 +209,9 @@ inputParameters::inputParameters()
 
 	_ip.addParameter(_nmbWBins);
 
-	_ip.addParameter(_maxRapidity);
+	_ip.addParameter(_phiSwitch);
+	_ip.addParameter(_kstarSwitch);
+       	_ip.addParameter(_maxRapidity);
 	_ip.addParameter(_nmbRapidityBins);
 
 	_ip.addParameter(_ptCutEnabled);
@@ -898,6 +902,9 @@ inputParameters::print(ostream &out) const
 		<< "    mass W of produced hadronic system ..... " << _minW.value() << " < W < " << _maxW.value() << " GeV/c^2" << endl
 		<< "    # of W bins ............................ " << _nmbWBins.value() << endl
 		<< "    maximum absolute value for rapidity .... " << _maxRapidity.value() << endl
+	        << "    switch to add phi information in output.." << _phiSwitch.value() << endl
+	        << "    switch to add kstar information in output" << _kstarSwitch.value() << endl
+	   
 		<< "    # of rapidity bins ..................... " << _nmbRapidityBins.value() << endl
 		<< "    cut in pT............................... " << yesNo(_ptCutEnabled.value()) << endl;
 	if (_ptCutEnabled.value())
@@ -986,6 +993,8 @@ inputParameters::write(ostream &out) const
 		<< "W_MIN" << minW() << endl
 		<< "W_N_BINS" << nmbWBins() << endl
 		<< "RAP_MAX" << maxRapidity() << endl
+	        << "KEEP_PHI"  << phiSwitch() <<endl
+	        << "KEEP_KSTAR"  << kstarSwitch() <<endl
 		<< "RAP_N_BINS" << nmbRapidityBins() << endl
 		<< "CUT_PT" << ptCutEnabled() << endl
 		<< "PT_MIN" << ptCutMin() << endl
