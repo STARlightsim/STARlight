@@ -40,11 +40,11 @@ extern "C"
             int slcharge[nmxhkk];
 
         } dpmjetparticle_;
-  // phi, kstar are the switch to store their information along with daughter particle in starlight+dpmjet output
+  // phi, kstar are the switch to store their information and remove its  daughter particle from  starlight+dpmjet output
     void dt_produceevent_(float* gammaE, int* nparticles, int* phi, int* kstar);
     void dt_getparticle_(int *ipart, int *res, int* phi, int* kstar);
     void dt_initialise_();
-    void dt_ltnuc_(double* Pin, double* Ein, double* Pout, double* Eout, int* Mode);
+    void dt_ltnuc_(double* Pin, double* Ein, double* Pout, double* Eout, int* Mode); // boost function from dpmjet, used to give proper  boost to Phi and K*0 
 }
 
 starlightDpmJet::starlightDpmJet(const inputParameters& inputParametersInstance,randomGenerator* randy,beamBeamSystem& beamsystem ) : eventChannel(inputParametersInstance,randy,beamsystem)
@@ -123,7 +123,7 @@ upcEvent starlightDpmJet::produceSingleEvent(int zdirection, float gammaE)
     double rapidity = _bbs.beam1().rapidity()*zdirection;
  
     for (int i = 0; i < nParticles; i++)
-      { /// boost phi and K*0 to dpmjet frame
+      { /// boost phi and K*0 to dpmjet lab frame from particle cms frmae, it is needed because default version of dpmjet only boost stable particle 
        if (dpmjetparticle_.slpid[i] == 333 || std::abs(dpmjetparticle_.slpid[i]) == 313)
 	  {
 	    double Pin  = dpmjetparticle_.slpz[i];

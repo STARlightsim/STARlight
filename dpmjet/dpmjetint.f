@@ -125,20 +125,20 @@ c      I = IPART
       IF (ISTHKK(I).EQ.1 .OR. ISTHKK(I).EQ.-1 .OR. ISTHKK(I).EQ.1001)
      & KEEPPARTICLE = .TRUE.
      
-* --- Keep selected Phi and K*0 resonances according to switches ---
+* --- Keep selected Phi and K*0 resonances according to switches and store in output ---
       IF (KEEP_PHI.EQ.1 .AND. ISTHKK(I).EQ.2 .AND. IDHKK(I).EQ.333)
      & KEEPPARTICLE = .TRUE.
       IF (KEEP_KSTAR.EQ.1 .AND. ISTHKK(I).EQ.2 .AND. (IDHKK(I).EQ.313
      & .OR. IDHKK(I).EQ.-313)) KEEPPARTICLE = .TRUE.
-* --- to remove the daughter of phi and K*0                                                                            
+*     --- to remove the daughter of phi and K*0 
+! This particle is a daughter of Phi
       IF (JMOHKK(1,I).GT.0) THEN
          IF (KEEP_PHI.EQ.1 .AND. IDHKK(JMOHKK(1,I)).EQ.333) THEN
             KEEPPARTICLE = .FALSE.
             END IF
-! This particle is a daughter of Phi                                                                                   
+!     This particle is a daughter of K*0                                                                                   
          IF (KEEP_KSTAR .EQ.1 .AND. (IDHKK(JMOHKK(1,I)).EQ.313
-     &        .OR. IDHKK(JMOHKK(1,I)).EQ.-313)) THEN
-!     This particle is a daughter of K*0                                                                               
+     &      .OR. IDHKK(JMOHKK(1,I)).EQ.-313)) THEN                                                                              
             KEEPPARTICLE = .FALSE.
          END IF
       END IF
