@@ -39,6 +39,9 @@
 eventFileWriter::eventFileWriter()
 : fileWriter()
 ,_writeFullPythia(false)
+#ifdef HEPMC3_ON
+,_hepmc3writer(nullptr)
+#endif
 { }
 
 
@@ -46,6 +49,17 @@ eventFileWriter::eventFileWriter()
 eventFileWriter::eventFileWriter(std::string filename)
 : fileWriter(filename)
 { }
+
+//______________________________________________________________________________
+eventFileWriter::~eventFileWriter()
+{
+#ifdef HEPMC3_ON
+    if (_hepmc3writer) {
+        delete _hepmc3writer;
+        _hepmc3writer = nullptr;
+    }
+#endif
+}
 
 //______________________________________________________________________________
 int eventFileWriter::writeInit(inputParameters &_p)
@@ -69,6 +83,17 @@ int eventFileWriter::writeInit(inputParameters &_p)
   _ip = _p;
   
   return 0;
+}
+
+//______________________________________________________________________________
+int eventFileWriter::close()
+{
+#ifdef HEPMC3_ON
+    if (_hepmc3writer) {
+        _hepmc3writer->close();
+    }
+#endif
+    return fileWriter::close();
 }
 
 //______________________________________________________________________________

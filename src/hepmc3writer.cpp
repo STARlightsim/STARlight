@@ -17,6 +17,16 @@ using namespace std;
 
 hepMC3Writer::hepMC3Writer()
 {}
+
+hepMC3Writer::~hepMC3Writer()
+{
+    if (_hepmc3_output) {
+        _hepmc3_output->close();
+        delete _hepmc3_output;
+        _hepmc3_output = nullptr;
+    }
+}
+
 int hepMC3Writer::initWriter(const inputParameters &param)
 {
     std::string hepmc3_filename = param.baseFileName() + ".hepmc";
@@ -147,11 +157,11 @@ int hepMC3Writer::writeEvent(const upcXEvent &event, int eventnumber){
         HepMC3::GenParticlePtr hepmc3_beam1_out = std::make_shared<HepMC3::GenParticle>(FourVector(beam_1.GetPx(),
                                                                                                     beam_1.GetPy(),
                                                                                                     beam_1.GetPz(),
-                                                                                                    beam_1.GetE()),beam1_pdg_id,1);
+                                                                                                    beam_1.GetE()),beam1_pdg_id,4);
         HepMC3::GenParticlePtr hepmc3_beam2_out = std::make_shared<HepMC3::GenParticle>(FourVector(beam_2.GetPx(),
                                                                                                     beam_2.GetPy(),
                                                                                                     beam_2.GetPz(),
-                                                                                                    beam_2.GetE()),beam2_pdg_id,1);
+                                                                                                    beam_2.GetE()),beam2_pdg_id,4);
 
 
         lorentzVector vmeson = event.getVectorMeson();
@@ -159,25 +169,21 @@ int hepMC3Writer::writeEvent(const upcXEvent &event, int eventnumber){
 
         const std::vector<starlightParticle> * particle_vector = event.getParticles();
 
-        HepMC3::GenVertexPtr hepmc3_root_vertex = std::make_shared<HepMC3::GenVertex>(FourVector(0,0,0,0));
         HepMC3::GenVertexPtr hepmc3_gamEmit_vertex = std::make_shared<HepMC3::GenVertex>(FourVector(0,0,0,0));
         HepMC3::GenVertexPtr hepmc3_VMProd_vertex = std::make_shared<HepMC3::GenVertex>(FourVector(0,0,0,0));
         HepMC3::GenVertexPtr hepmc3_PartProd_vertex = std::make_shared<HepMC3::GenVertex>(FourVector(0,0,0,0));
 
         hepmc3_evt.add_particle(hepmc3_beam1_in);
         hepmc3_evt.add_particle(hepmc3_beam2_in);
+        hepmc3_evt.set_beam_particles(hepmc3_beam1_in, hepmc3_beam2_in);
         if(event.targetBeamNo() == 1){
             hepmc3_evt.add_particle(gamma_particle);
             hepmc3_evt.add_particle(hepmc3_beam2_out);
             hepmc3_evt.add_particle(hepmc3_beam1_out);
             hepmc3_evt.add_particle(hepmc3_vector_meson);
-            hepmc3_evt.add_vertex(hepmc3_root_vertex);
             hepmc3_evt.add_vertex(hepmc3_gamEmit_vertex);
             hepmc3_evt.add_vertex(hepmc3_VMProd_vertex);
             hepmc3_evt.add_vertex(hepmc3_PartProd_vertex);
-            
-            hepmc3_root_vertex->add_particle_out(hepmc3_beam1_in);
-            hepmc3_root_vertex->add_particle_out(hepmc3_beam2_in);
 
             hepmc3_gamEmit_vertex->add_particle_in(hepmc3_beam2_in);
             hepmc3_gamEmit_vertex->add_particle_out(gamma_particle);
@@ -196,13 +202,9 @@ int hepMC3Writer::writeEvent(const upcXEvent &event, int eventnumber){
             hepmc3_evt.add_particle(gamma_particle);
             hepmc3_evt.add_particle(hepmc3_vector_meson);
             hepmc3_evt.add_particle(hepmc3_beam2_out);
-            hepmc3_evt.add_vertex(hepmc3_root_vertex);
             hepmc3_evt.add_vertex(hepmc3_gamEmit_vertex);
             hepmc3_evt.add_vertex(hepmc3_VMProd_vertex);
             hepmc3_evt.add_vertex(hepmc3_PartProd_vertex);
-
-            hepmc3_root_vertex->add_particle_out(hepmc3_beam1_in);
-            hepmc3_root_vertex->add_particle_out(hepmc3_beam2_in);
 
             hepmc3_gamEmit_vertex->add_particle_in(hepmc3_beam1_in);
             hepmc3_gamEmit_vertex->add_particle_out(hepmc3_beam1_out);
@@ -243,7 +245,7 @@ int hepMC3Writer::writeEvent(const upcXEvent &event, int eventnumber){
         HepMC3::GenParticlePtr hepmc3_beam1_out = std::make_shared<HepMC3::GenParticle>(FourVector(beam_1.GetPx(),
                                                                                                     beam_1.GetPy(),
                                                                                                     beam_1.GetPz(),
-                                                                                                    beam_1.GetE()),beam1_pdg_id,1);
+                                                                                                    beam_1.GetE()),beam1_pdg_id,4);
         
 
         lorentzVector gamma1 = event.getGammaFromBeam1().gamma;
@@ -261,7 +263,7 @@ int hepMC3Writer::writeEvent(const upcXEvent &event, int eventnumber){
         HepMC3::GenParticlePtr hepmc3_beam2_out = std::make_shared<HepMC3::GenParticle>(FourVector(beam_2.GetPx(),
                                                                                                     beam_2.GetPy(),
                                                                                                     beam_2.GetPz(),
-                                                                                                    beam_2.GetE()),beam2_pdg_id,1);
+                                                                                                    beam_2.GetE()),beam2_pdg_id,4);
         
         HepMC3::GenParticlePtr hepmc3_meson, hepmc3_meson2;
         if(!leptonpair){
@@ -277,7 +279,6 @@ int hepMC3Writer::writeEvent(const upcXEvent &event, int eventnumber){
         //decay product particles created later
 
         //2. create vertex
-        HepMC3::GenVertexPtr hepmc3_root_vertex = std::make_shared<HepMC3::GenVertex>(FourVector(0,0,0,0));
         HepMC3::GenVertexPtr hepmc3_beam1gamEmit_vertex = std::make_shared<HepMC3::GenVertex>(FourVector(0,0,0,0));
         HepMC3::GenVertexPtr hepmc3_beam2gamEmit_vertex = std::make_shared<HepMC3::GenVertex>(FourVector(0,0,0,0));
 
@@ -291,6 +292,7 @@ int hepMC3Writer::writeEvent(const upcXEvent &event, int eventnumber){
 
         hepmc3_evt.add_particle(hepmc3_beam1_in);
         hepmc3_evt.add_particle(hepmc3_beam2_in);
+        hepmc3_evt.set_beam_particles(hepmc3_beam1_in, hepmc3_beam2_in);
         hepmc3_evt.add_particle(hepmc3_beam1_out);
         hepmc3_evt.add_particle(gamma_particle1);
         hepmc3_evt.add_particle(gamma_particle2);
@@ -300,7 +302,6 @@ int hepMC3Writer::writeEvent(const upcXEvent &event, int eventnumber){
         //decay product particles added later
 
         //4. add vertex to event
-        hepmc3_evt.add_vertex(hepmc3_root_vertex);
         hepmc3_evt.add_vertex(hepmc3_beam1gamEmit_vertex);
         hepmc3_evt.add_vertex(hepmc3_beam2gamEmit_vertex);
         if(!leptonpair) hepmc3_evt.add_vertex(hepmc3_VMProd_vertex);
@@ -309,9 +310,6 @@ int hepMC3Writer::writeEvent(const upcXEvent &event, int eventnumber){
 
 
         //5. add particles to vertex
-        hepmc3_root_vertex->add_particle_out(hepmc3_beam1_in);
-        hepmc3_root_vertex->add_particle_out(hepmc3_beam2_in);
-
         hepmc3_beam1gamEmit_vertex->add_particle_in(hepmc3_beam1_in);
         hepmc3_beam1gamEmit_vertex->add_particle_out(hepmc3_beam1_out);
         hepmc3_beam1gamEmit_vertex->add_particle_out(gamma_particle1);

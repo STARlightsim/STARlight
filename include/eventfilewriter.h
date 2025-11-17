@@ -54,8 +54,14 @@ class eventFileWriter : public fileWriter
       /** Constructor with name */
       eventFileWriter(std::string filename);
 
+      /** Destructor */
+      ~eventFileWriter();
+
       /** Write out simulation set up */
       int writeInit(inputParameters &param );
+
+      /** Close output files */
+      int close();
 
       /** Write an UPC event to file */
       int writeEvent(upcEvent &event, int eventnumber);
