@@ -359,9 +359,11 @@ bool spectrum::generateBreakupProbabilities()
     for (int i = 0; i < nbbins; i++)
     {
         double bimp = b;
-        double rhad = 0;
-        rhad = _beamBeamSystem->probabilityOfBreakup(bimp);
-        _probOfBreakup[i] = exp(-rhad);
+	// Erroneous old code 
+        // double rhad = 0;
+        // rhad = _beamBeamSystem->probabilityOfBreakup(bimp);
+        // _probOfBreakup[i] = exp(-rhad);
+        _probOfBreakup[i] = _beamBeamSystem->probabilityOfBreakup(bimp); 
         b = b*binc;
     }
     return true;
